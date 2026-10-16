@@ -79,13 +79,13 @@ export interface Notification {
   agency_id: string
   to: string
   ticket_id: string
-  kind: 'escalated' | 'assigned'
+  kind: 'escalated' | 'assigned' | 'followup'
   text: string
   at: string
   read: boolean
 }
 
-export type Channel = 'web' | 'whatsapp' | 'email' | 'social'
+export type Channel = 'web' | 'whatsapp' | 'email' | 'social' | 'telegram'
 
 export interface TraceStep {
   agent: string
@@ -126,6 +126,9 @@ export interface Ticket {
   alerted_at?: string | null
   alert_delivered_at?: string | null
   assignee?: string | null
+  /** Set when the report came from Telegram; approved replies are sent back to this chat. */
+  telegram_chat_id?: string | null
+  followups?: { at: string; text: string }[]
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean

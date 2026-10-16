@@ -2,7 +2,7 @@ import type { Metadata } from 'next'
 import { Brand, Footer } from '@/components/Brand'
 import Track from '@/components/citizen/Track'
 
-export const metadata: Metadata = { title: 'Track a report · Embrace' }
+export const metadata: Metadata = { title: 'Track a report' }
 
 export default async function TrackPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params

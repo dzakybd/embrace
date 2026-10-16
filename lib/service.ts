@@ -10,6 +10,7 @@ import { decide } from './policy'
 import type { Channel, HistoryItem, Policy, Ticket, TraceStep } from './schemas'
 import { prefix } from './seed'
 import { STORE, now } from './store'
+import { send as tgSend } from './telegram'
 
 const pipelineRunner = new InMemoryRunner({ agent: pipeline, appName: 'embrace' })
 const analystRunner = new InMemoryRunner({ agent: analystAgent, appName: 'embrace_analyst' })
@@ -35,6 +36,7 @@ export async function* submit(
   channel: Channel,
   reporter: Ticket['reporter'],
   media: { mime: string; data: string }[],
+  opts: { noAi?: string; telegramChatId?: string } = {},
 ): AsyncGenerator<SubmitEvent> {
   const agency = getAgency(agencyId)!
   const id = newTicketId(agency)
@@ -52,6 +54,7 @@ export async function* submit(
     trace: [],
     history: [entry('system', 'received', `via ${channel}`)],
     seeded: false,
+    telegram_chat_id: opts.telegramChatId ?? null,
   }
   await STORE.put(ticket)
   yield { type: 'received', ticket_id: id }
@@ -60,6 +63,8 @@ export async function* submit(
   const outputs: Record<string, unknown> = {}
   let mark = Date.now()
   try {
+    // Over the AI budget (rate limit): no model call; the same fallback as a model failure decides.
+    if (opts.noAi) throw new Error(opts.noAi)
     const parts: Part[] = [{ text: 'Process this complaint.' }, ...media.map((m) => ({ inlineData: { mimeType: m.mime, data: m.data } }))]
     const events = pipelineRunner.runEphemeral({
       userId: agencyId,
@@ -140,8 +145,17 @@ export async function act(id: string, action: string, officer: string, note = ''
   const ts = now()
   const fields: Partial<Ticket> = { updated_at: ts }
   if (status) fields.status = status
+  let delivery = ''
   if (action === 'send_reply') {
     fields.sent_reply = reply || t.draft?.reply || ''
+    if (t.telegram_chat_id) {
+      try {
+        await tgSend(t.telegram_chat_id, fields.sent_reply)
+        delivery = ' · delivered to the citizen on Telegram'
+      } catch (err) {
+        delivery = ` · Telegram delivery failed: ${String(err).slice(0, 120)}`
+      }
+    }
     fields.reply_edited = !!reply && reply !== t.draft?.reply
     fields.responded_at = t.responded_at ?? ts
   }
@@ -159,7 +173,7 @@ export async function act(id: string, action: string, officer: string, note = ''
     fields.assignee = member.id
     label = `Delegated to ${member.name} (${member.title})`
   }
-  fields.history = [...t.history, entry(officer, action, note ? `${label}: ${note}` : label)]
+  fields.history = [...t.history, entry(officer, action, (note ? `${label}: ${note}` : label) + delivery)]
   const updated = await STORE.update(id, fields)
   if (member && member.id !== t.assignee) {
     await publish({ kind: 'assigned', agency_id: t.agency_id, ticket_id: id, to: [member.id], text: `${officer} delegated a case to you: ${t.triage?.summary ?? t.text.slice(0, 120)}${note ? ` (${note})` : ''}` }).catch((e) => console.error('case event failed', e))
@@ -184,4 +198,20 @@ export async function askAnalyst(agencyId: string, question: string) {
     if (ev.author === 'analyst_agent' && text && !(ev.content?.parts ?? []).some((p) => p.functionCall)) answer = text
   }
   return { answer, tools_used: toolsUsed }
+}
+
+/** A later message from the same citizen joins their open case (no AI call) and notifies the person in charge. */
+export async function addFollowup(id: string, text: string) {
+  const t = await STORE.get(id)
+  if (!t) return null
+  const at = now()
+  const updated = await STORE.update(id, {
+    followups: [...(t.followups ?? []), { at, text }],
+    history: [...t.history, entry('citizen', 'followup', text.slice(0, 300))],
+    updated_at: at,
+  })
+  if (t.assignee) {
+    await publish({ kind: 'followup', agency_id: t.agency_id, ticket_id: id, to: [t.assignee], text: `New message on ${id}: ${text.slice(0, 120)}` }).catch((e) => console.error('case event failed', e))
+  }
+  return updated
 }

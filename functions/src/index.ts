@@ -9,7 +9,7 @@ initializeApp()
 const db = getFirestore()
 
 interface CaseEvent {
-  kind: 'escalated' | 'assigned'
+  kind: 'escalated' | 'assigned' | 'followup'
   agency_id: string
   ticket_id: string
   to: string[]

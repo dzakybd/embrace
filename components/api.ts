@@ -1,6 +1,6 @@
 export type Urgency = 'critical' | 'high' | 'normal' | 'low'
 export type Status = 'received' | 'escalated' | 'manual_review' | 'assigned' | 'in_progress' | 'resolved'
-export type Channel = 'web' | 'whatsapp' | 'email' | 'social'
+export type Channel = 'web' | 'whatsapp' | 'email' | 'social' | 'telegram'
 
 export interface Agency {
   id: string
@@ -25,7 +25,7 @@ export interface TeamMember {
 export interface Notification {
   id?: string
   ticket_id: string
-  kind: 'escalated' | 'assigned'
+  kind: 'escalated' | 'assigned' | 'followup'
   text: string
   at: string
 }
@@ -120,6 +120,8 @@ export interface Ticket {
   alerted_at?: string | null
   alert_delivered_at?: string | null
   assignee?: string | null
+  telegram_chat_id?: string | null
+  followups?: { at: string; text: string }[]
 }
 export interface Row {
   id: string

@@ -11,6 +11,21 @@ export interface Store {
   clear(agencyId: string): Promise<void>
   addNotification(n: Notification): Promise<void>
   listNotifications(agencyId: string, to: string): Promise<Notification[]>
+  /** True the first time a key is seen (deduplicates webhook updates and Pub/Sub redeliveries). */
+  claim(key: string): Promise<boolean>
+  /** Sliding-window rate limit shared by all instances: records a hit and returns false when `limit` is reached. */
+  hit(key: string, limit: number, windowMs: number): Promise<boolean>
+  getChat(chatId: string): Promise<ChatState | null>
+  setChat(chatId: string, fields: Partial<ChatState>): Promise<void>
+}
+
+/** Conversation state of one Telegram chat. */
+export interface ChatState {
+  agency_id: string
+  open_ticket?: string | null
+  open_since?: string | null
+  awaiting?: 'report' | null
+  warned_at?: string | null
 }
 
 const newestFirst = (a: Ticket, b: Ticket) => b.created_at.localeCompare(a.created_at)
@@ -34,6 +49,28 @@ class MemoryStore implements Store {
   }
   async clear(agencyId: string) {
     for (const [id, t] of this.tickets) if (t.agency_id === agencyId) this.tickets.delete(id)
+  }
+  private claims = new Set<string>()
+  private hits = new Map<string, number[]>()
+  private chats = new Map<string, ChatState>()
+  async claim(key: string) {
+    if (this.claims.has(key)) return false
+    this.claims.add(key)
+    return true
+  }
+  async hit(key: string, limit: number, windowMs: number) {
+    const now = Date.now()
+    const ts = (this.hits.get(key) ?? []).filter((t) => t > now - windowMs)
+    if (ts.length >= limit) return false
+    ts.push(now)
+    this.hits.set(key, ts)
+    return true
+  }
+  async getChat(chatId: string) {
+    return this.chats.get(chatId) ?? null
+  }
+  async setChat(chatId: string, fields: Partial<ChatState>) {
+    this.chats.set(chatId, { agency_id: 'social_services', ...this.chats.get(chatId), ...fields })
   }
   private notes: Notification[] = []
   async addNotification(n: Notification) {
@@ -84,6 +121,32 @@ class FirestoreStore implements Store {
   }
   async addNotification(n: Notification) {
     await (await this.db).collection('notifications').add(n)
+  }
+  async claim(key: string) {
+    try {
+      await (await this.db).collection('dedupe').doc(key).create({ at: now() })
+      return true
+    } catch {
+      return false // already exists
+    }
+  }
+  async hit(key: string, limit: number, windowMs: number) {
+    const db = await this.db
+    const ref = db.collection('ratelimits').doc(key.replace(/\//g, '_'))
+    return db.runTransaction(async (tx) => {
+      const t = Date.now()
+      const ts = (((await tx.get(ref)).data()?.ts as number[]) ?? []).filter((x) => x > t - windowMs)
+      if (ts.length >= limit) return false
+      tx.set(ref, { ts: [...ts, t] })
+      return true
+    })
+  }
+  async getChat(chatId: string) {
+    const snap = await (await this.db).collection('tg_chats').doc(chatId).get()
+    return snap.exists ? (snap.data() as ChatState) : null
+  }
+  async setChat(chatId: string, fields: Partial<ChatState>) {
+    await (await this.db).collection('tg_chats').doc(chatId).set(fields, { merge: true })
   }
   async listNotifications(agencyId: string, to: string) {
     const snap = await (await this.db).collection('notifications').where('agency_id', '==', agencyId).where('to', '==', to).get()

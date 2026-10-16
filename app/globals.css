@@ -387,3 +387,10 @@ label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer
   .persona select { max-width: 180px; }
   .menu { position: fixed; left: 16px; right: 16px; width: auto; top: 110px; }
 }
+
+/* Telegram entry points */
+.role-actions { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; margin-top: 8px; }
+.role-actions .go { margin-top: 0; text-decoration: none; }
+.btn.light { background: #fff; color: var(--brand); }
+.tg-banner { display: flex; gap: 12px; align-items: center; padding: 12px 16px; border-radius: 16px; background: var(--brand-soft); color: var(--brand-soft-ink); text-decoration: none; font-size: 14px; }
+.followup { font-size: 14px; margin: 6px 0 0; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); }

@@ -15,3 +15,14 @@ env:
     secret: gemini-api-key
   - variable: GEMINI_API_KEY
     secret: gemini-api-key
+  - variable: TELEGRAM_BOT_TOKEN
+    secret: telegram-bot-token
+  - variable: TELEGRAM_WEBHOOK_SECRET
+    secret: telegram-webhook-secret
+  - variable: EMBRACE_PUBLIC_URL
+    value: https://embrace--embrace-23a9c.asia-southeast1.hosted.app
+  - variable: NEXT_PUBLIC_TELEGRAM_BOT
+    value: dmusa_bot
+    availability:
+      - BUILD
+      - RUNTIME

@@ -6,7 +6,7 @@ import { STORE, now } from './store'
 export const TOPIC = 'case-events'
 
 export interface CaseEvent {
-  kind: 'escalated' | 'assigned'
+  kind: 'escalated' | 'assigned' | 'followup'
   agency_id: string
   ticket_id: string
   /** Team member ids to notify. */
@@ -16,17 +16,24 @@ export interface CaseEvent {
   contact?: string
 }
 
-let topic: { publishMessage(m: { json: unknown }): Promise<string> } | null = null
+type Topic = { publishMessage(m: { json: unknown }): Promise<string> }
+const topics = new Map<string, Topic>()
+
+export const pubsubOn = () => process.env.EMBRACE_PUBSUB === 'on'
+
+/** Publishes a JSON message to a Pub/Sub topic. */
+export async function publishTo(name: string, json: unknown): Promise<void> {
+  let t = topics.get(name)
+  if (!t) {
+    const { PubSub } = await import('@google-cloud/pubsub')
+    t = new PubSub().topic(name)
+    topics.set(name, t)
+  }
+  await t.publishMessage({ json })
+}
 
 export async function publish(ev: CaseEvent): Promise<void> {
-  if (process.env.EMBRACE_PUBSUB === 'on') {
-    if (!topic) {
-      const { PubSub } = await import('@google-cloud/pubsub')
-      topic = new PubSub().topic(TOPIC)
-    }
-    await topic.publishMessage({ json: ev })
-    return
-  }
+  if (pubsubOn()) return publishTo(TOPIC, ev)
   await deliver(ev)
 }
 

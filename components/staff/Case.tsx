@@ -122,6 +122,9 @@ function Report({ t }: { t: Ticket }) {
         <Icon name="eye" size={14} /> {reveal ? 'Hide personal data' : 'Show original'}
       </button>}>
       <p className="complaint">{reveal ? t.text : (t.intake?.masked_text ?? t.text)}</p>
+      {t.followups?.map((f, i) => (
+        <p key={i} className="followup"><Icon name="chat" size={13} /> <b>Follow-up {new Date(f.at).toLocaleString()}:</b> {f.text}</p>
+      ))}
       {t.media?.transcript && <p className="media-out"><Icon name="mic" size={13} /> <b>Voice note:</b> “{t.media.transcript}”</p>}
       {t.media?.photo_description && <p className="media-out"><Icon name="image" size={13} /> <b>Photo:</b> {t.media.photo_description}</p>}
       {!reveal && t.intake?.pii_types?.length ? (
@@ -143,7 +146,8 @@ function Reply({ t, busy, act }: { t: Ticket; busy: boolean; act: (a: string, e?
         </>
       ) : t.draft ? (
         <>
-          <p className="muted small"><Icon name="spark" size={13} /> Drafted by AI from the agency&apos;s SOP. Edit freely; nothing is sent until you approve.</p>
+          <p className="muted small"><Icon name="spark" size={13} /> Drafted by AI from the agency&apos;s SOP. Edit freely; nothing is sent until you approve.
+            {t.telegram_chat_id && <> Approving sends it to the citizen&apos;s <b>Telegram</b> chat.</>}</p>
           <textarea rows={9} value={reply} onChange={(e) => setReply(e.target.value)} aria-label="Reply draft" />
           {t.sop && t.sop.length > 0 && (
             <details className="sources"><summary>Sources cited in this draft ({t.sop.length})</summary><Citations items={t.sop} /></details>

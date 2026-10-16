@@ -3,7 +3,7 @@ import Link from 'next/link'
 import { Brand, Footer } from '@/components/Brand'
 import Report from '@/components/citizen/Report'
 
-export const metadata: Metadata = { title: 'Report a problem · Embrace' }
+export const metadata: Metadata = { title: 'Report a problem' }
 
 export default function ReportPage() {
   return (
