@@ -28,7 +28,7 @@ Systems that work today start after a human has read, sorted and typed the case 
 | 5 | Reply drafter (Gemini) | Reply in the citizen's language with ticket number, team, response time in hours, and only procedures from the SOP passages, cited [1], [2]. Waits for officer approval. |
 | – | Analyst agent (Gemini + tools) | Answers leaders' questions and writes the weekly brief by calling tools over live Firestore data (`get_overview`, `find_clusters`, `search_tickets`). |
 
-![Report screen with the live agent trace](docs/screenshots/intake.png)
+![Case page in the staff workspace](docs/screenshots/case.png)
 
 Every case gets a **person in charge** (PIC): the policy step assigns the officer who owns the queue, and officers can delegate a case to a colleague with a handover note. Escalations and assignments are published to **Pub/Sub** (topic `case-events`); a **Cloud Function for Firebase** (`functions/src/index.ts`) writes a notification for the supervisor and the PIC and marks the alert delivered.
 
