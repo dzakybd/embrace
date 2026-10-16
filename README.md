@@ -1,10 +1,10 @@
 # Embrace
 
-**AI agents for public complaint desks, in any language.** Embrace reads every complaint a child protection or social assistance office receives (web, WhatsApp, email, social media, voice notes, photos), masks personal data, judges urgency, applies the agency's own escalation rules, finds the right procedure in the agency's SOPs and drafts a cited reply in the citizen's language. An officer approves every reply. Leaders get a live dashboard, an AI weekly brief and early warnings when complaints cluster around one school, village or payment batch.
+**AI agents for social services desks, in any language.** Embrace reads every report a social services office receives (social aid, disability and elderly care, homelessness, disaster relief, violence and child protection) from the web, WhatsApp, email, social media, voice notes or photos. It masks personal data, judges urgency, applies the agency's own escalation rules, assigns a person in charge, finds the right procedure in the agency's SOPs and drafts a cited reply in the citizen's language. An officer approves every reply. Leaders get a live dashboard, an AI weekly brief and early warnings when reports cluster around one village, school or payment batch.
 
 Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build for the world.") by team **Nalaria**.
 
-- Live prototype: https://embrace--embrace-23a9c.asia-southeast1.hosted.app
+- Live prototype: https://embrace.nalaria.ai.id (also https://embrace--embrace-23a9c.asia-southeast1.hosted.app)
 - Demo video: _coming soon_
 - Pitch deck: [`docs/submission/`](docs/submission/) (PPTX and PDF), brief description in [`docs/submission/description.md`](docs/submission/description.md)
 
@@ -12,7 +12,9 @@ Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build
 
 ## The problem
 
-Public complaint desks for children and vulnerable families get every kind of message in one inbox: a child being beaten tonight next to a question about office hours. Officers sort by hand, escalation depends on who reads the message first, replies quote procedures from memory, and no one sees that five families from the same village reported the same missing payment this week. The same pattern shows up in child protection hotlines and social assistance grievance desks across Asia-Pacific and the world.
+Social services desks get every kind of message in one inbox: a family without shelter tonight next to a question about office hours. Officers sort by hand, escalation depends on who reads the message first, replies quote procedures from memory, and no one sees that five families from the same village reported the same missing payment this week. In Indonesia alone, the national complaint channel SP4N-LAPOR! received 176,853 reports in 2023, up 30% on 2022, and KemenPPPA recorded 28,831 cases of violence against children in 2024.
+
+Systems that work today start after a human has read, sorted and typed the case in: UNICEF's Primero (CPIMS+, GBVIMS+) manages child protection and GBV cases in 75 countries, and SP4N-LAPOR! routes complaints to agencies. Embrace is the AI front door before that step.
 
 ## What it does
 
@@ -28,7 +30,9 @@ Public complaint desks for children and vulnerable families get every kind of me
 
 ![Report screen with the live agent trace](docs/screenshots/intake.png)
 
-Three screens: **Report** (citizen form with sample complaints, voice recording and photo upload, live agent trace), **Officer console** (escalation inbox, masked complaint, editable draft with sources, "Approve & send", agent trace explaining every decision, Ask-the-SOP search) and **Insights** (KPIs, AI weekly brief, ask-the-analyst, early-warning clusters, category trends).
+Every case gets a **person in charge** (PIC): the policy step assigns the officer who owns the queue, and officers can delegate a case to a colleague with a handover note. Escalations and assignments are published to **Pub/Sub** (topic `case-events`); a **Cloud Function for Firebase** (`functions/src/index.ts`) writes a notification for the supervisor and the PIC and marks the alert delivered.
+
+Three screens, in a Material 3 light theme: **Report** (citizen form with sample reports, voice recording and photo upload, live agent trace), **Officer console** (demo sign-in as any team member, My cases, escalation inbox, notifications, delegation, masked report, editable draft with sources, "Approve & send", agent trace, Ask-the-SOP search) and **Insights** (KPIs, AI weekly brief, ask-the-analyst, early-warning clusters, category trends).
 
 ## Built for the world: agency packs
 
@@ -36,19 +40,20 @@ Each agency is a folder under [`agencies/`](agencies/): `agency.json` (categorie
 
 | Pack | What it shows |
 |---|---|
+| `social_services` | Generic social services office: social aid, disability and elderly care, homelessness, disaster relief, domestic violence. Sample SOP. |
 | `child_protection` | Generic child protection service. Sample SOP + the UN Convention on the Rights of the Child. Complaints in English, Spanish, French, Tagalog, Portuguese, Vietnamese, Swahili. |
-| `social_assistance` | Generic social assistance grievance desk (cash transfers, food vouchers, disability and elderly services). Sample SOP. |
 | `id_demak` | Indonesia country pack: a district social affairs office with six real Indonesian regulations as SOPs; complaints in Indonesian and Javanese. |
 
-Prospective users are child protection commissions and social affairs offices; Embrace is an open-source blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
+Prospective users are social affairs offices and child protection commissions; Embrace is an open-source blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
 
 ## How it uses Google Cloud
 
 - **Gemini** (Gemini API, `gemini-3.1-flash-lite` for media, intake, drafting and analysis; `gemini-2.5-flash` for triage) for multilingual understanding, audio transcription, image reading, structured outputs and tool calling.
 - **Google Agent Development Kit (ADK) for TypeScript**: the pipeline is an ADK `SequentialAgent` of four `LlmAgent`s with Zod output schemas plus two custom `BaseAgent`s (rules and SOP search); the analyst is an `LlmAgent` with `FunctionTool`s.
 - **Firebase App Hosting**: builds and serves the Next.js app (UI + API route handlers) from this repo; secrets come from Secret Manager.
-- **Cloud Run**: App Hosting runs the Next.js server on Cloud Run (`asia-southeast1`), scaling to zero; agent progress streams to the browser over Server-Sent Events.
-- **Cloud Firestore**: tickets with the full agent trace, history and officer actions, plus an `alerts` collection for escalations; the analyst agent's tools read it live. Security rules deny all client access; only the server writes.
+- **Cloud Run**: App Hosting runs the Next.js server on Cloud Run (`asia-southeast1`, one warm instance during judging); agent progress streams to the browser over Server-Sent Events.
+- **Pub/Sub + Cloud Functions for Firebase**: escalations and assignments are published to the `case-events` topic; the `onCaseEvent` function notifies the supervisor and the person in charge and marks alerts delivered.
+- **Cloud Firestore**: cases with the full agent trace, person in charge, history and officer actions, plus `notifications`; the analyst agent's tools read it live. Security rules deny all client access; only the server and the function write.
 - **Firebase Analytics**: page and screen usage of the prototype.
 
 ## Quality
@@ -87,13 +92,14 @@ gcloud firestore databases create --location=asia-southeast1 --project <project-
 firebase apphosting:backends:create --backend embrace --primary-region asia-southeast1
 firebase apphosting:secrets:set gemini-api-key        # paste the Gemini API key
 firebase apphosting:secrets:grantaccess gemini-api-key --backend embrace
-firebase deploy --only apphosting,firestore
+firebase deploy --only apphosting,firestore,functions
 ```
 
 ## Layout
 
 ```
 app/              Next.js App Router: page + API route handlers (app/api/*)
+functions/        Cloud Function for Firebase: Pub/Sub case events -> notifications
 components/       React UI (Report, Officer console, Insights)
 lib/agents/       ADK agents: pipeline.ts, analyst.ts, models.ts
 lib/              policy rules, SOP search, Firestore store, analytics, seeding
