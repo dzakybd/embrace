@@ -96,6 +96,13 @@
   "reply_signature": "Social Services Office, Complaints Desk",
   "team": [
     {
+      "id": "helen",
+      "name": "Helen Park",
+      "role": "leader",
+      "title": "Head of office",
+      "queues": []
+    },
+    {
       "id": "maya",
       "name": "Maya Santos",
       "role": "supervisor",

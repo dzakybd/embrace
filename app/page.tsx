@@ -2,11 +2,11 @@ import Link from 'next/link'
 import { Brand, Footer } from '@/components/Brand'
 import { Icon } from '@/components/ui'
 
-const STEPS = [
-  { icon: 'chat', title: 'Any channel, any language', body: 'Web, WhatsApp, email, social media, voice notes and photos. Personal data is masked on arrival.' },
-  { icon: 'alert', title: 'Urgent cases first', body: 'Gemini agents judge urgency; the agency’s own rules decide escalation and alert the supervisor in seconds.' },
-  { icon: 'user', title: 'A person in charge', body: 'Every case goes to the right officer, who can delegate with a handover note.' },
-  { icon: 'book', title: 'Replies that cite the SOP', body: 'A draft in the citizen’s language, citing the agency’s procedures. An officer approves every reply.' },
+const ROLES = [
+  { href: '/report', icon: 'send', title: 'I need help', who: 'Citizen', body: 'Report a problem in your own words and language. Write, record a voice note or add a photo.', main: true },
+  { href: '/staff/inbox?as=officer', icon: 'inbox', title: 'Handle my cases', who: 'Officer (person in charge)', body: 'Cases assigned to you, AI-drafted replies citing the SOP, delegation and notifications.' },
+  { href: '/staff/inbox?as=supervisor', icon: 'alert', title: 'Watch escalations', who: 'On-call supervisor', body: 'Emergencies first: the escalation inbox, alerts delivered in seconds, assign and reassign.' },
+  { href: '/staff/insights?as=leader', icon: 'chart', title: 'See the big picture', who: 'Head of office', body: 'KPIs, an AI weekly brief, early warnings when reports cluster, and an analyst to ask.' },
 ]
 
 export default function Home() {
@@ -14,41 +14,28 @@ export default function Home() {
     <div className="public">
       <header className="top">
         <Brand sub="AI agents for social services desks" />
-        <nav className="top-links" aria-label="Main">
-          <Link href="/report">Report a problem</Link>
-          <Link href="/staff/inbox" className="btn">Staff workspace</Link>
-        </nav>
       </header>
       <main className="landing">
         <section className="hero">
           <h1>Every report read, routed and answered, in the citizen’s own language</h1>
           <p className="lead">
             Embrace is an open-source team of AI agents for social services desks: social aid, disability and elderly care,
-            homelessness, disaster relief, violence and child protection. It gives each case a person in charge and puts emergencies in front of a supervisor in seconds.
+            homelessness, disaster relief, violence and child protection.
           </p>
-          <div className="entry">
-            <Link href="/report" className="entry-card">
-              <span className="entry-ic"><Icon name="send" size={24} /></span>
-              <b>Report a problem</b>
-              <span className="muted">For citizens. Write, record a voice note or add a photo, in any language.</span>
-            </Link>
-            <Link href="/staff/inbox" className="entry-card alt">
-              <span className="entry-ic"><Icon name="inbox" size={24} /></span>
-              <b>Staff workspace</b>
-              <span className="muted">For officers, supervisors and leaders. Demo sign-in as any team member.</span>
-            </Link>
-          </div>
         </section>
-        <section className="how" aria-label="How it works">
-          {STEPS.map((s) => (
-            <div key={s.title} className="how-item">
-              <span className="entry-ic small"><Icon name={s.icon} size={20} /></span>
-              <b>{s.title}</b>
-              <p className="muted">{s.body}</p>
-            </div>
+        <h2 className="pick-h">Who are you?</h2>
+        <section className="roles" aria-label="Choose your role">
+          {ROLES.map((r) => (
+            <Link key={r.href} href={r.href} className={`role-card ${r.main ? 'main' : ''}`}>
+              <span className="entry-ic"><Icon name={r.icon} size={24} /></span>
+              <span className="muted small">{r.who}</span>
+              <b>{r.title}</b>
+              <span className="muted">{r.body}</span>
+              <span className="go">Continue <Icon name="send" size={14} /></span>
+            </Link>
           ))}
         </section>
-        <p className="muted small center">Prototype with synthetic data. Built with Google ADK and Gemini on Firebase App Hosting, Firestore, Pub/Sub and Cloud Functions.</p>
+        <p className="muted small center">Demo: no passwords. Staff can switch role or person any time from the top bar. Synthetic data only. Built with Google ADK and Gemini on Firebase App Hosting, Firestore, Pub/Sub and Cloud Functions.</p>
       </main>
       <Footer />
     </div>

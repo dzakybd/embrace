@@ -47,6 +47,21 @@ export function StaffProvider({ children, fallback }: { children: ReactNode; fal
     return () => clearInterval(t)
   }, [refreshNotes])
 
+  // Entry from the landing page: /staff/...?as=officer|supervisor|leader signs in as the first member with that role.
+  useEffect(() => {
+    if (!agency) return
+    const params = new URLSearchParams(location.search)
+    const role = params.get('as')
+    if (!role) return
+    const m = agency.team.find((x) => x.role === role)
+    if (m) {
+      setMeIds((ids) => ({ ...ids, [agency.id]: m.id }))
+      save(`persona:${agency.id}`, m.id)
+    }
+    params.delete('as')
+    history.replaceState(null, '', location.pathname + (params.size ? `?${params}` : ''))
+  }, [agency])
+
   if (error) return <p className="error pad">Could not reach the API: {error}</p>
   if (!agency || !me) return <>{fallback}</>
   const pickMe = (id: string) => {

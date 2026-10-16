@@ -7,6 +7,12 @@ import { Brand, Footer } from '../Brand'
 import { Icon, ago } from '../ui'
 import { StaffProvider, useStaff } from './StaffProvider'
 
+const ROLES = [
+  { id: 'leader', label: 'Head of office' },
+  { id: 'supervisor', label: 'Supervisor' },
+  { id: 'officer', label: 'Officers' },
+]
+
 const NAV = [
   { href: '/staff/inbox', label: 'Inbox', icon: 'inbox' },
   { href: '/staff/insights', label: 'Insights', icon: 'chart' },
@@ -27,7 +33,7 @@ function Frame({ children }: { children: ReactNode }) {
   return (
     <div className="staff">
       <header className="top">
-        <Brand sub="Staff workspace" href="/staff/inbox" />
+        <Brand sub="Staff workspace · switch role" href="/" />
         <Pickers />
       </header>
       <nav className="rail" aria-label="Staff">
@@ -65,7 +71,11 @@ function Pickers() {
       <label className="tenant persona" title="Demo sign-in: switch between team members">
         <span className="avatar" aria-hidden="true">{me.name[0]}</span>
         <select value={me.id} onChange={(e) => pickMe(e.target.value)} aria-label="Signed in as">
-          {agency.team.map((m) => <option key={m.id} value={m.id}>{m.name} · {m.title}</option>)}
+          {ROLES.map((r) => (
+            <optgroup key={r.id} label={r.label}>
+              {agency.team.filter((m) => m.role === r.id).map((m) => <option key={m.id} value={m.id}>{m.name} · {m.title}</option>)}
+            </optgroup>
+          ))}
         </select>
       </label>
     </div>

@@ -28,7 +28,7 @@ export default function Inbox() {
     setRows(null)
     load()
   }, [load])
-  useEffect(() => setFilter(me.role === 'supervisor' ? 'escalated' : 'mine'), [me.id, me.role])
+  useEffect(() => setFilter(me.role === 'supervisor' ? 'escalated' : me.role === 'leader' ? '' : 'mine'), [me.id, me.role])
 
   const names = Object.fromEntries(agency.team.map((m) => [m.id, m.name]))
   const match = (r: Row, f: string) => (f === 'mine' ? r.assignee === me.id && r.status !== 'resolved' : !f || r.status === f)

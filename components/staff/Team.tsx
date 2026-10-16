@@ -32,7 +32,7 @@ export default function Team() {
                 <span className="avatar big" aria-hidden="true">{m.name[0]}</span>
                 <div>
                   <b>{m.name}</b>{m.id === me.id && <span className="tag you">you</span>}
-                  <div className="muted small">{m.title}{m.role === 'supervisor' ? ' · receives escalations' : ''}</div>
+                  <div className="muted small">{m.title}{m.role === 'supervisor' ? ' · receives escalations' : m.role === 'leader' ? ' · sees Insights' : ''}</div>
                 </div>
               </div>
               <div className="tags">

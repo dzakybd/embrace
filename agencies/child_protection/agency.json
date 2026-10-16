@@ -88,6 +88,13 @@
   "reply_signature": "Child Protection Service, Complaints Team",
   "team": [
     {
+      "id": "ibrahim",
+      "name": "Ibrahim Musa",
+      "role": "leader",
+      "title": "Director",
+      "queues": []
+    },
+    {
       "id": "amara",
       "name": "Amara Okafor",
       "role": "supervisor",

@@ -18,7 +18,7 @@ export interface Agency {
 export interface TeamMember {
   id: string
   name: string
-  role: 'supervisor' | 'officer'
+  role: 'leader' | 'supervisor' | 'officer'
   title: string
   queues: string[]
 }

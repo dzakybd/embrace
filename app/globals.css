@@ -226,6 +226,7 @@ button.small { padding: 5px 12px; font-size: 13px; }
 .statlist b { font-size: 20px; font-weight: 400; font-variant-numeric: tabular-nums; }
 
 @media (max-width: 1100px) {
+  .roles { grid-template-columns: 1fr 1fr; }
   .brief, .clusters, .cats, .daily, .urg, .chan { grid-column: span 12; }
   .kpis { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); }
 }
@@ -263,16 +264,19 @@ button.small { padding: 5px 12px; font-size: 13px; }
 .landing { flex: 1; max-width: 1080px; margin: 0 auto; padding: 48px 24px; width: 100%; }
 .hero h1 { font-size: 40px; line-height: 48px; font-weight: 400; max-width: 820px; margin: 0 0 16px; }
 .lead { font-size: 16px; line-height: 24px; color: var(--ink-2); max-width: 760px; }
-.entry { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin: 32px 0; }
-.entry-card { display: flex; flex-direction: column; gap: 6px; padding: 24px; border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); text-decoration: none; color: var(--ink); transition: box-shadow 0.2s var(--ease); }
-.entry-card:hover { box-shadow: var(--shadow-2); }
-.entry-card b { font-size: 22px; font-weight: 400; }
-.entry-card.alt { background: var(--brand-soft); box-shadow: none; }
 .entry-ic { width: 48px; height: 48px; border-radius: 16px; display: grid; place-items: center; background: var(--brand); color: #fff; margin-bottom: 8px; }
 .entry-ic.small { width: 40px; height: 40px; border-radius: 12px; background: var(--brand-soft); color: var(--brand-soft-ink); }
-.how { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin: 16px 0 32px; }
-.how-item b { display: block; font-weight: 500; margin: 4px 0; }
-.how-item p { margin: 0; font-size: 14px; }
+.pick-h { font-size: 22px; font-weight: 400; margin: 32px 0 12px; }
+.roles { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+.role-card { display: flex; flex-direction: column; gap: 6px; padding: 20px; border-radius: 24px; background: var(--surface); box-shadow: var(--shadow); text-decoration: none; color: var(--ink); transition: box-shadow 0.2s var(--ease); }
+.role-card:hover { box-shadow: var(--shadow-2); }
+.role-card b { font-size: 20px; font-weight: 400; }
+.role-card > .muted:not(.small) { font-size: 14px; flex: 1; }
+.role-card.main { background: var(--brand); color: #fff; }
+.role-card.main .muted { color: #e3ebfb; }
+.role-card.main .entry-ic { background: #fff; color: var(--brand); }
+.role-card .go { color: var(--brand); font-weight: 500; font-size: 14px; display: inline-flex; gap: 6px; align-items: center; margin-top: 8px; }
+.role-card.main .go { color: #fff; }
 .center { text-align: center; }
 .citizen { flex: 1; padding: 32px 16px; display: flex; justify-content: center; }
 .citizen-form, .citizen-card, .citizen-done { width: 100%; max-width: 680px; }
@@ -372,7 +376,7 @@ label.btn { display: inline-flex; align-items: center; gap: 6px; cursor: pointer
   .rail-out { margin-top: 0; }
   .staff > .foot { grid-column: 1; grid-row: 4; }
   .staff-main { padding: 16px; }
-  .case-grid, .entry, .how { grid-template-columns: 1fr; }
+  .case-grid, .roles { grid-template-columns: 1fr; }
   .case-row { grid-template-columns: 1fr auto; gap: 6px 10px; }
   .case-row .case-main { grid-column: 1 / -1; grid-row: 2; }
   .case-row .case-pic { display: none; }
