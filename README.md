@@ -30,6 +30,8 @@ Systems that work today start after a human has read, sorted and typed the case 
 
 ![Case page in the staff workspace](docs/screenshots/case.png)
 
+**Telegram chat channel.** Citizens can chat with the bot ([@dmusa_bot](https://t.me/dmusa_bot)) instead of using the web form. An open chat must not call Gemini on every message, so the webhook (`lib/bot.ts`) handles everything it can in plain code first: it verifies Telegram's secret header and deduplicates updates; answers `/start`, `/new`, `/track`, `/emergency` and greetings; ignores stickers; sends the emergency number at once when danger words appear; adds messages within 24 hours of a report to that case (notifying the person in charge) instead of running the AI again; and enforces Firestore-backed limits per chat (15 messages a minute, 3 new reports an hour, 10 a day) and a global daily AI budget, past which cases are routed by rules and sent to manual review. Real reports are queued on Pub/Sub (`telegram-reports`) so the webhook returns at once; a push subscription runs the ADK pipeline, tells the citizen the report number, team and response time, and the officer's approved reply is sent back to the chat.
+
 Every case gets a **person in charge** (PIC): the policy step assigns the officer who owns the queue, and officers can delegate a case to a colleague with a handover note. Escalations and assignments are published to **Pub/Sub** (topic `case-events`); a **Cloud Function for Firebase** (`functions/src/index.ts`) writes a notification for the supervisor and the PIC and marks the alert delivered.
 
 The app opens on a role picker (citizen, officer, supervisor, head of office); each role lands on its own screen. It has two sides, in a Material 3 light theme. **Citizens** use `/report` (write, record a voice note or add a photo, in any language; the confirmation shows plain-language progress, with a "staff view" of the agent trace for the demo) and `/track/<id>` (status and the approved reply, no internal data). **Staff** use the workspace under `/staff` with a navigation rail: **Inbox** (My cases, escalated, queues, search), **Case** pages with tabs for the case, the agent trace and the history (delegate to a colleague, approve the reply, reassign, resolve), **Insights** (KPIs, AI weekly brief, early-warning clusters, and an Ask-the-analyst tab), **Knowledge** (the agency's SOP documents and search) and **Team** (who handles what, open cases per person). A demo sign-in picker switches between team members; a bell shows Pub/Sub notifications.
@@ -52,7 +54,7 @@ Prospective users are social affairs offices and child protection commissions; E
 - **Google Agent Development Kit (ADK) for TypeScript**: the pipeline is an ADK `SequentialAgent` of four `LlmAgent`s with Zod output schemas plus two custom `BaseAgent`s (rules and SOP search); the analyst is an `LlmAgent` with `FunctionTool`s.
 - **Firebase App Hosting**: builds and serves the Next.js app (UI + API route handlers) from this repo; secrets come from Secret Manager.
 - **Cloud Run**: App Hosting runs the Next.js server on Cloud Run (`asia-southeast1`, one warm instance during judging); agent progress streams to the browser over Server-Sent Events.
-- **Pub/Sub + Cloud Functions for Firebase**: escalations and assignments are published to the `case-events` topic; the `onCaseEvent` function notifies the supervisor and the person in charge and marks alerts delivered.
+- **Pub/Sub + Cloud Functions for Firebase**: escalations, assignments and citizen follow-ups are published to the `case-events` topic; the `onCaseEvent` function notifies the supervisor and the person in charge and marks alerts delivered. Telegram reports are queued on `telegram-reports` and pushed to the app, so the webhook answers Telegram instantly.
 - **Cloud Firestore**: cases with the full agent trace, person in charge, history and officer actions, plus `notifications`; the analyst agent's tools read it live. Security rules deny all client access; only the server and the function write.
 - **Firebase Analytics**: page and screen usage of the prototype.
 
@@ -79,7 +81,7 @@ Requirements: Node 22+, a Gemini API key.
 npm install
 cp .env.example .env.local     # set GOOGLE_GENAI_API_KEY
 npm run dev                    # http://localhost:3000, in-memory store
-npm test                       # policy rules and SOP search, no model calls
+npm test                       # policy rules, SOP search and Telegram gatekeeping, no model calls
 npm run eval                   # triage eval, uses the Gemini key
 npm run sop:index              # rebuild agencies/*/sop-index.json after changing SOP documents
 ```

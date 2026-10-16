@@ -6,7 +6,7 @@ export const maxDuration = 60
 
 /** Telegram webhook: checks the secret header, handles the update without AI, and queues real reports. */
 export async function POST(req: Request) {
-  const secret = process.env.TELEGRAM_WEBHOOK_SECRET
+  const secret = process.env.TELEGRAM_WEBHOOK_SECRET?.trim()
   if (!secret || req.headers.get('x-telegram-bot-api-secret-token') !== secret) return new Response('forbidden', { status: 403 })
   const update = (await req.json().catch(() => null)) as TgUpdate | null
   if (!update?.update_id) return Response.json({ ok: true })
