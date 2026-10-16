@@ -124,5 +124,6 @@ export async function ensureSeeded(store: Store, agencyId: string): Promise<void
 
 export async function reseed(store: Store, agencyId: string): Promise<void> {
   await store.clear(agencyId)
+  await store.clearNotifications(agencyId)
   for (const t of build(AGENCIES[agencyId])) await store.put(t)
 }

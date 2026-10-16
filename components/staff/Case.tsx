@@ -19,11 +19,27 @@ export default function Case({ id }: { id: string }) {
   const [tab, setTab] = useState('case')
   const [busy, setBusy] = useState(false)
 
+  const [failed, setFailed] = useState(false)
   useEffect(() => {
-    api.ticket(id).then(setT).catch(() => setMissing(true))
+    let stop = false
+    // Retry transient failures; only a 404 means the case does not exist.
+    const load = async (attempt: number): Promise<void> => {
+      try {
+        const ticket = await api.ticket(id)
+        if (!stop) setT(ticket)
+      } catch (e) {
+        if (stop) return
+        if (String(e).startsWith('Error: 404')) setMissing(true)
+        else if (attempt < 3) setTimeout(() => load(attempt + 1), 800 * attempt)
+        else setFailed(true)
+      }
+    }
+    load(1)
+    return () => { stop = true }
   }, [id])
 
   if (missing) return <div className="page"><p className="muted">Case {id} not found. <Link href="/staff/inbox">Back to inbox</Link></p></div>
+  if (failed) return <div className="page"><p className="muted">Could not load case {id}. <button className="ghost small" onClick={() => location.reload()}>Try again</button></p></div>
   if (!t) return <div className="page"><div className="shimmer tall" /></div>
   if (t.agency_id !== agency.id) return <div className="page"><p className="muted">This case belongs to another agency. Switch agency in the top bar.</p></div>
 

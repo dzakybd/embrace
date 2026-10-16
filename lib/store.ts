@@ -11,6 +11,7 @@ export interface Store {
   clear(agencyId: string): Promise<void>
   addNotification(n: Notification): Promise<void>
   listNotifications(agencyId: string, to: string): Promise<Notification[]>
+  clearNotifications(agencyId: string): Promise<void>
   /** True the first time a key is seen (deduplicates webhook updates and Pub/Sub redeliveries). */
   claim(key: string): Promise<boolean>
   /** Sliding-window rate limit shared by all instances: records a hit and returns false when `limit` is reached. */
@@ -76,6 +77,9 @@ class MemoryStore implements Store {
   async addNotification(n: Notification) {
     this.notes.push({ ...n, id: String(this.notes.length + 1) })
   }
+  async clearNotifications(agencyId: string) {
+    this.notes = this.notes.filter((n) => n.agency_id !== agencyId)
+  }
   async listNotifications(agencyId: string, to: string) {
     return this.notes.filter((n) => n.agency_id === agencyId && n.to === to).sort((a, b) => b.at.localeCompare(a.at))
   }
@@ -121,6 +125,15 @@ class FirestoreStore implements Store {
   }
   async addNotification(n: Notification) {
     await (await this.db).collection('notifications').add(n)
+  }
+  async clearNotifications(agencyId: string) {
+    const db = await this.db
+    const snap = await db.collection('notifications').where('agency_id', '==', agencyId).get()
+    for (let i = 0; i < snap.docs.length; i += 400) {
+      const batch = db.batch()
+      snap.docs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
+      await batch.commit()
+    }
   }
   async claim(key: string) {
     try {
