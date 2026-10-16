@@ -14,7 +14,8 @@
         "docs",
         "data",
         "agencies/*/sop/*.pdf",
-        "functions"
+        "functions",
+        "video"
       ]
     }
   ],
