@@ -1,0 +1,212 @@
+[
+ {
+  "index": 0,
+  "channel": "email",
+  "category": "domestic_violence",
+  "urgency": "critical",
+  "text": "Yth. Dinas Sosial P2PA Kab. Demak,Saya mohon bantuan segera untuk tetangga saya di Desa Kalikondang. Istrinya sering dipukul suaminya hampir setiap malam, dan anak-anak mereka juga ikut jadi korban. Kondisinya sudah sangat parah dan mereka butuh perlindungan. Mohon segera ditindaklanjuti, ini masalah serius."
+ },
+ {
+  "index": 1,
+  "channel": "whatsapp",
+  "category": "domestic_violence",
+  "urgency": "critical",
+  "text": "Pak/Bu Dinsos,Tolong bgt ini ada ibu sm 2 anak kecil diusir suaminya di Kec. Guntur. Mlm ini mereka tidur di mushola, kasian bgt ga punya tempat tinggal. Mohon bantuan secepatnya ya pak. Ini nomor sy: 0812-3456-7890."
+ },
+ {
+  "index": 2,
+  "channel": "web",
+  "category": "domestic_violence",
+  "urgency": "high",
+  "text": "Kepada Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin melaporkan kasus KDRT yang dialami kakak perempuan saya di Kecamatan Sayung. Suaminya sering mengancam dan melakukan kekerasan verbal. Kakak saya sangat ketakutan dan tidak berani melapor ke polisi karena diancam. Mohon arahan dan bantuan agar kakak saya bisa mendapatkan perlindungan hukum dan psikis. Terima kasih."
+ },
+ {
+  "index": 3,
+  "channel": "whatsapp",
+  "category": "benefit_not_received",
+  "urgency": "high",
+  "text": "Min, mau tny BPNT tahap ini kok blm cair ya buat sy? Sy di Desa Wonosalam. Tetangga udah pada cair semua lho. Kebutuhan udh mepet bgt nih. Mohon dicek ya."
+ },
+ {
+  "index": 4,
+  "channel": "email",
+  "category": "benefit_not_received",
+  "urgency": "normal",
+  "text": "Yth. Dinas Sosial P2PA Kab. Demak,Dengan hormat, saya ingin melaporkan bahwa bantuan BPNT melalui kartu KKS saya sudah dua bulan ini saldonya kosong. Saya warga Desa Wonosalam yang seharusnya menerima bantuan tersebut. Mohon untuk dapat dilakukan pengecekan lebih lanjut terkait permasalahan ini. Terima kasih atas perhatiannya."
+ },
+ {
+  "index": 5,
+  "channel": "web",
+  "category": "benefit_not_received",
+  "urgency": "high",
+  "text": "Kepada Dinas Sosial P2PA Kabupaten Demak,Saya melaporkan kondisi Mbah Sarinem, lansia sebatang kara di Desa Wonosalam. Sudah beberapa waktu ini BPNT beliau tidak masuk, padahal beras di rumah sudah habis. Beliau sangat membutuhkan bantuan pangan. Mohon bantuannya segera ditindaklanjuti."
+ },
+ {
+  "index": 6,
+  "channel": "web",
+  "category": "benefit_not_received",
+  "urgency": "normal",
+  "text": "Yth. Dinas Sosial P2PA Kab. Demak,Saya ingin mengadukan bahwa kartu KKS saya tiba-tiba terblokir tanpa ada pemberitahuan sebelumnya. Saya tidak bisa melakukan pencairan BPNT. Saya warga Desa Wonosalam. Mohon informasi dan bantuan untuk membuka blokir kartu KKS saya. Terima kasih."
+ },
+ {
+  "index": 7,
+  "channel": "web",
+  "category": "benefit_not_received",
+  "urgency": "normal",
+  "text": "Kepada Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin menanyakan perihal bantuan BPNT. Saat saya hendak mencairkan di e-warong Desa Wonosalam, nama saya dikatakan tidak ada dalam daftar penerima untuk tahap ini. Padahal sebelumnya saya selalu menerima. Mohon dicek kembali data saya. Terima kasih."
+ },
+ {
+  "index": 8,
+  "channel": "whatsapp",
+  "category": "benefit_not_received",
+  "urgency": "normal",
+  "text": "Pak Dinsos,Mau nanya, warga di RT 03 RW 01 Desa Wonosalam ini kok satu RT pada blm nerima BPNT ya? Ini udh lewat dr jadwal biasanya. Mohon info kepastiannya kapan cair ya pak. Banyak yg nanyain."
+ },
+ {
+  "index": 9,
+  "channel": "social",
+  "category": "benefit_not_received",
+  "urgency": "normal",
+  "text": "@DinsosDemak Min, mau tanya kenapa bantuan PKH keluarga saya berhenti ya? Anak saya baru lulus SD dan sekarang sudah SMP, tapi bantuan tidak cair lagi. Padahal masih sekolah. Kami di Kecamatan Mijen. Mohon pencerahannya dong."
+ },
+ {
+  "index": 10,
+  "channel": "social",
+  "category": "benefit_not_received",
+  "urgency": "critical",
+  "text": "@DinsosDemak Tolong bgt min, ada keluarga di Kec. Bonang, punya bayi, hari ini gaada makanan sama sekali di rumah. PKH mereka blm cair katanya. Ini gimana ya? Mohon bantuan secepatnya. Kasian bayinya."
+ },
+ {
+  "index": 11,
+  "channel": "email",
+  "category": "eligibility_registration",
+  "urgency": "normal",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin melaporkan bahwa ada beberapa keluarga sangat miskin di lingkungan saya, Kecamatan Karangtengah, yang sampai saat ini belum terdaftar dalam DTKS. Mereka sangat membutuhkan bantuan sosial. Mohon petunjuk bagaimana cara mendaftarkan mereka agar bisa menerima bantuan. Terima kasih."
+ },
+ {
+  "index": 12,
+  "channel": "social",
+  "category": "eligibility_registration",
+  "urgency": "normal",
+  "text": "@DinsosDemak Min, mau nanya nih. Nama orang tua saya yg sudah meninggal masih terdaftar di DTKS. Ini gimana ya cara ganti datanya? Kan harusnya yg masih hidup yg dpt bantuan. Lokasi di Karangtengah."
+ },
+ {
+  "index": 13,
+  "channel": "social",
+  "category": "eligibility_registration",
+  "urgency": "normal",
+  "text": "@DinsosDemak Dinsos, saya bingung kenapa di daerah Karangtengah banyak warga yg punya mobil dan rumah bagus malah masuk DTKS, tapi tetangga saya yg beneran miskin malah gak masuk. Mohon ditinjau ulang datanya ya. Ini meresahkan."
+ },
+ {
+  "index": 14,
+  "channel": "email",
+  "category": "eligibility_registration",
+  "urgency": "low",
+  "text": "Yth. Dinas Sosial P2PA Kab. Demak,Saya ingin menanyakan bagaimana cara untuk mengecek status DTKS secara online. Saya warga Kecamatan Dempet dan ingin memastikan apakah nama saya sudah terdaftar. Mohon informasinya. Terima kasih."
+ },
+ {
+  "index": 15,
+  "channel": "email",
+  "category": "payment_schedule",
+  "urgency": "low",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin menanyakan informasi mengenai jadwal penyaluran Bantuan Langsung Tunai (BLT) tahap berikutnya untuk wilayah Kecamatan Gajah. Dan apakah pencairannya akan dilakukan di kantor pos yang sama seperti sebelumnya? Mohon informasinya. Terima kasih."
+ },
+ {
+  "index": 16,
+  "channel": "whatsapp",
+  "category": "payment_schedule",
+  "urgency": "normal",
+  "text": "Pak/Bu Dinsos,Sy mau lapor di Kec Wedung, pendamping PKH sy kok ga pernah datang ya? Jadinya sy gatau jadwal pencairan PKH. Mohon dibantu spy pendampingnya lebih aktif atau sy bisa dpt info jadwalnya. Trimakasih."
+ },
+ {
+  "index": 17,
+  "channel": "whatsapp",
+  "category": "payment_schedule",
+  "urgency": "low",
+  "text": "Halo Min,Mau nanya, kalau pengambilan BPNT itu bisa diwakilkan gak ya? Soalnya ibu saya lagi sakit jadi ga bisa ambil sendiri. Kami di Kebonagung. Mohon infonya ya."
+ },
+ {
+  "index": 18,
+  "channel": "whatsapp",
+  "category": "disability_elderly",
+  "urgency": "high",
+  "text": "Pak/Bu Dinsos,Tolong ini ada lansia lumpuh di Kec. Mranggen tinggal sendiri. Gaada yg ngurusin sama sekali, makannya jg susah. Kondisinya memprihatinkan bgt. Sy takut kenapa-kenapa. Mohon perhatiannya ya."
+ },
+ {
+  "index": 19,
+  "channel": "web",
+  "category": "disability_elderly",
+  "urgency": "normal",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin menanyakan kelanjutan permohonan kursi roda untuk anak saya yang disabilitas di Kecamatan Demak. Saya sudah mengajukan permohonan sejak setahun yang lalu namun belum ada kabar. Anak saya sangat membutuhkan kursi roda tersebut untuk mobilitasnya. Mohon bantuannya."
+ },
+ {
+  "index": 20,
+  "channel": "email",
+  "category": "disability_elderly",
+  "urgency": "low",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin bertanya apakah ada informasi mengenai program pelatihan kerja atau keterampilan yang diperuntukkan bagi penyandang tunarungu di wilayah Kecamatan Sayung? Saya memiliki kerabat yang membutuhkan informasi ini. Mohon bantuannya. Terima kasih."
+ },
+ {
+  "index": 21,
+  "channel": "social",
+  "category": "social_rehabilitation",
+  "urgency": "high",
+  "text": "@DinsosDemak Tolong bgt ini Dinsos. Ada ODGJ di Kec. Karangawen dipasung sama keluarganya di belakang rumah. Udah lama banget kondisinya kasian. Mohon segera ditindaklanjuti ya. Ini pelanggaran hak asasi."
+ },
+ {
+  "index": 22,
+  "channel": "email",
+  "category": "social_rehabilitation",
+  "urgency": "normal",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin melaporkan bahwa sering terlihat banyak anak jalanan yang mengamen hingga larut malam di sekitar Alun-alun Kota Demak. Mereka terlihat masih sangat muda dan seharusnya tidak berada di jalanan pada jam tersebut. Mohon perhatian dan penanganan lebih lanjut agar anak-anak tersebut bisa mendapatkan perlindungan dan pembinaan. Terima kasih."
+ },
+ {
+  "index": 23,
+  "channel": "social",
+  "category": "social_rehabilitation",
+  "urgency": "normal",
+  "text": "@DinsosDemak Min, ada gelandangan lansia tidur di halte bus di daerah Kec. Sayung. Kayaknya lagi sakit deh, mukanya pucat. Udah beberapa hari disitu. Mohon dicek ya, kasian sekali."
+ },
+ {
+  "index": 24,
+  "channel": "email",
+  "category": "fraud_misconduct",
+  "urgency": "high",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya melaporkan adanya praktik pungutan liar yang dilakukan oleh agen e-warong di Desa Wonosalam. Setiap kali pencairan BPNT, agen tersebut selalu memotong uang sebesar Rp50.000 dari setiap penerima tanpa alasan yang jelas. Ini sangat merugikan masyarakat. Mohon segera ditindaklanjuti."
+ },
+ {
+  "index": 25,
+  "channel": "web",
+  "category": "fraud_misconduct",
+  "urgency": "normal",
+  "text": "Kepada Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin melaporkan bahwa ketua kelompok PKH di lingkungan saya, Kecamatan Mijen, meminta iuran wajib kepada setiap anggota. Padahal setahu kami tidak ada kewajiban iuran untuk penerima PKH. Mohon informasi dan klarifikasi mengenai hal ini. Terima kasih."
+ },
+ {
+  "index": 26,
+  "channel": "web",
+  "category": "fraud_misconduct",
+  "urgency": "high",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Saya ingin melaporkan adanya oknum perangkat desa di Kecamatan Bonang yang meminta sejumlah uang kepada warga agar nama mereka bisa masuk daftar penerima BLT. Praktik ini sangat merugikan dan tidak adil. Mohon segera ditindaklanjuti dan diselidiki."
+ },
+ {
+  "index": 27,
+  "channel": "social",
+  "category": "general_info",
+  "urgency": "low",
+  "text": "@DinsosDemak Min, mau tanya dong syarat-syarat buat mengajukan bantuan sosial apa aja ya? Temen saya ada yg butuh tapi ga ngerti. Tolong infonya ya."
+ },
+ {
+  "index": 28,
+  "channel": "whatsapp",
+  "category": "general_info",
+  "urgency": "low",
+  "text": "Halo Admin,Mau tanya jam layanan Dinsos P2PA Kab. Demak itu dari jam berapa sampai jam berapa ya? Dan kalau ada nomor WA resmi buat tanya-tanya, boleh di share juga. Makasih."
+ },
+ {
+  "index": 29,
+  "channel": "email",
+  "category": "general_info",
+  "urgency": "low",
+  "text": "Yth. Dinas Sosial P2PA Kabupaten Demak,Nuwun sewu, kulo badhe nyuwun pirso caranipun ndaftar bantuan sosial kangge tiyang sepuh (mbah) kulo. Piyambakipun sampun sepuh lan mboten saget mlampah tebih. Punopo wonten panduanipun ingkang gampil dipun mangertosi? Matur nuwun sanget."
+ }
+]

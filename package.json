@@ -1,0 +1,40 @@
+{
+  "name": "embrace",
+  "private": true,
+  "version": "0.1.0",
+  "type": "module",
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "eslint .",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "sop:index": "node scripts/build-sop-index.mjs",
+    "eval": "tsx scripts/eval-triage.ts"
+  },
+  "dependencies": {
+    "@google/adk": "^2.3.0",
+    "@google/genai": "^2.30.0",
+    "firebase": "^13.0.0",
+    "firebase-admin": "^14.5.0",
+    "next": "^16.4.2",
+    "react": "^19.3.1",
+    "react-dom": "^19.3.1",
+    "zod": "^4.6.7"
+  },
+  "devDependencies": {
+    "@types/node": "^26.6.5",
+    "@types/react": "^19.3.0",
+    "@types/react-dom": "^19.3.0",
+    "eslint": "^9.39.5",
+    "eslint-config-next": "^16.4.2",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "unpdf": "^1.9.0",
+    "vitest": "^5.0.5"
+  },
+  "allowScripts": {
+    "esbuild@0.28.2": true
+  }
+}

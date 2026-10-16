@@ -1,0 +1,10 @@
+{
+  "apphosting": [
+    {
+      "backendId": "embrace",
+      "rootDir": "/",
+      "ignore": ["node_modules", ".git", ".next", "firebase-debug.log", "firebase-debug.*.log", "functions", "scratch", "docs", "data", "agencies/*/sop/*.pdf"]
+    }
+  ],
+  "firestore": { "rules": "firestore.rules", "indexes": "firestore.indexes.json" }
+}

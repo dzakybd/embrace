@@ -1,0 +1,33 @@
+{
+  "id": "id_demak",
+  "name": "District Social Affairs Office, Demak (Indonesia country pack)",
+  "short_name": "Demak, Indonesia",
+  "country": "Indonesia",
+  "categories": [
+    {"id": "domestic_violence", "label": "Domestic violence against women or children (KDRT)", "queue": "protection"},
+    {"id": "benefit_not_received", "label": "Social aid not received or late (PKH, BPNT, BLT)", "queue": "benefits"},
+    {"id": "eligibility_registration", "label": "DTSEN (formerly DTKS) registry and eligibility", "queue": "data"},
+    {"id": "payment_schedule", "label": "Distribution schedule and location", "queue": "benefits"},
+    {"id": "disability_elderly", "label": "Disability and elderly services", "queue": "rehabilitation"},
+    {"id": "social_rehabilitation", "label": "Social rehabilitation (mental illness, homeless, street children)", "queue": "rehabilitation"},
+    {"id": "fraud_misconduct", "label": "Suspected illegal levies or distribution fraud", "queue": "oversight"},
+    {"id": "general_info", "label": "General information", "queue": "general"}
+  ],
+  "queues": {
+    "protection": "UPTD PPA (Women & Child Protection Unit)",
+    "benefits": "Social Protection & Security Division",
+    "data": "DTSEN Data Team",
+    "rehabilitation": "Social Rehabilitation Division",
+    "oversight": "Distribution Oversight Team",
+    "general": "Information Desk"
+  },
+  "escalation": {
+    "always_escalate_categories": ["domestic_violence"],
+    "escalate_flags": ["child_safety", "immediate_danger", "self_harm", "basic_needs_crisis"],
+    "keywords": ["dipukul", "dianiaya", "diusir", "tidak makan", "kelaparan", "bunuh diri", "terlantar", "sekarang juga", "diperkosa", "dicabuli"],
+    "escalation_contact": "Head of UPTD PPA Demak"
+  },
+  "sla_hours": {"critical": 2, "high": 24, "normal": 72, "low": 120},
+  "emergency_line": "112 or SAPA 129 (national women and child protection hotline)",
+  "reply_signature": "Complaints Desk, Dinas Sosial P2PA Kabupaten Demak"
+}

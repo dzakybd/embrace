@@ -1,0 +1,212 @@
+[
+ {
+  "index": 0,
+  "channel": "email",
+  "urgency": "critical",
+  "text": "Dengan hormat,Saya ingin melaporkan dugaan kekerasan fisik terhadap anak di Desa Bandungrejo, Mranggen. Anak tersebut, sebut saja Bunga (nama samaran), berusia 8 tahun, sering mengalami pemukulan oleh ayah tirinya. Kejadian terakhir mengakibatkan luka memar serius di beberapa bagian tubuhnya. Kondisi ini sangat memprihatinkan karena anak tersebut masih harus tinggal serumah dengan pelaku. Mohon bantuan KPAI untuk segera menindaklanjuti kasus ini demi keselamatan Bunga.",
+  "category": "physical_emotional_abuse"
+ },
+ {
+  "index": 1,
+  "channel": "whatsapp",
+  "urgency": "high",
+  "text": "Kak, sy mau lapor. Anak tetangga sy di Kota Semarang sering dibentak keras trus dikurung di kamar. Kemarin dia tdk dikasih makan seharian, kasian bgt. Sy takut ada apa2 sama dia, mohon bantuannya KPAI.",
+  "category": "physical_emotional_abuse"
+ },
+ {
+  "index": 2,
+  "channel": "social",
+  "urgency": "high",
+  "text": "@KPAI_ID min, tolong dong. Di Ponpes Al-Huda Sayung, ada santri dipukul pengasuhnya. Sy lihat sendiri, kasian bgt. Sampe nangis2. Ini sdh sering terjadi. Mohon ditindak lanjutin.",
+  "category": "physical_emotional_abuse"
+ },
+ {
+  "index": 3,
+  "channel": "web",
+  "urgency": "normal",
+  "text": "Yth. KPAI,Saya ingin mengadukan perlakuan tidak menyenangkan yang dialami anak saya di Kota Surabaya. Anak saya sering dihina dan direndahkan oleh guru lesnya, yang berdampak pada psikis anak saya. Anak jadi tdk percaya diri & takut ke tempat les. Saya ingin berkonsultasi mengenai langkah apa yg bisa saya ambil untuk melindungi anak saya dari perundungan verbal ini. Terima kasih atas perhatiannya.",
+  "category": "physical_emotional_abuse"
+ },
+ {
+  "index": 4,
+  "channel": "web",
+  "urgency": "critical",
+  "text": "Kepada KPAI,Saya melaporkan kasus pencabulan anak di Kecamatan Karanganyar. Keponakan saya, seorang anak perempuan berusia 12 tahun, menjadi korban pencabulan oleh pamannya sendiri. Yang lebih mengkhawatirkan, pelaku masih sering datang ke rumah dan ini membuat korban sangat ketakutan. Kami membutuhkan perlindungan segera untuk anak tersebut dan proses hukum bagi pelaku. Mohon bantuan KPAI.",
+  "category": "sexual_abuse"
+ },
+ {
+  "index": 5,
+  "channel": "web",
+  "urgency": "critical",
+  "text": "Yth. KPAI,Saya ingin melaporkan dugaan pelecehan seksual yang terjadi di SMP Harapan Bangsa, Kota Bekasi. Anak saya, seorang siswi, dilecehkan oleh oknum guru di sekolah tersebut. Kami menduga ada siswi lain yang juga menjadi korban. Hal ini sangat meresahkan dan membahayakan lingkungan belajar anak-anak. Kami mohon KPAI dapat segera melakukan investigasi dan memberikan perlindungan kepada para korban.",
+  "category": "sexual_abuse"
+ },
+ {
+  "index": 6,
+  "channel": "email",
+  "urgency": "critical",
+  "text": "Subjek: Bantuan Mendesak Kasus Pemerkosaan Anak di Kabupaten BogorKepada KPAI,Saya menulis surat ini untuk melaporkan kasus pemerkosaan terhadap seorang remaja perempuan berusia 15 tahun di Kabupaten Bogor. Akibat kejadian tragis ini, anak tersebut saat ini hamil. Yang lebih parah, keluarga korban mendapat ancaman agar tidak melaporkan kasus ini ke pihak berwajib. Kami sangat khawatir dengan keselamatan dan masa depan anak serta keluarganya. Mohon KPAI dapat memberikan perlindungan dan bantuan hukum secepatnya.",
+  "category": "sexual_abuse"
+ },
+ {
+  "index": 7,
+  "channel": "web",
+  "urgency": "critical",
+  "text": "Yth. KPAI,Saya melaporkan dugaan kasus trafficking anak yang menimpa kerabat saya di Kota Batam. Anak tersebut berusia 16 tahun, dijanjikan pekerjaan dengan gaji besar di Malaysia oleh seorang calo. Namun, sejak berangkat beberapa waktu lalu, anak tersebut tidak bisa dihubungi lagi oleh keluarganya. Kami sangat khawatir dia menjadi korban perdagangan manusia. Kami mohon bantuan KPAI untuk melacak keberadaan anak ini dan menyelamatkannya.",
+  "category": "exploitation_trafficking"
+ },
+ {
+  "index": 8,
+  "channel": "whatsapp",
+  "urgency": "high",
+  "text": "Pak/Bu KPAI, sy mau lapor. Di lampu merah daerah Jakarta Barat, tiap hari ada anak2 kecil disuruh ngemis sama org dewasa yg itu2 aja. Keliatan bgt dieksploitasi. Kasian anak2nya masih kecil. Tolong ditindak ya pak. Ini nomor sy 0812-3456-7890.",
+  "category": "exploitation_trafficking"
+ },
+ {
+  "index": 9,
+  "channel": "web",
+  "urgency": "critical",
+  "text": "Kepada KPAI,Saya ingin melaporkan kasus kejahatan siber yang menimpa anak saya di Kota Bandung. Anak saya yang berusia 13 tahun diancam oleh kenalan dari game online. Pelaku mengancam akan menyebarkan foto pribadi anak saya jika tidak mengirimkan foto lain yang lebih intim. Anak saya sekarang sangat ketakutan dan trauma. Mohon KPAI dapat membantu mengatasi ancaman ini dan melindungi anak saya dari dampak lebih lanjut.",
+  "category": "online_harm"
+ },
+ {
+  "index": 10,
+  "channel": "web",
+  "urgency": "high",
+  "text": "Yth. KPAI,Saya ingin melaporkan adanya penyebaran video perundungan di grup chat sekolah di Kota Malang. Video tersebut menunjukkan seorang anak yang dirundung oleh teman-temannya, dan sekarang video itu tersebar luas di kalangan siswa. Hal ini sangat merugikan korban dan bisa memicu perundungan lebih lanjut. Kami mohon KPAI dapat menindaklanjuti kasus ini agar video tersebut dihapus dan pelaku perundungan serta penyebar video diberikan sanksi.",
+  "category": "online_harm"
+ },
+ {
+  "index": 11,
+  "channel": "social",
+  "urgency": "normal",
+  "text": "@KPAI_ID min, sy mau kasih masukan. Di Depok banyak anak2 main game online yg kontennya tdk pantas utk anak. Ada unsur dewasa dan kekerasan. Bisa tlg diblokir atau disaring gak min? Khawatir bgt sama mental anak2.",
+  "category": "online_harm"
+ },
+ {
+  "index": 12,
+  "channel": "social",
+  "urgency": "high",
+  "text": "@KPAI_ID mohon bantuan. Mantan suami sy bawa kabur anak sy yg umur 4 tahun di Kota Tangerang. Sy sdh tdk diberi akses ketemu anak sdh 2 minggu. Sy khawatir dgn kondisi anak sy. Mohon bantuannya min, ini sdh pelanggaran hak anak.",
+  "category": "family_care"
+ },
+ {
+  "index": 13,
+  "channel": "web",
+  "urgency": "normal",
+  "text": "Yth. KPAI,Saya ingin melaporkan bahwa mantan suami saya di Kabupaten Demak tidak memenuhi kewajiban nafkah anak setelah perceraian, padahal sudah ada putusan pengadilan yang mengaturnya. Hal ini sangat memberatkan saya dan berdampak pada pemenuhan kebutuhan anak. Saya mohon KPAI dapat memberikan mediasi atau arahan agar hak-hak anak saya terpenuhi.",
+  "category": "family_care"
+ },
+ {
+  "index": 14,
+  "channel": "whatsapp",
+  "urgency": "normal",
+  "text": "Mbak/Mas KPAI, saya mau tanya prosedur pengasuhan anak sama nenek itu gmn ya? Anak sy mau diasuh neneknya di Yogyakarta krn ortunya sibuk kerja. Apakah ada syarat2 khusus? Makasih.",
+  "category": "family_care"
+ },
+ {
+  "index": 15,
+  "channel": "web",
+  "urgency": "low",
+  "text": "Yth. KPAI,Saya ingin bertanya apakah KPAI dapat bertindak sebagai mediator dalam permasalahan hak asuh anak di Kota Medan. Saya dan mantan pasangan sedang berselisih mengenai hak asuh anak dan ingin mencari solusi terbaik tanpa harus ke jalur hukum yang panjang. Mohon informasinya. Terima kasih.",
+  "category": "family_care"
+ },
+ {
+  "index": 16,
+  "channel": "social",
+  "urgency": "high",
+  "text": "@KPAI_ID tolong dong min, anak sy di SDN 3 Mranggen dirundung kakak kelas terus. Sampe skrg tdk mau sekolah lagi krn takut. Gurunya sdh dibilangin tp tdk ada tindakan. Kasian bgt anak sy.",
+  "category": "education"
+ },
+ {
+  "index": 17,
+  "channel": "web",
+  "urgency": "normal",
+  "text": "Yth. KPAI,Saya ingin melaporkan praktik pungutan di SDN 3 Mranggen. Sekolah mewajibkan pembelian seragam dengan harga tinggi dan study tour yang sifatnya wajib bagi semua siswa. Hal ini sangat memberatkan orang tua murid yang kurang mampu. Kami mohon KPAI dapat meninjau kebijakan ini karena bertentangan dengan prinsip pendidikan gratis.",
+  "category": "education"
+ },
+ {
+  "index": 18,
+  "channel": "web",
+  "urgency": "normal",
+  "text": "Yth. KPAI,Anak saya di SDN 3 Mranggen sering menjadi korban perundungan oleh teman-teman sekelasnya. Saya sudah berulang kali melaporkan kepada wali kelas, namun tidak ada tanggapan serius dan kondisi anak saya semakin tertekan. Saya khawatir ini akan berdampak buruk pada perkembangan psikologisnya. Mohon KPAI dapat membantu agar pihak sekolah lebih peduli.",
+  "category": "education"
+ },
+ {
+  "index": 19,
+  "channel": "whatsapp",
+  "urgency": "high",
+  "text": "Halo KPAI, sy mau lapor. Anak sy di SDN 3 Mranggen dipukul temannya di toilet sekolah. Ada memar di lengannya. Sy sdh lapor guru tp blm ada tindak lanjut. Anak sy jd takut ke sekolah. Mohon bantuannya.",
+  "category": "education"
+ },
+ {
+  "index": 20,
+  "channel": "web",
+  "urgency": "normal",
+  "text": "Yth. KPAI,Saya ingin mengadukan bahwa ijazah anak saya di SDN 3 Mranggen ditahan oleh pihak sekolah karena masih ada tunggakan uang komite. Anak saya sangat membutuhkan ijazah tersebut untuk melanjutkan pendidikan ke jenjang berikutnya. Mohon KPAI dapat memediasi agar hak anak saya untuk mendapatkan ijazahnya tidak terhambat.",
+  "category": "education"
+ },
+ {
+  "index": 21,
+  "channel": "social",
+  "urgency": "normal",
+  "text": "@KPAI_ID min, di SMA Negeri 2 Padang, ada siswi dilarang ikut ujian cuma gara2 jilbabnya tdk sesuai aturan sekolah. Ini kan melanggar hak anak utk pendidikan ya? Tolong ditinjau kebijakan sekolahnya.",
+  "category": "education"
+ },
+ {
+  "index": 22,
+  "channel": "web",
+  "urgency": "low",
+  "text": "Yth. KPAI,Saya ingin memberikan masukan terkait upaya pencegahan perundungan di sekolah. Akan sangat baik jika setiap sekolah, khususnya di Kota Makassar, memiliki konselor khusus yang fokus pada isu anti-perundungan. Hal ini bisa membantu anak-anak yang menjadi korban atau pelaku untuk mendapatkan bimbingan dan dukungan yang tepat. Terima kasih.",
+  "category": "education"
+ },
+ {
+  "index": 23,
+  "channel": "whatsapp",
+  "urgency": "high",
+  "text": "Pak/Bu KPAI, sy mau lapor. Ada balita di Kabupaten Grobogan gizi buruk, berat badannya turun drastis. Keluarganya tdk mampu bawa ke puskesmas. Sy khawatir kondisi kesehatannya memburuk. Mohon dibantu. Ini nomor sy 0857-1234-5678.",
+  "category": "health_nutrition"
+ },
+ {
+  "index": 24,
+  "channel": "web",
+  "urgency": "normal",
+  "text": "Yth. KPAI,Saya ingin melaporkan bahwa anak saya ditolak untuk imunisasi di Puskesmas Banjarsari, Kota Solo, karena kami tidak memiliki Kartu Keluarga (KK) setempat. Padahal, imunisasi adalah hak dasar anak untuk kesehatan. Mohon KPAI dapat meninjau kebijakan ini agar semua anak bisa mendapatkan layanan kesehatan tanpa diskriminasi.",
+  "category": "health_nutrition"
+ },
+ {
+  "index": 25,
+  "channel": "whatsapp",
+  "urgency": "normal",
+  "text": "Mbak/Mas KPAI, sy mau tanya. Ibu hamil di Kabupaten Kendal tdk dpt layanan BPJS di bidan desa. Katanya harus ke puskesmas yg jauh. Ini gmn ya? Harusnya kan bidan desa bisa cover jg. Mohon infonya.",
+  "category": "health_nutrition"
+ },
+ {
+  "index": 26,
+  "channel": "email",
+  "urgency": "low",
+  "text": "Subjek: Pertanyaan Mengenai Prosedur PengaduanDengan hormat,Saya ingin menanyakan mengenai prosedur dan mekanisme untuk melakukan pengaduan ke KPAI. Apakah ada formulir khusus yang harus diisi atau bisa melalui email ini? Lalu, berapa jam operasional layanan KPAI untuk pengaduan langsung? Mohon informasinya. Terima kasih.",
+  "category": "other"
+ },
+ {
+  "index": 27,
+  "channel": "social",
+  "urgency": "low",
+  "text": "@KPAI_ID min, sy tertarik bgt jd relawan perlindungan anak. Ada info pendaftaran atau program relawan gak ya? Mau ikut berkontribusi. DM ya min kl ada info.",
+  "category": "other"
+ },
+ {
+  "index": 28,
+  "channel": "whatsapp",
+  "urgency": "high",
+  "text": "Mbak/Mas KPAI, sy mau lapor. Di Kecamatan Mranggen, anak tetangga sy sering bgt terdengar nangis kenceng trus ada suara pukulan. Sy yakin ibunya mukul anaknya. Kasian bgt dengerinnya. Mohon ditindaklanjuti.",
+  "category": "physical_emotional_abuse"
+ },
+ {
+  "index": 29,
+  "channel": "web",
+  "urgency": "low",
+  "text": "To KPAI,I would like to inquire whether foreign nationals living in Indonesia can report child abuse cases to KPAI. If so, what is the procedure for reporting, and what kind of support can be provided? Thank you for your attention to this important matter.",
+  "category": "other"
+ }
+]
