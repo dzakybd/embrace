@@ -1,5 +1,5 @@
 // Ticket storage: Firestore in the cloud (EMBRACE_STORE=firestore), an in-memory map for local dev and tests.
-import type { Ticket } from './schemas'
+import type { Notification, Ticket } from './schemas'
 
 export const now = () => new Date().toISOString()
 
@@ -9,7 +9,8 @@ export interface Store {
   update(id: string, fields: Partial<Ticket>): Promise<Ticket>
   list(agencyId: string): Promise<Ticket[]>
   clear(agencyId: string): Promise<void>
-  addAlert(alert: { ticket_id: string; agency_id: string; contact: string; urgency: string; summary: string; at: string }): Promise<void>
+  addNotification(n: Notification): Promise<void>
+  listNotifications(agencyId: string, to: string): Promise<Notification[]>
 }
 
 const newestFirst = (a: Ticket, b: Ticket) => b.created_at.localeCompare(a.created_at)
@@ -34,7 +35,13 @@ class MemoryStore implements Store {
   async clear(agencyId: string) {
     for (const [id, t] of this.tickets) if (t.agency_id === agencyId) this.tickets.delete(id)
   }
-  async addAlert() {}
+  private notes: Notification[] = []
+  async addNotification(n: Notification) {
+    this.notes.push({ ...n, id: String(this.notes.length + 1) })
+  }
+  async listNotifications(agencyId: string, to: string) {
+    return this.notes.filter((n) => n.agency_id === agencyId && n.to === to).sort((a, b) => b.at.localeCompare(a.at))
+  }
 }
 
 class FirestoreStore implements Store {
@@ -75,8 +82,12 @@ class FirestoreStore implements Store {
       await batch.commit()
     }
   }
-  async addAlert(alert: Parameters<Store['addAlert']>[0]) {
-    await (await this.db).collection('alerts').add(alert)
+  async addNotification(n: Notification) {
+    await (await this.db).collection('notifications').add(n)
+  }
+  async listNotifications(agencyId: string, to: string) {
+    const snap = await (await this.db).collection('notifications').where('agency_id', '==', agencyId).where('to', '==', to).get()
+    return snap.docs.map((d) => ({ ...(d.data() as Notification), id: d.id })).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 30)
   }
 }
 

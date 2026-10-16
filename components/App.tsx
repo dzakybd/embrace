@@ -19,11 +19,18 @@ function useHash() {
   return hash
 }
 
-function stored(): string {
+function stored(key: string, fallback: string): string {
   try {
-    return localStorage.getItem('agency') || 'child_protection'
+    return localStorage.getItem(key) || fallback
   } catch {
-    return 'child_protection'
+    return fallback
+  }
+}
+function save(key: string, value: string) {
+  try {
+    localStorage.setItem(key, value)
+  } catch {
+    /* private mode */
   }
 }
 
@@ -36,12 +43,13 @@ const NAV = [
 export default function App() {
   const hash = useHash()
   const [agencies, setAgencies] = useState<Agency[]>([])
-  const [agencyId, setAgencyId] = useState('child_protection')
+  const [agencyId, setAgencyId] = useState('social_services')
+  const [personas, setPersonas] = useState<Record<string, string>>({})
   const [error, setError] = useState('')
   const [track, setTrack] = useState<((name: string, params?: Record<string, string>) => void) | null>(null)
 
   useEffect(() => {
-    setAgencyId(stored())
+    setAgencyId(stored('agency', 'social_services'))
     api.agencies().then(setAgencies).catch((e) => setError(String(e)))
     startAnalytics().then((log) => log && setTrack(() => log)).catch(() => {})
   }, [])
@@ -53,14 +61,19 @@ export default function App() {
 
   const pick = (id: string) => {
     setAgencyId(id)
-    try {
-      localStorage.setItem('agency', id)
-    } catch {
-      /* private mode */
-    }
+    save('agency', id)
   }
 
   const agency = agencies.find((t) => t.id === agencyId) ?? agencies[0]
+  // Demo sign-in: pick who you are on the agency's team (no passwords in the prototype).
+  const supervisorId = agency?.team.find((m) => m.role === 'supervisor')?.id ?? ''
+  const meId = agency ? personas[agency.id] ?? stored(`persona:${agency.id}`, supervisorId) : ''
+  const me = agency?.team.find((m) => m.id === meId) ?? agency?.team[0]
+  const setMe = (id: string) => {
+    if (!agency) return
+    setPersonas((p) => ({ ...p, [agency.id]: id }))
+    save(`persona:${agency.id}`, id)
+  }
 
   return (
     <div className="app">
@@ -73,7 +86,7 @@ export default function App() {
           </svg>
           <span>
             <b>Embrace</b>
-            <small>AI agents for public complaint desks</small>
+            <small>AI agents for social services desks</small>
           </span>
         </a>
         <nav aria-label="Main">
@@ -84,19 +97,31 @@ export default function App() {
             </a>
           ))}
         </nav>
-        <label className="tenant">
-          <span>Agency</span>
-          <select value={agency?.id ?? ''} onChange={(e) => pick(e.target.value)}>
-            {agencies.map((t) => (
-              <option key={t.id} value={t.id}>{t.short_name}</option>
-            ))}
-          </select>
-        </label>
+        <div className="pickers">
+          <label className="tenant">
+            <span>Agency</span>
+            <select value={agency?.id ?? ''} onChange={(e) => pick(e.target.value)}>
+              {agencies.map((t) => (
+                <option key={t.id} value={t.id}>{t.short_name}</option>
+              ))}
+            </select>
+          </label>
+          {agency && me && (
+            <label className="tenant persona" title="Demo sign-in: switch between team members">
+              <span className="avatar" aria-hidden="true">{me.name[0]}</span>
+              <select value={me.id} onChange={(e) => setMe(e.target.value)} aria-label="Signed in as">
+                {agency.team.map((m) => (
+                  <option key={m.id} value={m.id}>{m.name} · {m.title}</option>
+                ))}
+              </select>
+            </label>
+          )}
+        </div>
       </header>
       <main>
         {error && <p className="error">Could not reach the API: {error}</p>}
         {agency && view === 'intake' && <Intake agency={agency} />}
-        {agency && view === 'console' && <Console agency={agency} selected={param} />}
+        {agency && me && view === 'console' && <Console key={`${agency.id}-${me.id}`} agency={agency} me={me} selected={param} />}
         {agency && view === 'dashboard' && <Dashboard agency={agency} />}
       </main>
       <footer className="foot">

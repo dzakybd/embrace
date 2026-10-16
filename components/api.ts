@@ -12,8 +12,23 @@ export interface Agency {
   sla_hours: Record<Urgency, number>
   emergency_line: string
   escalation_contact: string
+  team: TeamMember[]
 }
 
+export interface TeamMember {
+  id: string
+  name: string
+  role: 'supervisor' | 'officer'
+  title: string
+  queues: string[]
+}
+export interface Notification {
+  id?: string
+  ticket_id: string
+  kind: 'escalated' | 'assigned'
+  text: string
+  at: string
+}
 export interface Media {
   transcript: string | null
   photo_description: string | null
@@ -103,6 +118,8 @@ export interface Ticket {
   seeded: boolean
   sla_breached: boolean
   alerted_at?: string | null
+  alert_delivered_at?: string | null
+  assignee?: string | null
 }
 export interface Row {
   id: string
@@ -117,6 +134,7 @@ export interface Row {
   sla_hours: number | null
   sla_breached: boolean
   seeded: boolean
+  assignee: string | null
 }
 export interface Cluster {
   kind: string
@@ -158,7 +176,7 @@ export const api = {
   tickets: (t: string, status?: string) =>
     fetch(`/api/agencies/${t}/tickets${status ? `?status=${status}` : ''}`).then(json<Row[]>),
   ticket: (id: string) => fetch(`/api/tickets/${id}`).then(json<Ticket>),
-  act: (id: string, body: { action: string; officer?: string; note?: string; reply?: string; queue?: string }) =>
+  act: (id: string, body: { action: string; officer?: string; note?: string; reply?: string; queue?: string; assignee?: string }) =>
     fetch(`/api/tickets/${id}/actions`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
@@ -176,6 +194,7 @@ export const api = {
     fetch(`/api/agencies/${t}/sop?q=${encodeURIComponent(q)}`).then(
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,
     ),
+  notifications: (t: string, member: string) => fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
   resetDemo: (t: string) => fetch(`/api/agencies/${t}/reset-demo`, { method: 'POST' }).then(json),
 }
 

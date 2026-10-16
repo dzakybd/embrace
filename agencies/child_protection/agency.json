@@ -4,14 +4,46 @@
   "short_name": "Child Protection",
   "country": "Any country",
   "categories": [
-    {"id": "physical_emotional_abuse", "label": "Physical or emotional abuse of a child", "queue": "special_protection"},
-    {"id": "sexual_abuse", "label": "Sexual abuse of a child", "queue": "special_protection"},
-    {"id": "exploitation_trafficking", "label": "Child labour, exploitation or trafficking", "queue": "special_protection"},
-    {"id": "online_harm", "label": "Online harm (grooming, sextortion, abuse images)", "queue": "cyber"},
-    {"id": "family_care", "label": "Custody, family and alternative care", "queue": "family"},
-    {"id": "education", "label": "Education (bullying, fees, right to school)", "queue": "education"},
-    {"id": "health_nutrition", "label": "Child and maternal health, nutrition", "queue": "health"},
-    {"id": "other", "label": "Information request / other", "queue": "general"}
+    {
+      "id": "physical_emotional_abuse",
+      "label": "Physical or emotional abuse of a child",
+      "queue": "special_protection"
+    },
+    {
+      "id": "sexual_abuse",
+      "label": "Sexual abuse of a child",
+      "queue": "special_protection"
+    },
+    {
+      "id": "exploitation_trafficking",
+      "label": "Child labour, exploitation or trafficking",
+      "queue": "special_protection"
+    },
+    {
+      "id": "online_harm",
+      "label": "Online harm (grooming, sextortion, abuse images)",
+      "queue": "cyber"
+    },
+    {
+      "id": "family_care",
+      "label": "Custody, family and alternative care",
+      "queue": "family"
+    },
+    {
+      "id": "education",
+      "label": "Education (bullying, fees, right to school)",
+      "queue": "education"
+    },
+    {
+      "id": "health_nutrition",
+      "label": "Child and maternal health, nutrition",
+      "queue": "health"
+    },
+    {
+      "id": "other",
+      "label": "Information request / other",
+      "queue": "general"
+    }
   ],
   "queues": {
     "special_protection": "Special Protection Team",
@@ -22,12 +54,91 @@
     "general": "General Enquiries"
   },
   "escalation": {
-    "always_escalate_categories": ["sexual_abuse", "exploitation_trafficking"],
-    "escalate_flags": ["child_safety", "immediate_danger", "self_harm"],
-    "keywords": ["raped", "rape", "molested", "sexually abused", "being sold", "locked up", "suicide", "kill myself", "bleeding", "badly hurt", "right now"],
-    "escalation_contact": "On-call Child Protection Supervisor (24/7)"
+    "always_escalate_categories": [
+      "sexual_abuse",
+      "exploitation_trafficking"
+    ],
+    "escalate_flags": [
+      "child_safety",
+      "immediate_danger",
+      "self_harm"
+    ],
+    "keywords": [
+      "raped",
+      "rape",
+      "molested",
+      "sexually abused",
+      "being sold",
+      "locked up",
+      "suicide",
+      "kill myself",
+      "bleeding",
+      "badly hurt",
+      "right now"
+    ],
+    "escalation_contact": "Amara Okafor, on-call supervisor"
   },
-  "sla_hours": {"critical": 1, "high": 24, "normal": 72, "low": 120},
+  "sla_hours": {
+    "critical": 1,
+    "high": 24,
+    "normal": 72,
+    "low": 120
+  },
   "emergency_line": "your local emergency number (for example 112 or 911) or the national child helpline",
-  "reply_signature": "Child Protection Service, Complaints Team"
+  "reply_signature": "Child Protection Service, Complaints Team",
+  "team": [
+    {
+      "id": "amara",
+      "name": "Amara Okafor",
+      "role": "supervisor",
+      "title": "On-call supervisor",
+      "queues": []
+    },
+    {
+      "id": "kenji",
+      "name": "Kenji Sato",
+      "role": "officer",
+      "title": "Special Protection",
+      "queues": [
+        "special_protection"
+      ]
+    },
+    {
+      "id": "priya",
+      "name": "Priya Nair",
+      "role": "officer",
+      "title": "Online Safety",
+      "queues": [
+        "cyber"
+      ]
+    },
+    {
+      "id": "sofia",
+      "name": "Sofia Lopez",
+      "role": "officer",
+      "title": "Family & Care",
+      "queues": [
+        "family"
+      ]
+    },
+    {
+      "id": "daniel",
+      "name": "Daniel Kim",
+      "role": "officer",
+      "title": "Education",
+      "queues": [
+        "education"
+      ]
+    },
+    {
+      "id": "nurul",
+      "name": "Nurul Huda",
+      "role": "officer",
+      "title": "Health & Nutrition, General",
+      "queues": [
+        "health",
+        "general"
+      ]
+    }
+  ]
 }

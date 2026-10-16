@@ -22,6 +22,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     sla_hours: t.policy?.sla_hours ?? null,
     sla_breached: slaBreached(t),
     seeded: t.seeded,
+    assignee: t.assignee ?? null,
   }))
   return Response.json(rows)
 }

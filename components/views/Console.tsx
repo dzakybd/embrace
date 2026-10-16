@@ -1,8 +1,9 @@
 import { useCallback, useEffect, useState } from 'react'
-import { api, type Citation, type Row, type Agency, type Ticket, type TraceStep } from '../api'
+import { api, type Citation, type Row, type Agency, type Notification, type TeamMember, type Ticket, type TraceStep } from '../api'
 import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
 
 const FILTERS = [
+  { id: 'mine', label: 'My cases', icon: 'user' },
   { id: 'escalated', label: 'Escalation inbox', icon: 'alert' },
   { id: 'manual_review', label: 'Manual review', icon: 'eye' },
   { id: 'assigned', label: 'Assigned', icon: 'inbox' },
@@ -13,12 +14,16 @@ const FILTERS = [
 
 const URG_RANK = { critical: 0, high: 1, normal: 2, low: 3 }
 
-export default function Console({ agency, selected }: { agency: Agency; selected?: string }) {
+export default function Console({ agency, me, selected }: { agency: Agency; me: TeamMember; selected?: string }) {
   const [rows, setRows] = useState<Row[]>([])
-  const [filter, setFilter] = useState(selected ? '' : 'escalated')
+  const [filter, setFilter] = useState(selected ? '' : me.role === 'supervisor' ? 'escalated' : 'mine')
   const [ticket, setTicket] = useState<Ticket | null>(null)
+  const [notes, setNotes] = useState<Notification[]>([])
 
-  const load = useCallback(() => api.tickets(agency.id).then(setRows), [agency.id])
+  const load = useCallback(() => {
+    api.notifications(agency.id, me.id).then(setNotes).catch(() => setNotes([]))
+    return api.tickets(agency.id).then(setRows)
+  }, [agency.id, me.id])
   useEffect(() => {
     load()
   }, [load])
@@ -27,9 +32,12 @@ export default function Console({ agency, selected }: { agency: Agency; selected
     else setTicket(null)
   }, [selected])
 
-  const counts = Object.fromEntries(FILTERS.map((f) => [f.id, f.id ? rows.filter((r) => r.status === f.id).length : rows.length]))
+  const open = (r: Row) => r.status !== 'resolved'
+  const match = (r: Row, f: string) => (f === 'mine' ? r.assignee === me.id && open(r) : !f || r.status === f)
+  const counts = Object.fromEntries(FILTERS.map((f) => [f.id, rows.filter((r) => match(r, f.id)).length]))
+  const names = Object.fromEntries(agency.team.map((m) => [m.id, m.name]))
   const shown = rows
-    .filter((r) => !filter || r.status === filter)
+    .filter((r) => match(r, filter))
     .sort((a, b) =>
       filter === 'resolved' ? b.created_at.localeCompare(a.created_at) :
         (URG_RANK[a.urgency ?? 'low'] - URG_RANK[b.urgency ?? 'low']) || b.created_at.localeCompare(a.created_at))
@@ -47,6 +55,16 @@ export default function Console({ agency, selected }: { agency: Agency; selected
             <Icon name={f.icon} /> <span>{f.label}</span> <b className={f.id === 'escalated' && counts[f.id] ? 'hot' : ''}>{counts[f.id]}</b>
           </button>
         ))}
+        <div className="notes" aria-label="Notifications">
+          <h3><Icon name="bell" size={14} /> Notifications</h3>
+          {notes.length === 0 && <p className="muted small">Nothing new for {me.name.split(' ')[0]}.</p>}
+          {notes.slice(0, 5).map((n) => (
+            <a key={n.id ?? n.at + n.ticket_id} href={`#/console/${n.ticket_id}`} className={`note ${n.kind}`}>
+              <span>{n.text}</span>
+              <small className="muted">{ago(n.at)} · via Pub/Sub</small>
+            </a>
+          ))}
+        </div>
         <button className="ghost small" onClick={() => api.resetDemo(agency.id).then(load)} title="Restore the synthetic demo data">
           <Icon name="refresh" size={14} /> Reset demo data
         </button>
@@ -65,14 +83,14 @@ export default function Console({ agency, selected }: { agency: Agency; selected
               <p>{r.summary}</p>
               <div className="row-f">
                 <code>{r.id}</code>
-                <span>{agency.queues[r.queue ?? ''] ?? '—'}</span>
+                <span>{r.assignee ? names[r.assignee] : agency.queues[r.queue ?? ''] ?? '—'}</span>
               </div>
             </a>
           )
         })}
       </section>
       <section className="detail">
-        {ticket ? <Detail key={ticket.id} t={ticket} agency={agency} onChange={onChange} /> : (
+        {ticket ? <Detail key={ticket.id} t={ticket} agency={agency} me={me} onChange={onChange} /> : (
           <div className="empty pad">
             <Icon name="inbox" size={40} />
             <p>Select a ticket. Critical cases sit at the top of the escalation inbox; every ticket shows which agent decided what, and why.</p>
@@ -83,7 +101,7 @@ export default function Console({ agency, selected }: { agency: Agency; selected
   )
 }
 
-function Detail({ t, agency, onChange }: { t: Ticket; agency: Agency; onChange: (t: Ticket) => void }) {
+function Detail({ t, agency, me, onChange }: { t: Ticket; agency: Agency; me: TeamMember; onChange: (t: Ticket) => void }) {
   const [reveal, setReveal] = useState(false)
   const [reply, setReply] = useState(t.sent_reply || t.draft?.reply || '')
   const [busy, setBusy] = useState(false)
@@ -93,7 +111,7 @@ function Detail({ t, agency, onChange }: { t: Ticket; agency: Agency; onChange: 
   const act = async (action: string, extra: Record<string, string> = {}) => {
     setBusy(true)
     try {
-      onChange(await api.act(t.id, { action, officer: 'Demo officer', ...extra }))
+      onChange(await api.act(t.id, { action, officer: me.name, ...extra }))
     } finally {
       setBusy(false)
     }
@@ -121,7 +139,7 @@ function Detail({ t, agency, onChange }: { t: Ticket; agency: Agency; onChange: 
           <Icon name="alert" />
           <span>
             Escalated to <b>{agency.escalation_contact}</b>
-            {t.alerted_at ? ` — alert sent ${new Date(t.alerted_at).toLocaleTimeString()}.` : '.'}
+            {t.alert_delivered_at ? ` — alert delivered via Pub/Sub at ${new Date(t.alert_delivered_at).toLocaleTimeString()}.` : t.alerted_at ? ' — alert queued.' : '.'}
           </span>
         </div>
       )}
@@ -137,6 +155,8 @@ function Detail({ t, agency, onChange }: { t: Ticket; agency: Agency; onChange: 
           <p className="pii"><Icon name="shield" size={13} /> Masked by the intake agent: {t.intake.pii_types.join(', ')}</p>
         ) : null}
       </Card>
+
+      <Delegate t={t} agency={agency} me={me} busy={busy} act={act} />
 
       <Card title="Reply to citizen" icon="send">
         {t.sent_reply ? (
@@ -258,6 +278,36 @@ function AskSop({ agency }: { agency: Agency }) {
       </form>
       {res && <Citations items={res} />}
       <p className="muted small">Searches {agency.short_name}&apos;s SOP and regulation documents directly. No AI tokens used.</p>
+    </Card>
+  )
+}
+
+function Delegate({ t, agency, me, busy, act }: {
+  t: Ticket; agency: Agency; me: TeamMember; busy: boolean; act: (action: string, extra?: Record<string, string>) => Promise<void>
+}) {
+  const [to, setTo] = useState('')
+  const [note, setNote] = useState('')
+  const pic = agency.team.find((m) => m.id === t.assignee)
+  const mine = t.assignee === me.id
+  return (
+    <Card title="Person in charge" icon="user" className="pic">
+      <div className="pic-row">
+        <span className="avatar big" aria-hidden="true">{pic?.name[0] ?? '?'}</span>
+        <div>
+          <b>{pic?.name ?? 'Unassigned'}</b>{mine && <span className="tag you">you</span>}
+          <div className="muted small">{pic?.title}</div>
+        </div>
+      </div>
+      <form className="delegate" onSubmit={(e) => { e.preventDefault(); if (to) act('assign', { assignee: to, note }).then(() => { setTo(''); setNote('') }) }}>
+        <label className="sr" htmlFor={`to-${t.id}`}>Delegate to</label>
+        <select id={`to-${t.id}`} value={to} onChange={(e) => setTo(e.target.value)} disabled={busy}>
+          <option value="">Delegate to…</option>
+          {agency.team.filter((m) => m.id !== t.assignee).map((m) => <option key={m.id} value={m.id}>{m.name} · {m.title}</option>)}
+        </select>
+        <input value={note} onChange={(e) => setNote(e.target.value)} placeholder="Note for them (optional)" aria-label="Handover note" maxLength={300} />
+        <button className="primary" disabled={busy || !to}>Delegate</button>
+      </form>
+      <p className="muted small">They get a notification through Pub/Sub and see the case under My cases.</p>
     </Card>
   )
 }

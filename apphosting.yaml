@@ -1,6 +1,6 @@
-# Firebase App Hosting (Next.js on Cloud Run). Sized to stay inside the free tier for a prototype.
+# Firebase App Hosting (Next.js on Cloud Run). One warm instance during judging; set minInstances: 0 afterwards.
 runConfig:
-  minInstances: 0
+  minInstances: 1
   maxInstances: 2
   concurrency: 80
   cpu: 1
@@ -9,6 +9,8 @@ runConfig:
 env:
   - variable: EMBRACE_STORE
     value: firestore
+  - variable: EMBRACE_PUBSUB
+    value: "on"
   - variable: GOOGLE_GENAI_API_KEY
     secret: gemini-api-key
   - variable: GEMINI_API_KEY

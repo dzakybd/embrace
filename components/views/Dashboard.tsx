@@ -4,7 +4,7 @@ import { CHANNEL_LABEL, Card, Icon, URGENCY_LABEL } from '../ui'
 
 const SUGGESTED: Record<string, string[]> = {
   child_protection: ['Which school has the most complaints this month?', 'Which categories grew this week vs last week?', 'How many critical cases have no response yet?'],
-  social_assistance: ['Which area has the most missing food voucher complaints?', 'Is there a pattern of illegal fees?', 'Which queue is breaching SLA the most?'],
+  social_services: ['Which area needs attention first this week?', 'Is there a pattern of illegal fees?', 'Which team is breaching SLA the most?'],
   id_demak: ['Which village has the most BPNT complaints?', 'Are there repeated reports of illegal levies?', 'Desa mana yang paling banyak keluhan BPNT?'],
 }
 

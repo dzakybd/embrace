@@ -88,6 +88,39 @@
   "cluster": false
  },
  {
+  "channel": "whatsapp",
+  "category": "disaster_relief",
+  "urgency": "critical",
+  "location": "Riverbend",
+  "institution": null,
+  "aid_program": "Flood relief",
+  "summary": "Family with an elderly mother trapped by rising flood water, no shelter tonight.",
+  "text": "Water is inside our house in Riverbend up to the knees and still rising. My mother is 80 and cannot walk. We have no shelter tonight, please send help.",
+  "cluster": true
+ },
+ {
+  "channel": "social",
+  "category": "disaster_relief",
+  "urgency": "high",
+  "location": "Riverbend",
+  "institution": null,
+  "aid_program": "Flood relief",
+  "summary": "Flood-affected families at the Riverbend evacuation point have no food or blankets.",
+  "text": "Families at the Riverbend school evacuation point since yesterday. No food packages or blankets have arrived yet. Many small children here.",
+  "cluster": true
+ },
+ {
+  "channel": "web",
+  "category": "disaster_relief",
+  "urgency": "normal",
+  "location": "Riverbend",
+  "institution": null,
+  "aid_program": "Flood relief",
+  "summary": "Asks how to claim flood relief for damaged household goods.",
+  "text": "Our house in Riverbend was flooded last week and the fridge and beds are ruined. How do we apply for flood relief?",
+  "cluster": true
+ },
+ {
   "channel": "email",
   "category": "eligibility_registration",
   "urgency": "normal",

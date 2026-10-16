@@ -2,9 +2,10 @@
 import { InMemoryRunner, type Event } from '@google/adk'
 import type { Part } from '@google/genai'
 import { randomBytes } from 'node:crypto'
-import { getAgency, type Agency } from './agencies'
+import { getAgency, picFor, supervisor, type Agency } from './agencies'
 import { analystAgent } from './agents/analyst'
 import { STEP_KEYS, initialState, pipeline } from './agents/pipeline'
+import { publish } from './events'
 import { decide } from './policy'
 import type { Channel, HistoryItem, Policy, Ticket, TraceStep } from './schemas'
 import { prefix } from './seed'
@@ -91,18 +92,8 @@ export async function* submit(
   const policy = outputs.policy as Policy
   const history = [...ticket.history, entry('agents', policy.route, policy.reasons.join('; '))]
   if (outputs.draft) history.push(entry('drafter_agent', 'draft_ready', 'Waiting for officer approval'))
-  if (policy.route === 'escalated') {
-    // The escalation alert: recorded in Firestore `alerts`, shown to the on-call supervisor in the console.
-    await STORE.addAlert({
-      ticket_id: id,
-      agency_id: agencyId,
-      contact: agency.escalation.escalation_contact,
-      urgency: policy.final_urgency,
-      summary: (outputs.triage as { summary?: string } | undefined)?.summary ?? '',
-      at: now(),
-    })
-    history.push(entry('system', 'alert_sent', `Alert sent to ${agency.escalation.escalation_contact}`))
-  }
+  const pic = picFor(agency, policy.queue)
+  history.push(entry('agents', 'assign', `Assigned to ${pic.name} (${pic.title})`))
   ticket = await STORE.update(id, {
     media: (outputs.media as Ticket['media']) ?? null,
     intake: (outputs.intake as Ticket['intake']) ?? null,
@@ -113,10 +104,22 @@ export async function* submit(
     trace,
     status: policy.route,
     alerted_at: policy.route === 'escalated' ? now() : null,
+    assignee: pic.id,
     updated_at: now(),
     history,
   })
-  yield { type: 'done', ticket }
+  const summary = (outputs.triage as { summary?: string } | undefined)?.summary ?? text.slice(0, 120)
+  try {
+    if (policy.route === 'escalated') {
+      const sup = supervisor(agency)
+      await publish({ kind: 'escalated', agency_id: agencyId, ticket_id: id, to: [...new Set([sup.id, pic.id])], text: `Escalated: ${summary}`, contact: `${sup.name} and ${pic.name}` })
+    } else {
+      await publish({ kind: 'assigned', agency_id: agencyId, ticket_id: id, to: [pic.id], text: `New case: ${summary}` })
+    }
+  } catch (err) {
+    console.error(`case event failed for ${id}`, err) // the ticket is saved and visible in the queue either way
+  }
+  yield { type: 'done', ticket: (await STORE.get(id)) ?? ticket }
 }
 
 const ACTIONS: Record<string, [Ticket['status'] | null, string]> = {
@@ -125,10 +128,11 @@ const ACTIONS: Record<string, [Ticket['status'] | null, string]> = {
   resolve: ['resolved', 'Case resolved'],
   reopen: ['in_progress', 'Case reopened'],
   reassign: [null, 'Reassigned'],
+  assign: [null, 'Delegated'],
 }
 export const ACTION_NAMES = Object.keys(ACTIONS)
 
-export async function act(id: string, action: string, officer: string, note = '', reply?: string, queue?: string) {
+export async function act(id: string, action: string, officer: string, note = '', reply?: string, queue?: string, assignee?: string) {
   const t = await STORE.get(id)
   if (!t) return null
   const [status, label0] = ACTIONS[action]
@@ -147,8 +151,20 @@ export async function act(id: string, action: string, officer: string, note = ''
     fields.status = 'assigned'
     label = `Reassigned to ${queue}`
   }
-  fields.history = [...t.history, entry(officer, action, note || label)]
-  return STORE.update(id, fields)
+  const agency = getAgency(t.agency_id)!
+  if (action === 'reassign' && queue) fields.assignee = picFor(agency, queue).id
+  const member = agency.team.find((m) => m.id === (action === 'assign' ? assignee : fields.assignee))
+  if (action === 'assign') {
+    if (!member) return null
+    fields.assignee = member.id
+    label = `Delegated to ${member.name} (${member.title})`
+  }
+  fields.history = [...t.history, entry(officer, action, note ? `${label}: ${note}` : label)]
+  const updated = await STORE.update(id, fields)
+  if (member && member.id !== t.assignee) {
+    await publish({ kind: 'assigned', agency_id: t.agency_id, ticket_id: id, to: [member.id], text: `${officer} delegated a case to you: ${t.triage?.summary ?? t.text.slice(0, 120)}${note ? ` (${note})` : ''}` }).catch((e) => console.error('case event failed', e))
+  }
+  return updated
 }
 
 export async function askAnalyst(agencyId: string, question: string) {

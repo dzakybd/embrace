@@ -1,0 +1,153 @@
+{
+  "id": "social_services",
+  "name": "Social Services Office (sample pack)",
+  "short_name": "Social Services",
+  "country": "Any country",
+  "categories": [
+    {
+      "id": "domestic_violence",
+      "label": "Domestic and gender-based violence",
+      "queue": "protection"
+    },
+    {
+      "id": "benefit_not_received",
+      "label": "Benefit not received or late (cash transfer, food aid)",
+      "queue": "benefits"
+    },
+    {
+      "id": "eligibility_registration",
+      "label": "Registration, eligibility and beneficiary data",
+      "queue": "data"
+    },
+    {
+      "id": "payment_schedule",
+      "label": "Payment schedule and pickup location",
+      "queue": "benefits"
+    },
+    {
+      "id": "disability_elderly",
+      "label": "Disability and elderly services",
+      "queue": "rehabilitation"
+    },
+    {
+      "id": "social_rehabilitation",
+      "label": "Homelessness, street children and mental illness",
+      "queue": "rehabilitation"
+    },
+    {
+      "id": "fraud_misconduct",
+      "label": "Suspected fraud, illegal fees or deductions",
+      "queue": "oversight"
+    },
+    {
+      "id": "disaster_relief",
+      "label": "Disaster and emergency relief (flood, fire, displacement)",
+      "queue": "emergency"
+    },
+    {
+      "id": "general_info",
+      "label": "General information",
+      "queue": "general"
+    }
+  ],
+  "queues": {
+    "protection": "Protection Unit (women & children)",
+    "benefits": "Benefits & Payments Team",
+    "data": "Beneficiary Registry",
+    "rehabilitation": "Social Rehabilitation Team",
+    "oversight": "Payment Oversight Team",
+    "general": "Information Desk",
+    "emergency": "Disaster Relief Team"
+  },
+  "escalation": {
+    "always_escalate_categories": [
+      "domestic_violence"
+    ],
+    "escalate_flags": [
+      "child_safety",
+      "immediate_danger",
+      "self_harm",
+      "basic_needs_crisis"
+    ],
+    "keywords": [
+      "beaten",
+      "kicked out",
+      "thrown out",
+      "no food",
+      "starving",
+      "suicide",
+      "kill myself",
+      "abandoned",
+      "right now",
+      "trapped",
+      "flooded",
+      "no shelter",
+      "evacuate"
+    ],
+    "escalation_contact": "Maya Santos, on-call supervisor"
+  },
+  "sla_hours": {
+    "critical": 2,
+    "high": 24,
+    "normal": 72,
+    "low": 120
+  },
+  "emergency_line": "your local emergency number (for example 112 or 911)",
+  "reply_signature": "Social Assistance Office, Complaints Desk",
+  "team": [
+    {
+      "id": "maya",
+      "name": "Maya Santos",
+      "role": "supervisor",
+      "title": "On-call supervisor",
+      "queues": []
+    },
+    {
+      "id": "rina",
+      "name": "Rina Halim",
+      "role": "officer",
+      "title": "Benefits & Payments",
+      "queues": [
+        "benefits"
+      ]
+    },
+    {
+      "id": "arif",
+      "name": "Arif Rahman",
+      "role": "officer",
+      "title": "Protection Unit",
+      "queues": [
+        "protection"
+      ]
+    },
+    {
+      "id": "leo",
+      "name": "Leo Tan",
+      "role": "officer",
+      "title": "Beneficiary Registry",
+      "queues": [
+        "data",
+        "general"
+      ]
+    },
+    {
+      "id": "grace",
+      "name": "Grace Mwangi",
+      "role": "officer",
+      "title": "Social Rehabilitation",
+      "queues": [
+        "rehabilitation"
+      ]
+    },
+    {
+      "id": "tomas",
+      "name": "Tomas Reyes",
+      "role": "officer",
+      "title": "Disaster Relief & Oversight",
+      "queues": [
+        "emergency",
+        "oversight"
+      ]
+    }
+  ]
+}

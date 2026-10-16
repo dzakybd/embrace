@@ -1,4 +1,4 @@
-# Sample SOP: social assistance grievance handling
+# Sample SOP: social services grievance handling
 
 This is a sample standard operating procedure written for the Embrace demo. It follows common grievance redress practice in social protection programmes (cash transfers, food aid, disability and elderly support), but it is not any real agency's SOP. Replace it with your agency's own document.
 
@@ -37,3 +37,7 @@ Replies are written in the beneficiary's language, in plain words. They acknowle
 ## 9. Closing a grievance
 
 A grievance is closed when the problem is solved or a clear decision with reasons has been given, and the beneficiary has been informed. The beneficiary may appeal a decision within 30 days. Grievance statistics are reported to leadership every month, without personal data.
+
+## 10. Disaster and emergency relief
+
+During floods, fires and other disasters, reports of people trapped, injured or without shelter are emergencies: alert the supervisor at once, share the location with the disaster management agency and tell the reporter to call the local emergency number. Families at evacuation points must receive food, water, blankets and hygiene kits within 24 hours of registration. Households whose homes or goods were damaged can claim relief within 30 days: the officer records the address, the damage and a photo, and a field worker verifies within 7 days. Relief is paid to the household directly; no fee may be charged.

@@ -20,7 +20,7 @@ const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[
       text: 'Hi admin, can your office also advise on child custody after a divorce? What are your opening hours?',
     },
   ],
-  social_assistance: [
+  social_services: [
     {
       label: 'Family without food, Tagalog (WhatsApp)',
       channel: 'whatsapp',
@@ -32,9 +32,9 @@ const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[
       text: 'I live on Maple Street in Northgate. My food voucher for this month has not arrived on my card, but my neighbours on the same street already collected theirs at the shop. Please check if I am still on the list.',
     },
     {
-      label: 'Illegal fee (social)',
-      channel: 'social',
-      text: 'The agent at the Northgate Corner Shop takes 5 dollars from every voucher payment and calls it an admin fee. Is that allowed?',
+      label: 'Flood, no shelter tonight (WhatsApp)',
+      channel: 'whatsapp',
+      text: 'water is inside our house in Riverbend and still rising, my father is in a wheelchair. we have nowhere to go tonight. please help us',
     },
   ],
   id_demak: [

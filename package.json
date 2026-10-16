@@ -14,6 +14,7 @@
     "eval": "tsx scripts/eval-triage.ts"
   },
   "dependencies": {
+    "@google-cloud/pubsub": "^6.3.0",
     "@google/adk": "^2.3.0",
     "@google/genai": "^2.30.0",
     "firebase": "^13.0.0",

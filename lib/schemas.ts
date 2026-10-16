@@ -73,6 +73,18 @@ export interface Citation {
 }
 
 export type Status = 'received' | 'escalated' | 'manual_review' | 'assigned' | 'in_progress' | 'resolved'
+/** A message for one team member, written by the case-events Cloud Function (or inline when running locally). */
+export interface Notification {
+  id?: string
+  agency_id: string
+  to: string
+  ticket_id: string
+  kind: 'escalated' | 'assigned'
+  text: string
+  at: string
+  read: boolean
+}
+
 export type Channel = 'web' | 'whatsapp' | 'email' | 'social'
 
 export interface TraceStep {
@@ -112,6 +124,8 @@ export interface Ticket {
   sent_reply?: string
   reply_edited?: boolean
   alerted_at?: string | null
+  alert_delivered_at?: string | null
+  assignee?: string | null
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean

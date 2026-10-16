@@ -4,7 +4,7 @@ import { decide } from '@/lib/policy'
 import type { Triage } from '@/lib/schemas'
 
 const cp = AGENCIES.child_protection
-const sa = AGENCIES.social_assistance
+const sa = AGENCIES.social_services
 const triage = (over: Partial<Triage>): Triage => ({
   category: 'education',
   urgency: 'normal',
