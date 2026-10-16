@@ -21,7 +21,7 @@ export const LIMITS = {
 const DANGER = ['suicide', 'kill myself', 'bunuh diri', 'help me now', 'tolong sekarang', 'he will kill', 'trapped', 'bleeding', 'berdarah', 'diperkosa', 'raped']
 const GREETING = /^(hi|hello|hey|halo|hallo|hai|pagi|siang|sore|malam|assalamu.?alaikum|test|tes|p|ping|\/?menu)\W*$/i
 
-const publicUrl = () => process.env.EMBRACE_PUBLIC_URL || 'https://embrace--embrace-23a9c.asia-southeast1.hosted.app'
+const publicUrl = () => process.env.EMBRACE_PUBLIC_URL || 'https://embrace.nalaria.ai.id'
 
 export interface ReportJob {
   update_id: number

@@ -20,7 +20,7 @@ env:
   - variable: TELEGRAM_WEBHOOK_SECRET
     secret: telegram-webhook-secret
   - variable: EMBRACE_PUBLIC_URL
-    value: https://embrace--embrace-23a9c.asia-southeast1.hosted.app
+    value: https://embrace.nalaria.ai.id
   - variable: NEXT_PUBLIC_TELEGRAM_BOT
     value: dmusa_bot
     availability:

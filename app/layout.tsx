@@ -4,7 +4,7 @@ import './globals.css'
 const description = 'AI agents that read, route and answer reports to social services desks, in any language. Built with Google ADK and Gemini on Firebase.'
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.EMBRACE_PUBLIC_URL || 'https://embrace--embrace-23a9c.asia-southeast1.hosted.app'),
+  metadataBase: new URL(process.env.EMBRACE_PUBLIC_URL || 'https://embrace.nalaria.ai.id'),
   title: { default: 'Embrace · AI agents for social services desks', template: '%s · Embrace' },
   description,
   applicationName: 'Embrace',
