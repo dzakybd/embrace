@@ -93,7 +93,7 @@
     "low": 120
   },
   "emergency_line": "your local emergency number (for example 112 or 911)",
-  "reply_signature": "Social Assistance Office, Complaints Desk",
+  "reply_signature": "Social Services Office, Complaints Desk",
   "team": [
     {
       "id": "maya",

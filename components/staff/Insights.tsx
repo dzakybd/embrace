@@ -1,6 +1,10 @@
+'use client'
+
 import { useEffect, useState } from 'react'
-import { api, type AnalystAnswer, type Overview, type Agency } from '../api'
+import { api, type AnalystAnswer, type Overview } from '../api'
+import Link from 'next/link'
 import { CHANNEL_LABEL, Card, Icon, URGENCY_LABEL } from '../ui'
+import { useStaff } from './StaffProvider'
 
 const SUGGESTED: Record<string, string[]> = {
   child_protection: ['Which school has the most complaints this month?', 'Which categories grew this week vs last week?', 'How many critical cases have no response yet?'],
@@ -8,7 +12,10 @@ const SUGGESTED: Record<string, string[]> = {
   id_demak: ['Which village has the most BPNT complaints?', 'Are there repeated reports of illegal levies?', 'Desa mana yang paling banyak keluhan BPNT?'],
 }
 
-export default function Dashboard({ agency }: { agency: Agency }) {
+export default function Insights() {
+  const { agency } = useStaff()
+  const [tab, setTab] = useState('overview')
+  const [history, setHistory] = useState<{ q: string; a: AnalystAnswer }[]>([])
   const [ov, setOv] = useState<Overview | null>(null)
   const [brief, setBrief] = useState<AnalystAnswer | null>(null)
   const [briefErr, setBriefErr] = useState('')
@@ -30,7 +37,9 @@ export default function Dashboard({ agency }: { agency: Agency }) {
     setAsking(true)
     setAnswer(null)
     try {
-      setAnswer(await api.ask(agency.id, question))
+      const a = await api.ask(agency.id, question)
+      setAnswer(a)
+      setHistory((h) => [{ q: question, a }, ...h].slice(0, 6))
     } catch (e) {
       setAnswer({ answer: `Error: ${e}`, tools_used: [] })
     } finally {
@@ -44,12 +53,45 @@ export default function Dashboard({ agency }: { agency: Agency }) {
     api.brief(agency.id, true).then(setBrief).catch((e) => setBriefErr(String(e)))
   }
 
-  if (!ov) return <p className="muted pad">Loading…</p>
+  if (!ov) return <div className="page"><div className="shimmer tall" /></div>
+
+  const askPanel = (
+    <Card title="Ask the analyst agent" icon="spark" className="brief">
+      <p className="muted small">The analyst agent answers from live case data by calling tools (overview, clusters, case search). It never sees personal data.</p>
+      <form className="ask" onSubmit={(e) => { e.preventDefault(); if (q.trim()) ask(q) }}>
+        <label htmlFor="ask" className="sr">Ask the analyst agent</label>
+        <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ask about your reports, in any language…" />
+        <button className="primary" disabled={asking || q.trim().length < 3}>Ask</button>
+      </form>
+      <div className="samples">
+        {SUGGESTED[agency.id]?.map((s) => <button key={s} className="chip" onClick={() => ask(s)}>{s}</button>)}
+      </div>
+      {asking && <div className="shimmer tall" />}
+      {history.map((h, i) => (
+        <div key={i} className="answer">
+          <p className="q"><b>{h.q}</b></p>
+          <Answer a={h.a} />
+        </div>
+      ))}
+      {!asking && !history.length && answer && <div className="answer"><Answer a={answer} /></div>}
+    </Card>
+  )
 
   return (
-    <div className="dash">
+    <div className="page dash">
+      <div className="page-h">
+        <div>
+          <h1>Insights</h1>
+          <p className="muted">{agency.name} · last 30 days, no personal data</p>
+        </div>
+      </div>
+      <div className="tabs" role="tablist">
+        <button role="tab" aria-selected={tab === 'overview'} className={tab === 'overview' ? 'on' : ''} onClick={() => setTab('overview')}>Overview</button>
+        <button role="tab" aria-selected={tab === 'ask'} className={tab === 'ask' ? 'on' : ''} onClick={() => setTab('ask')}>Ask the analyst</button>
+      </div>
+      {tab === 'ask' ? askPanel : (<>
       <div className="kpis">
-        <Kpi label="Complaints, 30 days" value={ov.total} />
+        <Kpi label="Reports, 30 days" value={ov.total} />
         <Kpi label="Open now" value={ov.open} />
         <Kpi label="Escalated" value={ov.escalated} tone="crit" icon="alert" />
         <Kpi label="Open past SLA" value={ov.sla_breached_open} tone={ov.sla_breached_open ? 'warn' : undefined} icon="clock" />
@@ -60,37 +102,28 @@ export default function Dashboard({ agency }: { agency: Agency }) {
         <Card title="AI weekly brief" icon="spark" className="brief"
           action={<button className="ghost small" onClick={refreshBrief} aria-label="Regenerate brief"><Icon name="refresh" size={14} /></button>}>
           {brief ? <Answer a={brief} /> : briefErr ? <p className="error">{briefErr}</p> : <div className="shimmer tall" aria-label="Analyst agent is reading the data" />}
-          <form className="ask" onSubmit={(e) => { e.preventDefault(); if (q.trim()) ask(q) }}>
-            <label htmlFor="ask" className="sr">Ask the analyst agent</label>
-            <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} placeholder="Ask about your complaints, in any language…" />
-            <button className="primary" disabled={asking || q.trim().length < 3}>Ask</button>
-          </form>
-          <div className="samples">
-            {SUGGESTED[agency.id]?.map((s) => <button key={s} className="chip" onClick={() => ask(s)}>{s}</button>)}
-          </div>
-          {asking && <div className="shimmer" />}
-          {answer && <div className="answer"><Answer a={answer} /></div>}
+          <button className="ghost small" onClick={() => setTab('ask')}><Icon name="chat" size={14} /> Ask a follow-up question</button>
         </Card>
 
-        <Card title="Early warning: related complaints" icon="pin" className="clusters">
+        <Card title="Early warning: related reports" icon="pin" className="clusters">
           {ov.clusters.length === 0 && <p className="muted">No clusters in the last 14 days.</p>}
           {ov.clusters.map((c) => (
             <div key={c.kind + c.display} className="cluster">
               <div className="cluster-h">
                 <b>{c.display}</b>
-                <span className="count">{c.count} complaints</span>
+                <span className="count">{c.count} reports</span>
               </div>
               <p className="muted">
                 {c.kind.replace('_', ' ')} · {c.top_categories.join(', ')}
                 {c.top_locations.length > 0 && c.kind !== 'location' && <> · {c.top_locations.join(', ')}</>}
               </p>
               <p className="muted small">since {new Date(c.first_seen).toLocaleDateString()} · {c.ticket_ids.slice(0, 4).map((id) => (
-                <a key={id} href={`#/console/${id}`}>{id} </a>))}</p>
+                <Link key={id} href={`/staff/cases/${id}`}>{id} </Link>))}</p>
             </div>
           ))}
         </Card>
 
-        <Card title="Complaints by category, 30 days" icon="chart" className="cats">
+        <Card title="Reports by category" icon="chart" className="cats">
           <CategoryBars ov={ov} />
         </Card>
 
@@ -114,6 +147,7 @@ export default function Dashboard({ agency }: { agency: Agency }) {
           </ul>
         </Card>
       </div>
+      </>)}
     </div>
   )
 }

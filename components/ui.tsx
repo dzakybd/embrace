@@ -24,6 +24,8 @@ const PATHS: Record<string, string> = {
   image: 'M3 5h18v14H3zM3 16l5-5 4 4 3-3 6 6M15 9.5a1.5 1.5 0 1 0 0-.01',
   stop: 'M6 6h12v12H6z',
   close: 'M6 6l12 12M18 6 6 18',
+  back: 'M15 18l-6-6 6-6',
+  home: 'M3 11l9-8 9 8v10H3z',
   bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
 }
 

@@ -1,6 +1,10 @@
+'use client'
+
+import Link from 'next/link'
 import { Fragment, useRef, useState } from 'react'
-import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Agency, type Ticket, type TraceStep, type Triage } from '../api'
-import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Card, Citations, Icon, UrgencyBadge } from '../ui'
+import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
+import { useAgencies } from '../useAgencies'
+import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Citations, Icon, UrgencyBadge } from '../ui'
 
 const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[]> = {
   child_protection: [
@@ -83,7 +87,8 @@ function toAttachment(blob: Blob, name: string): Promise<File_> {
   })
 }
 
-export default function Intake({ agency }: { agency: Agency }) {
+export default function Report() {
+  const { agencies, agency, pick, error: loadError } = useAgencies()
   const [text, setText] = useState('')
   const [channel, setChannel] = useState<Channel>('web')
   const [name, setName] = useState('')
@@ -158,43 +163,131 @@ export default function Intake({ agency }: { agency: Agency }) {
   const byAgent = Object.fromEntries(steps.map((s) => [s.agent, s]))
   const order = files.length || byAgent.media_reader ? ['media_reader', ...ORDER] : ORDER
   const activeIdx = running ? steps.length : -1
+  const reset = () => { setTicketId(''); setTicket(null); setSteps([]); setText(''); setFiles([]); setError('') }
+
+  if (loadError) return <p className="error pad">Could not reach the service: {loadError}</p>
+  if (!agency) return <div className="shimmer tall" />
+
+  if (ticketId) {
+    const done = byAgent.policy_agent?.output as unknown as Policy | undefined
+    const team = done ? agency.queues[done.queue] ?? done.queue : ''
+    const progress = [
+      { key: 'received', label: 'Report received', ok: true },
+      { key: 'read', label: files.length ? 'Reading your message, voice note and photos' : 'Reading your message', ok: !!byAgent.intake_agent },
+      { key: 'urgency', label: 'Checking how urgent it is', ok: !!byAgent.triage_agent },
+      { key: 'team', label: 'Finding the right team and person', ok: !!byAgent.policy_agent },
+      { key: 'reply', label: 'Preparing a first reply for an officer to check', ok: !!byAgent.drafter_agent || !!ticket },
+    ]
+    return (
+      <div className="citizen-done">
+        <section className="card done-card">
+          <p className="muted small">Report number</p>
+          <h1 className="tid-big">{ticketId}</h1>
+          <ol className="progress">
+            {progress.map((p, i) => {
+              const active = !p.ok && progress.slice(0, i).every((x) => x.ok) && running
+              return (
+                <li key={p.key} className={p.ok ? 'ok' : active ? 'active' : ''}>
+                  <span className="pdot">{p.ok ? <Icon name="check" size={14} /> : i + 1}</span>{p.label}
+                </li>
+              )
+            })}
+          </ol>
+          {done && done.route === 'escalated' && (
+            <div className="banner crit">
+              <Icon name="alert" />
+              <span><b>A supervisor has been alerted now.</b> If anyone is in danger right now, call {agency.emergency_line}.</span>
+            </div>
+          )}
+          {done && (
+            <p className="lead">
+              Your report is with the <b>{team}</b>. You will hear back within <b>{done.sla_hours} hours</b>.
+              {' '}An officer reviews every reply before it is sent.
+            </p>
+          )}
+          {error && <p className="error">{error}</p>}
+          <div className="actions">
+            <Link className="btn" href={`/track/${ticketId}`}>Track this report</Link>
+            <button onClick={reset}>Send another report</button>
+          </div>
+        </section>
+
+        <details className="card staff-view" open={running || undefined}>
+          <summary><Icon name="spark" /> Staff view: what the AI agents decided <span className="muted small">(shown for the demo)</span></summary>
+          <ol className="steps">
+            {order.map((a, i) => {
+              const s = byAgent[a]
+              const state = s ? 'done' : i === activeIdx ? 'active' : 'idle'
+              const kindClass = a === 'policy_agent' || a === 'sop_agent' ? 'rules' : ''
+              return (
+                <li key={a} className={`step ${state} ${kindClass}`}>
+                  <div className="dot" aria-hidden="true">{s ? <Icon name="check" size={14} /> : i + 1}</div>
+                  <div className="body">
+                    <div className="step-h">
+                      <b>{AGENT_META[a].label}</b>
+                      <span className="muted">{AGENT_META[a].role}</span>
+                      {s && <span className="ms">{s.kind === 'llm' ? `${(s.ms / 1000).toFixed(1)} s` : s.kind === 'search' ? 'search, no AI' : 'rules'}</span>}
+                    </div>
+                    {state === 'active' && <div className="shimmer" />}
+                    {s && <StepOutput agent={a} out={s.output} />}
+                  </div>
+                </li>
+              )
+            })}
+          </ol>
+          {ticket && <Link className="btn" href={`/staff/cases/${ticket.id}`}>Open the case in the staff workspace →</Link>}
+        </details>
+      </div>
+    )
+  }
 
   return (
-    <div className="intake">
-      <Card title={`Report to ${agency.short_name}`} icon="send" className="intake-form">
+    <div className="citizen-form">
+      <section className="card intake-form">
+        <h1>Report a problem</h1>
         <p className="muted">
-          Citizens write in their own words, in any channel and language. Try a sample, or write your own.
+          Tell us in your own words and your own language. You can also record a voice note or add a photo.
+          If someone is in danger right now, call {agency.emergency_line}.
         </p>
-        <div className="samples" role="group" aria-label="Sample complaints">
-          {SAMPLES[agency.id]?.map((s) => (
-            <button key={s.label} className="chip" onClick={() => { setText(s.text); setChannel(s.channel) }}>
-              <Icon name={CHANNEL_ICON[s.channel]} size={14} /> {s.label}
-            </button>
-          ))}
-        </div>
-        <fieldset className="channels">
-          <legend>Arrives via</legend>
-          {(['web', 'whatsapp', 'email', 'social'] as Channel[]).map((c) => (
-            <label key={c} className={channel === c ? 'on' : ''}>
-              <input type="radio" name="channel" value={c} checked={channel === c} onChange={() => setChannel(c)} />
-              <Icon name={CHANNEL_ICON[c]} size={14} /> {CHANNEL_LABEL[c]}
-            </label>
-          ))}
-        </fieldset>
         <label className="field">
-          <span>Complaint</span>
+          <span>Send to</span>
+          <select value={agency.id} onChange={(e) => pick(e.target.value)}>
+            {agencies.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+          </select>
+        </label>
+        <div className="demo-box">
+          <span className="muted small">Demo: try a sample report and the channel it arrives on</span>
+          <div className="samples" role="group" aria-label="Sample reports">
+            {SAMPLES[agency.id]?.map((s) => (
+              <button key={s.label} className="chip" onClick={() => { setText(s.text); setChannel(s.channel) }}>
+                <Icon name={CHANNEL_ICON[s.channel]} size={14} /> {s.label}
+              </button>
+            ))}
+          </div>
+          <fieldset className="channels">
+            <legend className="sr">Arrives via</legend>
+            {(['web', 'whatsapp', 'email', 'social'] as Channel[]).map((c) => (
+              <label key={c} className={channel === c ? 'on' : ''}>
+                <input type="radio" name="channel" value={c} checked={channel === c} onChange={() => setChannel(c)} />
+                <Icon name={CHANNEL_ICON[c]} size={14} /> {CHANNEL_LABEL[c]}
+              </label>
+            ))}
+          </fieldset>
+        </div>
+        <label className="field">
+          <span>What happened?</span>
           <textarea rows={7} value={text} onChange={(e) => setText(e.target.value)}
-            placeholder="Tell us what happened, where and when, in your own words and language…" />
+            placeholder="What happened, where and when. Any language is fine." />
         </label>
         <div className="attach">
           <span className="attach-h">Voice note or photo (optional)</span>
           <div className="attach-row">
-            <label className={`btn ghost small ${files.length >= 3 ? 'disabled' : ''}`}>
-              <Icon name="image" size={14} /> Attach file
+            <label className={`btn tonal small ${files.length >= 3 ? 'disabled' : ''}`}>
+              <Icon name="image" size={14} /> Add photo or audio
               <input type="file" accept="image/jpeg,image/png,image/webp,audio/*" multiple hidden
                 disabled={files.length >= 3} onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
             </label>
-            <button type="button" className={`ghost small ${recording ? 'rec' : ''}`} onClick={toggleRecording}
+            <button type="button" className={`small ${recording ? 'rec' : ''}`} onClick={toggleRecording}
               disabled={!recording && files.length >= 3} aria-pressed={recording}>
               <Icon name={recording ? 'stop' : 'mic'} size={14} /> {recording ? 'Stop recording' : 'Record voice note'}
             </button>
@@ -214,63 +307,20 @@ export default function Intake({ agency }: { agency: Agency }) {
         </div>
         <div className="row2">
           <label className="field">
-            <span>Name (optional)</span>
+            <span>Your name (optional)</span>
             <input value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label className="field">
-            <span>Phone / email (optional)</span>
+            <span>Phone or email for the reply (optional)</span>
             <input value={contact} onChange={(e) => setContact(e.target.value)} />
           </label>
         </div>
         <button className="primary" disabled={running || recording || (text.trim().length < 10 && !files.length)} onClick={submit}>
-          {running ? 'Agents working…' : 'Submit complaint'}
+          {running ? 'Sending…' : 'Send report'}
         </button>
         {error && <p className="error">{error}</p>}
-      </Card>
-
-      <Card title="What the agents decide" icon="spark" className="pipeline"
-        action={ticketId && <code className="tid">{ticketId}</code>}>
-        {!running && !steps.length && (
-          <div className="empty">
-            <PipelineArt />
-            <p>Submit a complaint to watch four agents read it, judge urgency, apply the agency’s rules and draft a reply, live.</p>
-          </div>
-        )}
-        <ol className="steps">
-          {order.map((a, i) => {
-            const s = byAgent[a]
-            const state = s ? 'done' : i === activeIdx ? 'active' : 'idle'
-            const kindClass = a === 'policy_agent' || a === 'sop_agent' ? 'rules' : ''
-            if (!running && !steps.length) return null
-            return (
-              <li key={a} className={`step ${state} ${kindClass}`}>
-                <div className="dot" aria-hidden="true">{s ? <Icon name="check" size={14} /> : i + 1}</div>
-                <div className="body">
-                  <div className="step-h">
-                    <b>{AGENT_META[a].label}</b>
-                    <span className="muted">{AGENT_META[a].role}</span>
-                    {s && <span className="ms">{s.kind === 'llm' ? `${(s.ms / 1000).toFixed(1)} s` : s.kind === 'search' ? 'search, no AI' : 'rules'}</span>}
-                  </div>
-                  {state === 'active' && <div className="shimmer" />}
-                  {s && <StepOutput agent={a} out={s.output} />}
-                </div>
-              </li>
-            )
-          })}
-        </ol>
-        {ticket && (
-          <div className={`outcome route-${ticket.status}`}>
-            <Icon name={ticket.status === 'escalated' ? 'alert' : 'check'} />
-            <div>
-              <b>{ticket.status === 'escalated' ? `Escalated: ${agency.escalation_contact} alerted` :
-                ticket.status === 'manual_review' ? 'Sent to manual review' :
-                  `Assigned to ${agency.queues[ticket.policy?.queue ?? ''] ?? ticket.policy?.queue}`}</b>
-              <span>Drafted reply is waiting for an officer to approve it.</span>
-            </div>
-            <a className="btn" href={`#/console/${ticket.id}`}>Open in console →</a>
-          </div>
-        )}
-      </Card>
+        <p className="muted small"><Icon name="shield" size={12} /> Your name, phone and ID numbers are hidden from staff by default.</p>
+      </section>
     </div>
   )
 }
@@ -336,31 +386,5 @@ function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] })
       <pre className="draft">{o.reply}</pre>
       <p className="muted"><b>Next step for officer:</b> {o.next_step}</p>
     </div>
-  )
-}
-
-function PipelineArt() {
-  return (
-    <svg viewBox="0 0 360 120" className="art" role="img" aria-label="Messages flow through four agents into queues">
-      <g fill="none" stroke="var(--line)" strokeWidth="2">
-        <path d="M40 30 C90 30 90 60 130 60 M40 60 H130 M40 90 C90 90 90 60 130 60" />
-        <path d="M290 60 C310 60 310 30 330 30 M290 60 H330 M290 60 C310 60 310 90 330 90" />
-      </g>
-      {[[28, 30, 'chat'], [28, 60, 'mail'], [28, 90, 'globe']].map(([x, y]) => (
-        <circle key={`${x}-${y}`} cx={x as number} cy={y as number} r="11" fill="var(--surface-2)" stroke="var(--line)" />
-      ))}
-      {[0, 1, 2, 3].map((i) => (
-        <g key={i}>
-          <rect x={132 + i * 40} y="44" width="32" height="32" rx="9"
-            fill={i === 2 ? 'var(--surface-2)' : 'var(--brand)'} stroke={i === 2 ? 'var(--brand)' : 'none'} strokeWidth="2" />
-          <circle cx={148 + i * 40} cy="60" r="5" fill={i === 2 ? 'var(--brand)' : 'var(--accent)'}>
-            <animate attributeName="opacity" values="1;.3;1" dur="1.6s" begin={`${i * 0.4}s`} repeatCount="indefinite" />
-          </circle>
-        </g>
-      ))}
-      <circle cx="336" cy="30" r="7" fill="var(--crit)" />
-      <circle cx="336" cy="60" r="7" fill="var(--brand)" />
-      <circle cx="336" cy="90" r="7" fill="var(--muted)" />
-    </svg>
   )
 }
