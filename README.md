@@ -6,7 +6,7 @@ Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build
 
 - Live prototype: https://embrace--embrace-23a9c.asia-southeast1.hosted.app
 - Demo video: _coming soon_
-- Pitch deck: [`docs/submission/Embrace - AI Builder Cup.pptx`](docs/submission/)
+- Pitch deck: [`docs/submission/`](docs/submission/) (PPTX and PDF), brief description in [`docs/submission/description.md`](docs/submission/description.md)
 
 > Prototype with synthetic data only. Agencies, SOPs and complaints in the two sample packs are fictional; the Indonesia pack uses real public regulations.
 
@@ -25,6 +25,8 @@ Public complaint desks for children and vulnerable families get every kind of me
 | 4 | SOP lookup (code) | BM25 search over the agency's SOP documents; no AI tokens. |
 | 5 | Reply drafter (Gemini) | Reply in the citizen's language with ticket number, team, response time in hours, and only procedures from the SOP passages, cited [1], [2]. Waits for officer approval. |
 | – | Analyst agent (Gemini + tools) | Answers leaders' questions and writes the weekly brief by calling tools over live Firestore data (`get_overview`, `find_clusters`, `search_tickets`). |
+
+![Report screen with the live agent trace](docs/screenshots/intake.png)
 
 Three screens: **Report** (citizen form with sample complaints, voice recording and photo upload, live agent trace), **Officer console** (escalation inbox, masked complaint, editable draft with sources, "Approve & send", agent trace explaining every decision, Ask-the-SOP search) and **Insights** (KPIs, AI weekly brief, ask-the-analyst, early-warning clusters, category trends).
 
