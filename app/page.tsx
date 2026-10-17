@@ -22,8 +22,8 @@ export default function Home() {
           <p className="lead">
             Embrace is an open-source team of AI agents for any social services complaint desk: social aid, disability and
             elderly care, homelessness, disaster relief, violence and child protection. The demo runs two Indonesian desks,
-            DINSOS Demak and KPAI, with their own units, service flows and regulations; any agency, in any country and
-            language, can be added from the main menu.
+            the Demak Regency Social Affairs Office and the Indonesian Child Protection Commission (KPAI), with their own
+            units, service flows and regulations; any agency, in any country and language, can be added from the main menu.
           </p>
         </section>
         <AgencyPicker />
