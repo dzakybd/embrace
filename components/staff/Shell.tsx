@@ -1,7 +1,7 @@
 'use client'
 
 import Link from 'next/link'
-import { usePathname } from 'next/navigation'
+import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Brand, Footer } from '../Brand'
 import { Icon, ago } from '../ui'
@@ -13,12 +13,23 @@ const ROLES = [
   { id: 'officer', label: 'Caseworkers' },
 ]
 
-const NAV = [
-  { href: '/staff/inbox', label: 'Inbox', icon: 'inbox' },
-  { href: '/staff/insights', label: 'Insights', icon: 'chart' },
-  { href: '/staff/knowledge', label: 'Knowledge', icon: 'book' },
-  { href: '/staff/team', label: 'Team', icon: 'user' },
+type Role = 'leader' | 'supervisor' | 'officer'
+
+/** What each role sees: caseworkers work their cases, the duty supervisor runs the desk, the head of office watches trends. */
+const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
+  { href: '/staff/insights', label: 'Insights', icon: 'chart', roles: ['leader'] },
+  { href: '/staff/inbox', label: 'Inbox', icon: 'inbox', roles: ['leader', 'supervisor', 'officer'] },
+  { href: '/staff/team', label: 'Team', icon: 'user', roles: ['leader', 'supervisor'] },
+  { href: '/staff/knowledge', label: 'Knowledge', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
 ]
+
+export const HOME: Record<Role, string> = { leader: '/staff/insights', supervisor: '/staff/inbox', officer: '/staff/inbox' }
+
+function allowed(path: string, role: Role) {
+  if (path.startsWith('/staff/cases')) return true
+  const item = NAV.find((n) => path.startsWith(n.href))
+  return !item || item.roles.includes(role)
+}
 
 export function StaffShell({ children }: { children: ReactNode }) {
   return (
@@ -30,14 +41,21 @@ export function StaffShell({ children }: { children: ReactNode }) {
 
 function Frame({ children }: { children: ReactNode }) {
   const path = usePathname()
+  const router = useRouter()
+  const { me } = useStaff()
+  const ok = allowed(path, me.role)
+  // Switching to an account without access to this page sends it to its own start page.
+  useEffect(() => {
+    if (!ok) router.replace(HOME[me.role])
+  }, [ok, me.role, router])
   return (
     <div className="staff">
       <header className="top">
-        <Brand sub="Staff workspace · switch role" href="/" />
+        <Brand sub="Staff workspace" href="/" />
         <Pickers />
       </header>
       <nav className="rail" aria-label="Staff">
-        {NAV.map((n) => {
+        {NAV.filter((n) => n.roles.includes(me.role)).map((n) => {
           const on = path.startsWith(n.href) || (n.href === '/staff/inbox' && path.startsWith('/staff/cases'))
           return (
             <Link key={n.href} href={n.href} className={on ? 'on' : ''} aria-current={on ? 'page' : undefined}>
@@ -51,22 +69,19 @@ function Frame({ children }: { children: ReactNode }) {
           <span>Citizen form</span>
         </Link>
       </nav>
-      <main className="staff-main">{children}</main>
+      <main className="staff-main">{ok ? children : null}</main>
       <Footer />
     </div>
   )
 }
 
 function Pickers() {
-  const { agencies, agency, me, pickAgency, pickMe } = useStaff()
+  const { agency, me, pickMe } = useStaff()
   return (
     <div className="pickers">
-      <label className="tenant">
-        <span>Agency</span>
-        <select value={agency.id} onChange={(e) => pickAgency(e.target.value)}>
-          {agencies.map((a) => <option key={a.id} value={a.id}>{a.short_name}</option>)}
-        </select>
-      </label>
+      <Link href="/" className="agency-chip" title={`${agency.name} · change agency on the main menu`}>
+        <Icon name="building" size={16} /> <span>{agency.short_name}</span>
+      </Link>
       <Bell />
       <label className="tenant persona" title="Demo sign-in: switch between team members">
         <span className="avatar" aria-hidden="true">{me.name[0]}</span>

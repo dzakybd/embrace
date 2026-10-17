@@ -41,7 +41,7 @@ export default function Case({ id }: { id: string }) {
   if (missing) return <div className="page"><p className="muted">Case {id} not found. <Link href="/staff/inbox">Back to inbox</Link></p></div>
   if (failed) return <div className="page"><p className="muted">Could not load case {id}. <button className="ghost small" onClick={() => location.reload()}>Try again</button></p></div>
   if (!t) return <div className="page"><div className="shimmer tall" /></div>
-  if (t.agency_id !== agency.id) return <div className="page"><p className="muted">This case belongs to another agency. Switch agency in the top bar.</p></div>
+  if (t.agency_id !== agency.id) return <div className="page"><p className="muted">This case belongs to another agency. <Link href="/">Switch agency on the main menu</Link>.</p></div>
 
   const act = async (action: string, extra: Record<string, string> = {}) => {
     setBusy(true)
@@ -52,6 +52,8 @@ export default function Case({ id }: { id: string }) {
       setBusy(false)
     }
   }
+  // The head of office reads cases; caseworkers and the duty supervisor act on them.
+  const readOnly = me.role === 'leader'
   const category = agency.categories.find((c) => c.id === t.triage?.category)
   const sla = t.status === 'resolved' ? null : slaLeft(t.created_at, t.policy?.sla_hours, t.responded_at)
 
@@ -89,11 +91,11 @@ export default function Case({ id }: { id: string }) {
         <div className="case-grid">
           <div className="col">
             <Report t={t} />
-            <Reply t={t} busy={busy} act={act} />
+            <Reply t={t} busy={busy} act={act} readOnly={readOnly} />
           </div>
           <div className="col">
-            <Pic t={t} agency={agency} me={me} busy={busy} act={act} />
-            <Card title="Actions" icon="rules">
+            <Pic t={t} agency={agency} me={me} busy={busy} act={act} readOnly={readOnly} />
+            {!readOnly && <Card title="Actions" icon="rules">
               <div className="actions">
                 {t.status !== 'in_progress' && t.status !== 'resolved' && <button disabled={busy} onClick={() => act('start')}>Start handling</button>}
                 {t.status !== 'resolved'
@@ -106,7 +108,7 @@ export default function Case({ id }: { id: string }) {
                   {Object.entries(agency.queues).map(([qid, name]) => <option key={qid} value={qid}>{name}</option>)}
                 </select>
               </label>
-            </Card>
+            </Card>}
             {t.draft?.next_step && (
               <Card title="Suggested next step" icon="spark"><p className="small-body">{t.draft.next_step}</p></Card>
             )}
@@ -151,7 +153,7 @@ function Report({ t }: { t: Ticket }) {
   )
 }
 
-function Reply({ t, busy, act }: { t: Ticket; busy: boolean; act: (a: string, e?: Record<string, string>) => Promise<void> }) {
+function Reply({ t, busy, act, readOnly }: { t: Ticket; busy: boolean; act: (a: string, e?: Record<string, string>) => Promise<void>; readOnly: boolean }) {
   const [reply, setReply] = useState(t.sent_reply || t.draft?.reply || '')
   return (
     <Card title="Reply to citizen" icon="send">
@@ -164,21 +166,23 @@ function Reply({ t, busy, act }: { t: Ticket; busy: boolean; act: (a: string, e?
         <>
           <p className="muted small"><Icon name="spark" size={13} /> Drafted by AI from the agency&apos;s SOP. Edit freely; nothing is sent until you approve.
             {t.telegram_chat_id && <> Approving sends it to the citizen&apos;s <b>Telegram</b> chat.</>}</p>
-          <textarea rows={9} value={reply} onChange={(e) => setReply(e.target.value)} aria-label="Reply draft" />
+          <textarea rows={9} value={reply} onChange={(e) => setReply(e.target.value)} aria-label="Reply draft" readOnly={readOnly} />
           {t.sop && t.sop.length > 0 && (
             <details className="sources"><summary>Sources cited in this draft ({t.sop.length})</summary><Citations items={t.sop} /></details>
           )}
-          <button className="primary" disabled={busy || !reply.trim()} onClick={() => act('send_reply', { reply })}>
-            <Icon name="send" size={14} /> Approve &amp; send
-          </button>
+          {readOnly
+            ? <p className="muted small">Read only: the caseworker in charge or the duty supervisor approves replies.</p>
+            : <button className="primary" disabled={busy || !reply.trim()} onClick={() => act('send_reply', { reply })}>
+              <Icon name="send" size={14} /> Approve &amp; send
+            </button>}
         </>
       ) : <p className="muted">No draft for this case (historical record).</p>}
     </Card>
   )
 }
 
-function Pic({ t, agency, me, busy, act }: {
-  t: Ticket; agency: Agency; me: TeamMember; busy: boolean; act: (a: string, e?: Record<string, string>) => Promise<void>
+function Pic({ t, agency, me, busy, act, readOnly }: {
+  t: Ticket; agency: Agency; me: TeamMember; busy: boolean; act: (a: string, e?: Record<string, string>) => Promise<void>; readOnly: boolean
 }) {
   const [to, setTo] = useState('')
   const [note, setNote] = useState('')
@@ -192,7 +196,7 @@ function Pic({ t, agency, me, busy, act }: {
           <div className="muted small">{pic?.title}</div>
         </div>
       </div>
-      <form className="delegate" onSubmit={(e) => { e.preventDefault(); if (to) act('assign', { assignee: to, note }).then(() => { setTo(''); setNote('') }) }}>
+      {!readOnly && <><form className="delegate" onSubmit={(e) => { e.preventDefault(); if (to) act('assign', { assignee: to, note }).then(() => { setTo(''); setNote('') }) }}>
         <label className="field">
           <span>Delegate to</span>
           <select value={to} onChange={(e) => setTo(e.target.value)} disabled={busy}>
@@ -206,7 +210,7 @@ function Pic({ t, agency, me, busy, act }: {
         </label>
         <button className="primary" disabled={busy || !to}>Delegate</button>
       </form>
-      <p className="muted small">They are notified through Pub/Sub and find the case under My cases.</p>
+      <p className="muted small">They are notified through Pub/Sub and find the case under My cases.</p></>}
     </Card>
   )
 }

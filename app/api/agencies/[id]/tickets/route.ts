@@ -1,4 +1,4 @@
-import { getAgency } from '@/lib/agencies'
+import { agencyById } from '@/lib/agencies'
 import { slaBreached } from '@/lib/analytics'
 import { error } from '@/lib/http'
 import { ensureSeeded } from '@/lib/seed'
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  if (!getAgency(id)) return error(404, 'unknown agency')
+  if (!(await agencyById(id))) return error(404, 'unknown agency')
   await ensureSeeded(STORE, id)
   const rows = (await STORE.list(id)).map((t) => ({
     id: t.id,

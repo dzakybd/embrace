@@ -7,38 +7,38 @@ import { useAgencies } from '../useAgencies'
 import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Citations, Icon, TELEGRAM_URL, UrgencyBadge } from '../ui'
 
 const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[]> = {
-  child_protection: [
+  dinsos_demak: [
     {
-      label: 'Child in danger (WhatsApp)',
+      label: 'Tidal flood, no food (WhatsApp)',
       channel: 'whatsapp',
-      text: 'pls help, my nephew is 9 and his stepdad hits him with a belt, yesterday his back was bleeding. they still live together in Eastfield. im scared it happens again tonight. my number 0812 3345 7781',
+      text: 'Pak tolong, rob masuk rumah kami di Desa Bedono Sayung sejak subuh, air sudah selutut dan terus naik. Bapak saya pakai kursi roda, kami belum bisa mengungsi dan dari pagi belum makan.',
     },
     {
-      label: 'School bullying, Spanish (email)',
-      channel: 'email',
-      text: 'Hola, mi hija está en 4º grado en Riverside Primary y lleva dos semanas sin querer ir a la escuela porque los niños mayores la acosan. Ya avisamos a la maestra pero no hicieron nada. ¿Qué podemos hacer? Gracias, Ana Torres',
+      label: 'BPNT not received (web)',
+      channel: 'web',
+      text: 'Saya warga Desa Wonosalam RT 03. BPNT tahap ini belum masuk ke KKS saya, padahal tetangga satu RT sudah bisa ambil di e-warong. Mohon dicek apakah nama saya masih terdaftar di DTSEN.',
     },
     {
-      label: 'Info request (social)',
+      label: 'Elderly, Javanese (social)',
       channel: 'social',
-      text: 'Hi admin, can your office also advise on child custody after a divorce? What are your opening hours?',
+      text: 'Nuwun sewu, simbah kulo sampun sepuh tur mboten saged mlampah, tasih urung pikantuk bantuan nopo-nopo. Pripun carane ndaftar? Kulo saking Karangtengah.',
     },
   ],
-  social_services: [
+  kpai: [
     {
-      label: 'Family without food, Tagalog (WhatsApp)',
+      label: 'Child beaten at home (WhatsApp)',
       channel: 'whatsapp',
-      text: 'Magandang araw po, nanay po ako ng 3 anak sa Southbank. Tatlong buwan na po hindi dumarating ang cash grant namin, ubos na po ang bigas ngayon, wala na po kaming maluto para sa mga bata. May sakit pa po ang asawa ko.',
+      text: 'Tolong KPAI, anak tetangga saya umur 8 tahun dipukuli ayah tirinya pakai ikat pinggang sampai punggungnya berdarah. Mereka masih tinggal serumah di Bekasi. Saya takut malam ini terjadi lagi.',
     },
     {
-      label: 'Food voucher missing (web)',
-      channel: 'web',
-      text: 'I live on Maple Street in Northgate. My food voucher for this month has not arrived on my card, but my neighbours on the same street already collected theirs at the shop. Please check if I am still on the list.',
+      label: 'Sextortion via online game (social)',
+      channel: 'social',
+      text: '@KPAI_official anak saya 13 thn diancam orang yg dikenal lewat game online, fotonya mau disebar kalau tidak kirim foto lagi. Kami harus bagaimana?',
     },
     {
-      label: 'Flood, no shelter tonight (WhatsApp)',
-      channel: 'whatsapp',
-      text: 'water is inside our house in Riverbend and still rising, my father is in a wheelchair. we have nowhere to go tonight. please help us',
+      label: 'Child support unpaid, English (email)',
+      channel: 'email',
+      text: 'Dear KPAI, my ex-husband in Surabaya has not paid the child support ordered by the religious court for 8 months. Our two children are 5 and 9. What can I do to protect their rights?',
     },
   ],
 }

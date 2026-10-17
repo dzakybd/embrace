@@ -1,4 +1,4 @@
-import { getAgency } from '@/lib/agencies'
+import { agencyById } from '@/lib/agencies'
 import { error } from '@/lib/http'
 import { STORE } from '@/lib/store'
 
@@ -8,7 +8,7 @@ export const dynamic = 'force-dynamic'
 export async function GET(_req: Request, { params }: { params: Promise<{ id: string }> }) {
   const t = await STORE.get((await params).id)
   if (!t) return error(404, 'not found')
-  const agency = getAgency(t.agency_id)!
+  const agency = (await agencyById(t.agency_id))!
   return Response.json({
     id: t.id,
     agency: agency.name,

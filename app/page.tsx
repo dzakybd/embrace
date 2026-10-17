@@ -1,10 +1,11 @@
 import Link from 'next/link'
+import { AgencyPicker } from '@/components/AgencyPicker'
 import { Brand, Footer } from '@/components/Brand'
 import { Icon, TELEGRAM_URL } from '@/components/ui'
 
 const ROLES = [
   { href: '/report', icon: 'send', title: 'I need help', who: 'Citizen', body: 'Report a problem in your own words and language: chat with us on Telegram, or use the web form. Voice notes and photos welcome.', main: true },
-  { href: '/staff/inbox?as=officer', icon: 'inbox', title: 'Handle my cases', who: 'Caseworker (person in charge)', body: 'Cases assigned to you, AI-drafted replies citing the SOP, delegation and notifications.' },
+  { href: '/staff/inbox?as=officer', icon: 'inbox', title: 'Handle my cases', who: 'Caseworker (person in charge)', body: 'Your cases and your team’s queue, AI-drafted replies citing the agency’s documents, delegation and notifications.' },
   { href: '/staff/inbox?as=supervisor', icon: 'alert', title: 'Watch escalations', who: 'Duty supervisor', body: 'Emergencies first: the escalation inbox, alerts delivered in seconds, delegate cases to caseworkers.' },
   { href: '/staff/insights?as=leader', icon: 'chart', title: 'See the big picture', who: 'Head of office', body: 'KPIs, an AI weekly brief, early warnings when reports cluster, and an analyst to ask.' },
 ]
@@ -20,10 +21,12 @@ export default function Home() {
           <h1>Any social complaint, read, routed and answered within minutes</h1>
           <p className="lead">
             Embrace is an open-source team of AI agents for any social services complaint desk: social aid, disability and
-            elderly care, homelessness, disaster relief, violence and child protection. Each agency plugs in its own categories,
-            rules and procedures; citizens write in their own words and language.
+            elderly care, homelessness, disaster relief, violence and child protection. The demo runs two Indonesian desks,
+            DINSOS Demak and KPAI, with their own units, service flows and regulations; any agency, in any country and
+            language, can be added from the main menu.
           </p>
         </section>
+        <AgencyPicker />
         <h2 className="pick-h">Who are you?</h2>
         <section className="roles" aria-label="Choose your role">
           {ROLES.map((r) => r.main ? (
@@ -47,7 +50,7 @@ export default function Home() {
             </Link>
           ))}
         </section>
-        <p className="muted small center">Demo: no passwords. Staff can switch role or person any time from the top bar. Synthetic data only. Built with Google ADK and Gemini on Firebase App Hosting, Firestore, Pub/Sub and Cloud Functions.</p>
+        <p className="muted small center">Demo: no passwords. Staff can switch account from the top bar; each role sees its own menu. Synthetic data only. Built with Google ADK and Gemini on Firebase App Hosting, Firestore, Pub/Sub and Cloud Functions.</p>
       </main>
       <Footer />
     </div>

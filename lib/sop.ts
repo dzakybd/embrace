@@ -1,4 +1,6 @@
 // SOP lookup without model tokens: BM25 over the agency's SOP passages (built by scripts/build-sop-index.mjs).
+import dinsosDemak from '@/agencies/dinsos_demak/sop-index.json'
+import kpai from '@/agencies/kpai/sop-index.json'
 import childProtection from '@/agencies/child_protection/sop-index.json'
 import socialServices from '@/agencies/social_services/sop-index.json'
 
@@ -23,6 +25,8 @@ interface IndexFile {
 }
 
 const FILES: Record<string, IndexFile> = {
+  dinsos_demak: dinsosDemak,
+  kpai,
   child_protection: childProtection,
   social_services: socialServices,
 }
@@ -48,6 +52,18 @@ const SYNONYMS: Record<string, string[]> = {
   kdrt: ['kekerasan', 'rumah', 'tangga'],
   dipukul: ['kekerasan', 'fisik'],
   dicabuli: ['kekerasan', 'seksual'],
+  dipukuli: ['kekerasan', 'fisik', 'penganiayaan'],
+  dinikahkan: ['pernikahan', 'usia', 'dini', 'perkawinan'],
+  nikah: ['pernikahan', 'perkawinan'],
+  nafkah: ['biaya', 'pemeliharaan', 'kewajiban', 'orang', 'tua'],
+  cerai: ['perceraian', 'pengasuhan', 'orang', 'tua'],
+  rob: ['bencana', 'banjir'],
+  banjir: ['bencana'],
+  odgj: ['gangguan', 'jiwa', 'tuna', 'sosial', 'terlantar'],
+  dipasung: ['pasung', 'gangguan', 'jiwa'],
+  bpjs: ['pbi', 'uhc', 'jaminan', 'kesehatan'],
+  uhc: ['pbi', 'jaminan', 'kesehatan'],
+  adopsi: ['pengangkatan', 'anak'],
   agen: ['warong'],
   hit: ['physical', 'abuse', 'injury'],
   beaten: ['physical', 'abuse', 'injury'],
@@ -127,6 +143,45 @@ export function indexFor(agencyId: string): SopIndex {
     cache.set(agencyId, idx)
   }
   return idx
+}
+
+/** Documents of an agency created in the app (built at upload time, see passagesFor). */
+export function registerDocs(agencyId: string, docs: IndexFile): void {
+  FILES[agencyId] = docs
+  cache.delete(agencyId)
+}
+
+const CHUNK = 900
+const OVERLAP = 150
+
+/** Same chunking as scripts/build-sop-index.mjs: ~900 characters, cut at a sentence end, 150 overlap. */
+function chunks(text: string): string[] {
+  text = text.split(/\s+/).join(' ').trim()
+  if (text.length <= CHUNK) return text ? [text] : []
+  const out: string[] = []
+  let start = 0
+  while (start < text.length) {
+    let end = Math.min(text.length, start + CHUNK)
+    if (end < text.length) {
+      const cut = text.lastIndexOf('. ', end)
+      if (cut > start + CHUNK / 2) end = cut + 1
+    }
+    out.push(text.slice(start, end).trim())
+    if (end >= text.length) break
+    start = Math.max(end - OVERLAP, start + 1)
+  }
+  return out
+}
+
+/** Passages of one uploaded document: "## " sections for Markdown, pages for PDFs, else the whole text. */
+export function passagesFor(src: Source, units: { loc: string; text: string }[]): Passage[] {
+  return units.flatMap((u) => chunks(u.text).map((text) => ({ doc: src.short, title: src.title, url: src.url, loc: u.loc, text })))
+}
+
+export function markdownUnits(text: string): { loc: string; text: string }[] {
+  const parts = text.split(/^## /m)
+  if (parts.length < 2) return [{ loc: 'text', text }]
+  return parts.slice(1).map((s) => ({ loc: `section ${s.split('.')[0].slice(0, 40)}`, text: s }))
 }
 
 export function sourcesFor(agencyId: string): Source[] {

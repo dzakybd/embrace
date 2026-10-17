@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { getAgency } from '@/lib/agencies'
+import { agencyById } from '@/lib/agencies'
 import { error, rateLimit } from '@/lib/http'
 import { submit } from '@/lib/service'
 
@@ -27,7 +27,7 @@ const Body = z
 /** Streams agent progress as Server-Sent Events; the final `done` event carries the ticket. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  if (!getAgency(id)) return error(404, 'unknown agency')
+  if (!(await agencyById(id))) return error(404, 'unknown agency')
   const parsed = Body.safeParse(await req.json().catch(() => null))
   if (!parsed.success) return error(422, parsed.error.issues[0]?.message ?? 'invalid body')
   const limited = rateLimit(req, 'complaint', 20)

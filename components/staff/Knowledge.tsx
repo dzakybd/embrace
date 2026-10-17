@@ -6,8 +6,8 @@ import { Card, Citations, Icon } from '../ui'
 import { useStaff } from './StaffProvider'
 
 const EXAMPLES: Record<string, string[]> = {
-  social_services: ['what to do when a payment is late', 'flood relief claim', 'illegal fee by a shop agent'],
-  child_protection: ['child injured by a parent', 'sextortion online', 'school withholding report card'],
+  dinsos_demak: ['syarat surat keterangan terdaftar DTSEN', 'bantuan korban banjir rob', 'pungutan liar e-warong'],
+  kpai: ['pengaduan online 3 x 24 jam', 'terminasi kasus', 'perlindungan khusus anak korban kekerasan seksual'],
 }
 
 export default function Knowledge() {

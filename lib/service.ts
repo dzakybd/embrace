@@ -2,7 +2,7 @@
 import { InMemoryRunner, type Event } from '@google/adk'
 import type { Part } from '@google/genai'
 import { randomBytes } from 'node:crypto'
-import { getAgency, picFor, supervisor, type Agency } from './agencies'
+import { agencyById, picFor, supervisor, type Agency } from './agencies'
 import { analystAgent } from './agents/analyst'
 import { STEP_KEYS, initialState, pipeline } from './agents/pipeline'
 import { publish } from './events'
@@ -38,7 +38,7 @@ export async function* submit(
   media: { mime: string; data: string }[],
   opts: { noAi?: string; telegramChatId?: string } = {},
 ): AsyncGenerator<SubmitEvent> {
-  const agency = getAgency(agencyId)!
+  const agency = (await agencyById(agencyId))!
   const id = newTicketId(agency)
   const ts = now()
   let ticket: Ticket = {
@@ -165,7 +165,7 @@ export async function act(id: string, action: string, officer: string, note = ''
     fields.status = 'assigned'
     label = `Reassigned to ${queue}`
   }
-  const agency = getAgency(t.agency_id)!
+  const agency = (await agencyById(t.agency_id))!
   if (action === 'reassign' && queue) fields.assignee = picFor(agency, queue).id
   const member = agency.team.find((m) => m.id === (action === 'assign' ? assignee : fields.assignee))
   if (action === 'assign') {
@@ -182,7 +182,7 @@ export async function act(id: string, action: string, officer: string, note = ''
 }
 
 export async function askAnalyst(agencyId: string, question: string) {
-  const agency = getAgency(agencyId)!
+  const agency = (await agencyById(agencyId))!
   const toolsUsed: string[] = []
   let answer = ''
   const events = analystRunner.runEphemeral({

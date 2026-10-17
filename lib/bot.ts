@@ -1,13 +1,12 @@
 // Telegram desk. The webhook answers commands, filters noise and enforces limits with plain code (no AI);
 // only a real report reaches the AI pipeline, as a Pub/Sub job so the webhook can return at once.
-import { AGENCIES, getAgency } from './agencies'
+import { AGENCIES, DEFAULT_AGENCY, getAgency, liveAgencies, loadAgencies } from './agencies'
 import { publishTo, pubsubOn } from './events'
 import { addFollowup, submit } from './service'
 import { STORE, now, type ChatState } from './store'
 import { answerCallback, download, esc, send, typing, type Button, type TgMessage, type TgUpdate } from './telegram'
 
 export const JOB_TOPIC = 'telegram-reports'
-const DEFAULT_AGENCY = 'social_services'
 const FOLLOWUP_WINDOW_MS = 24 * 3600_000
 const MIN = 60_000
 const HOUR = 3600_000
@@ -41,7 +40,9 @@ async function say(chatId: string | number, text: string, buttons?: Button[][]) 
   }
 }
 
-const agencyButtons = (): Button[][] => Object.values(AGENCIES).map((a) => [{ text: a.short_name, callback_data: `agency:${a.id}` }])
+/** A live agency (templates and deleted agencies fall back to the default office). */
+const live = (id: string) => { const a = getAgency(id); return a && !a.template ? a : AGENCIES[DEFAULT_AGENCY] }
+const agencyButtons = (): Button[][] => liveAgencies().map((a) => [{ text: a.short_name, callback_data: `agency:${a.id}` }])
 const menu = (): Button[][] => [
   [{ text: 'New report', callback_data: 'new' }, { text: 'Track my report', callback_data: 'track' }],
   [{ text: 'Emergency numbers', callback_data: 'emergency' }, { text: 'Change office', callback_data: 'office' }],
@@ -59,7 +60,7 @@ async function welcome(chatId: string) {
 }
 
 async function emergency(chatId: string, agencyId: string) {
-  const a = getAgency(agencyId) ?? AGENCIES[DEFAULT_AGENCY]
+  const a = live(agencyId)
   await say(chatId, `If anyone is in danger right now, call ${esc(a.emergency_line)}. Then tell us what happened here; urgent reports alert a supervisor at once.`)
 }
 
@@ -70,13 +71,14 @@ async function track(chatId: string, state: ChatState, id?: string) {
     await say(chatId, 'No open report found for this chat. Send /new to make one.')
     return
   }
-  const a = getAgency(t.agency_id)!
+  const a = live(t.agency_id)
   const status = t.resolved_at ? 'resolved' : t.responded_at ? 'replied, still open' : t.status === 'escalated' ? 'urgent, a supervisor has been alerted' : 'with the team'
   await say(chatId, `Report <b>${t.id}</b>: ${status}.\nTeam: ${esc(t.policy ? a.queues[t.policy.queue] ?? '' : '')}`, [[{ text: 'Open status page', url: `${publicUrl()}/track/${t.id}` }]])
 }
 
 /** Handles one webhook update without any model call. Returns a job when the AI pipeline should run. */
 export async function handleUpdate(u: TgUpdate): Promise<ReportJob | null> {
+  await loadAgencies()
   if (!(await STORE.claim(`tg-${u.update_id}`))) return null // Telegram retried an update we already handled
 
   if (u.callback_query) {
@@ -85,8 +87,8 @@ export async function handleUpdate(u: TgUpdate): Promise<ReportJob | null> {
     const chatId = String(cq.message?.chat.id ?? cq.from.id)
     const state = await chatState(chatId)
     const data = cq.data ?? ''
-    if (data.startsWith('agency:') && getAgency(data.slice(7))) {
-      const a = getAgency(data.slice(7))!
+    if (data.startsWith('agency:') && live(data.slice(7)).id === data.slice(7)) {
+      const a = live(data.slice(7))
       await STORE.setChat(chatId, { agency_id: a.id, awaiting: 'report', open_ticket: null })
       await say(chatId, `Your report goes to <b>${esc(a.name)}</b>.\nTell us what happened, where and when. You can also send a voice note or a photo.`)
     } else if (data === 'new') {
@@ -133,7 +135,7 @@ export async function handleUpdate(u: TgUpdate): Promise<ReportJob | null> {
     await say(chatId, 'Please describe the problem in words, a voice note or a photo.')
     return null
   }
-  const agency = getAgency(state.agency_id) ?? AGENCIES[DEFAULT_AGENCY]
+  const agency = live(state.agency_id)
   const lowered = text.toLowerCase()
   if ([...DANGER, ...agency.escalation.keywords].some((k) => lowered.includes(k))) await emergency(chatId, agency.id)
 
@@ -176,6 +178,7 @@ export async function dispatch(job: ReportJob) {
 
 /** Runs the AI pipeline for a Telegram report and tells the citizen where it went. */
 export async function processReport(job: ReportJob) {
+  await loadAgencies()
   if (!(await STORE.claim(`job-${job.update_id}`))) return // Pub/Sub redelivery
   const media: { mime: string; data: string }[] = []
   for (const f of job.media) {
@@ -187,7 +190,7 @@ export async function processReport(job: ReportJob) {
     if (ev.type === 'done') ticket = ev.ticket
   }
   if (!ticket?.policy) return
-  const a = getAgency(job.agency_id)!
+  const a = live(job.agency_id)
   await STORE.setChat(job.chat_id, { open_ticket: ticket.id, open_since: now(), awaiting: null })
   const urgent = ticket.policy.route === 'escalated'
   await say(job.chat_id,

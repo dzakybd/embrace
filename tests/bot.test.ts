@@ -31,7 +31,7 @@ describe('telegram bot gatekeeping (no AI)', () => {
 
   it('queues a real report as a job for the AI pipeline', async () => {
     const job = await handleUpdate(msg(REPORT))
-    expect(job).toMatchObject({ chat_id: String(chat), agency_id: 'social_services', text: REPORT })
+    expect(job).toMatchObject({ chat_id: String(chat), agency_id: 'dinsos_demak', text: REPORT })
     expect(job?.no_ai).toBeUndefined()
   })
 
@@ -62,7 +62,7 @@ describe('telegram bot gatekeeping (no AI)', () => {
   })
 
   it('adds messages after a report to the open case instead of running AI again', async () => {
-    await STORE.setChat(String(chat), { agency_id: 'social_services', open_ticket: 'SS-TEST', open_since: new Date().toISOString(), awaiting: null })
+    await STORE.setChat(String(chat), { agency_id: 'dinsos_demak', open_ticket: 'SS-TEST', open_since: new Date().toISOString(), awaiting: null })
     expect(await handleUpdate(msg('Also, my card number ends in 1234 and the shop is on Maple Street.'))).toBeNull()
     expect(sent.at(-1)).toContain('Added to your report')
   })

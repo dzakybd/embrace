@@ -1,0 +1,164 @@
+{
+  "id": "kpai",
+  "code": "KPAI",
+  "name": "Komisi Perlindungan Anak Indonesia (KPAI)",
+  "short_name": "KPAI",
+  "country": "Indonesia",
+  "description": "Indonesian Child Protection Commission: receives complaints about violations of children's rights, assesses them, refers children to service providers (UPTD PPA, Dinas Sosial, police) and oversees how agencies follow up.",
+  "categories": [
+    {
+      "id": "physical_emotional_abuse",
+      "label": "Physical or psychological violence against a child (incl. bullying with injury)",
+      "queue": "pka_violence"
+    },
+    {
+      "id": "sexual_abuse",
+      "label": "Sexual crimes against a child",
+      "queue": "pka_violence"
+    },
+    {
+      "id": "children_in_conflict_with_law",
+      "label": "Children in conflict with the law (ABH), as offender, victim or witness",
+      "queue": "pka_violence"
+    },
+    {
+      "id": "exploitation_trafficking",
+      "label": "Child trafficking, child labour and economic or sexual exploitation",
+      "queue": "pka_exploitation"
+    },
+    {
+      "id": "online_harm",
+      "label": "Pornography and cybercrime (grooming, sextortion, abuse images, online bullying)",
+      "queue": "pka_exploitation"
+    },
+    {
+      "id": "family_care",
+      "label": "Family and alternative care (custody disputes, child support, access, adoption, neglect)",
+      "queue": "family"
+    },
+    {
+      "id": "education",
+      "label": "Education, leisure, culture and religion (school bullying, fees, right to school)",
+      "queue": "education"
+    },
+    {
+      "id": "health_nutrition",
+      "label": "Basic health and welfare (health services, nutrition, free school meals)",
+      "queue": "health"
+    },
+    {
+      "id": "other",
+      "label": "Civil rights and other (birth certificate, identity, participation, other)",
+      "queue": "pengaduan"
+    }
+  ],
+  "queues": {
+    "pka_violence": "Special Protection: violence, sexual crimes and children in conflict with the law",
+    "pka_exploitation": "Special Protection: trafficking, exploitation, pornography and cybercrime",
+    "family": "Family and alternative care",
+    "education": "Education, leisure, culture and religion",
+    "health": "Basic health and welfare",
+    "pengaduan": "Complaints unit (front desk and assessment)"
+  },
+  "escalation": {
+    "always_escalate_categories": [
+      "sexual_abuse",
+      "exploitation_trafficking"
+    ],
+    "escalate_flags": [
+      "child_safety",
+      "immediate_danger",
+      "self_harm"
+    ],
+    "keywords": [
+      "diperkosa",
+      "dicabuli",
+      "pelecehan",
+      "dijual",
+      "disekap",
+      "dikurung",
+      "bunuh diri",
+      "berdarah",
+      "luka parah",
+      "sekarang juga",
+      "dianiaya",
+      "raped",
+      "molested",
+      "being sold",
+      "locked up",
+      "suicide",
+      "bleeding"
+    ],
+    "escalation_contact": "Hendro Wibisono, duty supervisor (Complaints Coordinator)"
+  },
+  "sla_hours": {
+    "critical": 2,
+    "high": 24,
+    "normal": 72,
+    "low": 336
+  },
+  "emergency_line": "110 (police) or SAPA 129 (WhatsApp 08111-129-129); KPAI complaints 0811-1002-7727",
+  "reply_signature": "Divisi Pengaduan, Komisi Perlindungan Anak Indonesia (KPAI)",
+  "team": [
+    {
+      "id": "ratna",
+      "name": "Ratna Kusumawati",
+      "role": "leader",
+      "title": "Chairperson (Ketua KPAI)",
+      "queues": []
+    },
+    {
+      "id": "hendro",
+      "name": "Hendro Wibisono",
+      "role": "supervisor",
+      "title": "Duty supervisor, Complaints Coordinator",
+      "queues": []
+    },
+    {
+      "id": "putri",
+      "name": "Putri Ayuningtyas",
+      "role": "officer",
+      "title": "Caseworker (commissioner's assistant), Special Protection: violence",
+      "queues": [
+        "pka_violence"
+      ]
+    },
+    {
+      "id": "fajar",
+      "name": "Fajar Nugroho",
+      "role": "officer",
+      "title": "Caseworker (commissioner's assistant), Special Protection: exploitation & cyber",
+      "queues": [
+        "pka_exploitation"
+      ]
+    },
+    {
+      "id": "melati",
+      "name": "Melati Sari",
+      "role": "officer",
+      "title": "Caseworker (commissioner's assistant), Family & Alternative Care",
+      "queues": [
+        "family"
+      ]
+    },
+    {
+      "id": "yusuf",
+      "name": "Yusuf Hidayat",
+      "role": "officer",
+      "title": "Caseworker (commissioner's assistant), Education",
+      "queues": [
+        "education"
+      ]
+    },
+    {
+      "id": "rina",
+      "name": "Rina Marlina",
+      "role": "officer",
+      "title": "Caseworker (social worker), Complaints Unit, Health & Welfare",
+      "queues": [
+        "pengaduan",
+        "health"
+      ]
+    }
+  ]
+}

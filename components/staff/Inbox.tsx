@@ -8,6 +8,7 @@ import { useStaff } from './StaffProvider'
 
 const FILTERS = [
   { id: 'mine', label: 'My cases', icon: 'user' },
+  { id: 'team', label: 'My team', icon: 'inbox' },
   { id: 'escalated', label: 'Escalated', icon: 'alert' },
   { id: 'manual_review', label: 'Manual review', icon: 'eye' },
   { id: 'assigned', label: 'Assigned', icon: 'inbox' },
@@ -15,6 +16,12 @@ const FILTERS = [
   { id: 'resolved', label: 'Resolved', icon: 'check' },
   { id: '', label: 'All', icon: 'rules' },
 ]
+// Caseworkers see their own cases and their team's queue; the supervisor and the head see the whole desk.
+const ROLE_FILTERS = {
+  officer: ['mine', 'team', 'resolved'],
+  supervisor: ['escalated', 'manual_review', 'assigned', 'in_progress', 'resolved', ''],
+  leader: ['', 'escalated', 'in_progress', 'resolved'],
+}
 const URG_RANK = { critical: 0, high: 1, normal: 2, low: 3 }
 
 export default function Inbox() {
@@ -28,12 +35,18 @@ export default function Inbox() {
     setRows(null)
     load()
   }, [load])
-  useEffect(() => setFilter(me.role === 'supervisor' ? 'escalated' : me.role === 'leader' ? '' : 'mine'), [me.id, me.role])
+  useEffect(() => setFilter(ROLE_FILTERS[me.role][0]), [me.id, me.role])
 
   const names = Object.fromEntries(agency.team.map((m) => [m.id, m.name]))
-  const match = (r: Row, f: string) => (f === 'mine' ? r.assignee === me.id && r.status !== 'resolved' : !f || r.status === f)
+  const filters = ROLE_FILTERS[me.role].map((id) => FILTERS.find((f) => f.id === id)!)
+  const mineOrTeam = (r: Row) => r.assignee === me.id || me.queues.includes(r.queue ?? '')
+  const match = (r: Row, f: string) =>
+    f === 'mine' ? r.assignee === me.id && r.status !== 'resolved'
+      : f === 'team' ? me.queues.includes(r.queue ?? '') && r.status !== 'resolved'
+        : me.role === 'officer' && f === 'resolved' ? mineOrTeam(r) && r.status === 'resolved'
+          : !f || r.status === f
   const all = rows ?? []
-  const counts = Object.fromEntries(FILTERS.map((f) => [f.id, all.filter((r) => match(r, f.id)).length]))
+  const counts = Object.fromEntries(filters.map((f) => [f.id, all.filter((r) => match(r, f.id)).length]))
   const q = query.trim().toLowerCase()
   const shown = all
     .filter((r) => match(r, filter) && (!q || `${r.id} ${r.summary}`.toLowerCase().includes(q)))
@@ -53,7 +66,7 @@ export default function Inbox() {
         </button>
       </div>
       <div className="filters" role="tablist" aria-label="Case filters">
-        {FILTERS.map((f) => (
+        {filters.map((f) => (
           <button key={f.id} role="tab" aria-selected={filter === f.id} className={`filter ${filter === f.id ? 'on' : ''}`} onClick={() => setFilter(f.id)}>
             <Icon name={f.icon} size={16} /> {f.label}
             <b className={f.id === 'escalated' && counts[f.id] ? 'hot' : ''}>{counts[f.id]}</b>

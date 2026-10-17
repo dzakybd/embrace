@@ -8,7 +8,7 @@ Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build
 - Demo video: _coming soon_
 - Pitch deck: [`docs/submission/`](docs/submission/) (PPTX and PDF), brief description in [`docs/submission/description.md`](docs/submission/description.md)
 
-> Prototype with synthetic data only. Agencies, SOPs and complaints in the two sample packs are fictional.
+> Prototype with synthetic data only. The two demo agencies, Dinsos P2PA Kabupaten Demak and KPAI, use their real unit structure, published service flows and public regulations; staff names and complaints are fictional, and neither agency endorses this prototype.
 
 ## The problem
 
@@ -34,18 +34,21 @@ Systems that work today start after a human has read, sorted and typed the case 
 
 Every case gets a **person in charge** (PIC): the policy step assigns the caseworker who owns the queue, and caseworkers can delegate a case to a colleague with a handover note. Escalations and assignments are published to **Pub/Sub** (topic `case-events`); a **Cloud Function for Firebase** (`functions/src/index.ts`) writes a notification for the supervisor and the PIC and marks the alert delivered.
 
-The app opens on a role picker (citizen, caseworker, duty supervisor, head of office); each role lands on its own screen. It has two sides, in a Material 3 light theme. **Citizens** use `/report` (write, record a voice note or add a photo, in any language; the confirmation shows plain-language progress, with a "staff view" of the agent trace for the demo) and `/track/<id>` (status and the approved reply, no internal data). **Staff** use the workspace under `/staff` with a navigation rail: **Inbox** (My cases, escalated, queues, search), **Case** pages with tabs for the case, the agent trace and the history (delegate to a colleague, approve the reply, reassign, resolve), **Insights** (KPIs, AI weekly brief, early-warning clusters, and an Ask-the-analyst tab), **Knowledge** (the agency's SOP documents and search) and **Team** (who handles what, open cases per person). A demo sign-in picker switches between team members; a bell shows Pub/Sub notifications.
+The app opens on a main menu: pick the agency (or create a new one), then a role (citizen, caseworker, duty supervisor, head of office). Each staff role sees its own menu: caseworkers get Inbox (My cases, My team) and Knowledge; the duty supervisor gets the escalation inbox, Team and Knowledge; the head of office gets Insights, a read-only Inbox, Team and Knowledge. Switching account in the top bar switches the menu. It has two sides, in a Material 3 light theme. **Citizens** use `/report` (write, record a voice note or add a photo, in any language; the confirmation shows plain-language progress, with a "staff view" of the agent trace for the demo) and `/track/<id>` (status and the approved reply, no internal data). **Staff** use the workspace under `/staff` with a navigation rail: **Inbox** (My cases, escalated, queues, search), **Case** pages with tabs for the case, the agent trace and the history (delegate to a colleague, approve the reply, reassign, resolve), **Insights** (KPIs, AI weekly brief, early-warning clusters, and an Ask-the-analyst tab), **Knowledge** (the agency's SOP documents and search) and **Team** (who handles what, open cases per person). A demo sign-in picker switches between team members; a bell shows Pub/Sub notifications.
 
 ## Built for the world: agency packs
 
-Each agency is a folder under [`agencies/`](agencies/): `agency.json` (categories, queues, escalation rules, SLA hours, emergency line, signature), `sop/` (its own SOP documents with a `sources.json`) and `seed.json` (synthetic demo history). Adding a country or agency means adding a folder, not changing code.
+Each built-in agency is a folder under [`agencies/`](agencies/): `agency.json` (categories, queues, team, escalation rules, SLA hours, emergency line, signature), `sop/` (its own SOPs, service flows and regulations with a `sources.json`) and `seed.json` (synthetic demo history). Any other agency is created in the app at `/agencies/new`: start from a template, edit categories, teams, staff and escalation words, upload PDFs or Markdown, and it is stored in Firestore and live on the web form, the Telegram bot and the staff workspace at once. No code changes per agency.
 
 | Pack | What it shows |
 |---|---|
-| `social_services` | Department of Social Affairs (generic, default): social aid, disability and elderly care, homelessness, disaster relief, domestic violence. Sample SOP. |
-| `child_protection` | Child Protection Commission (generic). Sample SOP + the UN Convention on the Rights of the Child. Complaints in English, Spanish, French, Tagalog, Portuguese, Vietnamese, Swahili. |
+| `dinsos_demak` | **Dinas Sosial P2PA Kabupaten Demak**, a district office: UPTD PPA, social protection and security (PKH, BPNT/Sembako), SLRT / Puskesos (DTSEN, PBI/UHC), social rehabilitation, disaster victim protection (tidal floods in Sayung), child marriage and adoption, distribution oversight. Knowledge: its 13 published service flows, PermenPANRB 5/2025, Permensos 1/2018 and 4/2023, an example UPTD PPA standard. Complaints in Indonesian and Javanese. |
+| `kpai` | **Komisi Perlindungan Anak Indonesia**, a national commission: complaints unit and clusters (special protection, family and alternative care, education, health and welfare). Knowledge: KPAI's complaint SOP (direct, online, assessment, oversight, monitoring, termination), UU 35/2014, Perpres 61/2016, PermenPANRB 5/2025, UN CRC. |
+| `social_services`, `child_protection` | Generic templates (any country, English sample SOPs) for creating new agencies. |
 
-Prospective users are social affairs offices and child protection commissions; Embrace is an open-source blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
+Why these two: the team is in contact with people at both agencies, and they cover the two ends of social complaints, a district office that delivers services and a national commission that refers and oversees. How their published processes compare with SP4N-LAPOR! and with Embrace: [`docs/research/complaint-processes.md`](docs/research/complaint-processes.md).
+
+Prospective users are social affairs offices and child protection commissions, starting with the two above; Embrace is an open-source blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
 
 ## How it uses Google Cloud
 
@@ -59,17 +62,17 @@ Prospective users are social affairs offices and child protection commissions; E
 
 ## Quality
 
-Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; one set per pack), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json):
+Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 30 for KPAI, 30 for Dinsos Demak), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json):
 
 | Metric | Result |
 |---|---|
-| Category accuracy | 92% |
-| Urgency exact / within one level | 80% / 98% |
+| Category accuracy | 93% |
+| Urgency exact / within one level | 78% / 100% |
 | Critical cases escalated (9 cases), model alone and with rules | 100% / 100% |
-| Escalations that were truly high or critical (20) | 95% |
+| Escalations that were truly high or critical (24) | 92% |
 | Sent to manual review | 0% |
 
-Remaining misses are borderline: a shared bullying video read as abuse rather than online harm, a name missing from a payment list read as a registry issue rather than a missed payment.
+Remaining misses are borderline: a shared bullying video and two school beatings read as violence rather than online harm or education, and an office-hours question read as registration.
 In local test runs a text complaint went through all five steps in about 6 seconds.
 
 ## Run it

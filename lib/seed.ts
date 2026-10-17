@@ -1,7 +1,7 @@
 // Seeds 30 days of synthetic history per agency so the dashboard and clusters have data.
 // Seeded tickets use their labels (no model calls) and are marked `seeded`; routing still goes through the real rules.
-import cpSeed from '@/agencies/child_protection/seed.json'
-import saSeed from '@/agencies/social_services/seed.json'
+import dinsosSeed from '@/agencies/dinsos_demak/seed.json'
+import kpaiSeed from '@/agencies/kpai/seed.json'
 import { AGENCIES, picFor, type Agency } from './agencies'
 import { decide } from './policy'
 import type { Channel, HistoryItem, Ticket, Triage } from './schemas'
@@ -19,7 +19,7 @@ interface SeedRow {
   cluster: boolean
 }
 
-const SEEDS: Record<string, SeedRow[]> = { child_protection: cpSeed, social_services: saSeed }
+const SEEDS: Record<string, SeedRow[]> = { dinsos_demak: dinsosSeed, kpai: kpaiSeed }
 const SENTIMENT = { critical: 'distressed', high: 'worried', normal: 'neutral', low: 'neutral' } as const
 const H = 3600_000
 
@@ -32,7 +32,7 @@ function rng(seed: number) {
 }
 
 export function prefix(agency: Agency) {
-  return agency.id.split('_').map((w) => w[0]).join('').toUpperCase()
+  return agency.code ?? agency.id.split('_').map((w) => w[0]).join('').toUpperCase()
 }
 
 export function build(agency: Agency): Ticket[] {
@@ -49,7 +49,7 @@ export function build(agency: Agency): Ticket[] {
       urgency,
       urgency_reason: r.summary,
       sentiment: SENTIMENT[urgency],
-      flags: urgency === 'critical' && agency.id === 'child_protection' ? ['child_safety'] : [],
+      flags: urgency === 'critical' && agency.id === 'kpai' ? ['child_safety'] : [],
       summary: r.summary,
       confidence: Math.round(uniform(0.75, 0.97) * 100) / 100,
     }
@@ -114,7 +114,8 @@ export async function ensureSeeded(store: Store, agencyId: string): Promise<void
       agencyId,
       (async () => {
         if ((await store.list(agencyId)).some((t) => t.seeded)) return
-        for (const t of build(AGENCIES[agencyId])) await store.put(t)
+        const agency = AGENCIES[agencyId]
+        if (agency) for (const t of build(agency)) await store.put(t)
       })(),
     )
   }
@@ -124,5 +125,6 @@ export async function ensureSeeded(store: Store, agencyId: string): Promise<void
 export async function reseed(store: Store, agencyId: string): Promise<void> {
   await store.clear(agencyId)
   await store.clearNotifications(agencyId)
-  for (const t of build(AGENCIES[agencyId])) await store.put(t)
+  const agency = AGENCIES[agencyId]
+  if (agency) for (const t of build(agency)) await store.put(t)
 }

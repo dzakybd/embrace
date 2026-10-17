@@ -1,7 +1,7 @@
 {
   "id": "child_protection",
-  "name": "Child Protection Commission (sample pack)",
-  "short_name": "Child Protection",
+  "name": "Generic child protection service (template)",
+  "short_name": "Generic child protection",
   "country": "Any country",
   "categories": [
     {
@@ -85,7 +85,7 @@
     "low": 120
   },
   "emergency_line": "your local emergency number (for example 112 or 911) or the national child helpline",
-  "reply_signature": "Child Protection Commission, Complaints Team",
+  "reply_signature": "Child Protection Service, Complaints Team",
   "team": [
     {
       "id": "ibrahim",
@@ -147,5 +147,6 @@
         "general"
       ]
     }
-  ]
+  ],
+  "template": true
 }

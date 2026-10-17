@@ -9,3 +9,5 @@ next-env.d.ts
 firebase-debug.log
 scratch/
 .DS_Store
+reference/
+.vitest/

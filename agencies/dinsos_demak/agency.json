@@ -1,0 +1,190 @@
+{
+  "id": "dinsos_demak",
+  "code": "DMK",
+  "name": "Dinas Sosial P2PA Kabupaten Demak (DINSOS Demak)",
+  "short_name": "DINSOS Demak",
+  "country": "Indonesia",
+  "description": "Demak Regency Office of Social Affairs, Women's Empowerment and Child Protection: social aid, DTSEN registry, health insurance support, disability and elderly care, homelessness, disaster relief and violence against women and children (UPTD PPA).",
+  "categories": [
+    {
+      "id": "domestic_violence",
+      "label": "Violence against women or children (KDRT, sexual violence)",
+      "queue": "protection"
+    },
+    {
+      "id": "benefit_not_received",
+      "label": "Social aid not received or late (PKH, BPNT/Sembako, BLT)",
+      "queue": "linjamsos"
+    },
+    {
+      "id": "eligibility_registration",
+      "label": "DTSEN registry and eligibility (registration, status check, certificate of registration, data corrections)",
+      "queue": "slrt"
+    },
+    {
+      "id": "payment_schedule",
+      "label": "Distribution schedule, pickup location (e-warong, post office) and PKH companion",
+      "queue": "linjamsos"
+    },
+    {
+      "id": "health_insurance",
+      "label": "Health and social insurance support (PBI-Pemda / UHC recommendation, BPJS for vulnerable workers)",
+      "queue": "slrt"
+    },
+    {
+      "id": "disability_elderly",
+      "label": "Disability and elderly services (rehabilitation, assistive devices, home care)",
+      "queue": "rehabsos"
+    },
+    {
+      "id": "social_rehabilitation",
+      "label": "Homeless people, beggars, street children and neglected people with mental illness (ODGJ, pasung)",
+      "queue": "rehabsos"
+    },
+    {
+      "id": "disaster_relief",
+      "label": "Disaster relief (flood, tidal flood/rob, fire, social disaster)",
+      "queue": "bencana"
+    },
+    {
+      "id": "child_family",
+      "label": "Child marriage, adoption and childcare institutions (LKS)",
+      "queue": "pppa"
+    },
+    {
+      "id": "fraud_misconduct",
+      "label": "Illegal levies or fraud in aid distribution",
+      "queue": "oversight"
+    },
+    {
+      "id": "general_info",
+      "label": "General information and service requirements",
+      "queue": "general"
+    }
+  ],
+  "queues": {
+    "protection": "UPTD PPA (protection of women and children)",
+    "linjamsos": "Social Protection & Security Division (PKH, BPNT/Sembako)",
+    "slrt": "SLRT / Puskesos (integrated referral service, DTSEN data)",
+    "rehabsos": "Social Rehabilitation Division (disability, elderly, homeless, ODGJ)",
+    "bencana": "Disaster victim protection (Social Protection & Security Division)",
+    "pppa": "Women's Empowerment & Child Protection Division",
+    "oversight": "Aid distribution oversight",
+    "general": "Front office / information desk"
+  },
+  "escalation": {
+    "always_escalate_categories": [
+      "domestic_violence"
+    ],
+    "escalate_flags": [
+      "child_safety",
+      "immediate_danger",
+      "self_harm",
+      "basic_needs_crisis"
+    ],
+    "keywords": [
+      "dipukul",
+      "dianiaya",
+      "diusir",
+      "tidak makan",
+      "gak makan",
+      "kelaparan",
+      "bunuh diri",
+      "terlantar",
+      "sekarang juga",
+      "diperkosa",
+      "dicabuli",
+      "dipasung",
+      "kebanjiran",
+      "rob masuk",
+      "kebakaran",
+      "mengungsi",
+      "beaten",
+      "kicked out",
+      "no food",
+      "suicide",
+      "flooded"
+    ],
+    "escalation_contact": "Sri Wahyuni, duty supervisor (Head of UPTD PPA)"
+  },
+  "sla_hours": {
+    "critical": 2,
+    "high": 24,
+    "normal": 72,
+    "low": 120
+  },
+  "emergency_line": "110 (police) or 112; for violence against women and children SAPA 129 (WhatsApp 08111-129-129)",
+  "reply_signature": "Layanan Pengaduan, Dinas Sosial P2PA Kabupaten Demak",
+  "team": [
+    {
+      "id": "ahmad",
+      "name": "Ahmad Fauzi",
+      "role": "leader",
+      "title": "Head of Office (Kepala Dinas)",
+      "queues": []
+    },
+    {
+      "id": "sri",
+      "name": "Sri Wahyuni",
+      "role": "supervisor",
+      "title": "Duty supervisor, Head of UPTD PPA",
+      "queues": []
+    },
+    {
+      "id": "dewi",
+      "name": "Dewi Lestari",
+      "role": "officer",
+      "title": "Caseworker (social worker), UPTD PPA",
+      "queues": [
+        "protection"
+      ]
+    },
+    {
+      "id": "budi",
+      "name": "Budi Santoso",
+      "role": "officer",
+      "title": "Caseworker, Social Protection & Security",
+      "queues": [
+        "linjamsos",
+        "bencana"
+      ]
+    },
+    {
+      "id": "agus",
+      "name": "Agus Prasetyo",
+      "role": "officer",
+      "title": "Caseworker, SLRT / Puskesos",
+      "queues": [
+        "slrt",
+        "general"
+      ]
+    },
+    {
+      "id": "siti",
+      "name": "Siti Aminah",
+      "role": "officer",
+      "title": "Caseworker, Social Rehabilitation",
+      "queues": [
+        "rehabsos"
+      ]
+    },
+    {
+      "id": "laili",
+      "name": "Nur Laili",
+      "role": "officer",
+      "title": "Caseworker, Women's Empowerment & Child Protection",
+      "queues": [
+        "pppa"
+      ]
+    },
+    {
+      "id": "hendra",
+      "name": "Hendra Wijaya",
+      "role": "officer",
+      "title": "Caseworker, Distribution Oversight",
+      "queues": [
+        "oversight"
+      ]
+    }
+  ]
+}

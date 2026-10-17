@@ -18,6 +18,10 @@ export interface Store {
   hit(key: string, limit: number, windowMs: number): Promise<boolean>
   getChat(chatId: string): Promise<ChatState | null>
   setChat(chatId: string, fields: Partial<ChatState>): Promise<void>
+  /** Agencies created in the app (built-in packs live in agencies/). */
+  listAgencies(): Promise<Record<string, unknown>[]>
+  putAgency(a: { id: string }): Promise<void>
+  deleteAgency(id: string): Promise<void>
 }
 
 /** Conversation state of one Telegram chat. */
@@ -71,7 +75,17 @@ class MemoryStore implements Store {
     return this.chats.get(chatId) ?? null
   }
   async setChat(chatId: string, fields: Partial<ChatState>) {
-    this.chats.set(chatId, { agency_id: 'social_services', ...this.chats.get(chatId), ...fields })
+    this.chats.set(chatId, { agency_id: 'dinsos_demak', ...this.chats.get(chatId), ...fields })
+  }
+  private agencies = new Map<string, Record<string, unknown>>()
+  async listAgencies() {
+    return [...this.agencies.values()]
+  }
+  async putAgency(a: { id: string }) {
+    this.agencies.set(a.id, a as Record<string, unknown>)
+  }
+  async deleteAgency(id: string) {
+    this.agencies.delete(id)
   }
   private notes: Notification[] = []
   async addNotification(n: Notification) {
@@ -160,6 +174,15 @@ class FirestoreStore implements Store {
   }
   async setChat(chatId: string, fields: Partial<ChatState>) {
     await (await this.db).collection('tg_chats').doc(chatId).set(fields, { merge: true })
+  }
+  async listAgencies() {
+    return (await (await this.db).collection('agencies').get()).docs.map((d) => d.data())
+  }
+  async putAgency(a: { id: string }) {
+    await (await this.db).collection('agencies').doc(a.id).set(a)
+  }
+  async deleteAgency(id: string) {
+    await (await this.db).collection('agencies').doc(id).delete()
   }
   async listNotifications(agencyId: string, to: string) {
     const snap = await (await this.db).collection('notifications').where('agency_id', '==', agencyId).where('to', '==', to).get()

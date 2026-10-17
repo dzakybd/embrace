@@ -26,6 +26,8 @@ const PATHS: Record<string, string> = {
   close: 'M6 6l12 12M18 6 6 18',
   back: 'M15 18l-6-6 6-6',
   home: 'M3 11l9-8 9 8v10H3z',
+  plus: 'M12 5v14M5 12h14',
+  building: 'M4 21V5l8-3 8 3v16M9 9h1m4 0h1M9 13h1m4 0h1M10 21v-4h4v4',
   bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
 }
 

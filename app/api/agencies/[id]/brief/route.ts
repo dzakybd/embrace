@@ -1,4 +1,4 @@
-import { getAgency } from '@/lib/agencies'
+import { agencyById } from '@/lib/agencies'
 import { error, rateLimit } from '@/lib/http'
 import { ensureSeeded } from '@/lib/seed'
 import { askAnalyst } from '@/lib/service'
@@ -11,7 +11,7 @@ const cache = new Map<string, { at: number; body: unknown }>()
 /** The analyst agent's weekly brief, cached for 15 minutes to save model budget. */
 export async function GET(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
-  if (!getAgency(id)) return error(404, 'unknown agency')
+  if (!(await agencyById(id))) return error(404, 'unknown agency')
   const refresh = new URL(req.url).searchParams.get('refresh') === 'true'
   const hit = cache.get(id)
   if (hit && !refresh && Date.now() - hit.at < 15 * 60_000) return Response.json(hit.body)

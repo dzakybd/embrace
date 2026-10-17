@@ -1,19 +1,19 @@
 {
  "summary": {
   "n": 60,
-  "category_accuracy": 92,
-  "urgency_exact": 80,
-  "urgency_within_one": 98,
+  "category_accuracy": 93,
+  "urgency_exact": 78,
+  "urgency_within_one": 100,
   "critical_recall_model": 100,
   "critical_recall_with_rules": 100,
   "critical_cases": 9,
-  "escalations": 20,
-  "escalations_high_or_critical_label": 95,
+  "escalations": 24,
+  "escalations_high_or_critical_label": 92,
   "manual_review": 0
  },
  "rows": [
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 0,
    "want_category": "physical_emotional_abuse",
    "want_urgency": "critical",
@@ -23,7 +23,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 1,
    "want_category": "physical_emotional_abuse",
    "want_urgency": "high",
@@ -33,7 +33,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 2,
    "want_category": "physical_emotional_abuse",
    "want_urgency": "high",
@@ -43,17 +43,17 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 3,
    "want_category": "physical_emotional_abuse",
    "want_urgency": "normal",
    "category": "physical_emotional_abuse",
-   "urgency": "normal",
-   "final": "normal",
-   "route": "assigned"
+   "urgency": "high",
+   "final": "critical",
+   "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 4,
    "want_category": "sexual_abuse",
    "want_urgency": "critical",
@@ -63,7 +63,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 5,
    "want_category": "sexual_abuse",
    "want_urgency": "critical",
@@ -73,7 +73,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 6,
    "want_category": "sexual_abuse",
    "want_urgency": "critical",
@@ -83,7 +83,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 7,
    "want_category": "exploitation_trafficking",
    "want_urgency": "critical",
@@ -93,7 +93,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 8,
    "want_category": "exploitation_trafficking",
    "want_urgency": "high",
@@ -103,7 +103,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 9,
    "want_category": "online_harm",
    "want_urgency": "critical",
@@ -113,27 +113,27 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 10,
    "want_category": "online_harm",
    "want_urgency": "high",
    "category": "physical_emotional_abuse",
    "urgency": "high",
-   "final": "high",
-   "route": "assigned"
+   "final": "critical",
+   "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 11,
    "want_category": "online_harm",
    "want_urgency": "normal",
    "category": "online_harm",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "low",
+   "final": "low",
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 12,
    "want_category": "family_care",
    "want_urgency": "high",
@@ -143,7 +143,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 13,
    "want_category": "family_care",
    "want_urgency": "normal",
@@ -153,7 +153,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 14,
    "want_category": "family_care",
    "want_urgency": "normal",
@@ -163,7 +163,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 15,
    "want_category": "family_care",
    "want_urgency": "low",
@@ -173,17 +173,17 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 16,
    "want_category": "education",
    "want_urgency": "high",
    "category": "education",
    "urgency": "high",
-   "final": "high",
-   "route": "assigned"
+   "final": "critical",
+   "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 17,
    "want_category": "education",
    "want_urgency": "normal",
@@ -193,17 +193,17 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 18,
    "want_category": "education",
    "want_urgency": "normal",
-   "category": "education",
-   "urgency": "normal",
-   "final": "normal",
+   "category": "physical_emotional_abuse",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 19,
    "want_category": "education",
    "want_urgency": "high",
@@ -213,27 +213,27 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 20,
    "want_category": "education",
    "want_urgency": "normal",
    "category": "education",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 21,
    "want_category": "education",
    "want_urgency": "normal",
    "category": "education",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 22,
    "want_category": "education",
    "want_urgency": "low",
@@ -243,7 +243,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 23,
    "want_category": "health_nutrition",
    "want_urgency": "high",
@@ -253,7 +253,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 24,
    "want_category": "health_nutrition",
    "want_urgency": "normal",
@@ -263,7 +263,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 25,
    "want_category": "health_nutrition",
    "want_urgency": "normal",
@@ -273,7 +273,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 26,
    "want_category": "other",
    "want_urgency": "low",
@@ -283,7 +283,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 27,
    "want_category": "other",
    "want_urgency": "low",
@@ -293,7 +293,7 @@
    "route": "assigned"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 28,
    "want_category": "physical_emotional_abuse",
    "want_urgency": "high",
@@ -303,7 +303,7 @@
    "route": "escalated"
   },
   {
-   "agency": "child_protection",
+   "agency": "kpai",
    "index": 29,
    "want_category": "other",
    "want_urgency": "low",
@@ -313,7 +313,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 0,
    "want_category": "domestic_violence",
    "want_urgency": "critical",
@@ -323,7 +323,7 @@
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 1,
    "want_category": "domestic_violence",
    "want_urgency": "critical",
@@ -333,7 +333,7 @@
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 2,
    "want_category": "domestic_violence",
    "want_urgency": "high",
@@ -343,17 +343,17 @@
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 3,
    "want_category": "benefit_not_received",
    "want_urgency": "high",
    "category": "benefit_not_received",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 4,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -363,17 +363,17 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 5,
    "want_category": "benefit_not_received",
    "want_urgency": "high",
    "category": "benefit_not_received",
-   "urgency": "critical",
+   "urgency": "high",
    "final": "critical",
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 6,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -383,17 +383,17 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 7,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
-   "category": "eligibility_registration",
+   "category": "benefit_not_received",
    "urgency": "normal",
    "final": "normal",
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 8,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -403,7 +403,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 9,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -413,7 +413,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 10,
    "want_category": "benefit_not_received",
    "want_urgency": "critical",
@@ -423,17 +423,17 @@
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 11,
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
    "category": "eligibility_registration",
-   "urgency": "low",
-   "final": "low",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 12,
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
@@ -443,7 +443,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 13,
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
@@ -453,7 +453,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 14,
    "want_category": "eligibility_registration",
    "want_urgency": "low",
@@ -463,7 +463,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 15,
    "want_category": "payment_schedule",
    "want_urgency": "low",
@@ -473,7 +473,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 16,
    "want_category": "payment_schedule",
    "want_urgency": "normal",
@@ -483,27 +483,27 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 17,
    "want_category": "payment_schedule",
    "want_urgency": "low",
-   "category": "general_info",
+   "category": "payment_schedule",
    "urgency": "low",
    "final": "low",
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 18,
    "want_category": "disability_elderly",
    "want_urgency": "high",
    "category": "disability_elderly",
    "urgency": "high",
-   "final": "high",
-   "route": "assigned"
+   "final": "critical",
+   "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 19,
    "want_category": "disability_elderly",
    "want_urgency": "normal",
@@ -513,7 +513,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 20,
    "want_category": "disability_elderly",
    "want_urgency": "low",
@@ -523,27 +523,27 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 21,
    "want_category": "social_rehabilitation",
    "want_urgency": "high",
    "category": "social_rehabilitation",
-   "urgency": "critical",
+   "urgency": "high",
    "final": "critical",
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 22,
    "want_category": "social_rehabilitation",
    "want_urgency": "normal",
    "category": "social_rehabilitation",
-   "urgency": "critical",
+   "urgency": "high",
    "final": "critical",
    "route": "escalated"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 23,
    "want_category": "social_rehabilitation",
    "want_urgency": "normal",
@@ -553,17 +553,17 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 24,
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
    "category": "fraud_misconduct",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 25,
    "want_category": "fraud_misconduct",
    "want_urgency": "normal",
@@ -573,17 +573,17 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 26,
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
    "category": "fraud_misconduct",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 27,
    "want_category": "general_info",
    "want_urgency": "low",
@@ -593,7 +593,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 28,
    "want_category": "general_info",
    "want_urgency": "low",
@@ -603,7 +603,7 @@
    "route": "assigned"
   },
   {
-   "agency": "social_services",
+   "agency": "dinsos_demak",
    "index": 29,
    "want_category": "general_info",
    "want_urgency": "low",
@@ -613,5 +613,5 @@
    "route": "assigned"
   }
  ],
- "at": "2026-10-17T15:25:02.910Z"
+ "at": "2026-10-17T17:06:26.443Z"
 }

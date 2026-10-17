@@ -13,6 +13,26 @@ export interface Agency {
   emergency_line: string
   escalation_contact: string
   team: TeamMember[]
+  description?: string
+  reply_signature: string
+  escalation: { always_escalate_categories: string[]; keywords: string[] }
+  template: boolean
+  custom: boolean
+}
+
+export interface NewAgency {
+  template: string
+  name: string
+  short_name: string
+  country: string
+  description: string
+  emergency_line: string
+  reply_signature: string
+  categories: { label: string; team: string; escalate: boolean }[]
+  team: { name: string; role: TeamMember['role']; title: string; teams: string[] }[]
+  keywords: string[]
+  keep_template_docs: boolean
+  docs: { title: string; text: string; pdf_base64?: string }[]
 }
 
 export interface TeamMember {
@@ -197,6 +217,9 @@ export const api = {
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,
     ),
   notifications: (t: string, member: string) => fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
+  createAgency: (body: NewAgency) =>
+    fetch('/api/agencies', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
+  deleteAgency: (t: string) => fetch(`/api/agencies/${t}`, { method: 'DELETE' }).then(json),
   resetDemo: (t: string) => fetch(`/api/agencies/${t}/reset-demo`, { method: 'POST' }).then(json),
 }
 
