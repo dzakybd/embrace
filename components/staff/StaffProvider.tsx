@@ -11,6 +11,8 @@ interface Staff {
   agency: Agency
   me: TeamMember
   pickAgency: (id: string) => void
+  /** Reloads agencies after their settings or channels change. */
+  reload: () => void
   pickMe: (id: string) => void
   notes: Notification[]
   refreshNotes: () => void
@@ -26,7 +28,7 @@ export function useStaff(): Staff {
 
 /** Agency, demo sign-in (who you are on the team) and notifications for every staff page. */
 export function StaffProvider({ children, fallback }: { children: ReactNode; fallback: ReactNode }) {
-  const { agencies, agency, pick, error } = useAgencies()
+  const { agencies, agency, pick, error, reload } = useAgencies()
   const [meIds, setMeIds] = useState<Record<string, string>>({})
   const [notes, setNotes] = useState<Notification[]>([])
 
@@ -68,5 +70,5 @@ export function StaffProvider({ children, fallback }: { children: ReactNode; fal
     setMeIds((m) => ({ ...m, [agency.id]: id }))
     save(`persona:${agency.id}`, id)
   }
-  return <Ctx.Provider value={{ agencies, agency, me, pickAgency: pick, pickMe, notes, refreshNotes }}>{children}</Ctx.Provider>
+  return <Ctx.Provider value={{ agencies, agency, me, pickAgency: pick, pickMe, notes, refreshNotes, reload }}>{children}</Ctx.Provider>
 }

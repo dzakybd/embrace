@@ -1,0 +1,34 @@
+'use client'
+
+import { useState } from 'react'
+import { api } from '../api'
+import AgencyForm from '../AgencyForm'
+import { Icon } from '../ui'
+import { useStaff } from './StaffProvider'
+
+/** Head of office: the agency's rules, categories, teams, staff and documents. Applies to new reports at once. */
+export default function Settings() {
+  const { agency, reload } = useStaff()
+  const [restoring, setRestoring] = useState(false)
+  const restore = async () => {
+    setRestoring(true)
+    await api.deleteAgency(agency.id).finally(() => setRestoring(false))
+    reload()
+  }
+  return (
+    <div className="page">
+      <div className="page-h">
+        <div>
+          <h1>Settings</h1>
+          <p className="muted">{agency.name} · rules, categories, teams, staff and documents. Changes apply to new reports at once; no code changes.</p>
+        </div>
+        {agency.edited && (
+          <button className="ghost small" onClick={restore} disabled={restoring} title="Back to the settings shipped with the demo">
+            <Icon name="refresh" size={14} /> Restore demo settings
+          </button>
+        )}
+      </div>
+      <AgencyForm key={`${agency.id}-${agency.edited}`} agency={agency} onSaved={() => reload()} />
+    </div>
+  )
+}

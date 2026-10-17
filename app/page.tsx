@@ -1,7 +1,8 @@
 import Link from 'next/link'
 import { AgencyPicker } from '@/components/AgencyPicker'
 import { Brand, Footer } from '@/components/Brand'
-import { Icon, TELEGRAM_URL } from '@/components/ui'
+import { CitizenActions } from '@/components/CitizenActions'
+import { Icon } from '@/components/ui'
 
 const ROLES = [
   { href: '/report', icon: 'send', title: 'I need help', who: 'Citizen', body: 'Report a problem in your own words and language: chat with us on Telegram, or use the web form. Voice notes and photos welcome.', main: true },
@@ -35,10 +36,7 @@ export default function Home() {
               <span className="muted small">{r.who}</span>
               <b>{r.title}</b>
               <span className="muted">{r.body}</span>
-              <div className="role-actions">
-                <a className="btn light" href={TELEGRAM_URL} target="_blank" rel="noreferrer">Chat on Telegram</a>
-                <Link className="go" href={r.href}>Use the web form <Icon name="send" size={14} /></Link>
-              </div>
+              <CitizenActions />
             </div>
           ) : (
             <Link key={r.href} href={r.href} className="role-card">

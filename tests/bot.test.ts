@@ -2,15 +2,19 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const sent: string[] = []
 vi.mock('@/lib/telegram', () => ({
-  send: vi.fn(async (_chat: string, text: string) => { sent.push(text) }),
+  send: vi.fn(async (_token: string, _chat: string, text: string) => { sent.push(text) }),
   answerCallback: vi.fn(async () => undefined),
   typing: vi.fn(async () => undefined),
   download: vi.fn(async () => null),
   esc: (s: string) => s,
 }))
 
-const { handleUpdate, LIMITS } = await import('@/lib/bot')
+const bot = await import('@/lib/bot')
 const { STORE } = await import('@/lib/store')
+const { LIMITS } = bot
+const BOT = { agency_id: 'dinsos_demak', token: 't', username: 'embrace_dinsos_demak_bot', secret: 's', managed: true }
+const handleUpdate = (u: Parameters<typeof bot.handleUpdate>[1]) => bot.handleUpdate(BOT, u)
+const key = (c: number) => `dinsos_demak:${c}`
 
 let nextId = 1000
 let chat = 1
@@ -35,6 +39,13 @@ describe('telegram bot gatekeeping (no AI)', () => {
     expect(job?.no_ai).toBeUndefined()
   })
 
+  it('keeps chats with two agencies apart', async () => {
+    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: null })
+    const kpai = { ...BOT, agency_id: 'kpai', username: 'embrace_kpai_bot' }
+    const job = await bot.handleUpdate(kpai, msg(REPORT))
+    expect(job).toMatchObject({ agency_id: 'kpai' })
+  })
+
   it('ignores a duplicate update', async () => {
     const u = msg(REPORT)
     expect(await handleUpdate(u)).not.toBeNull()
@@ -44,7 +55,7 @@ describe('telegram bot gatekeeping (no AI)', () => {
   it('limits new AI reports per chat per hour', async () => {
     const jobs = []
     for (let i = 0; i < LIMITS.reportsHour.limit + 1; i++) {
-      await STORE.setChat(String(chat), { open_ticket: null, awaiting: 'report' })
+      await STORE.setChat(key(chat), { open_ticket: null, awaiting: 'report' })
       jobs.push(await handleUpdate(msg(`${REPORT} (${i})`)))
     }
     expect(jobs.filter(Boolean)).toHaveLength(LIMITS.reportsHour.limit)
@@ -62,7 +73,7 @@ describe('telegram bot gatekeeping (no AI)', () => {
   })
 
   it('adds messages after a report to the open case instead of running AI again', async () => {
-    await STORE.setChat(String(chat), { agency_id: 'dinsos_demak', open_ticket: 'SS-TEST', open_since: new Date().toISOString(), awaiting: null })
+    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: null })
     expect(await handleUpdate(msg('Also, my card number ends in 1234 and the shop is on Maple Street.'))).toBeNull()
     expect(sent.at(-1)).toContain('Added to your report')
   })

@@ -6,6 +6,7 @@ import type { Agency } from './agencies'
 import type { Media, Policy, Triage, Urgency } from './schemas'
 
 export const CONFIDENCE_FLOOR = 0.7
+const RANK: Record<Urgency, number> = { low: 0, normal: 1, high: 2, critical: 3 }
 
 export function decide(agency: Agency, text: string, triage: Triage | null, media: Media | null = null): Policy {
   const esc = agency.escalation
@@ -59,12 +60,19 @@ export function decide(agency: Agency, text: string, triage: Triage | null, medi
     reasons.push(`Unknown category '${triage.category}'`)
     return make(agency, 'manual_review', 'general', urgency, reasons)
   }
-  if (triage.confidence < CONFIDENCE_FLOOR) {
-    reasons.push(`Low confidence ${triage.confidence.toFixed(2)} < ${CONFIDENCE_FLOOR}`)
-    return make(agency, 'manual_review', cat.queue, urgency, reasons)
+  // Agency rule: some categories never go below a minimum urgency (e.g. disaster relief at least high).
+  let final = urgency
+  if (cat.min_urgency && RANK[cat.min_urgency] > RANK[urgency]) {
+    final = cat.min_urgency
+    reasons.push(`Urgency raised from ${urgency} to ${final}: minimum for '${triage.category}'`)
+  }
+  const floor = esc.confidence_floor ?? CONFIDENCE_FLOOR
+  if (triage.confidence < floor) {
+    reasons.push(`Low confidence ${triage.confidence.toFixed(2)} < ${floor}`)
+    return make(agency, 'manual_review', cat.queue, final, reasons)
   }
   reasons.push(`Routed by category '${triage.category}' to ${agency.queues[cat.queue]}`)
-  return make(agency, 'assigned', cat.queue, urgency, reasons)
+  return make(agency, 'assigned', cat.queue, final, reasons)
 }
 
 function escalationQueue(agency: Agency): string {

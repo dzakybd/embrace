@@ -6,7 +6,7 @@ export interface Agency {
   id: string
   name: string
   short_name: string
-  categories: { id: string; label: string; queue: string }[]
+  categories: { id: string; label: string; queue: string; min_urgency?: Urgency }[]
   queues: Record<string, string>
   country: string
   sla_hours: Record<Urgency, number>
@@ -15,9 +15,16 @@ export interface Agency {
   team: TeamMember[]
   description?: string
   reply_signature: string
-  escalation: { always_escalate_categories: string[]; keywords: string[] }
+  escalation: { always_escalate_categories: string[]; keywords: string[]; escalate_flags: string[]; confidence_floor?: number }
   template: boolean
   custom: boolean
+  edited: boolean
+  telegram_bot: string | null
+}
+
+export interface Integrations {
+  web: { connected: boolean; url: string; page: string }
+  telegram: { connected: boolean; username?: string; managed: boolean; webhook: string }
 }
 
 export interface NewAgency {
@@ -28,10 +35,14 @@ export interface NewAgency {
   description: string
   emergency_line: string
   reply_signature: string
-  categories: { label: string; team: string; escalate: boolean }[]
-  team: { name: string; role: TeamMember['role']; title: string; teams: string[] }[]
+  categories: { id?: string; label: string; team: string; escalate: boolean; min_urgency?: 'low' | 'normal' | 'high' }[]
+  team: { id?: string; name: string; role: TeamMember['role']; title: string; teams: string[] }[]
   keywords: string[]
+  escalate_flags: string[]
+  sla_hours: Record<Urgency, number>
+  confidence_floor: number
   keep_template_docs: boolean
+  drop_docs: string[]
   docs: { title: string; text: string; pdf_base64?: string }[]
 }
 
@@ -219,6 +230,13 @@ export const api = {
   notifications: (t: string, member: string) => fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
   createAgency: (body: NewAgency) =>
     fetch('/api/agencies', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
+  integrations: (t: string) => fetch(`/api/agencies/${t}/integrations`).then(json<Integrations>),
+  connectTelegram: (t: string, token: string) =>
+    fetch(`/api/agencies/${t}/integrations`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) })
+      .then(json<{ connected: boolean; username: string }>),
+  disconnectTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
+  updateAgency: (t: string, body: NewAgency) =>
+    fetch(`/api/agencies/${t}`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
   deleteAgency: (t: string) => fetch(`/api/agencies/${t}`, { method: 'DELETE' }).then(json),
   resetDemo: (t: string) => fetch(`/api/agencies/${t}/reset-demo`, { method: 'POST' }).then(json),
 }

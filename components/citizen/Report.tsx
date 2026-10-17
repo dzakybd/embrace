@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Fragment, useRef, useState } from 'react'
 import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
 import { useAgencies } from '../useAgencies'
-import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Citations, Icon, TELEGRAM_URL, UrgencyBadge } from '../ui'
+import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
 
 const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[]> = {
   dinsos_demak: [
@@ -232,10 +232,12 @@ export default function Report() {
           Tell us in your own words and your own language. You can also record a voice note or add a photo.
           If someone is in danger right now, call {agency.emergency_line}.
         </p>
-        <a className="tg-banner" href={TELEGRAM_URL} target="_blank" rel="noreferrer">
-          <Icon name="send" size={18} />
-          <span><b>Prefer to chat?</b> Message us on Telegram: same service, and the caseworker&apos;s reply comes back to your chat.</span>
-        </a>
+        {agency.telegram_bot && (
+          <a className="tg-banner" href={telegramUrl(agency.telegram_bot)!} target="_blank" rel="noreferrer">
+            <Icon name="send" size={18} />
+            <span><b>Prefer to chat?</b> Message @{agency.telegram_bot} on Telegram: same service, and the caseworker&apos;s reply comes back to your chat.</span>
+          </a>
+        )}
         <label className="field">
           <span>Send to</span>
           <select value={agency.id} onChange={(e) => pick(e.target.value)}>

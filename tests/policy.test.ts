@@ -36,6 +36,18 @@ describe('policy rules', () => {
     expect(p.route).toBe('escalated')
   })
 
+  it('applies agency rules: minimum urgency per category and confidence threshold', () => {
+    const custom = {
+      ...cp,
+      categories: cp.categories.map((c) => (c.id === 'education' ? { ...c, min_urgency: 'high' as const } : c)),
+      escalation: { ...cp.escalation, confidence_floor: 0.95 },
+    }
+    const p = decide(custom, 'school withheld report card', triage({ urgency: 'low', confidence: 0.99 }))
+    expect(p.final_urgency).toBe('high')
+    expect(p.sla_hours).toBe(cp.sla_hours.high)
+    expect(decide(custom, 'text', triage({ confidence: 0.9 })).route).toBe('manual_review')
+  })
+
   it('always escalates configured categories', () => {
     expect(decide(cp, 'text', triage({ category: 'sexual_abuse' })).route).toBe('escalated')
     expect(decide(sa, 'text', triage({ category: 'domestic_violence' })).route).toBe('escalated')

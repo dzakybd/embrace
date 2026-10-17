@@ -69,7 +69,8 @@ export const CHANNEL_ICON: Record<string, string> = { web: 'form', whatsapp: 'ch
 export const CHANNEL_LABEL: Record<string, string> = { web: 'Web form', whatsapp: 'WhatsApp', email: 'Email', social: 'Social media', telegram: 'Telegram' }
 
 /** The citizen chat channel (Telegram bot). */
-export const TELEGRAM_URL = `https://t.me/${process.env.NEXT_PUBLIC_TELEGRAM_BOT || 'dmusa_bot'}`
+/** Link to an agency's Telegram bot, if it has one. */
+export const telegramUrl = (bot?: string | null) => (bot ? `https://t.me/${bot}` : null)
 
 export const AGENT_META: Record<string, { label: string; role: string }> = {
   media_reader: { label: 'Media agent', role: 'Transcribes voice notes, reads photos' },

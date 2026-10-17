@@ -10,6 +10,7 @@ import { decide } from './policy'
 import type { Channel, HistoryItem, Policy, Ticket, TraceStep } from './schemas'
 import { prefix } from './seed'
 import { STORE, now } from './store'
+import { telegramBot } from './channels'
 import { send as tgSend } from './telegram'
 
 const pipelineRunner = new InMemoryRunner({ agent: pipeline, appName: 'embrace' })
@@ -150,8 +151,10 @@ export async function act(id: string, action: string, officer: string, note = ''
     fields.sent_reply = reply || t.draft?.reply || ''
     if (t.telegram_chat_id) {
       try {
-        await tgSend(t.telegram_chat_id, fields.sent_reply)
-        delivery = ' · delivered to the citizen on Telegram'
+        const bot = await telegramBot(t.agency_id)
+        if (!bot) throw new Error('no Telegram bot is connected for this agency')
+        await tgSend(bot.token, t.telegram_chat_id, fields.sent_reply)
+        delivery = ` · delivered to the citizen on Telegram (@${bot.username})`
       } catch (err) {
         delivery = ` · Telegram delivery failed: ${String(err).slice(0, 120)}`
       }

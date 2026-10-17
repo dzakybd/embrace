@@ -5,7 +5,7 @@ import kpai from '@/agencies/kpai/agency.json'
 import socialServices from '@/agencies/social_services/agency.json'
 import childProtection from '@/agencies/child_protection/agency.json'
 import type { Urgency } from './schemas'
-import { registerDocs, type Passage, type Source } from './sop'
+import { registerDocs, resetDocs, type Passage, type Source } from './sop'
 import { STORE } from './store'
 
 export interface Agency {
@@ -16,13 +16,16 @@ export interface Agency {
   short_name: string
   country: string
   description?: string
-  categories: { id: string; label: string; queue: string }[]
+  /** min_urgency: an agency rule that keeps a category at or above this urgency. */
+  categories: { id: string; label: string; queue: string; min_urgency?: Urgency }[]
   queues: Record<string, string>
   escalation: {
     always_escalate_categories: string[]
     escalate_flags: string[]
     keywords: string[]
     escalation_contact: string
+    /** Below this triage confidence a case goes to manual review (default 0.7). */
+    confidence_floor?: number
   }
   sla_hours: Record<Urgency, number>
   emergency_line: string
@@ -32,6 +35,10 @@ export interface Agency {
   template?: boolean
   /** Created in the app (stored), not shipped in agencies/. */
   custom?: boolean
+  /** A built-in agency whose settings were edited in the app (stored as an override). */
+  edited?: boolean
+  /** Username of the agency's Telegram bot, without @. */
+  telegram_bot?: string | null
 }
 
 export interface TeamMember {
@@ -45,9 +52,12 @@ export interface TeamMember {
 export interface StoredAgency extends Agency {
   docs?: { sources: Source[]; passages: Passage[] }
   created_at?: string
+  /** Settings saved over a built-in agency. */
+  override?: boolean
 }
 
 const BUILT_IN = [dinsosDemak, kpai, socialServices, childProtection] as Agency[]
+const SHIPPED: Record<string, Agency> = Object.fromEntries(BUILT_IN.map((a) => [a.id, a]))
 
 /** Live agencies plus templates; custom agencies are merged in by loadAgencies(). */
 export const AGENCIES: Record<string, Agency> = Object.fromEntries(BUILT_IN.map((a) => [a.id, a]))
@@ -62,8 +72,9 @@ export function liveAgencies(): Agency[] {
   return Object.values(AGENCIES).filter((a) => !a.template)
 }
 
-export function templates(): Agency[] {
-  return BUILT_IN
+/** The agency as shipped in agencies/<id>/, before any edits made in the app. */
+export function shipped(id: string): Agency | undefined {
+  return SHIPPED[id]
 }
 
 let loadedAt = 0
@@ -75,9 +86,18 @@ export async function loadAgencies(force = false): Promise<void> {
   loading ??= (async () => {
     try {
       const stored = (await STORE.listAgencies()) as unknown as StoredAgency[]
-      for (const id of Object.keys(AGENCIES)) if (AGENCIES[id].custom && !stored.some((s) => s.id === id)) delete AGENCIES[id]
-      for (const { docs, ...a } of stored) {
-        AGENCIES[a.id] = { ...a, custom: true }
+      const ids = new Set(stored.map((s) => s.id))
+      for (const id of Object.keys(AGENCIES)) {
+        if (ids.has(id)) continue
+        if (AGENCIES[id].custom) delete AGENCIES[id]
+        else if (AGENCIES[id].edited) {
+          AGENCIES[id] = SHIPPED[id]
+          resetDocs(id)
+        }
+      }
+      for (const { docs, override, ...a } of stored) {
+        if (override && !SHIPPED[a.id]) continue
+        AGENCIES[a.id] = override ? { ...a, template: SHIPPED[a.id].template, edited: true } : { ...a, custom: true }
         registerDocs(a.id, docs ?? { sources: [], passages: [] })
       }
       loadedAt = Date.now()
@@ -109,10 +129,10 @@ export function taxonomyText(a: Agency): string {
 
 /** What the browser needs to know about an agency. */
 export function publicAgency(a: Agency) {
-  const { id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, template, custom } = a
+  const { id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, template, custom, edited } = a
   return {
-    id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team,
-    template: !!template, custom: !!custom, escalation_contact: a.escalation.escalation_contact,
+    id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, telegram_bot: a.telegram_bot ?? null,
+    template: !!template, custom: !!custom, edited: !!edited, escalation_contact: a.escalation.escalation_contact,
     escalation: a.escalation, reply_signature: a.reply_signature,
   }
 }

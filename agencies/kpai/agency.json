@@ -163,5 +163,6 @@
         "health"
       ]
     }
-  ]
+  ],
+  "telegram_bot": "embrace_kpai_bot"
 }

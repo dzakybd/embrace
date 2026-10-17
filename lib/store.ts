@@ -21,7 +21,16 @@ export interface Store {
   /** Agencies created in the app (built-in packs live in agencies/). */
   listAgencies(): Promise<Record<string, unknown>[]>
   putAgency(a: { id: string }): Promise<void>
+  /** Merges fields into a stored agency (e.g. the connected Telegram bot). */
+  patchAgency(id: string, fields: Record<string, unknown>): Promise<void>
   deleteAgency(id: string): Promise<void>
+  /** Channel credentials per agency (server only; Firestore rules deny all client access). */
+  getIntegration(agencyId: string): Promise<Integrations | null>
+  setIntegration(agencyId: string, fields: Partial<Integrations>): Promise<void>
+}
+
+export interface Integrations {
+  telegram?: { token: string; username: string; secret: string; connected_at: string } | null
 }
 
 /** Conversation state of one Telegram chat. */
@@ -75,7 +84,7 @@ class MemoryStore implements Store {
     return this.chats.get(chatId) ?? null
   }
   async setChat(chatId: string, fields: Partial<ChatState>) {
-    this.chats.set(chatId, { agency_id: 'dinsos_demak', ...this.chats.get(chatId), ...fields })
+    this.chats.set(chatId, { agency_id: '', ...this.chats.get(chatId), ...fields })
   }
   private agencies = new Map<string, Record<string, unknown>>()
   async listAgencies() {
@@ -84,8 +93,19 @@ class MemoryStore implements Store {
   async putAgency(a: { id: string }) {
     this.agencies.set(a.id, a as Record<string, unknown>)
   }
+  async patchAgency(id: string, fields: Record<string, unknown>) {
+    const a = this.agencies.get(id)
+    if (a) this.agencies.set(id, { ...a, ...fields })
+  }
   async deleteAgency(id: string) {
     this.agencies.delete(id)
+  }
+  private integrations = new Map<string, Integrations>()
+  async getIntegration(agencyId: string) {
+    return this.integrations.get(agencyId) ?? null
+  }
+  async setIntegration(agencyId: string, fields: Partial<Integrations>) {
+    this.integrations.set(agencyId, { ...this.integrations.get(agencyId), ...fields })
   }
   private notes: Notification[] = []
   async addNotification(n: Notification) {
@@ -181,8 +201,18 @@ class FirestoreStore implements Store {
   async putAgency(a: { id: string }) {
     await (await this.db).collection('agencies').doc(a.id).set(a)
   }
+  async patchAgency(id: string, fields: Record<string, unknown>) {
+    await (await this.db).collection('agencies').doc(id).set(fields, { merge: true })
+  }
   async deleteAgency(id: string) {
     await (await this.db).collection('agencies').doc(id).delete()
+  }
+  async getIntegration(agencyId: string) {
+    const snap = await (await this.db).collection('integrations').doc(agencyId).get()
+    return snap.exists ? (snap.data() as Integrations) : null
+  }
+  async setIntegration(agencyId: string, fields: Partial<Integrations>) {
+    await (await this.db).collection('integrations').doc(agencyId).set(fields, { merge: true })
   }
   async listNotifications(agencyId: string, to: string) {
     const snap = await (await this.db).collection('notifications').where('agency_id', '==', agencyId).where('to', '==', to).get()

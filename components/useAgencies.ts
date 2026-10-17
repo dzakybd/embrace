@@ -13,7 +13,9 @@ export function useAgencies() {
   const [error, setError] = useState('')
   const reload = () => api.agencies().then(setAll).catch((e) => setError(String(e)))
   useEffect(() => {
-    setAgencyId(new URLSearchParams(location.search).get('agency') || stored('agency', DEFAULT_AGENCY))
+    const fromUrl = new URLSearchParams(location.search).get('agency')
+    if (fromUrl) save('agency', fromUrl)
+    setAgencyId(fromUrl || stored('agency', DEFAULT_AGENCY))
     reload()
   }, [])
   const pick = (id: string) => {

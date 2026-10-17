@@ -15,14 +15,13 @@ env:
     secret: gemini-api-key
   - variable: GEMINI_API_KEY
     secret: gemini-api-key
-  - variable: TELEGRAM_BOT_TOKEN
-    secret: telegram-bot-token
+  # One Telegram bot per built-in agency: TELEGRAM_BOT_TOKEN_<AGENCY_ID>. Agencies created in the app connect theirs
+  # from the Channels page (stored server-side in Firestore).
+  - variable: TELEGRAM_BOT_TOKEN_DINSOS_DEMAK
+    secret: telegram-bot-dinsos-demak
+  - variable: TELEGRAM_BOT_TOKEN_KPAI
+    secret: telegram-bot-kpai
   - variable: TELEGRAM_WEBHOOK_SECRET
     secret: telegram-webhook-secret
   - variable: EMBRACE_PUBLIC_URL
     value: https://embrace.nalaria.ai.id
-  - variable: NEXT_PUBLIC_TELEGRAM_BOT
-    value: dmusa_bot
-    availability:
-      - BUILD
-      - RUNTIME

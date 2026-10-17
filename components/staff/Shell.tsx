@@ -21,6 +21,8 @@ const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
   { href: '/staff/inbox', label: 'Inbox', icon: 'inbox', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/team', label: 'Team', icon: 'user', roles: ['leader', 'supervisor'] },
   { href: '/staff/knowledge', label: 'Knowledge', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
+  { href: '/staff/integrations', label: 'Channels', icon: 'chat', roles: ['leader', 'supervisor'] },
+  { href: '/staff/settings', label: 'Settings', icon: 'rules', roles: ['leader'] },
 ]
 
 export const HOME: Record<Role, string> = { leader: '/staff/insights', supervisor: '/staff/inbox', officer: '/staff/inbox' }

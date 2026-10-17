@@ -1,16 +1,9 @@
-// Telegram Bot API: the citizen chat channel. Messages are plain HTTPS calls; no SDK needed.
+// Telegram Bot API: the citizen chat channel, one bot per agency. Plain HTTPS calls; no SDK needed.
+// Every call takes the bot token, so several agencies' bots run on the same server.
 const API = 'https://api.telegram.org'
 
-function token() {
-  const t = process.env.TELEGRAM_BOT_TOKEN
-  if (!t) throw new Error('TELEGRAM_BOT_TOKEN is not set')
-  return t
-}
-
-export const telegramEnabled = () => !!process.env.TELEGRAM_BOT_TOKEN
-
-async function call<T>(method: string, body: Record<string, unknown>): Promise<T> {
-  const res = await fetch(`${API}/bot${token()}/${method}`, {
+export async function call<T>(token: string, method: string, body: Record<string, unknown>): Promise<T> {
+  const res = await fetch(`${API}/bot${token}/${method}`, {
     method: 'POST',
     headers: { 'content-type': 'application/json' },
     body: JSON.stringify(body),
@@ -23,8 +16,8 @@ async function call<T>(method: string, body: Record<string, unknown>): Promise<T
 
 export type Button = { text: string; callback_data?: string; url?: string }
 
-export function send(chatId: string | number, text: string, buttons?: Button[][]) {
-  return call('sendMessage', {
+export function send(token: string, chatId: string | number, text: string, buttons?: Button[][]) {
+  return call(token, 'sendMessage', {
     chat_id: chatId,
     text,
     parse_mode: 'HTML',
@@ -33,19 +26,19 @@ export function send(chatId: string | number, text: string, buttons?: Button[][]
   })
 }
 
-export function answerCallback(id: string) {
-  return call('answerCallbackQuery', { callback_query_id: id }).catch(() => undefined)
+export function answerCallback(token: string, id: string) {
+  return call(token, 'answerCallbackQuery', { callback_query_id: id }).catch(() => undefined)
 }
 
-export function typing(chatId: string | number) {
-  return call('sendChatAction', { chat_id: chatId, action: 'typing' }).catch(() => undefined)
+export function typing(token: string, chatId: string | number) {
+  return call(token, 'sendChatAction', { chat_id: chatId, action: 'typing' }).catch(() => undefined)
 }
 
 /** Downloads a file the citizen sent (voice note, photo) as base64, up to `maxBytes`. */
-export async function download(fileId: string, maxBytes = 7 * 1024 * 1024): Promise<string | null> {
-  const f = await call<{ file_path?: string; file_size?: number }>('getFile', { file_id: fileId })
+export async function download(token: string, fileId: string, maxBytes = 7 * 1024 * 1024): Promise<string | null> {
+  const f = await call<{ file_path?: string; file_size?: number }>(token, 'getFile', { file_id: fileId })
   if (!f.file_path || (f.file_size ?? 0) > maxBytes) return null
-  const res = await fetch(`${API}/file/bot${token()}/${f.file_path}`, { signal: AbortSignal.timeout(20_000) })
+  const res = await fetch(`${API}/file/bot${token}/${f.file_path}`, { signal: AbortSignal.timeout(20_000) })
   return Buffer.from(await res.arrayBuffer()).toString('base64')
 }
 

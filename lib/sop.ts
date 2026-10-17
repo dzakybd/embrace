@@ -148,6 +148,15 @@ export function indexFor(agencyId: string): SopIndex {
   return idx
 }
 
+const SHIPPED = { ...FILES }
+
+/** Back to the documents shipped in agencies/<id>/ (after an edited agency is reset). */
+export function resetDocs(agencyId: string): void {
+  if (SHIPPED[agencyId]) FILES[agencyId] = SHIPPED[agencyId]
+  else delete FILES[agencyId]
+  cache.delete(agencyId)
+}
+
 /** Documents of an agency created in the app (built at upload time, see passagesFor). */
 export function registerDocs(agencyId: string, docs: IndexFile): void {
   FILES[agencyId] = docs
