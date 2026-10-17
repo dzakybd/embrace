@@ -1,8 +1,66 @@
 [
-  {"file": "alur-layanan-dinsos-p2pa-demak.md", "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), transcribed from the office's public infographics", "short": "Alur layanan Dinsos P2PA Demak", "url": "https://dinsosp2pa.demakkab.go.id", "issuer": "Dinsos P2PA Kabupaten Demak", "kind": "service-flow"},
-  {"file": "standar-respons-pengaduan.md", "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025)", "short": "Standar respons (sampel)", "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/standar-respons-pengaduan.md", "issuer": "Embrace sample", "kind": "sample-sop"},
-  {"file": "permenpanrb-5-2025-sp4n.pdf", "title": "PANRB Ministerial Regulation 5/2025 on the national public service complaint management system (SP4N-LAPOR!)", "short": "PermenPANRB 5/2025", "url": "https://jdih.menpan.go.id", "issuer": "Ministry of Administrative and Bureaucratic Reform", "kind": "regulation"},
-  {"file": "permensos-4-2023-program-sembako.pdf", "title": "Minister of Social Affairs Regulation 4/2023 on the Sembako food aid programme", "short": "Permensos 4/2023", "url": "https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf", "issuer": "Ministry of Social Affairs", "kind": "regulation"},
-  {"file": "permensos-1-2018-pkh.pdf", "title": "Minister of Social Affairs Regulation 1/2018 on the PKH family cash transfer", "short": "Permensos 1/2018", "url": "https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf", "issuer": "Ministry of Social Affairs", "kind": "regulation"},
-  {"file": "standar-layanan-uptd-ppa-kab-tapin.pdf", "title": "UPTD PPA service standard (Tapin Regency, used as an example of a district UPTD PPA standard)", "short": "UPTD PPA service standard", "url": "https://dpppa.profile.tapinkab.go.id/storage/assets/dpppa/file/ipAH6UkH3KvjhUXd08KIMvr2LRk1wa4mgzKrEAYv.pdf", "issuer": "DPPPA Tapin Regency", "kind": "example-sop"}
+ {
+  "file": "service-flows-en.md",
+  "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), English translation of the office's public infographics",
+  "short": "Demak service flows",
+  "url": "https://dinsosp2pa.demakkab.go.id",
+  "issuer": "Dinsos P2PA Kabupaten Demak",
+  "kind": "service-flow"
+ },
+ {
+  "file": "response-standard-en.md",
+  "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025)",
+  "short": "Response standard (sample)",
+  "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/response-standard-en.md",
+  "issuer": "Embrace sample",
+  "kind": "sample-sop"
+ },
+ {
+  "file": "alur-layanan-dinsos-p2pa-demak.md",
+  "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), transcribed from the office's public infographics (Indonesian original)",
+  "short": "Alur layanan Dinsos P2PA Demak",
+  "url": "https://dinsosp2pa.demakkab.go.id",
+  "issuer": "Dinsos P2PA Kabupaten Demak",
+  "kind": "service-flow"
+ },
+ {
+  "file": "standar-respons-pengaduan.md",
+  "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025) (Indonesian original)",
+  "short": "Standar respons (sampel)",
+  "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/standar-respons-pengaduan.md",
+  "issuer": "Embrace sample",
+  "kind": "sample-sop"
+ },
+ {
+  "file": "permenpanrb-5-2025-sp4n.pdf",
+  "title": "PANRB Ministerial Regulation 5/2025 on the national public service complaint management system (SP4N-LAPOR!)",
+  "short": "PermenPANRB 5/2025",
+  "url": "https://jdih.menpan.go.id",
+  "issuer": "Ministry of Administrative and Bureaucratic Reform",
+  "kind": "regulation"
+ },
+ {
+  "file": "permensos-4-2023-program-sembako.pdf",
+  "title": "Minister of Social Affairs Regulation 4/2023 on the Sembako food aid programme",
+  "short": "Permensos 4/2023",
+  "url": "https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf",
+  "issuer": "Ministry of Social Affairs",
+  "kind": "regulation"
+ },
+ {
+  "file": "permensos-1-2018-pkh.pdf",
+  "title": "Minister of Social Affairs Regulation 1/2018 on the PKH family cash transfer",
+  "short": "Permensos 1/2018",
+  "url": "https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf",
+  "issuer": "Ministry of Social Affairs",
+  "kind": "regulation"
+ },
+ {
+  "file": "standar-layanan-uptd-ppa-kab-tapin.pdf",
+  "title": "UPTD PPA service standard (Tapin Regency, used as an example of a district UPTD PPA standard)",
+  "short": "UPTD PPA service standard",
+  "url": "https://dpppa.profile.tapinkab.go.id/storage/assets/dpppa/file/ipAH6UkH3KvjhUXd08KIMvr2LRk1wa4mgzKrEAYv.pdf",
+  "issuer": "DPPPA Tapin Regency",
+  "kind": "example-sop"
+ }
 ]

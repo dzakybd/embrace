@@ -1,8 +1,8 @@
 {
   "id": "dinsos_demak",
   "code": "DMK",
-  "name": "Dinas Sosial P2PA Kabupaten Demak (DINSOS Demak)",
-  "short_name": "DINSOS Demak",
+  "name": "Demak Regency Social Affairs Office (Dinsos P2PA Demak)",
+  "short_name": "Demak Social Affairs",
   "country": "Indonesia",
   "description": "Demak Regency Office of Social Affairs, Women's Empowerment and Child Protection: social aid, DTSEN registry, health insurance support, disability and elderly care, homelessness, disaster relief and violence against women and children (UPTD PPA).",
   "categories": [
@@ -103,7 +103,10 @@
       "kicked out",
       "no food",
       "suicide",
-      "flooded"
+      "flooded",
+      "thrown out",
+      "chained",
+      "trapped"
     ],
     "escalation_contact": "Sri Wahyuni, duty supervisor (Head of UPTD PPA)"
   },
@@ -114,7 +117,7 @@
     "low": 120
   },
   "emergency_line": "110 (police) or 112; for violence against women and children SAPA 129 (WhatsApp 08111-129-129)",
-  "reply_signature": "Layanan Pengaduan, Dinas Sosial P2PA Kabupaten Demak",
+  "reply_signature": "Complaints Desk, Demak Regency Social Affairs Office (Dinsos P2PA Demak)",
   "team": [
     {
       "id": "ahmad",

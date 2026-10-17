@@ -19,6 +19,12 @@ describe('SOP search', () => {
     ['dinsos_demak', 'pungutan liar agen e-warong', 'Standar respons (sampel) section 5'],
     ['kpai', 'pengaduan online data belum lengkap kapan dihubungi', 'SOP pengaduan KPAI section 3'],
     ['kpai', 'pengadu tidak dapat dihubungi, kasus diterminasi', 'SOP pengaduan KPAI section 7'],
+    ['dinsos_demak', 'tidal flood in our house, we have not evacuated, need disaster aid', 'Demak service flows section 6'],
+    ['dinsos_demak', 'how do I get a PBI UHC recommendation, BPJS inactive', 'Demak service flows section 3'],
+    ['dinsos_demak', 'my 15-year-old niece will be married off', 'Demak service flows section 10'],
+    ['dinsos_demak', 'e-warong agent deducts money, illegal levy', 'Response standard (sample) section 5'],
+    ['kpai', 'online complaint, data incomplete, when will you contact me', 'KPAI complaint SOP section 3'],
+    ['kpai', 'which days can I complain in person and what documents', 'KPAI complaint SOP section 1'],
     ['child_protection', 'child beaten with injury by stepfather', 'Sample CP SOP section 3'],
     ['social_services', 'flood water in the house no shelter tonight', 'Sample social services SOP section 10'],
   ])('%s: "%s" finds %s', (agency, q, want) => {

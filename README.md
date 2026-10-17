@@ -8,7 +8,7 @@ Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build
 - Demo video: _coming soon_
 - Pitch deck: [`docs/submission/`](docs/submission/) (PPTX and PDF), brief description in [`docs/submission/description.md`](docs/submission/description.md)
 
-> Prototype with synthetic data only. The two demo agencies, Dinsos P2PA Kabupaten Demak and KPAI, use their real unit structure, published service flows and public regulations; staff names and complaints are fictional, and neither agency endorses this prototype.
+> Prototype with synthetic data only. The two demo agencies, the Demak Regency Social Affairs Office (Dinsos P2PA Kabupaten Demak) and the Indonesian Child Protection Commission (KPAI), use their real unit structure, published service flows and public regulations; staff names and complaints are fictional, and neither agency endorses this prototype. Demo complaints and documents are in English so anyone can follow them; the agents read Indonesian and Javanese too (see the eval set and the labelled Indonesian samples on the report form), and the Indonesian originals of the service flows are kept next to the translations.
 
 ## The problem
 
@@ -42,8 +42,8 @@ Each built-in agency is a folder under [`agencies/`](agencies/): `agency.json` (
 
 | Pack | What it shows |
 |---|---|
-| `dinsos_demak` | **Dinas Sosial P2PA Kabupaten Demak**, a district office: UPTD PPA, social protection and security (PKH, BPNT/Sembako), SLRT / Puskesos (DTSEN, PBI/UHC), social rehabilitation, disaster victim protection (tidal floods in Sayung), child marriage and adoption, distribution oversight. Knowledge: its 13 published service flows, PermenPANRB 5/2025, Permensos 1/2018 and 4/2023, an example UPTD PPA standard. Complaints in Indonesian and Javanese. |
-| `kpai` | **Komisi Perlindungan Anak Indonesia**, a national commission: complaints unit and clusters (special protection, family and alternative care, education, health and welfare). Knowledge: KPAI's complaint SOP (direct, online, assessment, oversight, monitoring, termination), UU 35/2014, Perpres 61/2016, PermenPANRB 5/2025, UN CRC. |
+| `dinsos_demak` | **Demak Regency Social Affairs Office (Dinsos P2PA Demak)**, a district office: UPTD PPA, social protection and security (PKH, BPNT/Sembako), SLRT / Puskesos (DTSEN, PBI/UHC), social rehabilitation, disaster victim protection (tidal floods in Sayung), child marriage and adoption, distribution oversight. Knowledge: its 13 published service flows (English translation and Indonesian original), PermenPANRB 5/2025, Permensos 1/2018 and 4/2023, an example UPTD PPA standard. Demo complaints in English. |
+| `kpai` | **Indonesian Child Protection Commission (KPAI)**, a national commission: complaints unit and clusters (special protection, family and alternative care, education, health and welfare). Knowledge: KPAI's complaint SOP (in person, online, assessment, oversight, monitoring, closing cases; English and Indonesian), UU 35/2014, Perpres 61/2016, PermenPANRB 5/2025, UN CRC. |
 | `social_services`, `child_protection` | Generic templates (any country, English sample SOPs) for creating new agencies. |
 
 Why these two: the team is in contact with people at both agencies, and they cover the two ends of social complaints, a district office that delivers services and a national commission that refers and oversees. How their published processes compare with SP4N-LAPOR! and with Embrace: [`docs/research/complaint-processes.md`](docs/research/complaint-processes.md).

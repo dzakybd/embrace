@@ -11,34 +11,34 @@ const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[
     {
       label: 'Tidal flood, no food (WhatsApp)',
       channel: 'whatsapp',
-      text: 'Pak tolong, rob masuk rumah kami di Desa Bedono Sayung sejak subuh, air sudah selutut dan terus naik. Bapak saya pakai kursi roda, kami belum bisa mengungsi dan dari pagi belum makan.',
+      text: 'Please help, the tidal flood has been coming into our house in Bedono Village, Sayung since dawn. The water is knee-high and still rising. My father uses a wheelchair, we cannot evacuate and we have not eaten since this morning.',
     },
     {
-      label: 'BPNT not received (web)',
+      label: 'Food aid not received (web)',
       channel: 'web',
-      text: 'Saya warga Desa Wonosalam RT 03. BPNT tahap ini belum masuk ke KKS saya, padahal tetangga satu RT sudah bisa ambil di e-warong. Mohon dicek apakah nama saya masih terdaftar di DTSEN.',
+      text: 'I live in Wonosalam Village, RT 03. This round of BPNT food aid has not arrived on my KKS card, but my neighbours in the same RT have already collected theirs at the e-warong. Please check if my name is still registered in DTSEN.',
     },
     {
-      label: 'Elderly, Javanese (social)',
+      label: 'In Indonesian: elderly aid (social)',
       channel: 'social',
-      text: 'Nuwun sewu, simbah kulo sampun sepuh tur mboten saged mlampah, tasih urung pikantuk bantuan nopo-nopo. Pripun carane ndaftar? Kulo saking Karangtengah.',
+      text: 'Min, simbah saya sudah sepuh dan tidak bisa jalan jauh, sampai sekarang belum dapat bantuan apa-apa. Bagaimana cara daftarnya? Kami dari Karangtengah.',
     },
   ],
   kpai: [
     {
       label: 'Child beaten at home (WhatsApp)',
       channel: 'whatsapp',
-      text: 'Tolong KPAI, anak tetangga saya umur 8 tahun dipukuli ayah tirinya pakai ikat pinggang sampai punggungnya berdarah. Mereka masih tinggal serumah di Bekasi. Saya takut malam ini terjadi lagi.',
+      text: 'Please help KPAI, my neighbour\'s 8-year-old son is beaten with a belt by his stepfather until his back bleeds. They still live together in Bekasi. I am afraid it will happen again tonight.',
     },
     {
       label: 'Sextortion via online game (social)',
       channel: 'social',
-      text: '@KPAI_official anak saya 13 thn diancam orang yg dikenal lewat game online, fotonya mau disebar kalau tidak kirim foto lagi. Kami harus bagaimana?',
+      text: '@KPAI_official my 13-year-old daughter is being threatened by someone she met in an online game, who says he will spread her photos unless she sends more. What should we do?',
     },
     {
-      label: 'Child support unpaid, English (email)',
+      label: 'In Indonesian: child support unpaid (email)',
       channel: 'email',
-      text: 'Dear KPAI, my ex-husband in Surabaya has not paid the child support ordered by the religious court for 8 months. Our two children are 5 and 9. What can I do to protect their rights?',
+      text: 'Yth. KPAI, mantan suami saya di Surabaya sudah 8 bulan tidak membayar nafkah anak yang diputuskan pengadilan agama. Anak kami dua, usia 5 dan 9 tahun. Apa yang bisa saya lakukan?',
     },
   ],
 }

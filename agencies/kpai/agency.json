@@ -1,7 +1,7 @@
 {
   "id": "kpai",
   "code": "KPAI",
-  "name": "Komisi Perlindungan Anak Indonesia (KPAI)",
+  "name": "Indonesian Child Protection Commission (KPAI)",
   "short_name": "KPAI",
   "country": "Indonesia",
   "description": "Indonesian Child Protection Commission: receives complaints about violations of children's rights, assesses them, refers children to service providers (UPTD PPA, Dinas Sosial, police) and oversees how agencies follow up.",
@@ -87,7 +87,10 @@
       "being sold",
       "locked up",
       "suicide",
-      "bleeding"
+      "bleeding",
+      "beaten",
+      "sexually abused",
+      "locked in"
     ],
     "escalation_contact": "Hendro Wibisono, duty supervisor (Complaints Coordinator)"
   },
@@ -98,7 +101,7 @@
     "low": 336
   },
   "emergency_line": "110 (police) or SAPA 129 (WhatsApp 08111-129-129); KPAI complaints 0811-1002-7727",
-  "reply_signature": "Divisi Pengaduan, Komisi Perlindungan Anak Indonesia (KPAI)",
+  "reply_signature": "Complaints Unit, Indonesian Child Protection Commission (KPAI)",
   "team": [
     {
       "id": "ratna",

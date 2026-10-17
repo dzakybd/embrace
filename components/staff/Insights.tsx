@@ -7,8 +7,8 @@ import { CHANNEL_LABEL, Card, Icon, URGENCY_LABEL } from '../ui'
 import { useStaff } from './StaffProvider'
 
 const SUGGESTED: Record<string, string[]> = {
-  dinsos_demak: ['Which village needs attention first this week?', 'Is there a pattern of illegal levies in aid distribution?', 'Desa mana yang paling banyak aduan rob?'],
-  kpai: ['Which school has the most complaints this month?', 'Which clusters grew this week vs last week?', 'Berapa kasus kritis yang belum ditanggapi?'],
+  dinsos_demak: ['Which village needs attention first this week?', 'Is there a pattern of illegal levies in aid distribution?', 'How many tidal flood reports are still open?'],
+  kpai: ['Which school has the most complaints this month?', 'Which clusters grew this week vs last week?', 'How many critical cases have no response yet?'],
 }
 
 export default function Insights() {
