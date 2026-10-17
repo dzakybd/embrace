@@ -8,7 +8,6 @@ import { useStaff } from './StaffProvider'
 const EXAMPLES: Record<string, string[]> = {
   social_services: ['what to do when a payment is late', 'flood relief claim', 'illegal fee by a shop agent'],
   child_protection: ['child injured by a parent', 'sextortion online', 'school withholding report card'],
-  id_demak: ['syarat penerima program sembako', 'pengaduan pelayanan publik', 'pendamping PKH'],
 }
 
 export default function Knowledge() {

@@ -5,7 +5,7 @@ const top = (agency: string, q: string) => indexFor(agency).search(q, 3).map((r)
 
 describe('SOP search', () => {
   it('every agency has sources and passages', () => {
-    for (const id of ['child_protection', 'social_services', 'id_demak']) {
+    for (const id of ['child_protection', 'social_services']) {
       expect(sourcesFor(id).length).toBeGreaterThan(0)
       expect(indexFor(id).passages.length).toBeGreaterThan(0)
     }
@@ -23,9 +23,5 @@ describe('SOP search', () => {
     ['social_services', 'flood water in the house no shelter tonight', 'Sample social services SOP section 10'],
   ])('%s: "%s" finds %s', (agency, q, want) => {
     expect(top(agency, q)).toContain(want)
-  })
-
-  it('finds the food aid regulation for an Indonesian BPNT complaint', () => {
-    expect(top('id_demak', 'BPNT belum masuk ke KKS').some((d) => d.startsWith('Permensos 4/2023'))).toBe(true)
   })
 })

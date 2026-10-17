@@ -41,23 +41,6 @@ const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[
       text: 'water is inside our house in Riverbend and still rising, my father is in a wheelchair. we have nowhere to go tonight. please help us',
     },
   ],
-  id_demak: [
-    {
-      label: 'Family without food, Indonesian (WhatsApp)',
-      channel: 'whatsapp',
-      text: 'Assalamualaikum pak, sy ibu 3 anak di Bonang. PKH sy udh 3 bulan ga cair, hari ini beras udh habis bener2 ga ada yg bisa dimasak buat anak2. suami kerja serabutan lg sakit. mohon bantuannya',
-    },
-    {
-      label: 'BPNT not received (web)',
-      channel: 'web',
-      text: 'Saya warga Desa Wonosalam RT 03. BPNT tahap ini belum masuk ke KKS saya, padahal tetangga satu RT sudah bisa ambil di e-warong. Mohon dicek apakah nama saya masih terdaftar.',
-    },
-    {
-      label: 'Javanese, asking for help (social)',
-      channel: 'social',
-      text: 'Nuwun sewu, simbah kulo sampun sepuh tur mboten saged mlampah, tasih urung pikantuk bantuan nopo-nopo. Pripun carane ndaftar? Kulo saking Karangtengah.',
-    },
-  ],
 }
 
 const ORDER = ['intake_agent', 'triage_agent', 'policy_agent', 'sop_agent', 'drafter_agent']
@@ -176,7 +159,7 @@ export default function Report() {
       { key: 'read', label: files.length ? 'Reading your message, voice note and photos' : 'Reading your message', ok: !!byAgent.intake_agent },
       { key: 'urgency', label: 'Checking how urgent it is', ok: !!byAgent.triage_agent },
       { key: 'team', label: 'Finding the right team and person', ok: !!byAgent.policy_agent },
-      { key: 'reply', label: 'Preparing a first reply for an officer to check', ok: !!byAgent.drafter_agent || !!ticket },
+      { key: 'reply', label: 'Preparing a first reply for a caseworker to check', ok: !!byAgent.drafter_agent || !!ticket },
     ]
     return (
       <div className="citizen-done">
@@ -202,7 +185,7 @@ export default function Report() {
           {done && (
             <p className="lead">
               Your report is with the <b>{team}</b>. You will hear back within <b>{done.sla_hours} hours</b>.
-              {' '}An officer reviews every reply before it is sent.
+              {' '}A caseworker reviews every reply before it is sent.
             </p>
           )}
           {error && <p className="error">{error}</p>}
@@ -251,7 +234,7 @@ export default function Report() {
         </p>
         <a className="tg-banner" href={TELEGRAM_URL} target="_blank" rel="noreferrer">
           <Icon name="send" size={18} />
-          <span><b>Prefer to chat?</b> Message us on Telegram: same service, and the officer&apos;s reply comes back to your chat.</span>
+          <span><b>Prefer to chat?</b> Message us on Telegram: same service, and the caseworker&apos;s reply comes back to your chat.</span>
         </a>
         <label className="field">
           <span>Send to</span>
@@ -388,7 +371,7 @@ function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] })
   return (
     <div className="out">
       <pre className="draft">{o.reply}</pre>
-      <p className="muted"><b>Next step for officer:</b> {o.next_step}</p>
+      <p className="muted"><b>Next step for the caseworker:</b> {o.next_step}</p>
     </div>
   )
 }

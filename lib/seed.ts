@@ -2,7 +2,6 @@
 // Seeded tickets use their labels (no model calls) and are marked `seeded`; routing still goes through the real rules.
 import cpSeed from '@/agencies/child_protection/seed.json'
 import saSeed from '@/agencies/social_services/seed.json'
-import idSeed from '@/agencies/id_demak/seed.json'
 import { AGENCIES, picFor, type Agency } from './agencies'
 import { decide } from './policy'
 import type { Channel, HistoryItem, Ticket, Triage } from './schemas'
@@ -20,7 +19,7 @@ interface SeedRow {
   cluster: boolean
 }
 
-const SEEDS: Record<string, SeedRow[]> = { child_protection: cpSeed, social_services: saSeed, id_demak: idSeed }
+const SEEDS: Record<string, SeedRow[]> = { child_protection: cpSeed, social_services: saSeed }
 const SENTIMENT = { critical: 'distressed', high: 'worried', normal: 'neutral', low: 'neutral' } as const
 const H = 3600_000
 

@@ -79,7 +79,7 @@ export const AGENT_META: Record<string, { label: string; role: string }> = {
 }
 
 export function Citations({ items }: { items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[] }) {
-  if (!items.length) return <p className="muted small">No matching SOP passage: the officer confirms the procedure.</p>
+  if (!items.length) return <p className="muted small">No matching SOP passage: the caseworker confirms the procedure.</p>
   return (
     <ol className="cites">
       {items.map((c, i) => (

@@ -1,7 +1,6 @@
 // Agency packs: taxonomy, queues, escalation rules and SOP index per agency (agencies/<id>/).
 import childProtection from '@/agencies/child_protection/agency.json'
 import socialServices from '@/agencies/social_services/agency.json'
-import idDemak from '@/agencies/id_demak/agency.json'
 import type { Urgency } from './schemas'
 
 export interface Agency {
@@ -32,7 +31,7 @@ export interface TeamMember {
 }
 
 export const AGENCIES: Record<string, Agency> = Object.fromEntries(
-  [socialServices, childProtection, idDemak].map((a) => [a.id, a as Agency]),
+  [socialServices, childProtection].map((a) => [a.id, a as Agency]),
 )
 
 export function getAgency(id: string): Agency | undefined {

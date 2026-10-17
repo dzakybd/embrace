@@ -1,9 +1,9 @@
 {
  "summary": {
   "n": 60,
-  "category_accuracy": 93,
+  "category_accuracy": 92,
   "urgency_exact": 80,
-  "urgency_within_one": 100,
+  "urgency_within_one": 98,
   "critical_recall_model": 100,
   "critical_recall_with_rules": 100,
   "critical_cases": 9,
@@ -117,7 +117,7 @@
    "index": 10,
    "want_category": "online_harm",
    "want_urgency": "high",
-   "category": "education",
+   "category": "physical_emotional_abuse",
    "urgency": "high",
    "final": "high",
    "route": "assigned"
@@ -198,8 +198,8 @@
    "want_category": "education",
    "want_urgency": "normal",
    "category": "education",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
@@ -313,7 +313,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 0,
    "want_category": "domestic_violence",
    "want_urgency": "critical",
@@ -323,7 +323,7 @@
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 1,
    "want_category": "domestic_violence",
    "want_urgency": "critical",
@@ -333,7 +333,7 @@
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 2,
    "want_category": "domestic_violence",
    "want_urgency": "high",
@@ -343,17 +343,17 @@
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 3,
    "want_category": "benefit_not_received",
    "want_urgency": "high",
    "category": "benefit_not_received",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 4,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -363,7 +363,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 5,
    "want_category": "benefit_not_received",
    "want_urgency": "high",
@@ -373,7 +373,7 @@
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 6,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -383,17 +383,17 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 7,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
-   "category": "benefit_not_received",
+   "category": "eligibility_registration",
    "urgency": "normal",
    "final": "normal",
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 8,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -403,7 +403,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 9,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
@@ -413,7 +413,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 10,
    "want_category": "benefit_not_received",
    "want_urgency": "critical",
@@ -423,17 +423,17 @@
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 11,
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
    "category": "eligibility_registration",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "low",
+   "final": "low",
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 12,
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
@@ -443,7 +443,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 13,
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
@@ -453,7 +453,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 14,
    "want_category": "eligibility_registration",
    "want_urgency": "low",
@@ -463,7 +463,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 15,
    "want_category": "payment_schedule",
    "want_urgency": "low",
@@ -473,7 +473,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 16,
    "want_category": "payment_schedule",
    "want_urgency": "normal",
@@ -483,7 +483,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 17,
    "want_category": "payment_schedule",
    "want_urgency": "low",
@@ -493,7 +493,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 18,
    "want_category": "disability_elderly",
    "want_urgency": "high",
@@ -503,7 +503,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 19,
    "want_category": "disability_elderly",
    "want_urgency": "normal",
@@ -513,7 +513,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 20,
    "want_category": "disability_elderly",
    "want_urgency": "low",
@@ -523,7 +523,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 21,
    "want_category": "social_rehabilitation",
    "want_urgency": "high",
@@ -533,17 +533,17 @@
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 22,
    "want_category": "social_rehabilitation",
    "want_urgency": "normal",
    "category": "social_rehabilitation",
-   "urgency": "high",
+   "urgency": "critical",
    "final": "critical",
    "route": "escalated"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 23,
    "want_category": "social_rehabilitation",
    "want_urgency": "normal",
@@ -553,7 +553,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 24,
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
@@ -563,7 +563,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 25,
    "want_category": "fraud_misconduct",
    "want_urgency": "normal",
@@ -573,17 +573,17 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 26,
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
    "category": "fraud_misconduct",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 27,
    "want_category": "general_info",
    "want_urgency": "low",
@@ -593,7 +593,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 28,
    "want_category": "general_info",
    "want_urgency": "low",
@@ -603,7 +603,7 @@
    "route": "assigned"
   },
   {
-   "agency": "id_demak",
+   "agency": "social_services",
    "index": 29,
    "want_category": "general_info",
    "want_urgency": "low",
@@ -613,5 +613,5 @@
    "route": "assigned"
   }
  ],
- "at": "2026-10-16T19:08:02.662Z"
+ "at": "2026-10-17T15:25:02.910Z"
 }

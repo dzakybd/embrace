@@ -12,7 +12,7 @@ const limit = Number(process.argv[process.argv.indexOf('--limit') + 1]) || Infin
 const runner = new InMemoryRunner({ agent: triageOnly, appName: 'embrace_eval' })
 
 const rows: Record<string, unknown>[] = []
-for (const agencyId of ['child_protection', 'id_demak']) {
+for (const agencyId of ['child_protection', 'social_services']) {
   const agency = getAgency(agencyId)!
   const cases = JSON.parse(readFileSync(`data/eval/${agencyId}.json`, 'utf8')).slice(0, limit)
   for (const c of cases) {

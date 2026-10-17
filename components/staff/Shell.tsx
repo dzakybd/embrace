@@ -9,8 +9,8 @@ import { StaffProvider, useStaff } from './StaffProvider'
 
 const ROLES = [
   { id: 'leader', label: 'Head of office' },
-  { id: 'supervisor', label: 'Supervisor' },
-  { id: 'officer', label: 'Officers' },
+  { id: 'supervisor', label: 'Duty supervisor' },
+  { id: 'officer', label: 'Caseworkers' },
 ]
 
 const NAV = [

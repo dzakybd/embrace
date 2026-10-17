@@ -9,7 +9,6 @@ import { useStaff } from './StaffProvider'
 const SUGGESTED: Record<string, string[]> = {
   child_protection: ['Which school has the most complaints this month?', 'Which categories grew this week vs last week?', 'How many critical cases have no response yet?'],
   social_services: ['Which area needs attention first this week?', 'Is there a pattern of illegal fees?', 'Which team is breaching SLA the most?'],
-  id_demak: ['Which village has the most BPNT complaints?', 'Are there repeated reports of illegal levies?', 'Desa mana yang paling banyak keluhan BPNT?'],
 }
 
 export default function Insights() {

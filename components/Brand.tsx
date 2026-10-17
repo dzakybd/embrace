@@ -5,8 +5,10 @@ export function Brand({ sub, href = '/' }: { sub?: string; href?: string }) {
     <Link className="brand" href={href} aria-label="Embrace home">
       <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
         <rect width="32" height="32" rx="8" fill="var(--brand)" />
-        <path d="M8 18c3 5 13 5 16 0M10 13a6 6 0 0 1 12 0" stroke="#fff" strokeWidth="2.6" fill="none" strokeLinecap="round" />
-        <circle cx="16" cy="13" r="2.4" fill="var(--accent)" />
+        <circle cx="11" cy="8.6" r="3" fill="#fff" />
+        <circle cx="21" cy="8.6" r="3" fill="var(--accent)" />
+        <path d="M16 26c-5-3.2-9.6-6.6-9.6-10.6 0-2.4 1.8-3.9 4.4-3.9 2.2 0 4.2 1.6 5.2 3.6" stroke="#fff" strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+        <path d="M16 26c5-3.2 9.6-6.6 9.6-10.6 0-2.4-1.8-3.9-4.4-3.9-2.2 0-4.2 1.6-5.2 3.6" stroke="var(--accent)" strokeWidth="2.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
       </svg>
       <span>
         <b>Embrace</b>

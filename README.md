@@ -1,6 +1,6 @@
 # Embrace
 
-**AI agents for social services desks, in any language.** Embrace reads every report a social services office receives (social aid, disability and elderly care, homelessness, disaster relief, violence and child protection) from the web, WhatsApp, email, social media, voice notes or photos. It masks personal data, judges urgency, applies the agency's own escalation rules, assigns a person in charge, finds the right procedure in the agency's SOPs and drafts a cited reply in the citizen's language. An officer approves every reply. Leaders get a live dashboard, an AI weekly brief and early warnings when reports cluster around one village, school or payment batch.
+**The AI front door for any social services complaint.** Embrace reads every report a social services office receives (social aid, disability and elderly care, homelessness, disaster relief, violence and child protection) from the web, WhatsApp, email, social media, voice notes or photos. It masks personal data, judges urgency, applies the agency's own escalation rules, assigns a person in charge, finds the right procedure in the agency's SOPs and drafts a cited reply in the citizen's language. A caseworker approves every reply. Leaders get a live dashboard, an AI weekly brief and early warnings when reports cluster around one village, school or payment batch.
 
 Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build for the world.") by team **Nalaria**.
 
@@ -8,11 +8,11 @@ Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build
 - Demo video: _coming soon_
 - Pitch deck: [`docs/submission/`](docs/submission/) (PPTX and PDF), brief description in [`docs/submission/description.md`](docs/submission/description.md)
 
-> Prototype with synthetic data only. Agencies, SOPs and complaints in the two sample packs are fictional; the Indonesia pack uses real public regulations.
+> Prototype with synthetic data only. Agencies, SOPs and complaints in the two sample packs are fictional.
 
 ## The problem
 
-Social services desks get every kind of message in one inbox: a family without shelter tonight next to a question about office hours. Officers sort by hand, escalation depends on who reads the message first, replies quote procedures from memory, and no one sees that five families from the same village reported the same missing payment this week. In Indonesia alone, the national complaint channel SP4N-LAPOR! received 176,853 reports in 2023, up 30% on 2022, and KemenPPPA recorded 28,831 cases of violence against children in 2024.
+Social services desks get every kind of message in one inbox: a family without shelter tonight next to a question about office hours. Staff sort by hand, escalation depends on who reads the message first, replies quote procedures from memory, and no one sees that five families from the same village reported the same missing payment this week. Indonesia's national complaint channel SP4N-LAPOR! has handled 1.18 million reports, about 454 a day ([KemenPANRB via IDN Times, 2026](https://www.idntimes.com/news/indonesia/kemenpan-rb-aduan-sp4nlapor-02-5kbmp-d70p98)), and the child protection commission KPAI recorded 2,031 child-rights violations from 1,508 public complaints in 2025 ([KPAI year-end report](https://www.kpai.go.id/files/2026/01/siaran-pers-laporan-akhir-tahun-KPAI-2025.pdf)). Worldwide, up to 1 billion children aged 2–17 experience violence each year and fewer than 1 in 10 receive help ([WHO](https://www.who.int/news-room/fact-sheets/detail/violence-against-children)), and 3.8 billion people have no social protection at all ([ILO World Social Protection Report 2024–26](https://www.ilo.org/publications/world-social-protection-report-2024-26-universal-social-protection-climate)).
 
 Systems that work today start after a human has read, sorted and typed the case in: UNICEF's Primero (CPIMS+, GBVIMS+) manages child protection and GBV cases in 75 countries, and SP4N-LAPOR! routes complaints to agencies. Embrace is the AI front door before that step.
 
@@ -25,16 +25,16 @@ Systems that work today start after a human has read, sorted and typed the case 
 | 2 | Triage agent (Gemini) | Category from the agency's taxonomy, urgency with the decisive quote, sentiment, safety flags, confidence. |
 | 3 | Policy rules (code) | Deterministic escalation and routing. Safety flags, always-escalate categories and keywords force escalation even if the model under-rates the case; model failure falls back to keyword rules and manual review, never silence. |
 | 4 | SOP lookup (code) | BM25 search over the agency's SOP documents; no AI tokens. |
-| 5 | Reply drafter (Gemini) | Reply in the citizen's language with ticket number, team, response time in hours, and only procedures from the SOP passages, cited [1], [2]. Waits for officer approval. |
+| 5 | Reply drafter (Gemini) | Reply in the citizen's language with ticket number, team, response time in hours, and only procedures from the SOP passages, cited [1], [2]. Waits for caseworker approval. |
 | – | Analyst agent (Gemini + tools) | Answers leaders' questions and writes the weekly brief by calling tools over live Firestore data (`get_overview`, `find_clusters`, `search_tickets`). |
 
 ![Case page in the staff workspace](docs/screenshots/case.png)
 
 **Telegram chat channel.** Citizens can chat with the bot ([@dmusa_bot](https://t.me/dmusa_bot)) instead of using the web form. An open chat must not call Gemini on every message, so the webhook (`lib/bot.ts`) handles everything it can in plain code first: it verifies Telegram's secret header and deduplicates updates; answers `/start`, `/new`, `/track`, `/emergency` and greetings; ignores stickers; sends the emergency number at once when danger words appear; adds messages within 24 hours of a report to that case (notifying the person in charge) instead of running the AI again; and enforces Firestore-backed limits per chat (15 messages a minute, 3 new reports an hour, 10 a day) and a global daily AI budget, past which cases are routed by rules and sent to manual review. Real reports are queued on Pub/Sub (`telegram-reports`) so the webhook returns at once; a push subscription runs the ADK pipeline, tells the citizen the report number, team and response time, and the officer's approved reply is sent back to the chat.
 
-Every case gets a **person in charge** (PIC): the policy step assigns the officer who owns the queue, and officers can delegate a case to a colleague with a handover note. Escalations and assignments are published to **Pub/Sub** (topic `case-events`); a **Cloud Function for Firebase** (`functions/src/index.ts`) writes a notification for the supervisor and the PIC and marks the alert delivered.
+Every case gets a **person in charge** (PIC): the policy step assigns the caseworker who owns the queue, and caseworkers can delegate a case to a colleague with a handover note. Escalations and assignments are published to **Pub/Sub** (topic `case-events`); a **Cloud Function for Firebase** (`functions/src/index.ts`) writes a notification for the supervisor and the PIC and marks the alert delivered.
 
-The app opens on a role picker (citizen, officer, supervisor, head of office); each role lands on its own screen. It has two sides, in a Material 3 light theme. **Citizens** use `/report` (write, record a voice note or add a photo, in any language; the confirmation shows plain-language progress, with a "staff view" of the agent trace for the demo) and `/track/<id>` (status and the approved reply, no internal data). **Staff** use the workspace under `/staff` with a navigation rail: **Inbox** (My cases, escalated, queues, search), **Case** pages with tabs for the case, the agent trace and the history (delegate to a colleague, approve the reply, reassign, resolve), **Insights** (KPIs, AI weekly brief, early-warning clusters, and an Ask-the-analyst tab), **Knowledge** (the agency's SOP documents and search) and **Team** (who handles what, open cases per person). A demo sign-in picker switches between team members; a bell shows Pub/Sub notifications.
+The app opens on a role picker (citizen, caseworker, duty supervisor, head of office); each role lands on its own screen. It has two sides, in a Material 3 light theme. **Citizens** use `/report` (write, record a voice note or add a photo, in any language; the confirmation shows plain-language progress, with a "staff view" of the agent trace for the demo) and `/track/<id>` (status and the approved reply, no internal data). **Staff** use the workspace under `/staff` with a navigation rail: **Inbox** (My cases, escalated, queues, search), **Case** pages with tabs for the case, the agent trace and the history (delegate to a colleague, approve the reply, reassign, resolve), **Insights** (KPIs, AI weekly brief, early-warning clusters, and an Ask-the-analyst tab), **Knowledge** (the agency's SOP documents and search) and **Team** (who handles what, open cases per person). A demo sign-in picker switches between team members; a bell shows Pub/Sub notifications.
 
 ## Built for the world: agency packs
 
@@ -42,9 +42,8 @@ Each agency is a folder under [`agencies/`](agencies/): `agency.json` (categorie
 
 | Pack | What it shows |
 |---|---|
-| `social_services` | Generic social services office: social aid, disability and elderly care, homelessness, disaster relief, domestic violence. Sample SOP. |
-| `child_protection` | Generic child protection service. Sample SOP + the UN Convention on the Rights of the Child. Complaints in English, Spanish, French, Tagalog, Portuguese, Vietnamese, Swahili. |
-| `id_demak` | Indonesia country pack: a district social affairs office with six real Indonesian regulations as SOPs; complaints in Indonesian and Javanese. |
+| `social_services` | Department of Social Affairs (generic, default): social aid, disability and elderly care, homelessness, disaster relief, domestic violence. Sample SOP. |
+| `child_protection` | Child Protection Commission (generic). Sample SOP + the UN Convention on the Rights of the Child. Complaints in English, Spanish, French, Tagalog, Portuguese, Vietnamese, Swahili. |
 
 Prospective users are social affairs offices and child protection commissions; Embrace is an open-source blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
 
@@ -55,22 +54,22 @@ Prospective users are social affairs offices and child protection commissions; E
 - **Firebase App Hosting**: builds and serves the Next.js app (UI + API route handlers) from this repo; secrets come from Secret Manager.
 - **Cloud Run**: App Hosting runs the Next.js server on Cloud Run (`asia-southeast1`, one warm instance during judging); agent progress streams to the browser over Server-Sent Events.
 - **Pub/Sub + Cloud Functions for Firebase**: escalations, assignments and citizen follow-ups are published to the `case-events` topic; the `onCaseEvent` function notifies the supervisor and the person in charge and marks alerts delivered. Telegram reports are queued on `telegram-reports` and pushed to the app, so the webhook answers Telegram instantly.
-- **Cloud Firestore**: cases with the full agent trace, person in charge, history and officer actions, plus `notifications`; the analyst agent's tools read it live. Security rules deny all client access; only the server and the function write.
+- **Cloud Firestore**: cases with the full agent trace, person in charge, history and caseworker actions, plus `notifications`; the analyst agent's tools read it live. Security rules deny all client access; only the server and the function write.
 - **Firebase Analytics**: page and screen usage of the prototype.
 
 ## Quality
 
-Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; child protection and social assistance), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json):
+Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; one set per pack), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json):
 
 | Metric | Result |
 |---|---|
-| Category accuracy | 93% |
-| Urgency exact / within one level | 80% / 100% |
+| Category accuracy | 92% |
+| Urgency exact / within one level | 80% / 98% |
 | Critical cases escalated (9 cases), model alone and with rules | 100% / 100% |
 | Escalations that were truly high or critical (20) | 95% |
 | Sent to manual review | 0% |
 
-Remaining misses are borderline: a shared bullying video read as education rather than online harm, a schoolyard beating with bruises escalated as abuse, street children busking escalated.
+Remaining misses are borderline: a shared bullying video read as abuse rather than online harm, a name missing from a payment list read as a registry issue rather than a missed payment.
 In local test runs a text complaint went through all five steps in about 6 seconds.
 
 ## Run it
@@ -102,7 +101,7 @@ firebase deploy --only apphosting,firestore,functions
 ```
 app/              Next.js App Router: page + API route handlers (app/api/*)
 functions/        Cloud Function for Firebase: Pub/Sub case events -> notifications
-components/       React UI (Report, Officer console, Insights)
+components/       React UI (Report, staff workspace, Insights)
 lib/agents/       ADK agents: pipeline.ts, analyst.ts, models.ts
 lib/              policy rules, SOP search, Firestore store, analytics, seeding
 agencies/<id>/    agency packs: agency.json, sop/, sop-index.json, seed.json
@@ -112,8 +111,8 @@ tests/            vitest: policy and SOP search
 
 ## Safety and privacy
 
-- Synthetic data only. Personal data is masked by the intake agent before officers see it; the original stays behind a "Show original" toggle.
-- Escalation never depends on the model alone; replies are never sent without officer approval.
+- Synthetic data only. Personal data is masked by the intake agent before staff see it; the original stays behind a "Show original" toggle.
+- Escalation never depends on the model alone; replies are never sent without caseworker approval.
 - Attachments are sent to Gemini and not stored; the ticket keeps only their type and size and what the media agent read.
 - Per-IP rate limits protect the demo's Gemini budget.
 

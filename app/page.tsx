@@ -4,8 +4,8 @@ import { Icon, TELEGRAM_URL } from '@/components/ui'
 
 const ROLES = [
   { href: '/report', icon: 'send', title: 'I need help', who: 'Citizen', body: 'Report a problem in your own words and language: chat with us on Telegram, or use the web form. Voice notes and photos welcome.', main: true },
-  { href: '/staff/inbox?as=officer', icon: 'inbox', title: 'Handle my cases', who: 'Officer (person in charge)', body: 'Cases assigned to you, AI-drafted replies citing the SOP, delegation and notifications.' },
-  { href: '/staff/inbox?as=supervisor', icon: 'alert', title: 'Watch escalations', who: 'On-call supervisor', body: 'Emergencies first: the escalation inbox, alerts delivered in seconds, assign and reassign.' },
+  { href: '/staff/inbox?as=officer', icon: 'inbox', title: 'Handle my cases', who: 'Caseworker (person in charge)', body: 'Cases assigned to you, AI-drafted replies citing the SOP, delegation and notifications.' },
+  { href: '/staff/inbox?as=supervisor', icon: 'alert', title: 'Watch escalations', who: 'Duty supervisor', body: 'Emergencies first: the escalation inbox, alerts delivered in seconds, delegate cases to caseworkers.' },
   { href: '/staff/insights?as=leader', icon: 'chart', title: 'See the big picture', who: 'Head of office', body: 'KPIs, an AI weekly brief, early warnings when reports cluster, and an analyst to ask.' },
 ]
 
@@ -13,14 +13,15 @@ export default function Home() {
   return (
     <div className="public">
       <header className="top">
-        <Brand sub="AI agents for social services desks" />
+        <Brand sub="The AI front door for social complaints" />
       </header>
       <main className="landing">
         <section className="hero">
-          <h1>Every report read, routed and answered, in the citizen’s own language</h1>
+          <h1>Any social complaint, read, routed and answered within minutes</h1>
           <p className="lead">
-            Embrace is an open-source team of AI agents for social services desks: social aid, disability and elderly care,
-            homelessness, disaster relief, violence and child protection.
+            Embrace is an open-source team of AI agents for any social services complaint desk: social aid, disability and
+            elderly care, homelessness, disaster relief, violence and child protection. Each agency plugs in its own categories,
+            rules and procedures; citizens write in their own words and language.
           </p>
         </section>
         <h2 className="pick-h">Who are you?</h2>

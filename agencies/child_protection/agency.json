@@ -1,6 +1,6 @@
 {
   "id": "child_protection",
-  "name": "Child Protection Service (sample pack)",
+  "name": "Child Protection Commission (sample pack)",
   "short_name": "Child Protection",
   "country": "Any country",
   "categories": [
@@ -76,7 +76,7 @@
       "badly hurt",
       "right now"
     ],
-    "escalation_contact": "Amara Okafor, on-call supervisor"
+    "escalation_contact": "Amara Okafor, duty supervisor"
   },
   "sla_hours": {
     "critical": 1,
@@ -85,27 +85,27 @@
     "low": 120
   },
   "emergency_line": "your local emergency number (for example 112 or 911) or the national child helpline",
-  "reply_signature": "Child Protection Service, Complaints Team",
+  "reply_signature": "Child Protection Commission, Complaints Team",
   "team": [
     {
       "id": "ibrahim",
       "name": "Ibrahim Musa",
       "role": "leader",
-      "title": "Director",
+      "title": "Chairperson",
       "queues": []
     },
     {
       "id": "amara",
       "name": "Amara Okafor",
       "role": "supervisor",
-      "title": "On-call supervisor",
+      "title": "Duty supervisor",
       "queues": []
     },
     {
       "id": "kenji",
       "name": "Kenji Sato",
       "role": "officer",
-      "title": "Special Protection",
+      "title": "Caseworker, Special Protection",
       "queues": [
         "special_protection"
       ]
@@ -114,7 +114,7 @@
       "id": "priya",
       "name": "Priya Nair",
       "role": "officer",
-      "title": "Online Safety",
+      "title": "Caseworker, Online Safety",
       "queues": [
         "cyber"
       ]
@@ -123,7 +123,7 @@
       "id": "sofia",
       "name": "Sofia Lopez",
       "role": "officer",
-      "title": "Family & Care",
+      "title": "Caseworker, Family & Care",
       "queues": [
         "family"
       ]
@@ -132,7 +132,7 @@
       "id": "daniel",
       "name": "Daniel Kim",
       "role": "officer",
-      "title": "Education",
+      "title": "Caseworker, Education",
       "queues": [
         "education"
       ]
@@ -141,7 +141,7 @@
       "id": "nurul",
       "name": "Nurul Huda",
       "role": "officer",
-      "title": "Health & Nutrition, General",
+      "title": "Caseworker, Health & Nutrition, General",
       "queues": [
         "health",
         "general"

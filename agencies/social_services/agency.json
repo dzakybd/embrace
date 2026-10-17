@@ -1,7 +1,7 @@
 {
   "id": "social_services",
-  "name": "Social Services Office (sample pack)",
-  "short_name": "Social Services",
+  "name": "Department of Social Affairs (sample pack)",
+  "short_name": "Social Affairs",
   "country": "Any country",
   "categories": [
     {
@@ -16,12 +16,12 @@
     },
     {
       "id": "eligibility_registration",
-      "label": "Registration, eligibility and beneficiary data",
+      "label": "Registration, eligibility and beneficiary registry (how to register, checking registry status, data corrections)",
       "queue": "data"
     },
     {
       "id": "payment_schedule",
-      "label": "Payment schedule and pickup location",
+      "label": "Payment or distribution schedule and pickup location (when and where the next payment is)",
       "queue": "benefits"
     },
     {
@@ -84,7 +84,7 @@
       "no shelter",
       "evacuate"
     ],
-    "escalation_contact": "Maya Santos, on-call supervisor"
+    "escalation_contact": "Maya Santos, duty supervisor"
   },
   "sla_hours": {
     "critical": 2,
@@ -93,7 +93,7 @@
     "low": 120
   },
   "emergency_line": "your local emergency number (for example 112 or 911)",
-  "reply_signature": "Social Services Office, Complaints Desk",
+  "reply_signature": "Department of Social Affairs, Complaints Desk",
   "team": [
     {
       "id": "helen",
@@ -106,14 +106,14 @@
       "id": "maya",
       "name": "Maya Santos",
       "role": "supervisor",
-      "title": "On-call supervisor",
+      "title": "Duty supervisor",
       "queues": []
     },
     {
       "id": "rina",
       "name": "Rina Halim",
       "role": "officer",
-      "title": "Benefits & Payments",
+      "title": "Caseworker, Benefits & Payments",
       "queues": [
         "benefits"
       ]
@@ -122,7 +122,7 @@
       "id": "arif",
       "name": "Arif Rahman",
       "role": "officer",
-      "title": "Protection Unit",
+      "title": "Caseworker, Protection Unit",
       "queues": [
         "protection"
       ]
@@ -131,7 +131,7 @@
       "id": "leo",
       "name": "Leo Tan",
       "role": "officer",
-      "title": "Beneficiary Registry",
+      "title": "Caseworker, Beneficiary Registry",
       "queues": [
         "data",
         "general"
@@ -141,7 +141,7 @@
       "id": "grace",
       "name": "Grace Mwangi",
       "role": "officer",
-      "title": "Social Rehabilitation",
+      "title": "Caseworker, Social Rehabilitation",
       "queues": [
         "rehabilitation"
       ]
@@ -150,7 +150,7 @@
       "id": "tomas",
       "name": "Tomas Reyes",
       "role": "officer",
-      "title": "Disaster Relief & Oversight",
+      "title": "Caseworker, Disaster Relief & Oversight",
       "queues": [
         "emergency",
         "oversight"

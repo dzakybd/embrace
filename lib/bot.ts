@@ -54,7 +54,7 @@ async function chatState(chatId: string): Promise<ChatState> {
 async function welcome(chatId: string) {
   await say(chatId,
     '<b>Embrace</b> helps you reach social services: social aid, disability and elderly care, homelessness, disaster relief, violence and child protection.\n\n' +
-      'Write what happened in your own words and language, or send a voice note or photo. A real officer reviews every reply.\n\nFirst, which office should receive your report?',
+      'Write what happened in your own words and language, or send a voice note or photo. A real caseworker reviews every reply.\n\nFirst, which office should receive your report?',
     agencyButtons())
 }
 
@@ -193,7 +193,7 @@ export async function processReport(job: ReportJob) {
   await say(job.chat_id,
     `Your report number is <b>${ticket.id}</b>.\n` +
       (urgent ? `<b>Marked urgent: a supervisor has been alerted now.</b> If anyone is in danger right now, call ${esc(a.emergency_line)}.\n` : '') +
-      `It is with the <b>${esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue)}</b>. You will hear back within ${ticket.policy.sla_hours} hours; an officer reviews every reply before it is sent.\n\n` +
+      `It is with the <b>${esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue)}</b>. You will hear back within ${ticket.policy.sla_hours} hours; a caseworker reviews every reply before it is sent.\n\n` +
       'Anything you send here in the next 24 hours is added to this report.',
     [[{ text: 'Track this report', url: `${publicUrl()}/track/${ticket.id}` }], [{ text: 'New report', callback_data: 'new' }]])
 }
