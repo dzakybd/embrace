@@ -1,4 +1,5 @@
-// Gemini models per agent. Cheap Flash-Lite by default (3.1 detects informal languages better than 2.5); triage gets Flash because urgency matters most.
+// Gemini models per agent: 3.1 Flash-Lite everywhere. For triage it measured better than 2.5 Flash on the eval set
+// (data/eval/triage-models.json), at a lower price.
 import { Gemini } from '@google/adk'
 import type { GenerateContentConfig } from '@google/genai'
 
@@ -7,11 +8,19 @@ const env = (k: string, d: string) => process.env[k] || d
 export const MODELS = {
   media: env('EMBRACE_MEDIA_MODEL', 'gemini-3.1-flash-lite'),
   intake: env('EMBRACE_INTAKE_MODEL', 'gemini-3.1-flash-lite'),
-  triage: env('EMBRACE_TRIAGE_MODEL', 'gemini-2.5-flash'),
+  triage: env('EMBRACE_TRIAGE_MODEL', 'gemini-3.1-flash-lite'),
   drafter: env('EMBRACE_DRAFTER_MODEL', 'gemini-3.1-flash-lite'),
   analyst: env('EMBRACE_ANALYST_MODEL', 'gemini-3.1-flash-lite'),
 }
 export type ModelKey = keyof typeof MODELS
+
+/** List prices in USD per 1M tokens (input, output) on the Gemini API paid tier, October 2026, as reported by public
+ * price trackers; the official page is ai.google.dev/gemini-api/docs/pricing. Used for cost estimates only. */
+export const PRICES: Record<string, [number, number]> = {
+  'gemini-3.1-flash-lite': [0.25, 1.5],
+  'gemini-2.5-flash': [0.3, 2.5],
+  'gemini-2.5-flash-lite': [0.1, 0.4],
+}
 
 /** Models an agency may pick in the AI control tower. Anything else is ignored. */
 export const MODEL_CHOICES = ['gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.5-flash']

@@ -123,6 +123,7 @@ export interface TraceStep {
   model?: string
   tokens_in?: number
   tokens_out?: number
+  trace_id?: string
   rerun?: boolean
 }
 export interface SopSource {
@@ -245,8 +246,8 @@ export const api = {
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,
     ),
   ai: (t: string) => fetch(`/api/agencies/${t}/ai`).then(json<import('./staff/AiTower').Tower>),
-  setAiModels: (t: string, models: Record<string, string>, by: string) =>
-    fetch(`/api/agencies/${t}/ai`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ models, by }) }).then(json<{ ok: boolean }>),
+  setAi: (t: string, body: { models: Record<string, string>; guard: { read: string; write: string; injection: string; questions: number }; by: string }) =>
+    fetch(`/api/agencies/${t}/ai`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<{ ok: boolean }>),
   notifications: (t: string, member: string) => fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
   createAgency: (body: NewAgency) =>
     fetch('/api/agencies', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),

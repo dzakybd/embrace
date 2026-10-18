@@ -97,4 +97,17 @@ describe('AI control tower report', () => {
     expect(r.draft_edited_pct).toBe(50)
     expect(r.agents[0]).toMatchObject({ agent: 'intake_agent', calls: 1, models: ['m1'] })
   })
+
+  it('estimates cost from list prices and counts output checks by kind', () => {
+    const r = aiReport([
+      base({ id: 'A', trace: [{ agent: 'triage_agent', kind: 'llm', ms: 900, output: {}, model: 'm1', tokens_in: 1_000_000, tokens_out: 100_000, trace_id: 'abc' }],
+        guard: { injection: [], draft: ['Does not mention the report number', 'Cites [4] but only 3 SOP passages were retrieved'] } }),
+    ], 30, { m1: [0.25, 1.5] })
+    expect(r.usd).toBeCloseTo(0.25 + 0.15)
+    expect(r.daily).toHaveLength(14)
+    expect(r.daily.at(-1)).toMatchObject({ calls: 1, tokens: 1_100_000 })
+    expect(Object.fromEntries(r.draft_checks.map((c) => [c.check, c.count]))).toMatchObject({ 'report number': 1, citations: 1, links: 0 })
+    expect(r.recent[0].trace_id).toBe('abc')
+    expect(r.events.map((e) => e.kind)).toEqual(['draft', 'draft'])
+  })
 })

@@ -10,38 +10,32 @@ import { useLang, useT } from '../Lang'
 import { useAgencies } from '../useAgencies'
 import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
 
-const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[]> = {
+const SAMPLES: Record<string, { label: string; text: string }[]> = {
   dinsos_demak: [
     {
-      label: 'Tidal flood, no food (WhatsApp)',
-      channel: 'whatsapp',
+      label: 'Tidal flood, no food',
       text: 'Please help, the tidal flood has been coming into our house in Bedono Village, Sayung since dawn. The water is knee-high and still rising. My father uses a wheelchair, we cannot evacuate and we have not eaten since this morning.',
     },
     {
-      label: 'Food aid not received (web)',
-      channel: 'web',
+      label: 'Food aid not received',
       text: 'I live in Wonosalam Village, RT 03. This round of BPNT food aid has not arrived on my KKS card, but my neighbours in the same RT have already collected theirs at the e-warong. Please check if my name is still registered in DTSEN.',
     },
     {
-      label: 'In Indonesian: elderly aid (social)',
-      channel: 'social',
+      label: 'In Indonesian: elderly aid',
       text: 'Min, simbah saya sudah sepuh dan tidak bisa jalan jauh, sampai sekarang belum dapat bantuan apa-apa. Bagaimana cara daftarnya? Kami dari Karangtengah.',
     },
   ],
   kpai: [
     {
-      label: 'Child beaten at home (WhatsApp)',
-      channel: 'whatsapp',
+      label: 'Child beaten at home',
       text: 'Please help KPAI, my neighbour\'s 8-year-old son is beaten with a belt by his stepfather until his back bleeds. They still live together in Bekasi. I am afraid it will happen again tonight.',
     },
     {
-      label: 'Sextortion via online game (social)',
-      channel: 'social',
+      label: 'Sextortion via online game',
       text: '@KPAI_official my 13-year-old daughter is being threatened by someone she met in an online game, who says he will spread her photos unless she sends more. What should we do?',
     },
     {
-      label: 'In Indonesian: child support unpaid (email)',
-      channel: 'email',
+      label: 'In Indonesian: child support unpaid',
       text: 'Yth. KPAI, mantan suami saya di Surabaya sudah 8 bulan tidak membayar nafkah anak yang diputuskan pengadilan agama. Anak kami dua, usia 5 dan 9 tahun. Apa yang bisa saya lakukan?',
     },
   ],
@@ -78,11 +72,13 @@ type Phase = 'compose' | 'running' | 'details' | 'done'
 
 /** The web report desk as a chat, like the agency's Telegram bot: the citizen writes, the agents answer in the thread,
  * and missing details are asked one at a time after the case exists. */
-export default function Report() {
+export default function Report({ agencyId, embed = false }: { agencyId?: string; embed?: boolean } = {}) {
   const { t, lang } = useLang()
-  const { agencies, agency: raw, pick, error: loadError } = useAgencies()
+  const { agencies, agency: picked, pick, error: loadError } = useAgencies()
+  // Embedded on an agency's site, the chat is fixed to that agency.
+  const raw = (agencyId && agencies.find((a) => a.id === agencyId)) || picked
+  const [copied, setCopied] = useState(false)
   const [text, setText] = useState('')
-  const [channel, setChannel] = useState<Channel>('web')
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
   const [showContact, setShowContact] = useState(false)
@@ -169,7 +165,7 @@ export default function Report() {
     try {
       await submitComplaint(
         agency.id,
-        { text: body, channel, reporter_name: name || undefined, reporter_contact: contact || undefined, attachments: files.map(({ mime, data }) => ({ mime, data })) },
+        { text: body, channel: 'web', reporter_name: name || undefined, reporter_contact: contact || undefined, attachments: files.map(({ mime, data }) => ({ mime, data })) },
         (e) => {
           if (e.type === 'received') setTicketId(e.ticket_id)
           if (e.type === 'step') setSteps((s) => [...s, e])
@@ -187,7 +183,16 @@ export default function Report() {
 
   const reset = () => {
     setPhase('compose'); setSent(null); setTicketId(''); setTicket(null); setSteps([]); setText(''); setFiles([])
-    setError(''); setAnswers([]); setDetailsSent('no'); setChannel('web')
+    setError(''); setAnswers([]); setDetailsSent('no')
+  }
+
+  /** Shares the agency's chat link: the phone's share sheet when there is one, else the clipboard. */
+  const share = async (id: string) => {
+    const url = `${location.origin}/report?agency=${id}`
+    try {
+      if (navigator.share) await navigator.share({ url, title: document.title })
+      else { await navigator.clipboard.writeText(url); setCopied(true); setTimeout(() => setCopied(false), 2000) }
+    } catch { /* dismissed */ }
   }
 
   if (loadError) return <p className="error pad">{t('Could not reach the service:')} {loadError}</p>
@@ -208,30 +213,36 @@ export default function Report() {
   const canSend = phase === 'details' ? !!text.trim() : phase === 'compose' && !recording && (text.trim().length >= 10 || files.length > 0)
 
   return (
-    <div className="chat-desk">
+    <div className={`chat-desk${embed ? ' embedded' : ''}`}>
       <header className="chat-head">
         <Monogram agency={{ id: agency.id, short_name: agency.short_name, logo: agency.logo ?? null }} size={40} />
         <div className="chat-who">
           <b>{agency.short_name}</b>
-          <select value={raw.id} onChange={(e) => { pick(e.target.value); reset() }} aria-label={t('Send to')} disabled={phase === 'running'}>
-            {agencies.map((a) => <option key={a.id} value={a.id}>{localize(a, lang).name}</option>)}
-          </select>
+          {embed ? <small className="muted">{agency.name}</small> : (
+            <select value={raw.id} onChange={(e) => { pick(e.target.value); reset() }} aria-label={t('Send to')} disabled={phase === 'running'}>
+              {agencies.map((a) => <option key={a.id} value={a.id}>{localize(a, lang).name}</option>)}
+            </select>
+          )}
         </div>
-        {tg && <a className="btn tonal small" href={tg} target="_blank" rel="noreferrer"><ChannelIcon c="telegram" size={16} /> {t('Continue on Telegram')}</a>}
+        {!embed && (
+          <button type="button" className="icon-btn" title={copied ? t('Link copied') : t('Share this chat')} aria-label={t('Share this chat')} onClick={() => share(raw.id)}>
+            <Icon name={copied ? 'check' : 'share'} size={18} />
+          </button>
+        )}
+        {tg && <a className="btn tonal small" href={tg} target="_blank" rel="noreferrer"><ChannelIcon c="telegram" size={16} /> {embed ? 'Telegram' : t('Continue on Telegram')}</a>}
       </header>
 
       <div className="chat-log" aria-live="polite">
         <Bubble from="bot">
           <p>{t('Hello! Tell us what happened, where and when, in your own words. You can also send a voice note or a photo.')}</p>
-          <p className="danger-line"><Icon name="alert" size={14} /> {t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}</p>
         </Bubble>
 
         {phase === 'compose' && !sent && (
           <div className="chat-chips" role="group" aria-label={t('Sample reports')}>
             <span className="muted small">{t('Try a sample report')}</span>
             {SAMPLES[raw.id]?.map((s) => (
-              <button key={s.label} className="chip" onClick={() => { setText(s.text); setChannel(s.channel) }}>
-                <ChannelIcon c={s.channel} size={14} /> {t(s.label)}
+              <button key={s.label} className="chip" onClick={() => setText(s.text)}>
+                <Icon name="chat" size={14} /> {t(s.label)}
               </button>
             ))}
           </div>
@@ -241,7 +252,6 @@ export default function Report() {
           <Bubble from="me">
             {sent.text && <p>{sent.text}</p>}
             {sent.files.map((f) => f.mime.startsWith('image/') ? <img key={f.url} src={f.url} alt={f.name} /> : <audio key={f.url} controls src={f.url} />)}
-            {channel !== 'web' && <small className="via"><ChannelIcon c={channel} size={12} /> {t('Demo: arrives as {channel}', { channel: t(CHANNEL_LABEL[channel]) })}</small>}
           </Bubble>
         )}
 

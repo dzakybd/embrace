@@ -3,8 +3,9 @@
 // - records model, latency and token usage for the case trace and as OpenTelemetry GenAI metrics,
 // - writes a structured log line with metadata only: prompts and complaint text never reach the logs.
 import { BasePlugin, type Context, type LlmRequest, type LlmResponse } from '@google/adk'
-import { metrics } from '@opentelemetry/api'
-import { STORE } from '../store'
+import { metrics, trace } from '@opentelemetry/api'
+import { GUARD_DEFAULTS, safetyAt } from '../guardrails'
+import { STORE, type GuardConfig } from '../store'
 import { AGENT_MODEL_KEY, MODEL_CHOICES, MODELS } from './models'
 
 export interface ModelCall {
@@ -14,6 +15,8 @@ export interface ModelCall {
   tokens_in: number
   tokens_out: number
   error?: string
+  /** Cloud Trace id of the run, to open its waterfall from the control tower. */
+  trace_id?: string
 }
 
 const meter = metrics.getMeter('embrace')
@@ -31,15 +34,19 @@ export function recordGuard(kind: string, agencyId: string, ticketId: string) {
   log('WARNING', 'guardrail', { kind, agency: agencyId, ticket: ticketId })
 }
 
-/** Model per agent chosen by an agency, cached briefly so the control tower takes effect within a minute. */
-const choices = new Map<string, { at: number; models: Record<string, string> }>()
-export async function agencyModels(agencyId: string): Promise<Record<string, string>> {
+export interface AiConfig { models: Record<string, string>; guard: GuardConfig; updated_by?: string; updated_at?: string }
+
+/** Models and guardrail settings chosen by an agency, cached briefly so the control tower takes effect within a minute. */
+const choices = new Map<string, { at: number; cfg: AiConfig }>()
+export async function agencyAi(agencyId: string): Promise<AiConfig> {
   const hit = choices.get(agencyId)
-  if (hit && Date.now() - hit.at < 30_000) return hit.models
-  const models = (await STORE.getIntegration(agencyId).catch(() => null))?.ai?.models ?? {}
-  choices.set(agencyId, { at: Date.now(), models })
-  return models
+  if (hit && Date.now() - hit.at < 30_000) return hit.cfg
+  const ai = (await STORE.getIntegration(agencyId).catch(() => null))?.ai
+  const cfg: AiConfig = { models: ai?.models ?? {}, guard: { ...GUARD_DEFAULTS, ...ai?.guard }, updated_by: ai?.updated_by, updated_at: ai?.updated_at }
+  choices.set(agencyId, { at: Date.now(), cfg })
+  return cfg
 }
+export const agencyModels = async (agencyId: string) => (await agencyAi(agencyId)).models
 export const forgetAgencyModels = (agencyId: string) => choices.delete(agencyId)
 
 /** The model an agent runs for an agency: its allow-listed choice, else the deployment default. */
@@ -80,8 +87,11 @@ export class GovernancePlugin extends BasePlugin {
   override async beforeModelCallback({ callbackContext: ctx, llmRequest }: { callbackContext: Context; llmRequest: LlmRequest }) {
     const agencyId = ctx.state.get('agency_id') as string | undefined
     if (agencyId) {
-      const model = modelFor(ctx.agentName, await agencyModels(agencyId))
+      const cfg = await agencyAi(agencyId)
+      const model = modelFor(ctx.agentName, cfg.models)
       if (model) llmRequest.model = model
+      // The drafter writes to the public; every other agent reads reports.
+      llmRequest.config = { ...llmRequest.config, safetySettings: safetyAt(ctx.agentName === 'drafter_agent' ? cfg.guard.write : cfg.guard.read) }
     }
     this.started.set(`${ctx.invocationId}:${ctx.agentName}`, { at: Date.now(), model: llmRequest.model ?? 'gemini' })
     return undefined
@@ -95,7 +105,10 @@ export class GovernancePlugin extends BasePlugin {
     const u = llmResponse.usageMetadata
     // The model the request was sent to; structured-output responses do not always echo modelVersion.
     const model = llmResponse.modelVersion ?? start?.model ?? 'gemini'
-    const call: ModelCall = { agent: ctx.agentName, model, ms, tokens_in: u?.promptTokenCount ?? 0, tokens_out: (u?.candidatesTokenCount ?? 0) + (u?.thoughtsTokenCount ?? 0) }
+    const call: ModelCall = {
+      agent: ctx.agentName, model, ms, tokens_in: u?.promptTokenCount ?? 0, tokens_out: (u?.candidatesTokenCount ?? 0) + (u?.thoughtsTokenCount ?? 0),
+      trace_id: trace.getActiveSpan()?.spanContext().traceId,
+    }
     this.push(ctx, call)
     const attrs = { 'gen_ai.agent.name': ctx.agentName, 'gen_ai.request.model': model, 'gen_ai.provider.name': 'gcp.gemini', 'gen_ai.operation.name': 'generate_content' }
     tokenUsage.record(call.tokens_in, { ...attrs, 'gen_ai.token.type': 'input' })

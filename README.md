@@ -51,7 +51,7 @@ Prospective users are social affairs offices and child protection commissions, s
 
 ## How it uses Google Cloud
 
-- **Gemini** (Gemini API, `gemini-3.1-flash-lite` for media, intake, drafting and analysis; `gemini-2.5-flash` for triage) for multilingual understanding, audio transcription, image reading, structured outputs and tool calling.
+- **Gemini** (Gemini API, `gemini-3.1-flash-lite` for every agent, chosen on the eval below; the head of office can switch per agent in the AI control tower) for multilingual understanding, audio transcription, image reading, structured outputs and tool calling.
 - **Google Agent Development Kit (ADK) for TypeScript**: the pipeline is an ADK `SequentialAgent` of four `LlmAgent`s with Zod output schemas plus two custom `BaseAgent`s (rules and SOP search); the analyst is an `LlmAgent` with `FunctionTool`s.
 - **Firebase App Hosting**: builds and serves the Next.js app (UI + API route handlers) from this repo; secrets come from Secret Manager.
 - **Cloud Run**: App Hosting runs the Next.js server on Cloud Run (`asia-southeast1`, one warm instance during judging); agent progress streams to the browser over Server-Sent Events.
@@ -61,17 +61,17 @@ Prospective users are social affairs offices and child protection commissions, s
 
 ## Quality
 
-Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 30 for KPAI, 30 for Dinsos Demak), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json):
+Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 30 for KPAI, 30 for Dinsos Demak), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json). Triage runs on `gemini-3.1-flash-lite`, which beat `gemini-2.5-flash` on the same set (category 95% vs 93%, all critical cases escalated by both, no over-escalation; [`triage-models.json`](data/eval/triage-models.json)):
 
 | Metric | Result |
 |---|---|
-| Category accuracy | 93% |
-| Urgency exact / within one level | 78% / 100% |
+| Category accuracy | 95% |
+| Urgency exact / within one level | 80% / 100% |
 | Critical cases escalated (9 cases), model alone and with rules | 100% / 100% |
-| Escalations that were truly high or critical (24) | 92% |
+| Escalations that were truly high or critical (18) | 100% |
 | Sent to manual review | 0% |
 
-Remaining misses are borderline: a shared bullying video and two school beatings read as violence rather than online harm or education, and an office-hours question read as registration.
+The three misses are borderline: a school beating read as violence rather than education, a recipient dropped from the BPNT list read as registration rather than aid not received, and a Javanese question on how to register an elderly parent read as registration rather than general information.
 In local test runs a text complaint went through all five steps in about 6 seconds.
 
 **Load test on production**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm Cloud Run instance; case list API 63 req/s (p50 277 ms); 10 AI reports at once all completed in about 4.7 s each, first progress event within 0.23 s (`scripts/load-burst.mjs`).

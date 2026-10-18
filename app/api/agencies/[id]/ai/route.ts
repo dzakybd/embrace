@@ -2,17 +2,18 @@ import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { agencyById } from '@/lib/agencies'
 import { aiReport } from '@/lib/ai-report'
-import { agencyModels, forgetAgencyModels, log } from '@/lib/agents/governance'
-import { AGENT_MODEL_KEY, MODEL_CHOICES, MODELS } from '@/lib/agents/models'
+import { agencyAi, forgetAgencyModels, log } from '@/lib/agents/governance'
+import { AGENT_MODEL_KEY, MODEL_CHOICES, MODELS, PRICES } from '@/lib/agents/models'
 import { LIMITS } from '@/lib/bot'
 import { MAX_QUESTIONS, requiredDetails } from '@/lib/details'
-import { SAFETY } from '@/lib/guardrails'
+import { THRESHOLDS } from '@/lib/guardrails'
 import { error, rateLimit } from '@/lib/http'
 import { CONFIDENCE_FLOOR } from '@/lib/policy'
 import { ensureSeeded } from '@/lib/seed'
 import { STORE, now } from '@/lib/store'
 import { telemetryStatus } from '@/lib/telemetry'
 import evalResults from '@/data/eval/results.json'
+import triageModels from '@/data/eval/triage-models.json'
 
 export const dynamic = 'force-dynamic'
 
@@ -30,12 +31,15 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')
   await ensureSeeded(STORE, id)
-  const chosen = await agencyModels(id)
+  const cfg = await agencyAi(id)
+  const chosen = cfg.models
   const key = process.env.GOOGLE_GENAI_API_KEY?.trim()
-  const threshold = (s: typeof SAFETY.reading) => String(s[0].threshold)
   return Response.json({
     models: Object.entries(AGENT_MODEL_KEY).map(([agent, k]) => ({ agent, key: k, role: ROLE[agent], default: MODELS[k], chosen: chosen[k] ?? null })),
-    choices: MODEL_CHOICES,
+    choices: MODEL_CHOICES.map((m) => ({ model: m, price: PRICES[m] ?? null, eval: (triageModels as Record<string, { category_accuracy: number; critical_recall_with_rules: number; urgency_within_one: number }>)[m] ?? null })),
+    guard: cfg.guard,
+    thresholds: THRESHOLDS,
+    changed: cfg.updated_at ? { by: cfg.updated_by, at: cfg.updated_at } : null,
     key: {
       provider: 'Gemini API (Google AI)',
       store: 'Google Secret Manager: gemini-api-key, injected into Cloud Run at deploy',
@@ -45,7 +49,6 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     },
     telemetry: telemetryStatus(),
     safety: {
-      filters: { reading: threshold(SAFETY.reading), writing: threshold(SAFETY.writing) },
       confidence_floor: agency.escalation.confidence_floor ?? CONFIDENCE_FLOOR,
       escalate_flags: agency.escalation.escalate_flags,
       keywords: agency.escalation.keywords.length,
@@ -54,13 +57,19 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     },
     eval: evalResults.summary,
     eval_at: evalResults.at,
-    report: aiReport(await STORE.list(id)),
+    report: aiReport(await STORE.list(id), 30, PRICES),
   })
 }
 
-const Body = z.object({ models: z.partialRecord(z.enum(Object.keys(MODELS) as [keyof typeof MODELS]), z.string()), by: z.string().max(80) })
+const Body = z.object({
+  models: z.partialRecord(z.enum(Object.keys(MODELS) as [keyof typeof MODELS]), z.string()),
+  guard: z.object({
+    read: z.enum(THRESHOLDS), write: z.enum(THRESHOLDS), injection: z.enum(['review', 'flag']), questions: z.number().int().min(0).max(2),
+  }).optional(),
+  by: z.string().max(80),
+})
 
-/** Head of office: choose the model per agent from the allow-list. Applies within a minute, logged for audit. */
+/** Head of office: models per agent (allow-listed) and guardrail settings. Applies within a minute, logged for audit. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const limited = rateLimit(req, 'ai-config', 20)
   if (limited) return limited
@@ -72,10 +81,11 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const bad = Object.values(parsed.data.models).find((m) => m && !MODEL_CHOICES.includes(m))
   if (bad) return error(422, `model not allowed: ${bad}`)
   const by = agency.team.find((m) => m.name === parsed.data.by)
-  if (by?.role !== 'leader') return error(403, 'only the head of office changes models')
+  if (by?.role !== 'leader') return error(403, 'only the head of office changes AI settings')
   const models = Object.fromEntries(Object.entries(parsed.data.models).filter(([k, v]) => v && v !== MODELS[k as keyof typeof MODELS]))
-  await STORE.setIntegration(id, { ai: { models: models as Record<string, string>, updated_by: by.name, updated_at: now() } })
+  const guard = parsed.data.guard ?? (await agencyAi(id)).guard
+  await STORE.setIntegration(id, { ai: { models: models as Record<string, string>, guard, updated_by: by.name, updated_at: now() } })
   forgetAgencyModels(id)
-  log('INFO', 'ai_models_changed', { agency: id, by: by.name, models })
-  return Response.json({ ok: true, models })
+  log('INFO', 'ai_config_changed', { agency: id, by: by.name, models, guard })
+  return Response.json({ ok: true, models, guard })
 }

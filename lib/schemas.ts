@@ -97,6 +97,8 @@ export interface TraceStep {
   model?: string
   tokens_in?: number
   tokens_out?: number
+  /** Cloud Trace id of the run (model steps). */
+  trace_id?: string
   /** Set on steps of the re-run after the citizen added details. */
   rerun?: boolean
 }

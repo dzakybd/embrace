@@ -8,76 +8,92 @@ import { useT } from '../Lang'
 import { AGENT_META, Card, Icon, ago } from '../ui'
 import { useStaff } from './StaffProvider'
 
+type Guard = { read: string; write: string; injection: 'review' | 'flag'; questions: number }
+type EvalSummary = { category_accuracy: number; critical_recall_with_rules: number; urgency_within_one: number }
+
 export interface Tower {
   models: { agent: string; key: string; role: string; default: string; chosen: string | null }[]
-  choices: string[]
+  choices: { model: string; price: [number, number] | null; eval: EvalSummary | null }[]
+  guard: Guard
+  thresholds: string[]
+  changed: { by?: string; at: string } | null
   key: { provider: string; store: string; configured: boolean; fingerprint: string | null }
   telemetry: { tracing: boolean; metrics: boolean; logging: boolean; project: string | null; error?: string }
   safety: {
-    filters: { reading: string; writing: string }
     confidence_floor: number
     escalate_flags: string[]
     keywords: number
     limits: { reports_per_hour: number; reports_per_day: number; ai_reports_per_day: number }
     details: { required: string[]; max_questions: number }
   }
-  eval: { n: number; category_accuracy: number; urgency_within_one: number; critical_recall_with_rules: number; escalations_high_or_critical_label: number }
+  eval: EvalSummary & { n: number }
   eval_at: string
   report: AiReport
 }
 
 const PROJECT = 'embrace-23a9c'
 const CONSOLE = {
-  trace: `https://console.cloud.google.com/traces/list?project=${PROJECT}`,
+  trace: `https://console.cloud.google.com/traces/explorer?project=${PROJECT}`,
   metrics: `https://console.cloud.google.com/monitoring/metrics-explorer?project=${PROJECT}`,
   logs: `https://console.cloud.google.com/logs/query;query=jsonPayload.component%3D%22embrace-agents%22?project=${PROJECT}`,
 }
+const traceUrl = (id: string) => `https://console.cloud.google.com/traces/explorer;traceId=${id}?project=${PROJECT}`
 const sec = (ms: number) => `${(ms / 1000).toFixed(1)} s`
 const k = (n: number) => (n >= 10_000 ? `${Math.round(n / 1000)}k` : n.toLocaleString())
+const usd = (n: number) => (n === 0 ? '$0' : n < 0.01 ? `$${n.toFixed(4)}` : `$${n.toFixed(2)}`)
+const THRESHOLD_LABEL: Record<string, string> = {
+  BLOCK_NONE: 'Off', BLOCK_ONLY_HIGH: 'Block only high', BLOCK_MEDIUM_AND_ABOVE: 'Block medium and above', BLOCK_LOW_AND_ABOVE: 'Block low and above',
+}
 
-/** AI control tower: which models run, under which key and guardrails, and what the agents did, for governance. */
+/** AI control tower: which models run at what cost and quality, the guardrails and what they caught, and live telemetry. */
 export default function AiTower() {
   const t = useT()
   const { agency, me } = useStaff()
   const [d, setD] = useState<Tower | null>(null)
   const [err, setErr] = useState('')
   const [models, setModels] = useState<Record<string, string>>({})
+  const [guard, setGuard] = useState<Guard | null>(null)
   const [saved, setSaved] = useState('')
   const load = useCallback(() => api.ai(agency.id).then((x) => {
     setD(x)
     setModels(Object.fromEntries(x.models.map((m) => [m.key, m.chosen ?? m.default])))
+    setGuard(x.guard)
   }).catch((e) => setErr(String(e))), [agency.id])
   useEffect(() => { load() }, [load])
 
   if (err) return <div className="page"><p className="error">{err}</p></div>
-  if (!d) return <div className="page"><div className="shimmer tall" /></div>
+  if (!d || !guard) return <div className="page"><div className="shimmer tall" /></div>
   const r = d.report
   const canEdit = me.role === 'leader'
-  const changed = d.models.some((m) => models[m.key] !== (m.chosen ?? m.default))
+  const changed = d.models.some((m) => models[m.key] !== (m.chosen ?? m.default)) || JSON.stringify(guard) !== JSON.stringify(d.guard)
   const save = async () => {
     setSaved('')
     try {
-      await api.setAiModels(agency.id, models, me.name)
-      setSaved(t('Saved. New reports use these models within a minute.'))
+      await api.setAi(agency.id, { models, guard, by: me.name })
+      setSaved(t('Saved. New reports use these settings within a minute.'))
       load()
     } catch (e) {
       setSaved(String(e).replace(/^Error: \d+ /, ''))
     }
   }
+  const choice = (m: string) => d.choices.find((c) => c.model === m)
+  const live = (m: string) => r.models.find((x) => x.model === m)
   const maxRun = Math.max(1, ...r.recent.map((x) => x.steps.filter((s) => !s.rerun).reduce((a, s) => a + s.ms, 0)))
+  const maxDraft = Math.max(1, ...r.draft_checks.map((c) => c.count))
 
   return (
     <div className="page tower">
       <div className="page-h">
         <div>
           <h1>{t('AI control tower')}</h1>
-          <p className="muted">{t('Which models run, under which key and guardrails, and what the agents did in the last 30 days.')}</p>
+          <p className="muted">{t('Models, cost, guardrails and live telemetry of the agents, last 30 days.')}</p>
         </div>
+        {d.changed && <p className="muted small">{t('Last change by {by}, {when}', { by: d.changed.by ?? '?', when: ago(d.changed.at, t) })}</p>}
       </div>
 
       <div className="kpis">
         <Kpi label={t('Model calls')} value={k(r.model_calls)} sub={t('{n} cases', { n: r.cases })} />
-        <Kpi label={t('Tokens in / out')} value={`${k(r.tokens_in)} / ${k(r.tokens_out)}`} />
+        <Kpi label={t('Estimated AI cost')} value={usd(r.usd)} sub={t('{c} per case', { c: usd(r.usd_per_case) })} />
         <Kpi label={t('Pipeline time p50 / p95')} value={`${sec(r.run_p50_ms)} / ${sec(r.run_p95_ms)}`} />
         <Kpi label={t('Rules fallback')} value={`${r.fallback_pct}%`} sub={t('model failed or budget used')} tone={r.fallback_pct > 5 ? 'warn' : undefined} />
         <Kpi label={t('Guardrail findings')} value={r.guard_injection + r.guard_draft} sub={t('{a} input · {b} draft', { a: r.guard_injection, b: r.guard_draft })} tone={r.guard_injection ? 'warn' : undefined} />
@@ -85,70 +101,87 @@ export default function AiTower() {
       </div>
 
       <div className="tower-grid">
+        <Card title={t('Activity, last 14 days')} icon="chart" className="t-activity">
+          <Activity days={r.daily} />
+        </Card>
+
+        <Card title={t('API key and usage')} icon="shield" className="t-key">
+          <div className="statgrid">
+            <Stat label={t('Gemini API key')} value={d.key.configured ? t('Active') : t('Missing')} tone={d.key.configured ? 'ok' : 'bad'} sub={d.key.fingerprint ? `sha256 ${d.key.fingerprint}…` : undefined} />
+            <Stat label={t('Tokens in / out')} value={`${k(r.tokens_in)} / ${k(r.tokens_out)}`} />
+            <Stat label={t('Spend, 30 days')} value={usd(r.usd)} />
+            <Stat label={t('Daily AI budget')} value={t('{n} reports', { n: d.safety.limits.ai_reports_per_day })} sub={t('then rules only')} />
+          </div>
+          <p className="muted small">{t(d.key.store)}. {t('The key stays on the server; browsers and logs never see it.')}</p>
+        </Card>
+
         <Card title={t('Models')} icon="spark" className="t-models">
           <table className="ttable">
-            <thead><tr><th>{t('Agent')}</th><th>{t('Model')}</th></tr></thead>
+            <thead><tr><th>{t('Agent')}</th><th>{t('Model')}</th><th>{t('Price in / out')}</th><th>{t('Live p50')}</th></tr></thead>
             <tbody>
-              {d.models.map((m) => (
-                <tr key={m.agent}>
-                  <td><b>{t(AGENT_META[m.agent]?.label ?? 'Analyst agent')}</b><div className="muted small">{t(m.role)}</div></td>
-                  <td>
-                    <select value={models[m.key]} disabled={!canEdit} onChange={(e) => setModels({ ...models, [m.key]: e.target.value })} aria-label={t('Model')}>
-                      {[...new Set([m.default, ...d.choices])].map((c) => <option key={c} value={c}>{c}{c === m.default ? ` · ${t('default')}` : ''}</option>)}
-                    </select>
-                  </td>
+              {d.models.map((m) => {
+                const sel = models[m.key]
+                const c = choice(sel)
+                return (
+                  <tr key={m.agent}>
+                    <td><b>{t(AGENT_META[m.agent]?.label ?? m.agent)}</b><div className="muted small">{t(m.role)}</div></td>
+                    <td>
+                      <select value={sel} disabled={!canEdit} onChange={(e) => setModels({ ...models, [m.key]: e.target.value })} aria-label={t('Model')}>
+                        {[...new Set([m.default, ...d.choices.map((x) => x.model)])].map((x) => <option key={x} value={x}>{x}{x === m.default ? ` · ${t('default')}` : ''}</option>)}
+                      </select>
+                    </td>
+                    <td className="num">{c?.price ? `$${c.price[0]} / $${c.price[1]}` : '—'}</td>
+                    <td className="num">{live(sel) ? sec(live(sel)!.p50_ms) : '—'}</td>
+                  </tr>
+                )
+              })}
+            </tbody>
+          </table>
+          <h3 className="sub-h">{t('Triage quality by model, on {n} labelled reports', { n: d.eval.n })}</h3>
+          <table className="ttable">
+            <thead><tr><th>{t('Model')}</th><th>{t('Category')}</th><th>{t('Critical escalated')}</th><th>{t('Urgency ±1')}</th></tr></thead>
+            <tbody>
+              {d.choices.filter((c) => c.eval).map((c) => (
+                <tr key={c.model} className={models.triage === c.model ? 'sel' : ''}>
+                  <td>{c.model}</td><td className="num">{c.eval!.category_accuracy}%</td><td className="num">{c.eval!.critical_recall_with_rules}%</td><td className="num">{c.eval!.urgency_within_one}%</td>
                 </tr>
               ))}
             </tbody>
           </table>
-          {canEdit
-            ? <div className="form-actions"><button className="primary small" disabled={!changed} onClick={save}>{t('Apply models')}</button>{saved && <span className="muted small">{saved}</span>}</div>
-            : <p className="muted small">{t('Only the head of office changes models; every change is logged.')}</p>}
-        </Card>
-
-        <Card title={t('API key and data')} icon="shield" className="t-key">
-          <ul className="checks">
-            <Check ok={d.key.configured}>{d.key.provider}: {d.key.configured ? t('configured') : t('missing')}{d.key.fingerprint && <> · <code>sha256 {d.key.fingerprint}…</code></>}</Check>
-            <Check ok>{t(d.key.store)}</Check>
-            <Check ok>{t('The key stays on the server; browsers and logs never see it.')}</Check>
-            <Check ok>{t('Personal data is masked before staff read a case; prompts and complaint text are not logged.')}</Check>
-            <Check ok>{t('Cases stored in Firestore, asia-southeast1 (Jakarta region).')}</Check>
-          </ul>
+          <p className="muted small">{t('Prices are USD per million tokens (Gemini API list prices, October 2026). Quality is measured with npm run eval on synthetic reports.')}</p>
         </Card>
 
         <Card title={t('Guardrails')} icon="shield" className="t-safety">
-          <ul className="checks">
-            <Check ok><b>{t('Input')}:</b> {t('instructions aimed at the AI are detected in code and send the case to a person; public text is fenced as data in every prompt.')}</Check>
-            <Check ok><b>{t('Gemini safety filters')}:</b> {t('reading agents {a}, drafter {b} (reports describe abuse, so readers only block high-probability harm).', { a: d.safety.filters.reading, b: d.safety.filters.writing })}</Check>
-            <Check ok><b>{t('Output')}:</b> {t('drafts are checked for copied personal data, invented links, citations that do not exist, a missing report number and promised outcomes.')}</Check>
-            <Check ok><b>{t('Deterministic decisions')}:</b> {t('escalation and routing are code: {f} safety flags, {k} keywords, manual review below {c}% confidence.', { f: d.safety.escalate_flags.length, k: d.safety.keywords, c: Math.round(d.safety.confidence_floor * 100) })}</Check>
-            <Check ok><b>{t('Human in the loop')}:</b> {t('no reply reaches a citizen without a caseworker approving it.')}</Check>
-            <Check ok><b>{t('Limits')}:</b> {t('{h} reports per chat per hour, {d} per day; {a} AI-processed reports per day, then rules only.', { h: d.safety.limits.reports_per_hour, d: d.safety.limits.reports_per_day, a: d.safety.limits.ai_reports_per_day })}</Check>
-            <Check ok><b>{t('Resilience')}:</b> {t('ADK reflect-and-retry for malformed tool calls; any model failure falls back to keyword rules and manual review.')}</Check>
+          <div className="guard-form">
+            <label className="field"><span>{t('Safety filter, agents that read reports')}</span>
+              <select value={guard.read} disabled={!canEdit} onChange={(e) => setGuard({ ...guard, read: e.target.value })}>
+                {d.thresholds.map((x) => <option key={x} value={x}>{t(THRESHOLD_LABEL[x] ?? x)}</option>)}
+              </select>
+            </label>
+            <label className="field"><span>{t('Safety filter, reply drafter')}</span>
+              <select value={guard.write} disabled={!canEdit} onChange={(e) => setGuard({ ...guard, write: e.target.value })}>
+                {d.thresholds.map((x) => <option key={x} value={x}>{t(THRESHOLD_LABEL[x] ?? x)}</option>)}
+              </select>
+            </label>
+            <label className="field"><span>{t('When a report contains instructions aimed at the AI')}</span>
+              <select value={guard.injection} disabled={!canEdit} onChange={(e) => setGuard({ ...guard, injection: e.target.value as Guard['injection'] })}>
+                <option value="review">{t('Send the case to a person')}</option>
+                <option value="flag">{t('Only flag it')}</option>
+              </select>
+            </label>
+            <label className="field"><span>{t('Follow-up questions for missing details')}</span>
+              <select value={guard.questions} disabled={!canEdit} onChange={(e) => setGuard({ ...guard, questions: Number(e.target.value) })}>
+                <option value={0}>{t('Off')}</option><option value={1}>1</option><option value={2}>2</option>
+              </select>
+            </label>
+          </div>
+          <h3 className="sub-h">{t('Output checks on drafts, last 30 days')}</h3>
+          <ul className="hbars">
+            {r.draft_checks.map((c) => (
+              <li key={c.check}><span>{t(c.check)}</span><span className="hbar"><span style={{ width: `${(c.count / maxDraft) * 100}%` }} /></span><b>{c.count}</b></li>
+            ))}
           </ul>
-        </Card>
-
-        <Card title={t('Observability')} icon="eye" className="t-otel">
-          <ul className="checks">
-            <Check ok={d.telemetry.tracing}><b>{t('Traces')}:</b> {t('ADK OpenTelemetry spans (invoke_agent, generate_content) to Cloud Trace.')} <a href={CONSOLE.trace} target="_blank" rel="noreferrer">{t('Open')}</a></Check>
-            <Check ok={d.telemetry.metrics}><b>{t('Metrics')}:</b> <code>gen_ai.client.token.usage</code>, <code>gen_ai.client.operation.duration</code>, <code>embrace.guardrail.events</code> {t('to Cloud Monitoring.')} <a href={CONSOLE.metrics} target="_blank" rel="noreferrer">{t('Open')}</a></Check>
-            <Check ok={d.telemetry.logging}><b>{t('Logs')}:</b> {t('structured model-call, guardrail and audit events to Cloud Logging, metadata only.')} <a href={CONSOLE.logs} target="_blank" rel="noreferrer">{t('Open')}</a></Check>
-            <Check ok><b>{t('Evaluation')}:</b> {t('{n} labelled reports: category {c}%, critical cases escalated {r}%, urgency within one level {u}%.', { n: d.eval.n, c: d.eval.category_accuracy, r: d.eval.critical_recall_with_rules, u: d.eval.urgency_within_one })}</Check>
-          </ul>
-          {d.telemetry.error && <p className="error small">{d.telemetry.error}</p>}
-          {!d.telemetry.tracing && !d.telemetry.error && <p className="muted small">{t('Telemetry export runs on Cloud Run; this instance is local.')}</p>}
-        </Card>
-
-        <Card title={t('Agents, last 30 days')} icon="chart" className="t-agents">
-          {r.agents.length === 0 ? <p className="muted">{t('No AI runs yet: send a report to see them here.')}</p> : (
-            <table className="ttable">
-              <thead><tr><th>{t('Agent')}</th><th>{t('Calls')}</th><th>p50</th><th>p95</th><th>{t('Tokens in / out')}</th></tr></thead>
-              <tbody>{r.agents.map((a) => (
-                <tr key={a.agent}><td><b>{t(AGENT_META[a.agent]?.label ?? a.agent)}</b><div className="muted small">{a.models.join(', ')}</div></td><td>{a.calls}</td><td>{sec(a.p50_ms)}</td><td>{sec(a.p95_ms)}</td><td>{k(a.tokens_in)} / {k(a.tokens_out)}</td></tr>
-              ))}</tbody>
-            </table>
-          )}
-          <p className="muted small">{t('Multi-turn intake: details asked in {a} cases, answered in {b}.', { a: r.details_asked, b: r.details_answered })}</p>
+          <p className="muted small">{t('Always on: escalation by rules ({f} safety flags, {k} keywords), manual review below {c}% confidence, and a caseworker approves every reply.', { f: d.safety.escalate_flags.length, k: d.safety.keywords, c: Math.round(d.safety.confidence_floor * 100) })}</p>
         </Card>
 
         <Card title={t('Recent agent runs')} icon="clock" className="t-runs">
@@ -157,7 +190,8 @@ export default function AiTower() {
             {r.recent.map((x) => (
               <li key={x.id}>
                 <Link href={`/staff/cases/${x.id}`}><code>{x.id}</code></Link>
-                <span className="muted small">{ago(x.at, t)}{x.route ? ` · ${t(x.route === 'escalated' ? 'Escalated' : x.route === 'manual_review' ? 'Manual review' : 'Assigned')}` : ''}{x.guard ? ` · ${t('{n} guardrail', { n: x.guard })}` : ''}</span>
+                <span className="muted small">{ago(x.at, t)}{x.route ? ` · ${t(x.route === 'escalated' ? 'Escalated' : x.route === 'manual_review' ? 'Manual review' : 'Assigned')}` : ''}{x.guard ? ` · ${t('{n} guardrail', { n: x.guard })}` : ''}
+                  {x.trace_id && <> · <a href={traceUrl(x.trace_id)} target="_blank" rel="noreferrer">{t('Trace')} ↗</a></>}</span>
                 <span className="bar" aria-hidden="true">
                   {x.steps.filter((s) => !s.rerun).map((s, i) => (
                     <span key={i} className={`seg ${s.kind} ${s.agent}${s.fallback ? ' fb' : ''}`} style={{ width: `${Math.max(2, (s.ms / maxRun) * 100)}%` }}
@@ -167,9 +201,38 @@ export default function AiTower() {
               </li>
             ))}
           </ul>
-          <p className="legend muted small"><span className="seg llm" /> {t('model call')} <span className="seg rules" /> {t('rules')} <span className="seg search" /> {t('SOP search')}</p>
+          <p className="legend muted small"><span className="seg intake_agent" /> {t('Intake agent')} <span className="seg triage_agent" /> {t('Triage agent')} <span className="seg drafter_agent" /> {t('Reply drafter')} <span className="seg rules" /> {t('rules')} <span className="seg search" /> {t('SOP search')}</p>
+        </Card>
+
+        <Card title={t('Observability')} icon="eye" className="t-otel">
+          <div className="statgrid">
+            <Stat label={t('Traces')} value={d.telemetry.tracing ? t('Exporting') : t('Off')} tone={d.telemetry.tracing ? 'ok' : undefined} sub="Cloud Trace" href={CONSOLE.trace} />
+            <Stat label={t('Metrics')} value={d.telemetry.metrics ? t('Exporting') : t('Off')} tone={d.telemetry.metrics ? 'ok' : undefined} sub="Cloud Monitoring" href={CONSOLE.metrics} />
+            <Stat label={t('Logs')} value={d.telemetry.logging ? t('Exporting') : t('Off')} tone={d.telemetry.logging ? 'ok' : undefined} sub="Cloud Logging" href={CONSOLE.logs} />
+            <Stat label={t('Evaluation')} value={`${d.eval.category_accuracy}%`} sub={t('category accuracy, {n} reports', { n: d.eval.n })} />
+          </div>
+          <h3 className="sub-h">{t('Audit feed')}</h3>
+          {r.events.length === 0 ? <p className="muted small">{t('No guardrail or fallback events in the last 30 days.')}</p> : (
+            <ul className="events">
+              {r.events.map((e, i) => (
+                <li key={i} className={e.kind}>
+                  <span className="tag">{t(e.kind === 'injection' ? 'Input guardrail' : e.kind === 'draft' ? 'Output guardrail' : 'Rules fallback')}</span>
+                  <Link href={`/staff/cases/${e.ticket}`}><code>{e.ticket}</code></Link>
+                  <span className="muted small">{e.text.slice(0, 90)} · {ago(e.at, t)}</span>
+                </li>
+              ))}
+            </ul>
+          )}
+          {d.telemetry.error && <p className="error small">{d.telemetry.error}</p>}
         </Card>
       </div>
+
+      {canEdit && (
+        <div className="savebar">
+          <span className="muted small">{saved || (changed ? t('Unsaved changes to models or guardrails') : t('Only the head of office changes these settings; every change is logged.'))}</span>
+          <button className="primary" disabled={!changed} onClick={save}>{t('Apply')}</button>
+        </div>
+      )}
     </div>
   )
 }
@@ -178,6 +241,35 @@ function Kpi({ label, value, sub, tone }: { label: string; value: string | numbe
   return <div className={`kpi ${tone ?? ''}`}><span>{label}</span><b>{value}</b>{sub && <small className="muted">{sub}</small>}</div>
 }
 
-function Check({ ok, children }: { ok: boolean; children: React.ReactNode }) {
-  return <li className={ok ? 'ok' : 'off'}><Icon name={ok ? 'check' : 'close'} size={14} /><span>{children}</span></li>
+function Stat({ label, value, sub, tone, href }: { label: string; value: string; sub?: string; tone?: 'ok' | 'bad'; href?: string }) {
+  const body = <><span className="muted small">{label}</span><b className={tone ?? ''}>{value}</b>{sub && <small className="muted">{sub}{href ? ' ↗' : ''}</small>}</>
+  return href ? <a className="stat" href={href} target="_blank" rel="noreferrer">{body}</a> : <div className="stat">{body}</div>
+}
+
+/** Model calls per day as columns, median model latency as a line. */
+function Activity({ days }: { days: AiReport['daily'] }) {
+  const t = useT()
+  const W = 560, H = 140, pad = 4
+  const maxC = Math.max(1, ...days.map((d) => d.calls))
+  const maxL = Math.max(1, ...days.map((d) => d.p50_ms))
+  const bw = (W - pad * 2) / days.length
+  const pts = days.map((d, i) => [pad + i * bw + bw / 2, H - (d.p50_ms / maxL) * (H - 16)] as const).filter((_, i) => days[i].calls)
+  return (
+    <div className="activity">
+      <svg viewBox={`0 0 ${W} ${H + 18}`} role="img" aria-label={t('Model calls per day and median latency, last 14 days')}>
+        {days.map((d, i) => {
+          const h = (d.calls / maxC) * (H - 16)
+          return (
+            <g key={d.day}>
+              <rect x={pad + i * bw + 3} y={H - h} width={bw - 6} height={Math.max(h, d.calls ? 2 : 0)} rx="3" className="col"><title>{`${d.day}: ${d.calls} calls, ${d.tokens} tokens, p50 ${(d.p50_ms / 1000).toFixed(1)} s`}</title></rect>
+              {i % 2 === 0 && <text x={pad + i * bw + bw / 2} y={H + 14} textAnchor="middle" className="axis">{d.day.slice(5)}</text>}
+            </g>
+          )
+        })}
+        {pts.length > 1 && <polyline points={pts.map((p) => p.join(',')).join(' ')} className="lat" />}
+        {pts.map((p, i) => <circle key={i} cx={p[0]} cy={p[1]} r="3" className="latdot" />)}
+      </svg>
+      <p className="legend muted small"><span className="seg llm" /> {t('model calls')} <span className="dot-line" /> {t('median latency')}</p>
+    </div>
+  )
 }

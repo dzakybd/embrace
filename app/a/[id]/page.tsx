@@ -63,7 +63,6 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
             {agency.description && <p className="lead clamp">{agency.description}</p>}
           </div>
         </section>
-        <div className="banner crit"><Icon name="alert" /><span>{t('In danger right now? Call')} <b>{agency.emergency_line}</b>.</span></div>
 
         <h2 className="pick-h">{t('Get help')}</h2>
         <section className="hub-grid">

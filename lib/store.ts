@@ -29,10 +29,21 @@ export interface Store {
   setIntegration(agencyId: string, fields: Partial<Integrations>): Promise<void>
 }
 
+/** Guardrail settings an agency can adjust in the AI control tower (defaults in lib/guardrails.ts). */
+export interface GuardConfig {
+  /** Gemini safety threshold for the agents that read reports, and for the reply drafter. */
+  read: string
+  write: string
+  /** What a suspected prompt injection does: send the case to a person, or only flag it. */
+  injection: 'review' | 'flag'
+  /** Missing-detail questions asked after a report (0 turns multi-turn intake off). */
+  questions: number
+}
+
 export interface Integrations {
   telegram?: { token: string; username: string; secret: string; connected_at: string } | null
   /** Models chosen in the AI control tower, per model setting (see lib/agents/models.ts). */
-  ai?: { models: Record<string, string>; updated_by: string; updated_at: string } | null
+  ai?: { models: Record<string, string>; guard?: Partial<GuardConfig>; updated_by: string; updated_at: string } | null
 }
 
 /** Conversation state of one Telegram chat. */

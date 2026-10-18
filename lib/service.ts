@@ -4,7 +4,7 @@ import type { Part } from '@google/genai'
 import { randomBytes } from 'node:crypto'
 import { agencyById, picFor, supervisor, type Agency } from './agencies'
 import { analystAgent } from './agents/analyst'
-import { governance, log, recordGuard } from './agents/governance'
+import { agencyAi, governance, log, recordGuard } from './agents/governance'
 import { STEP_KEYS, initialState, pipeline } from './agents/pipeline'
 import { publish } from './events'
 import { detailsText, missingDetails, type Slot } from './details'
@@ -67,7 +67,7 @@ async function* runAgents(
         const call = kind === 'llm' ? governance.last(ev.invocationId, ev.author!) : undefined
         yield {
           agent: ev.author!, kind, ms: call?.ms ?? ms, output: delta[key],
-          ...(call ? { model: call.model, tokens_in: call.tokens_in, tokens_out: call.tokens_out } : {}),
+          ...(call ? { model: call.model, tokens_in: call.tokens_in, tokens_out: call.tokens_out, ...(call.trace_id ? { trace_id: call.trace_id } : {}) } : {}),
           ...(opts.rerun ? { rerun: true } : {}),
         }
       }
@@ -140,13 +140,14 @@ export async function* submit(
   await STORE.put(ticket)
   yield { type: 'received', ticket_id: id }
 
-  // Input guardrail before any model call.
+  // Input guardrail before any model call; the agency decides whether a hit sends the case to a person or only flags it.
+  const { guard } = await agencyAi(agencyId)
   const screen = screenInput(text)
   if (screen.injection) recordGuard('injection', agencyId, id)
 
   const trace: TraceStep[] = []
   const outputs: Outputs = {}
-  for await (const step of runAgents(agency, id, text, channel, media, { noAi: opts.noAi, injection: screen.injection }, outputs)) {
+  for await (const step of runAgents(agency, id, text, channel, media, { noAi: opts.noAi, injection: screen.injection && guard.injection === 'review' }, outputs)) {
     trace.push(step)
     yield { type: 'step', ...step }
   }
@@ -156,7 +157,7 @@ export async function* submit(
   if (outputs.draft) history.push(entry('drafter_agent', 'draft_ready', 'Waiting for officer approval'))
   const pic = picFor(agency, policy.queue)
   history.push(entry('agents', 'assign', `Assigned to ${pic.name} (${pic.title})`))
-  const missing = missingDetails(agency, outputs.intake as Intake | undefined)
+  const missing = missingDetails(agency, outputs.intake as Intake | undefined).slice(0, guard.questions)
   ticket = await STORE.update(id, {
     media: (outputs.media as Ticket['media']) ?? null,
     intake: (outputs.intake as Ticket['intake']) ?? null,
@@ -196,7 +197,7 @@ export async function addDetails(id: string, answers: Partial<Record<Slot, strin
   const steps: TraceStep[] = []
   // Media was read on the first run; pass what it found instead of the files.
   const state = t.media ? { media: t.media } : {}
-  for await (const step of runAgents(agency, id, text, t.channel, [], { injection: screen.injection || !!t.guard?.injection.length, state, rerun: true }, outputs)) steps.push(step)
+  for await (const step of runAgents(agency, id, text, t.channel, [], { injection: (screen.injection || !!t.guard?.injection.length) && (await agencyAi(agency.id)).guard.injection === 'review', state, rerun: true }, outputs)) steps.push(step)
 
   const before = t.policy!
   const after = outputs.policy as Policy

@@ -26,6 +26,32 @@ const NEXT = [
   },
 ]
 
+/** Share link and iframe snippet so an agency can put the report chat on its own website. */
+function EmbedCode({ agencyId, reportUrl }: { agencyId: string; reportUrl: string }) {
+  const t = useT()
+  const [copied, setCopied] = useState('')
+  const origin = new URL(reportUrl).origin
+  const snippet = `<iframe src="${origin}/embed/${agencyId}" title="Report a problem" allow="microphone" style="width:100%;max-width:420px;height:640px;border:0;border-radius:16px"></iframe>`
+  const copy = async (what: string, text: string) => {
+    try { await navigator.clipboard.writeText(text); setCopied(what); setTimeout(() => setCopied(''), 2000) } catch { /* blocked */ }
+  }
+  return (
+    <div className="embed-code">
+      <label className="field"><span>{t('Share link')}</span>
+        <div className="copy-row"><input readOnly value={reportUrl} onFocus={(e) => e.target.select()} />
+          <button type="button" className="small" onClick={() => copy('link', reportUrl)}>{copied === 'link' ? t('Copied') : t('Copy')}</button></div>
+      </label>
+      <label className="field"><span>{t('Embed on your website')}</span>
+        <textarea readOnly rows={3} value={snippet} onFocus={(e) => e.target.select()} />
+        <div className="copy-row end">
+          <a className="small" href={`/embed/${agencyId}`} target="_blank" rel="noreferrer">{t('Preview')} ↗</a>
+          <button type="button" className="small" onClick={() => copy('embed', snippet)}>{copied === 'embed' ? t('Copied') : t('Copy code')}</button>
+        </div>
+      </label>
+    </div>
+  )
+}
+
 export default function Integrations() {
   const t = useT()
   const { agency, me, reload } = useStaff()
@@ -66,8 +92,8 @@ export default function Integrations() {
       <div className="channels-grid">
         <Card title={t('Website')} icon="globe" className="channel on">
           <p className="status ok"><Icon name="check" size={14} /> {t('Live')}</p>
-          <p className="small-body">{t('Report form (text, voice, photo) and agency home page.')}</p>
-          {st && <p className="small-body"><a href={st.web.page}>{st.web.page.replace(/^https?:\/\//, '')}</a><br /><a href={st.web.url}>{st.web.url.replace(/^https?:\/\//, '')}</a></p>}
+          <p className="small-body">{t('Report chat (text, voice, photo): share the link or embed it on the agency website.')}</p>
+          {st && <EmbedCode agencyId={agency.id} reportUrl={st.web.url} />}
         </Card>
 
         <Card title={<><ChannelIcon c="telegram" size={20} /> Telegram</>} className={`channel ${tg?.connected ? 'on' : ''}`}>
@@ -109,7 +135,6 @@ export default function Integrations() {
           </Card>
         ))}
       </div>
-      <p className="muted small">{t('Today, desks can log WhatsApp, email or social messages through the web form.')}</p>
     </div>
   )
 }

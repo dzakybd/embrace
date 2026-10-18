@@ -1,14 +1,14 @@
 {
  "summary": {
   "n": 60,
-  "category_accuracy": 93,
-  "urgency_exact": 78,
+  "category_accuracy": 95,
+  "urgency_exact": 80,
   "urgency_within_one": 100,
   "critical_recall_model": 100,
   "critical_recall_with_rules": 100,
   "critical_cases": 9,
-  "escalations": 24,
-  "escalations_high_or_critical_label": 92,
+  "escalations": 18,
+  "escalations_high_or_critical_label": 100,
   "manual_review": 0
  },
  "rows": [
@@ -48,9 +48,9 @@
    "want_category": "physical_emotional_abuse",
    "want_urgency": "normal",
    "category": "physical_emotional_abuse",
-   "urgency": "high",
-   "final": "critical",
-   "route": "escalated"
+   "urgency": "normal",
+   "final": "normal",
+   "route": "assigned"
   },
   {
    "agency": "kpai",
@@ -117,10 +117,10 @@
    "index": 10,
    "want_category": "online_harm",
    "want_urgency": "high",
-   "category": "physical_emotional_abuse",
+   "category": "online_harm",
    "urgency": "high",
-   "final": "critical",
-   "route": "escalated"
+   "final": "high",
+   "route": "assigned"
   },
   {
    "agency": "kpai",
@@ -179,8 +179,8 @@
    "want_urgency": "high",
    "category": "education",
    "urgency": "high",
-   "final": "critical",
-   "route": "escalated"
+   "final": "high",
+   "route": "assigned"
   },
   {
    "agency": "kpai",
@@ -197,9 +197,9 @@
    "index": 18,
    "want_category": "education",
    "want_urgency": "normal",
-   "category": "physical_emotional_abuse",
-   "urgency": "high",
-   "final": "high",
+   "category": "education",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
@@ -209,8 +209,8 @@
    "want_urgency": "high",
    "category": "physical_emotional_abuse",
    "urgency": "high",
-   "final": "critical",
-   "route": "escalated"
+   "final": "high",
+   "route": "assigned"
   },
   {
    "agency": "kpai",
@@ -218,8 +218,8 @@
    "want_category": "education",
    "want_urgency": "normal",
    "category": "education",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
@@ -228,8 +228,8 @@
    "want_category": "education",
    "want_urgency": "normal",
    "category": "education",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
@@ -249,8 +249,8 @@
    "want_urgency": "high",
    "category": "health_nutrition",
    "urgency": "high",
-   "final": "critical",
-   "route": "escalated"
+   "final": "high",
+   "route": "assigned"
   },
   {
    "agency": "kpai",
@@ -338,7 +338,7 @@
    "want_category": "domestic_violence",
    "want_urgency": "high",
    "category": "domestic_violence",
-   "urgency": "high",
+   "urgency": "critical",
    "final": "critical",
    "route": "escalated"
   },
@@ -368,7 +368,7 @@
    "want_category": "benefit_not_received",
    "want_urgency": "high",
    "category": "benefit_not_received",
-   "urgency": "high",
+   "urgency": "critical",
    "final": "critical",
    "route": "escalated"
   },
@@ -387,7 +387,7 @@
    "index": 7,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
-   "category": "benefit_not_received",
+   "category": "eligibility_registration",
    "urgency": "normal",
    "final": "normal",
    "route": "assigned"
@@ -428,8 +428,8 @@
    "want_category": "eligibility_registration",
    "want_urgency": "normal",
    "category": "eligibility_registration",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "low",
+   "final": "low",
    "route": "assigned"
   },
   {
@@ -538,9 +538,9 @@
    "want_category": "social_rehabilitation",
    "want_urgency": "normal",
    "category": "social_rehabilitation",
-   "urgency": "high",
-   "final": "critical",
-   "route": "escalated"
+   "urgency": "normal",
+   "final": "normal",
+   "route": "assigned"
   },
   {
    "agency": "dinsos_demak",
@@ -558,8 +558,8 @@
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
    "category": "fraud_misconduct",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
@@ -613,5 +613,5 @@
    "route": "assigned"
   }
  ],
- "at": "2026-10-17T17:06:26.443Z"
+ "at": "2026-10-18T06:34:26.266Z"
 }

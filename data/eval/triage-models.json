@@ -1,0 +1,28 @@
+{
+ "gemini-3.1-flash-lite": {
+  "n": 60,
+  "category_accuracy": 95,
+  "urgency_exact": 80,
+  "urgency_within_one": 100,
+  "critical_recall_model": 100,
+  "critical_recall_with_rules": 100,
+  "critical_cases": 9,
+  "escalations": 18,
+  "escalations_high_or_critical_label": 100,
+  "manual_review": 0,
+  "at": "2026-10-18T06:34:26.266Z"
+ },
+ "gemini-2.5-flash": {
+  "n": 60,
+  "category_accuracy": 93,
+  "urgency_exact": 78,
+  "urgency_within_one": 100,
+  "critical_recall_model": 100,
+  "critical_recall_with_rules": 100,
+  "critical_cases": 9,
+  "escalations": 24,
+  "escalations_high_or_critical_label": 92,
+  "manual_review": 0,
+  "at": "2026-10-17T17:06:26.443Z"
+ }
+}

@@ -53,12 +53,17 @@ export function checkDraft(reply: string, ctx: { original: string; ticketId: str
   return { warnings }
 }
 
-/** Gemini safety filters per agent. Reports describe abuse, sexual violence and self-harm, so filtering the agents
- * that read them would silence the people who need help most: they block only high-probability harm. The drafter
- * writes to the public, so it blocks from medium probability. A blocked response falls back to the rules and a human. */
+/** Gemini safety thresholds an agency can choose in the AI control tower. */
+export const THRESHOLDS = ['BLOCK_NONE', 'BLOCK_ONLY_HIGH', 'BLOCK_MEDIUM_AND_ABOVE', 'BLOCK_LOW_AND_ABOVE'] as const
+export const safetyAt = (threshold: string): SafetySetting[] => t((THRESHOLDS as readonly string[]).includes(threshold) ? threshold as HarmBlockThreshold : HarmBlockThreshold.BLOCK_ONLY_HIGH)
+export const GUARD_DEFAULTS = { read: 'BLOCK_ONLY_HIGH', write: 'BLOCK_MEDIUM_AND_ABOVE', injection: 'review' as const, questions: 2 }
+
 const t = (threshold: HarmBlockThreshold): SafetySetting[] =>
   [HarmCategory.HARM_CATEGORY_HARASSMENT, HarmCategory.HARM_CATEGORY_HATE_SPEECH, HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT]
     .map((category) => ({ category, threshold }))
+/** Gemini safety filters per agent. Reports describe abuse, sexual violence and self-harm, so filtering the agents
+ * that read them would silence the people who need help most: they block only high-probability harm. The drafter
+ * writes to the public, so it blocks from medium probability. A blocked response falls back to the rules and a human. */
 export const SAFETY = {
   reading: t(HarmBlockThreshold.BLOCK_ONLY_HIGH),
   writing: t(HarmBlockThreshold.BLOCK_MEDIUM_AND_ABOVE),
