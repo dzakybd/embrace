@@ -10,12 +10,12 @@ const config: NextConfig = {
     '@google-cloud/opentelemetry-cloud-trace-exporter',
     '@google-cloud/opentelemetry-cloud-monitoring-exporter',
   ],
-  // Short link for the demo video in the deck and README; point it at YouTube once the film is up.
+  // Stable short link for the demo video in the deck and README.
   async redirects() {
     return [
       {
         source: '/demo',
-        destination: 'https://drive.google.com/drive/folders/1vu12gJthTznQft9KAmY7A5rueKGBmqYE?usp=sharing',
+        destination: 'https://www.youtube.com/watch?v=RK11lo23qUs',
         permanent: false,
       },
     ]
