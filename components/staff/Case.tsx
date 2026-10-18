@@ -258,16 +258,21 @@ function Checklist({
   const fits = all.filter((p) => p.categories.includes(t.triage?.category ?? ''))
   const options = fits.length ? fits : all
   const [chosen, setChosen] = useState(t.progress?.procedure ?? options[0]?.id ?? '')
+  // Ticks show at once; the saved case replaces them when the server answers, or they roll back on an error.
+  const [pending, setPending] = useState<number[] | null>(null)
   const proc = all.find((p) => p.id === chosen)
   if (!proc) return null
-  const done = t.progress?.procedure === proc.id ? t.progress.done : []
+  const saved = t.progress?.procedure === proc.id ? t.progress.done : []
+  const done = pending ?? saved
   const toggle = async (stage: number, on: boolean) => {
     setErr('')
+    setPending(on ? [...done, stage] : done.filter((s) => s !== stage))
     try {
       onChange(await api.progress(t.id, { procedure: proc.id, stage, done: on, officer }))
     } catch (e) {
       setErr(String(e))
     }
+    setPending(null)
   }
   return (
     <Card
