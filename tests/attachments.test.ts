@@ -7,9 +7,14 @@ describe('report attachments', () => {
   it('keeps photos and voice notes in private storage under the case', async () => {
     const png = Buffer.from('fake png bytes')
     let ticket: Ticket | null = null
-    for await (const ev of submit('kpai', 'A child is begging at the traffic light every night in Semarang', 'web', {}, [
-      { mime: 'image/png', data: png.toString('base64') },
-    ], { noAi: 'test: no model calls' })) {
+    for await (const ev of submit(
+      'kpai',
+      'A child is begging at the traffic light every night in Semarang',
+      'web',
+      {},
+      [{ mime: 'image/png', data: png.toString('base64') }],
+      { noAi: 'test: no model calls' },
+    )) {
       if (ev.type === 'done') ticket = ev.ticket
     }
     const a = ticket!.attachments[0]

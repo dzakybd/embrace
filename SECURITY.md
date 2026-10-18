@@ -18,21 +18,15 @@ confirmed issues in the demo within 14 days, and we credit reporters who want it
 | Telegram bot tokens (built-in agencies) | Secret Manager `telegram-bot-dinsos-demak`, `telegram-bot-kpai` | The Channels page shows where a token is stored and a masked hint, never the token |
 | Telegram bot tokens (agencies created in the app) | Firestore `integrations`, server only | Firestore rules deny every client read and write |
 | Telegram webhook secret | Secret Manager `telegram-webhook-secret` | Every webhook call must carry it in `X-Telegram-Bot-Api-Secret-Token` |
-| Firebase web API key | Secret Manager `firebase-web-api-key`, read at build time (`NEXT_PUBLIC_FIREBASE_API_KEY`) | Ends up in the browser bundle by design; see below |
 
 `.env*` files are gitignored. `.env.example` lists the variable names only.
 
 ### The Firebase web API key
 
-The browser needs the Firebase web `apiKey` for Analytics, so it is in the JavaScript the site serves. It is not in the
-repository any more (it comes from Secret Manager at build time; older commits still contain it). Firebase web config is
-meant to be public: the key identifies the project and grants no access on its own
-([Firebase docs](https://firebase.google.com/docs/projects/api-keys)). GitHub secret scanning flags it as a Google API key; the alert was reviewed and closed. The key is restricted anyway:
-
-- **APIs:** Firebase Installations and Firebase Management (web config) only, the two calls Firebase Analytics makes.
-  It cannot call the Gemini API, Firestore, Storage, Cloud Logging or any other Google API.
-- **Websites:** `embrace.nalaria.ai.id`, the App Hosting domain and localhost only.
-- The Gemini API is not enabled on the Firebase project; Gemini runs with a separate key from Secret Manager.
+The browser runs no Firebase SDK, so no Google API key is in the code or in the JavaScript the site serves. Older
+commits contain the Firebase web key from an earlier Analytics setup; GitHub secret scanning flagged it and the alert
+was reviewed. That key is restricted to Firebase Installations and Firebase Management and to our domains, cannot call
+the Gemini API (not enabled on the Firebase project), and the app no longer uses it.
 
 ## How the app is protected
 

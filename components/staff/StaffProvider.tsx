@@ -2,7 +2,6 @@
 
 import { createContext, useCallback, useContext, useEffect, useState, type ReactNode } from 'react'
 import { api, type Agency, type Notification, type TeamMember } from '../api'
-import { startAnalytics } from '../firebase'
 import { save, stored } from '../storage'
 import { useAgencies } from '../useAgencies'
 
@@ -31,12 +30,6 @@ export function StaffProvider({ children, fallback }: { children: ReactNode; fal
   const { agencies, agency, pick, error, reload } = useAgencies()
   const [meIds, setMeIds] = useState<Record<string, string>>({})
   const [notes, setNotes] = useState<Notification[]>([])
-
-  useEffect(() => {
-    startAnalytics()
-      .then((log) => log?.('screen_view', { screen_name: 'staff' }))
-      .catch(() => {})
-  }, [])
 
   const supervisorId = agency?.team.find((m) => m.role === 'supervisor')?.id ?? ''
   const meId = agency ? (meIds[agency.id] ?? stored(`persona:${agency.id}`, supervisorId)) : ''

@@ -57,7 +57,6 @@ Prospective users are social affairs offices and child protection commissions, s
 - **Cloud Run**: App Hosting runs the Next.js server on Cloud Run (`asia-southeast1`, one warm instance during judging); agent progress streams to the browser over Server-Sent Events.
 - **Pub/Sub + Cloud Functions for Firebase**: escalations, assignments and citizen follow-ups are published to the `case-events` topic; the `onCaseEvent` function notifies the supervisor and the person in charge and marks alerts delivered. Telegram reports are queued on `telegram-reports` and pushed to the app, so the webhook answers Telegram instantly.
 - **Cloud Firestore**: cases with the full agent trace, person in charge, history and caseworker actions, plus `notifications`; the analyst agent's tools read it live. Security rules deny all client access; only the server and the function write.
-- **Firebase Analytics**: page and screen usage of the prototype.
 
 ## Quality
 
@@ -94,7 +93,7 @@ Requirements: Node 22+, a Gemini API key.
 npm install
 cp .env.example .env.local     # set GOOGLE_GENAI_API_KEY
 npm run dev                    # http://localhost:3000, in-memory store
-npm test                       # 59 tests: rules, SOP search, guardrails, procedures, Telegram gatekeeping; no model calls
+npm test                       # 60 tests: rules, SOP search, guardrails, procedures, Telegram gatekeeping; no model calls
 npm run format                 # Biome formatter (npm run lint for ESLint)
 npm run eval                   # triage eval, uses the Gemini key
 npm run eval:attacks           # attack tests through the full pipeline, uses the Gemini key
