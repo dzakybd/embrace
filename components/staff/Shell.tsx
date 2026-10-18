@@ -6,7 +6,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Brand, Footer } from '../Brand'
 import { localize } from '@/lib/i18n'
 import { LangSwitch, useLang, useT } from '../Lang'
-import { Icon, ago } from '../ui'
+import { Avatar, Icon, ago } from '../ui'
 import { StaffProvider, useStaff } from './StaffProvider'
 
 const ROLES = [
@@ -96,7 +96,7 @@ function Pickers() {
       <LangSwitch />
       <Bell />
       <label className="tenant persona" title={t('Demo sign-in: switch between team members')}>
-        <span className="avatar" aria-hidden="true">{me.name[0]}</span>
+        <Avatar agency={agency.id} id={me.id} name={me.name} />
         <select value={me.id} onChange={(e) => pickMe(e.target.value)} aria-label={t('Signed in as')}>
           {ROLES.map((r) => (
             <optgroup key={r.id} label={t(r.label)}>

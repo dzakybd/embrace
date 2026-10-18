@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { api, type Agency, type Citation, type TeamMember, type Ticket, type TraceStep } from '../api'
-import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
+import { Avatar, AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
 import { LABEL, type Slot } from '@/lib/details'
 import { useLang, useT } from '../Lang'
 import { catLabel, LawLinks, procTitle, stageTitle } from '../Procedures'
@@ -252,7 +252,7 @@ function Pic({ t, agency, me, busy, act, readOnly }: {
   return (
     <Card title={tr('Person in charge')} icon="user">
       <div className="pic-row">
-        <span className="avatar big" aria-hidden="true">{pic?.name[0] ?? '?'}</span>
+        <Avatar agency={agency.id} id={pic?.id} name={pic?.name} big />
         <div>
           <b>{pic?.name ?? tr('Unassigned')}</b>{t.assignee === me.id && <span className="tag you">{tr('you')}</span>}
           <div className="muted small">{pic?.title}</div>

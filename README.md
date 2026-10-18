@@ -126,6 +126,8 @@ tests/            vitest: policy and SOP search
 
 ## Safety and privacy
 
+How to report a vulnerability, where secrets live and the known limits of the prototype: [SECURITY.md](SECURITY.md).
+
 - Synthetic data only. Personal data is masked by the intake agent before staff see it; the original stays behind a "Show original" toggle.
 - Escalation never depends on the model alone; replies are never sent without caseworker approval.
 - Attachments are sent to Gemini and not stored; the ticket keeps only their type and size and what the media agent read.

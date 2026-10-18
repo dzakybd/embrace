@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { api, type Row } from '../api'
-import { Card } from '../ui'
+import { Avatar, Card } from '../ui'
 import { useT } from '../Lang'
 import { useStaff } from './StaffProvider'
 
@@ -31,7 +31,7 @@ export default function Team() {
           return (
             <Card key={m.id} className={`member ${m.id === me.id ? 'me' : ''}`}>
               <div className="pic-row">
-                <span className="avatar big" aria-hidden="true">{m.name[0]}</span>
+                <Avatar agency={agency.id} id={m.id} name={m.name} big />
                 <div>
                   <b>{m.name}</b>{m.id === me.id && <span className="tag you">{t('you')}</span>}
                   <div className="muted small">{m.title}{m.role === 'supervisor' ? ` · ${t('receives escalations')}` : m.role === 'leader' ? ` · ${t('sees Insights')}` : ''}</div>

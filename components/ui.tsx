@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react'
+import { useState, type ReactNode } from 'react'
 import type { IconType } from 'react-icons'
 import { SiGmail, SiInstagram, SiTelegram, SiThreads, SiWhatsapp } from 'react-icons/si'
 import type { T } from '@/lib/i18n'
@@ -108,6 +108,17 @@ export const AGENT_META: Record<string, { label: string; role: string }> = {
 const pageLink = (url: string, loc: string) => {
   const page = /^p\. (\d+)/.exec(loc)?.[1]
   return page && url.includes('.pdf') ? `${url}#page=${page}` : url
+}
+
+/** A staff member's photo from public/team/<agency>/<id>.jpg (fictional, generated portraits), or their initial
+ * when there is none. */
+export function Avatar({ agency, id, name, big = false }: { agency: string; id?: string | null; name?: string; big?: boolean }) {
+  const [failed, setFailed] = useState(false)
+  return (
+    <span className={`avatar${big ? ' big' : ''}`} aria-hidden="true">
+      {id && !failed ? <img src={`/team/${agency}/${id}.jpg`} alt="" onError={() => setFailed(true)} /> : (name?.[0] ?? '?')}
+    </span>
+  )
 }
 
 export function Citations({ items }: { items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[] }) {

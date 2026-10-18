@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Row } from '../api'
-import { ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
+import { Avatar, ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
 import { useT } from '../Lang'
 import { useStaff } from './StaffProvider'
 
@@ -88,7 +88,7 @@ export default function Inbox() {
                 <p>{r.summary}</p>
                 <span className="muted small"><code>{r.id}</code> · <ChannelIcon c={r.channel} size={12} /> {ago(r.created_at, t)} · {agency.queues[r.queue ?? ''] ?? '—'}</span>
               </div>
-              <span className="case-pic"><span className="avatar" aria-hidden="true">{r.assignee ? names[r.assignee]?.[0] : '?'}</span>{r.assignee ? names[r.assignee] : t('Unassigned')}</span>
+              <span className="case-pic"><Avatar agency={agency.id} id={r.assignee} name={r.assignee ? names[r.assignee] : undefined} />{r.assignee ? names[r.assignee] : t('Unassigned')}</span>
               {sla ? <span className={`sla ${sla.tone}`}>{r.sla_breached ? t('SLA breached') : sla.text}</span> : <span className="sla ok">{t('Resolved')}</span>}
             </Link>
           )
