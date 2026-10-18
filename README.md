@@ -89,7 +89,7 @@ The four category misses are borderline: two beatings at school read as violence
 
 **Attack tests on the public chat**: 14 synthetic attacks in English and Indonesian ([`data/eval/attacks.json`](data/eval/attacks.json)) through the full pipeline (`npm run eval:attacks`): prompt injection, fake system tags, prompt leaks, role play, urgency tricks, planted links and promises, data exfiltration. 14 of 14 held ([`attacks-results.json`](data/eval/attacks-results.json)).
 
-**Load test on production**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm instance; 10 AI reports at once completed in about 4.7 s each (`scripts/load-burst.mjs`).
+**Load test on the live prototype**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm instance; 10 AI reports at once completed in about 4.7 s each (`scripts/load-burst.mjs`).
 
 **Tests**: 80 vitest tests without model calls (rules, durations, setup sections, guardrails, the drafting loop, citations, maps, the settings password, procedures, the bot gate, translations).
 
