@@ -69,9 +69,19 @@ describe('policy rules', () => {
   })
 
   it('escalates a safety concern found in an attachment, and keywords in a transcript', () => {
-    const media = { transcript: null, photo_description: 'bruises', safety_concern: true, safety_reason: 'visible bruises' }
+    const media = {
+      transcript: null,
+      photo_description: 'bruises',
+      safety_concern: true,
+      safety_reason: 'visible bruises',
+    }
     expect(decide(cp, 'see photo', triage({}), media).route).toBe('escalated')
-    const voice = { transcript: 'he said he will commit suicide tonight', photo_description: null, safety_concern: false, safety_reason: '' }
+    const voice = {
+      transcript: 'he said he will commit suicide tonight',
+      photo_description: null,
+      safety_concern: false,
+      safety_reason: '',
+    }
     expect(decide(cp, '', triage({}), voice).route).toBe('escalated')
   })
 })

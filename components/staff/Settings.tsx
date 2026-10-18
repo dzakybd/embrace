@@ -22,10 +22,17 @@ export default function Settings() {
       <div className="page-h">
         <div>
           <h1>{t('Settings')}</h1>
-          <p className="muted">{t('Rules, categories, teams, staff and documents. Changes apply to new reports at once.')}</p>
+          <p className="muted">
+            {t('Rules, categories, teams, staff and documents. Changes apply to new reports at once.')}
+          </p>
         </div>
         {agency.edited && (
-          <button className="ghost small" onClick={restore} disabled={restoring} title={t('Back to the settings shipped with the demo')}>
+          <button
+            className="ghost small"
+            onClick={restore}
+            disabled={restoring}
+            title={t('Back to the settings shipped with the demo')}
+          >
             <Icon name="refresh" size={14} /> {t('Restore demo settings')}
           </button>
         )}

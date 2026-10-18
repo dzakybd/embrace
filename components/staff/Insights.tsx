@@ -8,8 +8,16 @@ import { useLang, useT } from '../Lang'
 import { useStaff } from './StaffProvider'
 
 const SUGGESTED: Record<string, string[]> = {
-  dinsos_demak: ['Which village needs attention first this week?', 'Is there a pattern of illegal levies in aid distribution?', 'How many tidal flood reports are still open?'],
-  kpai: ['Which school has the most complaints this month?', 'Which clusters grew this week vs last week?', 'How many critical cases have no response yet?'],
+  dinsos_demak: [
+    'Which village needs attention first this week?',
+    'Is there a pattern of illegal levies in aid distribution?',
+    'How many tidal flood reports are still open?',
+  ],
+  kpai: [
+    'Which school has the most complaints this month?',
+    'Which clusters grew this week vs last week?',
+    'How many critical cases have no response yet?',
+  ],
 }
 
 export default function Insights() {
@@ -30,7 +38,10 @@ export default function Insights() {
     setAnswer(null)
     setBriefErr('')
     api.overview(agency.id).then(setOv)
-    api.brief(agency.id, false, lang).then(setBrief).catch((e) => setBriefErr(String(e)))
+    api
+      .brief(agency.id, false, lang)
+      .then(setBrief)
+      .catch((e) => setBriefErr(String(e)))
   }, [agency.id, lang])
 
   const ask = async (question: string) => {
@@ -51,30 +62,58 @@ export default function Insights() {
   const refreshBrief = () => {
     setBrief(null)
     setBriefErr('')
-    api.brief(agency.id, true, lang).then(setBrief).catch((e) => setBriefErr(String(e)))
+    api
+      .brief(agency.id, true, lang)
+      .then(setBrief)
+      .catch((e) => setBriefErr(String(e)))
   }
 
-  if (!ov) return <div className="page"><div className="shimmer tall" /></div>
+  if (!ov)
+    return (
+      <div className="page">
+        <div className="shimmer tall" />
+      </div>
+    )
 
   const askPanel = (
     <Card title={t('Ask the analyst agent')} icon="spark" className="brief">
       <p className="muted small">{t('Answers from live case data through tools. It never sees personal data.')}</p>
-      <form className="ask" onSubmit={(e) => { e.preventDefault(); if (q.trim()) ask(q) }}>
-        <label htmlFor="ask" className="sr">{t('Ask the analyst agent')}</label>
+      <form
+        className="ask"
+        onSubmit={(e) => {
+          e.preventDefault()
+          if (q.trim()) ask(q)
+        }}
+      >
+        <label htmlFor="ask" className="sr">
+          {t('Ask the analyst agent')}
+        </label>
         <input id="ask" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Ask about your reports…')} />
-        <button className="primary" disabled={asking || q.trim().length < 3}>{t('Ask')}</button>
+        <button className="primary" disabled={asking || q.trim().length < 3}>
+          {t('Ask')}
+        </button>
       </form>
       <div className="samples">
-        {SUGGESTED[agency.id]?.map((s) => <button key={s} className="chip" onClick={() => ask(t(s))}>{t(s)}</button>)}
+        {SUGGESTED[agency.id]?.map((s) => (
+          <button key={s} className="chip" onClick={() => ask(t(s))}>
+            {t(s)}
+          </button>
+        ))}
       </div>
       {asking && <div className="shimmer tall" />}
       {history.map((h, i) => (
         <div key={i} className="answer">
-          <p className="q"><b>{h.q}</b></p>
+          <p className="q">
+            <b>{h.q}</b>
+          </p>
           <Answer a={h.a} />
         </div>
       ))}
-      {!asking && !history.length && answer && <div className="answer"><Answer a={answer} /></div>}
+      {!asking && !history.length && answer && (
+        <div className="answer">
+          <Answer a={answer} />
+        </div>
+      )}
     </Card>
   )
 
@@ -87,77 +126,147 @@ export default function Insights() {
         </div>
       </div>
       <div className="tabs" role="tablist">
-        <button role="tab" aria-selected={tab === 'overview'} className={tab === 'overview' ? 'on' : ''} onClick={() => setTab('overview')}>{t('Overview')}</button>
-        <button role="tab" aria-selected={tab === 'ask'} className={tab === 'ask' ? 'on' : ''} onClick={() => setTab('ask')}>{t('Ask the analyst')}</button>
+        <button
+          role="tab"
+          aria-selected={tab === 'overview'}
+          className={tab === 'overview' ? 'on' : ''}
+          onClick={() => setTab('overview')}
+        >
+          {t('Overview')}
+        </button>
+        <button
+          role="tab"
+          aria-selected={tab === 'ask'}
+          className={tab === 'ask' ? 'on' : ''}
+          onClick={() => setTab('ask')}
+        >
+          {t('Ask the analyst')}
+        </button>
       </div>
-      {tab === 'ask' ? askPanel : (<>
-      <div className="kpis">
-        <Kpi label="Reports, 30 days" value={ov.total} />
-        <Kpi label="Open now" value={ov.open} />
-        <Kpi label="Escalated" value={ov.escalated} tone="crit" icon="alert" />
-        <Kpi label="Open past SLA" value={ov.sla_breached_open} tone={ov.sla_breached_open ? 'warn' : undefined} icon="clock" />
-        <Kpi label="Median first response" value={ov.median_first_response_h == null ? '—' : `${ov.median_first_response_h} ${t('h')}`} />
-      </div>
+      {tab === 'ask' ? (
+        askPanel
+      ) : (
+        <>
+          <div className="kpis">
+            <Kpi label="Reports, 30 days" value={ov.total} />
+            <Kpi label="Open now" value={ov.open} />
+            <Kpi label="Escalated" value={ov.escalated} tone="crit" icon="alert" />
+            <Kpi
+              label="Open past SLA"
+              value={ov.sla_breached_open}
+              tone={ov.sla_breached_open ? 'warn' : undefined}
+              icon="clock"
+            />
+            <Kpi
+              label="Median first response"
+              value={ov.median_first_response_h == null ? '—' : `${ov.median_first_response_h} ${t('h')}`}
+            />
+          </div>
 
-      <div className="dash-grid">
-        <Card title={t('AI weekly brief')} icon="spark" className="brief"
-          action={<button className="ghost small" onClick={refreshBrief} aria-label={t('Regenerate brief')}><Icon name="refresh" size={14} /></button>}>
-          {brief ? <Answer a={brief} /> : briefErr ? <p className="error">{briefErr}</p> : <div className="shimmer tall" aria-label={t('Analyst agent is reading the data')} />}
-          <button className="ghost small" onClick={() => setTab('ask')}><Icon name="chat" size={14} /> {t('Ask a follow-up question')}</button>
-        </Card>
+          <div className="dash-grid">
+            <Card
+              title={t('AI weekly brief')}
+              icon="spark"
+              className="brief"
+              action={
+                <button className="ghost small" onClick={refreshBrief} aria-label={t('Regenerate brief')}>
+                  <Icon name="refresh" size={14} />
+                </button>
+              }
+            >
+              {brief ? (
+                <Answer a={brief} />
+              ) : briefErr ? (
+                <p className="error">{briefErr}</p>
+              ) : (
+                <div className="shimmer tall" aria-label={t('Analyst agent is reading the data')} />
+              )}
+              <button className="ghost small" onClick={() => setTab('ask')}>
+                <Icon name="chat" size={14} /> {t('Ask a follow-up question')}
+              </button>
+            </Card>
 
-        <Card title={t('Early warning: related reports')} icon="pin" className="clusters">
-          {ov.clusters.length === 0 && <p className="muted">{t('No clusters in the last 14 days.')}</p>}
-          {ov.clusters.map((c) => (
-            <div key={c.kind + c.display} className="cluster">
-              <div className="cluster-h">
-                <b>{c.display}</b>
-                <span className="count">{t('{n} reports', { n: c.count })}</span>
-              </div>
-              <p className="muted">
-                {t(c.kind.replace('_', ' '))} · {c.top_categories.join(', ')}
-                {c.top_locations.length > 0 && c.kind !== 'location' && <> · {c.top_locations.join(', ')}</>}
-              </p>
-              <p className="muted small">{t('since')} {new Date(c.first_seen).toLocaleDateString()} · {c.ticket_ids.slice(0, 4).map((id) => (
-                <Link key={id} href={`/staff/cases/${id}`}>{id} </Link>))}</p>
-            </div>
-          ))}
-        </Card>
+            <Card title={t('Early warning: related reports')} icon="pin" className="clusters">
+              {ov.clusters.length === 0 && <p className="muted">{t('No clusters in the last 14 days.')}</p>}
+              {ov.clusters.map((c) => (
+                <div key={c.kind + c.display} className="cluster">
+                  <div className="cluster-h">
+                    <b>{c.display}</b>
+                    <span className="count">{t('{n} reports', { n: c.count })}</span>
+                  </div>
+                  <p className="muted">
+                    {t(c.kind.replace('_', ' '))} · {c.top_categories.join(', ')}
+                    {c.top_locations.length > 0 && c.kind !== 'location' && <> · {c.top_locations.join(', ')}</>}
+                  </p>
+                  <p className="muted small">
+                    {t('since')} {new Date(c.first_seen).toLocaleDateString()} ·{' '}
+                    {c.ticket_ids.slice(0, 4).map((id) => (
+                      <Link key={id} href={`/staff/cases/${id}`}>
+                        {id}{' '}
+                      </Link>
+                    ))}
+                  </p>
+                </div>
+              ))}
+            </Card>
 
-        <Card title={t('Reports by category')} icon="chart" className="cats">
-          <CategoryBars ov={ov} />
-        </Card>
+            <Card title={t('Reports by category')} icon="chart" className="cats">
+              <CategoryBars ov={ov} />
+            </Card>
 
-        <Card title={t('Daily volume')} icon="chart" className="daily">
-          <DailyColumns data={ov.daily} />
-        </Card>
+            <Card title={t('Daily volume')} icon="chart" className="daily">
+              <DailyColumns data={ov.daily} />
+            </Card>
 
-        <Card title={t('By urgency')} icon="alert" className="urg">
-          <ul className="statlist">
-            {(['critical', 'high', 'normal', 'low'] as const).map((u) => (
-              <li key={u}><span className={`badge urg-${u}`}>{t(URGENCY_LABEL[u])}</span><b>{ov.by_urgency[u] ?? 0}</b></li>
-            ))}
-          </ul>
-        </Card>
+            <Card title={t('By urgency')} icon="alert" className="urg">
+              <ul className="statlist">
+                {(['critical', 'high', 'normal', 'low'] as const).map((u) => (
+                  <li key={u}>
+                    <span className={`badge urg-${u}`}>{t(URGENCY_LABEL[u])}</span>
+                    <b>{ov.by_urgency[u] ?? 0}</b>
+                  </li>
+                ))}
+              </ul>
+            </Card>
 
-        <Card title={t('By channel')} icon="chat" className="chan">
-          <ul className="statlist">
-            {Object.entries(ov.by_channel).sort((a, b) => b[1] - a[1]).map(([c, n]) => (
-              <li key={c}><span><ChannelIcon c={c} size={14} /> {t(CHANNEL_LABEL[c] ?? c)}</span><b>{n}</b></li>
-            ))}
-          </ul>
-        </Card>
-      </div>
-      </>)}
+            <Card title={t('By channel')} icon="chat" className="chan">
+              <ul className="statlist">
+                {Object.entries(ov.by_channel)
+                  .sort((a, b) => b[1] - a[1])
+                  .map(([c, n]) => (
+                    <li key={c}>
+                      <span>
+                        <ChannelIcon c={c} size={14} /> {t(CHANNEL_LABEL[c] ?? c)}
+                      </span>
+                      <b>{n}</b>
+                    </li>
+                  ))}
+              </ul>
+            </Card>
+          </div>
+        </>
+      )}
     </div>
   )
 }
 
-function Kpi({ label, value, tone, icon }: { label: string; value: number | string; tone?: 'crit' | 'warn'; icon?: string }) {
+function Kpi({
+  label,
+  value,
+  tone,
+  icon,
+}: {
+  label: string
+  value: number | string
+  tone?: 'crit' | 'warn'
+  icon?: string
+}) {
   const t = useT()
   return (
     <div className={`kpi ${tone ?? ''}`}>
-      <span>{icon && <Icon name={icon} size={14} />} {t(label)}</span>
+      <span>
+        {icon && <Icon name={icon} size={14} />} {t(label)}
+      </span>
       <b>{value}</b>
     </div>
   )
@@ -167,9 +276,18 @@ function Answer({ a }: { a: AnalystAnswer }) {
   const t = useT()
   return (
     <>
-      <div className="md">{a.answer.split('\n').filter(Boolean).map((l, i) => <p key={i}>{l.replace(/\*\*/g, '').replace(/^\s*[*-]\s+/, '• ')}</p>)}</div>
+      <div className="md">
+        {a.answer
+          .split('\n')
+          .filter(Boolean)
+          .map((l, i) => (
+            <p key={i}>{l.replace(/\*\*/g, '').replace(/^\s*[*-]\s+/, '• ')}</p>
+          ))}
+      </div>
       {a.tools_used.length > 0 && (
-        <p className="muted small"><Icon name="rules" size={12} /> {t('Analyst agent used:')} {[...new Set(a.tools_used)].join(', ')}</p>
+        <p className="muted small">
+          <Icon name="rules" size={12} /> {t('Analyst agent used:')} {[...new Set(a.tools_used)].join(', ')}
+        </p>
       )}
     </>
   )
@@ -190,7 +308,10 @@ function CategoryBars({ ov }: { ov: Overview }) {
                 <span className="bar" style={{ width: `${(c.count / max) * 100}%` }} />
                 <span className="val">{c.count}</span>
               </td>
-              <td className={`delta ${d > 0 ? 'up' : ''}`}>{d > 0 ? `▲ ${d}` : d < 0 ? `▼ ${-d}` : '–'}<span className="sr"> vs last week</span></td>
+              <td className={`delta ${d > 0 ? 'up' : ''}`}>
+                {d > 0 ? `▲ ${d}` : d < 0 ? `▼ ${-d}` : '–'}
+                <span className="sr"> vs last week</span>
+              </td>
             </tr>
           )
         })}
@@ -208,17 +329,27 @@ function DailyColumns({ data }: { data: { date: string; count: number }[] }) {
     days.push({ date: d, count: map[d] ?? 0 })
   }
   const max = Math.max(1, ...days.map((d) => d.count))
-  const W = 600, H = 160, pad = 24, bw = (W - pad) / days.length
+  const W = 600,
+    H = 160,
+    pad = 24,
+    bw = (W - pad) / days.length
   const ticks = [0, Math.ceil(max / 2), max]
   return (
     <div className="daily-wrap">
-      <svg viewBox={`0 0 ${W} ${H + 20}`} role="img" aria-label="Complaints per day for the last 30 days" onMouseLeave={() => setHover(null)}>
+      <svg
+        viewBox={`0 0 ${W} ${H + 20}`}
+        role="img"
+        aria-label="Complaints per day for the last 30 days"
+        onMouseLeave={() => setHover(null)}
+      >
         {ticks.map((t) => {
           const y = H - (t / max) * (H - 10)
           return (
             <g key={t}>
               <line x1={pad} x2={W} y1={y} y2={y} className="grid" />
-              <text x={pad - 6} y={y + 4} className="axis" textAnchor="end">{t}</text>
+              <text x={pad - 6} y={y + 4} className="axis" textAnchor="end">
+                {t}
+              </text>
             </g>
           )
         })}
@@ -228,8 +359,10 @@ function DailyColumns({ data }: { data: { date: string; count: number }[] }) {
             <g key={d.date} onMouseEnter={() => setHover(i)}>
               <rect x={pad + i * bw} y={0} width={bw} height={H} fill="transparent" />
               {d.count > 0 && (
-                <path className={`col ${hover === i ? 'on' : ''}`}
-                  d={`M${pad + i * bw + 2},${H} v${-(h - 4)} q0,-4 4,-4 h${bw - 12} q4,0 4,4 v${h - 4} z`} />
+                <path
+                  className={`col ${hover === i ? 'on' : ''}`}
+                  d={`M${pad + i * bw + 2},${H} v${-(h - 4)} q0,-4 4,-4 h${bw - 12} q4,0 4,4 v${h - 4} z`}
+                />
               )}
             </g>
           )
@@ -242,7 +375,8 @@ function DailyColumns({ data }: { data: { date: string; count: number }[] }) {
       </svg>
       {hover != null && (
         <div className="tip" style={{ left: `${((pad + hover * bw + bw / 2) / W) * 100}%` }}>
-          <b>{days[hover].count}</b> on {new Date(days[hover].date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
+          <b>{days[hover].count}</b> on{' '}
+          {new Date(days[hover].date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
         </div>
       )}
     </div>

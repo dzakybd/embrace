@@ -36,8 +36,14 @@ export function overview(agency: Agency, tickets: Ticket[], days = 30) {
   const thisWeek = new Date(t0 - 7 * 24 * H).toISOString()
   const prevWeek = new Date(t0 - 14 * 24 * H).toISOString()
   const byCat = tally(recent, (t) => t.triage?.category)
-  const catThis = tally(recent.filter((t) => t.created_at >= thisWeek), (t) => t.triage?.category)
-  const catPrev = tally(recent.filter((t) => t.created_at >= prevWeek && t.created_at < thisWeek), (t) => t.triage?.category)
+  const catThis = tally(
+    recent.filter((t) => t.created_at >= thisWeek),
+    (t) => t.triage?.category,
+  )
+  const catPrev = tally(
+    recent.filter((t) => t.created_at >= prevWeek && t.created_at < thisWeek),
+    (t) => t.triage?.category,
+  )
   const daily = tally(recent, (t) => t.created_at.slice(0, 10))
   return {
     window_days: days,
@@ -45,11 +51,19 @@ export function overview(agency: Agency, tickets: Ticket[], days = 30) {
     open: recent.filter((t) => OPEN.has(t.status)).length,
     escalated: recent.filter((t) => t.policy?.route === 'escalated').length,
     sla_breached_open: recent.filter((t) => OPEN.has(t.status) && slaBreached(t)).length,
-    median_first_response_h: median(recent.filter((t) => t.responded_at).map((t) => hours(t.created_at, t.responded_at!))),
+    median_first_response_h: median(
+      recent.filter((t) => t.responded_at).map((t) => hours(t.created_at, t.responded_at!)),
+    ),
     median_resolution_h: median(recent.filter((t) => t.resolved_at).map((t) => hours(t.created_at, t.resolved_at!))),
     by_category: [...byCat]
       .sort((a, b) => b[1] - a[1])
-      .map(([id, count]) => ({ id, label: labels[id] ?? id, count, this_week: catThis.get(id) ?? 0, prev_week: catPrev.get(id) ?? 0 })),
+      .map(([id, count]) => ({
+        id,
+        label: labels[id] ?? id,
+        count,
+        this_week: catThis.get(id) ?? 0,
+        prev_week: catPrev.get(id) ?? 0,
+      })),
     by_urgency: Object.fromEntries(tally(recent, (t) => t.policy?.final_urgency)),
     by_status: Object.fromEntries(tally(recent, (t) => t.status)),
     by_channel: Object.fromEntries(tally(recent, (t) => t.channel)),
@@ -90,7 +104,9 @@ export function clusters(agency: Agency, tickets: Ticket[], days = 14, minSize =
   const covered = new Set<string>()
   const out = []
   // Most specific, largest groups first; drop groups that mostly repeat one already reported.
-  for (const g of [...groups.values()].sort((a, b) => SPECIFICITY[a.kind] - SPECIFICITY[b.kind] || b.ts.length - a.ts.length)) {
+  for (const g of [...groups.values()].sort(
+    (a, b) => SPECIFICITY[a.kind] - SPECIFICITY[b.kind] || b.ts.length - a.ts.length,
+  )) {
     const ids = g.ts.map((t) => t.id)
     if (g.ts.length < minSize || ids.filter((id) => covered.has(id)).length >= 0.6 * ids.length) continue
     ids.forEach((id) => covered.add(id))

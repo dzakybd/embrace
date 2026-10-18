@@ -44,9 +44,12 @@ export default function Inbox() {
   const filters = ROLE_FILTERS[me.role].map((id) => FILTERS.find((f) => f.id === id)!)
   const mineOrTeam = (r: Row) => r.assignee === me.id || me.queues.includes(r.queue ?? '')
   const match = (r: Row, f: string) =>
-    f === 'mine' ? r.assignee === me.id && r.status !== 'resolved'
-      : f === 'team' ? me.queues.includes(r.queue ?? '') && r.status !== 'resolved'
-        : me.role === 'officer' && f === 'resolved' ? mineOrTeam(r) && r.status === 'resolved'
+    f === 'mine'
+      ? r.assignee === me.id && r.status !== 'resolved'
+      : f === 'team'
+        ? me.queues.includes(r.queue ?? '') && r.status !== 'resolved'
+        : me.role === 'officer' && f === 'resolved'
+          ? mineOrTeam(r) && r.status === 'resolved'
           : !f || r.status === f
   const all = rows ?? []
   const counts = Object.fromEntries(filters.map((f) => [f.id, all.filter((r) => match(r, f.id)).length]))
@@ -54,8 +57,10 @@ export default function Inbox() {
   const shown = all
     .filter((r) => match(r, filter) && (!q || `${r.id} ${r.summary}`.toLowerCase().includes(q)))
     .sort((a, b) =>
-      filter === 'resolved' ? b.created_at.localeCompare(a.created_at) :
-        (URG_RANK[a.urgency ?? 'low'] - URG_RANK[b.urgency ?? 'low']) || b.created_at.localeCompare(a.created_at))
+      filter === 'resolved'
+        ? b.created_at.localeCompare(a.created_at)
+        : URG_RANK[a.urgency ?? 'low'] - URG_RANK[b.urgency ?? 'low'] || b.created_at.localeCompare(a.created_at),
+    )
 
   return (
     <div className="page">
@@ -64,18 +69,35 @@ export default function Inbox() {
           <h1>{t('Inbox')}</h1>
           <p className="muted">{t('Signed in as {name}, {title}', { name: me.name, title: me.title })}</p>
         </div>
-        <button className="ghost small" onClick={() => api.resetDemo(agency.id).then(load)} title={t('Restore the synthetic demo data')}>
+        <button
+          className="ghost small"
+          onClick={() => api.resetDemo(agency.id).then(load)}
+          title={t('Restore the synthetic demo data')}
+        >
           <Icon name="refresh" size={14} /> {t('Reset demo data')}
         </button>
       </div>
       <div className="filters" role="tablist" aria-label={t('Case filters')}>
         {filters.map((f) => (
-          <button key={f.id} role="tab" aria-selected={filter === f.id} className={`filter ${filter === f.id ? 'on' : ''}`} onClick={() => setFilter(f.id)}>
+          <button
+            key={f.id}
+            role="tab"
+            aria-selected={filter === f.id}
+            className={`filter ${filter === f.id ? 'on' : ''}`}
+            onClick={() => setFilter(f.id)}
+          >
             <Icon name={f.icon} size={16} /> {t(f.label)}
             <b className={f.id === 'escalated' && counts[f.id] ? 'hot' : ''}>{counts[f.id]}</b>
           </button>
         ))}
-        <input className="search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('Search cases')} aria-label={t('Search cases')} />
+        <input
+          className="search"
+          type="search"
+          value={query}
+          onChange={(e) => setQuery(e.target.value)}
+          placeholder={t('Search cases')}
+          aria-label={t('Search cases')}
+        />
       </div>
       <section className="table card" aria-label={t('Cases')}>
         {rows === null && <div className="shimmer tall" />}
@@ -87,10 +109,20 @@ export default function Inbox() {
               <UrgencyBadge u={r.urgency} />
               <div className="case-main">
                 <p>{r.summary}</p>
-                <span className="muted small"><code>{r.id}</code> · <ChannelIcon c={r.channel} size={12} /> {ago(r.created_at, t)} · {agency.queues[r.queue ?? ''] ?? '—'}</span>
+                <span className="muted small">
+                  <code>{r.id}</code> · <ChannelIcon c={r.channel} size={12} /> {ago(r.created_at, t)} ·{' '}
+                  {agency.queues[r.queue ?? ''] ?? '—'}
+                </span>
               </div>
-              <span className="case-pic"><Avatar agency={agency.id} id={r.assignee} name={r.assignee ? names[r.assignee] : undefined} />{r.assignee ? names[r.assignee] : t('Unassigned')}</span>
-              {sla ? <span className={`sla ${sla.tone}`}>{r.sla_breached ? t('SLA breached') : sla.text}</span> : <span className="sla ok">{t('Resolved')}</span>}
+              <span className="case-pic">
+                <Avatar agency={agency.id} id={r.assignee} name={r.assignee ? names[r.assignee] : undefined} />
+                {r.assignee ? names[r.assignee] : t('Unassigned')}
+              </span>
+              {sla ? (
+                <span className={`sla ${sla.tone}`}>{r.sla_breached ? t('SLA breached') : sla.text}</span>
+              ) : (
+                <span className="sla ok">{t('Resolved')}</span>
+              )}
             </Link>
           )
         })}

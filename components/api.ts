@@ -18,7 +18,12 @@ export interface Agency {
   team: TeamMember[]
   description?: string
   reply_signature: string
-  escalation: { always_escalate_categories: string[]; keywords: string[]; escalate_flags: string[]; confidence_floor?: number }
+  escalation: {
+    always_escalate_categories: string[]
+    keywords: string[]
+    escalate_flags: string[]
+    confidence_floor?: number
+  }
   custom: boolean
   edited: boolean
   telegram_bot: string | null
@@ -30,15 +35,30 @@ export interface Agency {
 }
 
 export interface BotStatus {
-  reachable: boolean; name: string | null; webhook_ok: boolean; pending: number; last_error: { message: string; at: string } | null
-  description: boolean; commands: number; photo: boolean
+  reachable: boolean
+  name: string | null
+  webhook_ok: boolean
+  pending: number
+  last_error: { message: string; at: string } | null
+  description: boolean
+  commands: number
+  photo: boolean
 }
-export interface SetupStep { step: string; ok: boolean; error?: string }
+export interface SetupStep {
+  step: string
+  ok: boolean
+  error?: string
+}
 
 export interface Integrations {
   web: { connected: boolean; url: string; page: string }
   telegram: {
-    connected: boolean; username?: string; managed: boolean; webhook: string; token_hint?: string; stored_in?: string
+    connected: boolean
+    username?: string
+    managed: boolean
+    webhook: string
+    token_hint?: string
+    stored_in?: string
     status?: BotStatus
   }
 }
@@ -238,18 +258,29 @@ export const api = {
     fetch(`/api/agencies/${t}/tickets${status ? `?status=${status}` : ''}`).then(json<Row[]>),
   ticket: (id: string) => fetch(`/api/tickets/${id}`).then(json<Ticket>),
   details: (id: string, answers: Record<string, string>) =>
-    fetch(`/api/tickets/${id}/details`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ answers }) })
-      .then(json<Pick<Ticket, 'id' | 'status' | 'details'>>),
+    fetch(`/api/tickets/${id}/details`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ answers }),
+    }).then(json<Pick<Ticket, 'id' | 'status' | 'details'>>),
   progress: (id: string, body: { procedure: string; stage: number; done: boolean; officer: string }) =>
-    fetch(`/api/tickets/${id}/progress`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Ticket>),
-  act: (id: string, body: { action: string; officer?: string; note?: string; reply?: string; queue?: string; assignee?: string }) =>
+    fetch(`/api/tickets/${id}/progress`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<Ticket>),
+  act: (
+    id: string,
+    body: { action: string; officer?: string; note?: string; reply?: string; queue?: string; assignee?: string },
+  ) =>
     fetch(`/api/tickets/${id}/actions`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     }).then(json<Ticket>),
   overview: (t: string) => fetch(`/api/agencies/${t}/overview`).then(json<Overview>),
-  brief: (t: string, refresh = false, lang = 'en') => fetch(`/api/agencies/${t}/brief?lang=${lang}${refresh ? '&refresh=true' : ''}`).then(json<AnalystAnswer>),
+  brief: (t: string, refresh = false, lang = 'en') =>
+    fetch(`/api/agencies/${t}/brief?lang=${lang}${refresh ? '&refresh=true' : ''}`).then(json<AnalystAnswer>),
   ask: (t: string, question: string) =>
     fetch(`/api/agencies/${t}/ask`, {
       method: 'POST',
@@ -261,21 +292,52 @@ export const api = {
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,
     ),
   ai: (t: string) => fetch(`/api/agencies/${t}/ai`).then(json<import('./staff/AiTower').Tower>),
-  setAi: (t: string, body: { models: Record<string, string>; guard: { read: string; write: string; injection: string; questions: number }; by: string }) =>
-    fetch(`/api/agencies/${t}/ai`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<{ ok: boolean }>),
-  notifications: (t: string, member: string) => fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
+  setAi: (
+    t: string,
+    body: {
+      models: Record<string, string>
+      guard: { read: string; write: string; injection: string; questions: number }
+      by: string
+    },
+  ) =>
+    fetch(`/api/agencies/${t}/ai`, {
+      method: 'PATCH',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<{ ok: boolean }>),
+  notifications: (t: string, member: string) =>
+    fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
   createAgency: (body: NewAgency) =>
-    fetch('/api/agencies', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
+    fetch('/api/agencies', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<Agency>),
   integrations: (t: string) => fetch(`/api/agencies/${t}/integrations`).then(json<Integrations>),
   connectTelegram: (t: string, token: string) =>
-    fetch(`/api/agencies/${t}/integrations`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) })
-      .then(json<{ connected: boolean; username: string; steps: SetupStep[] }>),
-  setupTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(json<{ steps: SetupStep[]; status: BotStatus }>),
+    fetch(`/api/agencies/${t}/integrations`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ token }),
+    }).then(json<{ connected: boolean; username: string; steps: SetupStep[] }>),
+  setupTelegram: (t: string) =>
+    fetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(json<{ steps: SetupStep[]; status: BotStatus }>),
   disconnectTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
-  saveProcedures: (t: string, body: { procedures: ProcedureT[]; laws: Record<string, string[]>; by: { name: string; role: string } }) =>
-    fetch(`/api/agencies/${t}/procedures`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
+  saveProcedures: (
+    t: string,
+    body: { procedures: ProcedureT[]; laws: Record<string, string[]>; by: { name: string; role: string } },
+  ) =>
+    fetch(`/api/agencies/${t}/procedures`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<Agency>),
   updateAgency: (t: string, body: NewAgency) =>
-    fetch(`/api/agencies/${t}`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
+    fetch(`/api/agencies/${t}`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<Agency>),
   deleteAgency: (t: string) => fetch(`/api/agencies/${t}`, { method: 'DELETE' }).then(json),
   resetDemo: (t: string) => fetch(`/api/agencies/${t}/reset-demo`, { method: 'POST' }).then(json),
 }
@@ -289,7 +351,13 @@ export type SubmitEvent =
 /** POST a complaint and read the agents' progress from the SSE stream. */
 export async function submitComplaint(
   agency: string,
-  body: { text: string; channel: Channel; reporter_name?: string; reporter_contact?: string; attachments?: Attachment[] },
+  body: {
+    text: string
+    channel: Channel
+    reporter_name?: string
+    reporter_contact?: string
+    attachments?: Attachment[]
+  },
   onEvent: (e: SubmitEvent) => void,
 ) {
   const res = await fetch(`/api/agencies/${agency}/complaints`, {

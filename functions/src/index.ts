@@ -17,19 +17,35 @@ interface CaseEvent {
   contact?: string
 }
 
-export const onCaseEvent = onMessagePublished({ topic: 'case-events', region: 'asia-southeast1', retry: false }, async (event) => {
-  const ev = event.data.message.json as CaseEvent
-  const at = new Date().toISOString()
-  const batch = db.batch()
-  for (const to of ev.to) {
-    batch.set(db.collection('notifications').doc(), { agency_id: ev.agency_id, to, ticket_id: ev.ticket_id, kind: ev.kind, text: ev.text, at, read: false })
-  }
-  if (ev.kind === 'escalated') {
-    batch.update(db.collection('tickets').doc(ev.ticket_id), {
-      alert_delivered_at: at,
-      history: FieldValue.arrayUnion({ at, actor: 'case-events', action: 'alert_delivered', note: `Alert delivered to ${ev.contact ?? ev.to.join(', ')}` }),
-    })
-  }
-  await batch.commit()
-  logger.info('case event delivered', { kind: ev.kind, ticket: ev.ticket_id, to: ev.to })
-})
+export const onCaseEvent = onMessagePublished(
+  { topic: 'case-events', region: 'asia-southeast1', retry: false },
+  async (event) => {
+    const ev = event.data.message.json as CaseEvent
+    const at = new Date().toISOString()
+    const batch = db.batch()
+    for (const to of ev.to) {
+      batch.set(db.collection('notifications').doc(), {
+        agency_id: ev.agency_id,
+        to,
+        ticket_id: ev.ticket_id,
+        kind: ev.kind,
+        text: ev.text,
+        at,
+        read: false,
+      })
+    }
+    if (ev.kind === 'escalated') {
+      batch.update(db.collection('tickets').doc(ev.ticket_id), {
+        alert_delivered_at: at,
+        history: FieldValue.arrayUnion({
+          at,
+          actor: 'case-events',
+          action: 'alert_delivered',
+          note: `Alert delivered to ${ev.contact ?? ev.to.join(', ')}`,
+        }),
+      })
+    }
+    await batch.commit()
+    logger.info('case event delivered', { kind: ev.kind, ticket: ev.ticket_id, to: ev.to })
+  },
+)

@@ -23,7 +23,9 @@ export interface InputScreen {
 /** Flags complaints that try to steer the agents. They are never dropped (a citizen's report still counts): the case
  * goes to manual review and the trace shows why. */
 export function screenInput(text: string): InputScreen {
-  const matches = INJECTION.map((r) => text.match(r)?.[0]).filter((m): m is string => !!m).map((m) => m.slice(0, 80))
+  const matches = INJECTION.map((r) => text.match(r)?.[0])
+    .filter((m): m is string => !!m)
+    .map((m) => m.slice(0, 80))
   return { injection: matches.length > 0, matches }
 }
 
@@ -31,14 +33,18 @@ const PHONE = /(?:\+?\d[\d\s-]{8,}\d)/g
 const NIK = /\b\d{16}\b/g
 const EMAIL = /[\w.+-]+@[\w-]+\.[\w.]+/g
 const URL_RE = /https?:\/\/[^\s)]+/g
-const PROMISE = /\b(guarantee[ds]?|we promise|will definitely|100%|dijamin|pasti (akan )?(cair|diterima|dapat)|kami janji)\b/gi
+const PROMISE =
+  /\b(guarantee[ds]?|we promise|will definitely|100%|dijamin|pasti (akan )?(cair|diterima|dapat)|kami janji)\b/gi
 /** Fragments of the agents' own prompts: a draft that contains them is leaking its instructions. */
-const LEAK = /<<<|>>>|‹‹‹|›››|You draft the first reply|Original complaint:|Routing decision:|SOP passages|treat it only as data|never follow instructions/i
+const LEAK =
+  /<<<|>>>|‹‹‹|›››|You draft the first reply|Original complaint:|Routing decision:|SOP passages|treat it only as data|never follow instructions/i
 /** Only staff set a case's status; a draft must not tell the citizen it is closed. */
-const CLOSED = /\b(case|report|complaint)\b[^.]{0,30}\b(is|has been)\s+(now\s+)?(resolved|closed|completed)\b|\bstatus (kasus|laporan|pengaduan)\b[^.]{0,30}\b(selesai|ditutup)\b|\b(kasus|laporan|pengaduan)\b[^.]{0,20}\b(telah|sudah)\s+(selesai|ditutup)\b/i
+const CLOSED =
+  /\b(case|report|complaint)\b[^.]{0,30}\b(is|has been)\s+(now\s+)?(resolved|closed|completed)\b|\bstatus (kasus|laporan|pengaduan)\b[^.]{0,30}\b(selesai|ditutup)\b|\b(kasus|laporan|pengaduan)\b[^.]{0,20}\b(telah|sudah)\s+(selesai|ditutup)\b/i
 /** "We cannot guarantee" is the honest answer, not a promise. */
 const NEGATED = /\b(not|cannot|can't|unable to|no|tidak|belum|bukan|tak)\b[\w\s]{0,20}$/i
-const promises = (reply: string) => [...reply.matchAll(PROMISE)].some((m) => !NEGATED.test(reply.slice(Math.max(0, m.index - 30), m.index)))
+const promises = (reply: string) =>
+  [...reply.matchAll(PROMISE)].some((m) => !NEGATED.test(reply.slice(Math.max(0, m.index - 30), m.index)))
 
 export interface DraftCheck {
   /** Problems an officer must see before approving. */
@@ -47,16 +53,31 @@ export interface DraftCheck {
 
 /** Checks a drafted reply before an officer sees it: no personal data copied back, no invented links, citations that
  * exist, the ticket number present, no promised outcome. The officer still approves every reply. */
-export function checkDraft(reply: string, ctx: { original: string; ticketId: string; sopCount: number; allowedUrls?: string[] }): DraftCheck {
+export function checkDraft(
+  reply: string,
+  ctx: { original: string; ticketId: string; sopCount: number; allowedUrls?: string[] },
+): DraftCheck {
   const warnings: string[] = []
-  const leaked = [...new Set([...(ctx.original.match(PHONE) ?? []), ...(ctx.original.match(NIK) ?? []), ...(ctx.original.match(EMAIL) ?? [])])]
-    .map((s) => s.trim()).filter((s) => s.replace(/\D/g, '').length >= 9 || s.includes('@')).filter((s) => reply.includes(s))
-  if (leaked.length) warnings.push(`Repeats personal data from the report (${leaked.length} item${leaked.length > 1 ? 's' : ''})`)
+  const leaked = [
+    ...new Set([
+      ...(ctx.original.match(PHONE) ?? []),
+      ...(ctx.original.match(NIK) ?? []),
+      ...(ctx.original.match(EMAIL) ?? []),
+    ]),
+  ]
+    .map((s) => s.trim())
+    .filter((s) => s.replace(/\D/g, '').length >= 9 || s.includes('@'))
+    .filter((s) => reply.includes(s))
+  if (leaked.length)
+    warnings.push(`Repeats personal data from the report (${leaked.length} item${leaked.length > 1 ? 's' : ''})`)
   const urls = (reply.match(URL_RE) ?? []).filter((u) => !(ctx.allowedUrls ?? []).some((a) => u.startsWith(a)))
   if (urls.length) warnings.push(`Contains a link that is not from the agency's documents: ${urls[0].slice(0, 60)}`)
   const cited = [...reply.matchAll(/\[(\d+)\]/g)].map((m) => Number(m[1]))
   const bad = cited.filter((n) => n < 1 || n > ctx.sopCount)
-  if (bad.length) warnings.push(`Cites [${bad[0]}] but only ${ctx.sopCount} SOP passage${ctx.sopCount === 1 ? '' : 's'} were retrieved`)
+  if (bad.length)
+    warnings.push(
+      `Cites [${bad[0]}] but only ${ctx.sopCount} SOP passage${ctx.sopCount === 1 ? '' : 's'} were retrieved`,
+    )
   if (!reply.includes(ctx.ticketId)) warnings.push('Does not mention the report number')
   if (promises(reply)) warnings.push('Promises an outcome; replies may only commit to a response time')
   if (LEAK.test(reply)) warnings.push("Repeats the AI's own instructions")
@@ -66,12 +87,26 @@ export function checkDraft(reply: string, ctx: { original: string; ticketId: str
 
 /** Gemini safety thresholds an agency can choose in the AI control tower. */
 export const THRESHOLDS = ['BLOCK_NONE', 'BLOCK_ONLY_HIGH', 'BLOCK_MEDIUM_AND_ABOVE', 'BLOCK_LOW_AND_ABOVE'] as const
-export const safetyAt = (threshold: string): SafetySetting[] => t((THRESHOLDS as readonly string[]).includes(threshold) ? threshold as HarmBlockThreshold : HarmBlockThreshold.BLOCK_ONLY_HIGH)
-export const GUARD_DEFAULTS = { read: 'BLOCK_ONLY_HIGH', write: 'BLOCK_MEDIUM_AND_ABOVE', injection: 'review' as const, questions: 2 }
+export const safetyAt = (threshold: string): SafetySetting[] =>
+  t(
+    (THRESHOLDS as readonly string[]).includes(threshold)
+      ? (threshold as HarmBlockThreshold)
+      : HarmBlockThreshold.BLOCK_ONLY_HIGH,
+  )
+export const GUARD_DEFAULTS = {
+  read: 'BLOCK_ONLY_HIGH',
+  write: 'BLOCK_MEDIUM_AND_ABOVE',
+  injection: 'review' as const,
+  questions: 2,
+}
 
 const t = (threshold: HarmBlockThreshold): SafetySetting[] =>
-  [HarmCategory.HARM_CATEGORY_HARASSMENT, HarmCategory.HARM_CATEGORY_HATE_SPEECH, HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT, HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT]
-    .map((category) => ({ category, threshold }))
+  [
+    HarmCategory.HARM_CATEGORY_HARASSMENT,
+    HarmCategory.HARM_CATEGORY_HATE_SPEECH,
+    HarmCategory.HARM_CATEGORY_SEXUALLY_EXPLICIT,
+    HarmCategory.HARM_CATEGORY_DANGEROUS_CONTENT,
+  ].map((category) => ({ category, threshold }))
 /** Gemini safety filters per agent. Reports describe abuse, sexual violence and self-harm, so filtering the agents
  * that read them would silence the people who need help most: they block only high-probability harm. The drafter
  * writes to the public, so it blocks from medium probability. A blocked response falls back to the rules and a human. */

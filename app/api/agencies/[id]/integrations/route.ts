@@ -18,14 +18,24 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     web: { connected: true, url: `${publicUrl()}/report?agency=${id}`, page: `${publicUrl()}/a/${id}` },
     telegram: bot
       ? {
-          connected: true, username: bot.username, managed: bot.managed, webhook: webhookUrl(id), token_hint: tokenHint(bot.token),
-          stored_in: bot.managed ? `Google Secret Manager: ${managedSecret(id)}` : 'Firestore (server only)', status: await botStatus(bot),
+          connected: true,
+          username: bot.username,
+          managed: bot.managed,
+          webhook: webhookUrl(id),
+          token_hint: tokenHint(bot.token),
+          stored_in: bot.managed ? `Google Secret Manager: ${managedSecret(id)}` : 'Firestore (server only)',
+          status: await botStatus(bot),
         }
       : { connected: false, managed: false, webhook: webhookUrl(id) },
   })
 }
 
-const Connect = z.object({ token: z.string().trim().regex(/^\d{5,15}:[A-Za-z0-9_-]{30,60}$/, 'That does not look like a bot token from @BotFather') })
+const Connect = z.object({
+  token: z
+    .string()
+    .trim()
+    .regex(/^\d{5,15}:[A-Za-z0-9_-]{30,60}$/, 'That does not look like a bot token from @BotFather'),
+})
 
 /** Connects a Telegram bot to an agency created in the app: validates the token and sets the webhook. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -42,7 +52,12 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   try {
     username = (await call<{ username: string }>(parsed.data.token, 'getMe', {})).username
   } catch (e) {
-    return error(400, `Telegram refused the token: ${String(e).replace(/^Error: /, '').slice(0, 160)}`)
+    return error(
+      400,
+      `Telegram refused the token: ${String(e)
+        .replace(/^Error: /, '')
+        .slice(0, 160)}`,
+    )
   }
   await STORE.setIntegration(id, { telegram: { token: parsed.data.token, username, secret, connected_at: now() } })
   await STORE.patchAgency(id, { telegram_bot: username })

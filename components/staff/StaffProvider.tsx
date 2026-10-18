@@ -33,15 +33,21 @@ export function StaffProvider({ children, fallback }: { children: ReactNode; fal
   const [notes, setNotes] = useState<Notification[]>([])
 
   useEffect(() => {
-    startAnalytics().then((log) => log?.('screen_view', { screen_name: 'staff' })).catch(() => {})
+    startAnalytics()
+      .then((log) => log?.('screen_view', { screen_name: 'staff' }))
+      .catch(() => {})
   }, [])
 
   const supervisorId = agency?.team.find((m) => m.role === 'supervisor')?.id ?? ''
-  const meId = agency ? meIds[agency.id] ?? stored(`persona:${agency.id}`, supervisorId) : ''
+  const meId = agency ? (meIds[agency.id] ?? stored(`persona:${agency.id}`, supervisorId)) : ''
   const me = agency?.team.find((m) => m.id === meId) ?? agency?.team[0]
 
   const refreshNotes = useCallback(() => {
-    if (agency && me) api.notifications(agency.id, me.id).then(setNotes).catch(() => setNotes([]))
+    if (agency && me)
+      api
+        .notifications(agency.id, me.id)
+        .then(setNotes)
+        .catch(() => setNotes([]))
   }, [agency, me])
   useEffect(() => {
     refreshNotes()
@@ -70,5 +76,9 @@ export function StaffProvider({ children, fallback }: { children: ReactNode; fal
     setMeIds((m) => ({ ...m, [agency.id]: id }))
     save(`persona:${agency.id}`, id)
   }
-  return <Ctx.Provider value={{ agencies, agency, me, pickAgency: pick, pickMe, notes, refreshNotes, reload }}>{children}</Ctx.Provider>
+  return (
+    <Ctx.Provider value={{ agencies, agency, me, pickAgency: pick, pickMe, notes, refreshNotes, reload }}>
+      {children}
+    </Ctx.Provider>
+  )
 }

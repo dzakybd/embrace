@@ -11,16 +11,26 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const agency = (await agencyById(t.agency_id))!
   // The procedure staff follow (or the one for this kind of case) and the stages done, so the citizen sees what comes next.
   const procs = agency.procedures ?? []
-  const proc = procs.find((p) => p.id === t.progress?.procedure) ?? procs.find((p) => p.categories.includes(t.triage?.category ?? ''))
+  const proc =
+    procs.find((p) => p.id === t.progress?.procedure) ??
+    procs.find((p) => p.categories.includes(t.triage?.category ?? ''))
   return Response.json({
     agency_id: agency.id,
-    procedure: proc ? { id: proc.id, title: proc.title, title_id: proc.title_id, stages: proc.stages, done: t.progress?.procedure === proc.id ? t.progress.done : [] } : null,
+    procedure: proc
+      ? {
+          id: proc.id,
+          title: proc.title,
+          title_id: proc.title_id,
+          stages: proc.stages,
+          done: t.progress?.procedure === proc.id ? t.progress.done : [],
+        }
+      : null,
     id: t.id,
     agency: agency.name,
     agency_name_id: agency.name_id ?? null,
     status: t.status,
     created_at: t.created_at,
-    team: t.policy ? agency.queues[t.policy.queue] ?? t.policy.queue : null,
+    team: t.policy ? (agency.queues[t.policy.queue] ?? t.policy.queue) : null,
     sla_hours: t.policy?.sla_hours ?? null,
     escalated: t.policy?.route === 'escalated',
     emergency_line: agency.emergency_line,

@@ -11,11 +11,26 @@ export function TrackBox() {
   const router = useRouter()
   const [id, setId] = useState('')
   return (
-    <form className="role-card track-box" onSubmit={(e) => { e.preventDefault(); if (id.trim()) router.push(`/track/${encodeURIComponent(id.trim().toUpperCase())}`) }}>
-      <span className="entry-ic small"><Icon name="eye" size={22} /></span>
+    <form
+      className="role-card track-box"
+      onSubmit={(e) => {
+        e.preventDefault()
+        if (id.trim()) router.push(`/track/${encodeURIComponent(id.trim().toUpperCase())}`)
+      }}
+    >
+      <span className="entry-ic small">
+        <Icon name="eye" size={22} />
+      </span>
       <b>{t('Track a report')}</b>
-      <input value={id} onChange={(e) => setId(e.target.value)} placeholder={t('Report number')} aria-label={t('Report number')} />
-      <button className="small" disabled={!id.trim()}>{t('Check status')}</button>
+      <input
+        value={id}
+        onChange={(e) => setId(e.target.value)}
+        placeholder={t('Report number')}
+        aria-label={t('Report number')}
+      />
+      <button className="small" disabled={!id.trim()}>
+        {t('Check status')}
+      </button>
     </form>
   )
 }

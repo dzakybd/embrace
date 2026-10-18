@@ -7,10 +7,21 @@ import { Card, Citations, Icon } from '../ui'
 import { useLang } from '../Lang'
 import { useStaff } from './StaffProvider'
 
-const KIND: Record<string, string> = { law: 'Law', regulation: 'Regulation', sop: 'SOP', 'service-flow': 'Service flow', 'sample-sop': 'Sample SOP', uploaded: 'Uploaded' }
+const KIND: Record<string, string> = {
+  law: 'Law',
+  regulation: 'Regulation',
+  sop: 'SOP',
+  'service-flow': 'Service flow',
+  'sample-sop': 'Sample SOP',
+  uploaded: 'Uploaded',
+}
 
 const EXAMPLES: Record<string, string[]> = {
-  dinsos_demak: ['certificate of DTSEN registration requirements', 'aid for tidal flood victims', 'illegal levy by an e-warong agent'],
+  dinsos_demak: [
+    'certificate of DTSEN registration requirements',
+    'aid for tidal flood victims',
+    'illegal levy by an e-warong agent',
+  ],
   kpai: ['online complaint incomplete data', 'closing a case', 'already reported to the police, oversight'],
 }
 
@@ -46,18 +57,47 @@ export default function Knowledge() {
         </div>
       </div>
       <Card title={t('Ask the SOP')} icon="book">
-        <form className="ask" onSubmit={(e) => { e.preventDefault(); if (q.trim().length >= 3) search(q) }}>
-          <label htmlFor="ask-sop" className="sr">{t('Search procedures and regulations')}</label>
-          <input id="ask-sop" value={q} onChange={(e) => setQ(e.target.value)} placeholder={t('Search procedures and regulations')} />
-          <button className="primary" disabled={busy || q.trim().length < 3}>{t('Search')}</button>
+        <form
+          className="ask"
+          onSubmit={(e) => {
+            e.preventDefault()
+            if (q.trim().length >= 3) search(q)
+          }}
+        >
+          <label htmlFor="ask-sop" className="sr">
+            {t('Search procedures and regulations')}
+          </label>
+          <input
+            id="ask-sop"
+            value={q}
+            onChange={(e) => setQ(e.target.value)}
+            placeholder={t('Search procedures and regulations')}
+          />
+          <button className="primary" disabled={busy || q.trim().length < 3}>
+            {t('Search')}
+          </button>
         </form>
         <div className="samples">
-          {EXAMPLES[agency.id]?.map((x) => <button key={x} className="chip" onClick={() => search(x)}>{x}</button>)}
+          {EXAMPLES[agency.id]?.map((x) => (
+            <button key={x} className="chip" onClick={() => search(x)}>
+              {x}
+            </button>
+          ))}
         </div>
         {busy && <div className="shimmer" />}
-        {res && (res.length ? <Citations items={res} /> : <p className="muted">{t('No passage matches. Try other words.')}</p>)}
+        {res &&
+          (res.length ? (
+            <Citations items={res} />
+          ) : (
+            <p className="muted">{t('No passage matches. Try other words.')}</p>
+          ))}
       </Card>
-      <h2 className="section-h">{t('Documents ({n})', { n: sources.length })} <Link className="small" href="/staff/case-types">{t('Case types and their stages')} →</Link></h2>
+      <h2 className="section-h">
+        {t('Documents ({n})', { n: sources.length })}{' '}
+        <Link className="small" href="/staff/case-types">
+          {t('Case types and their stages')} →
+        </Link>
+      </h2>
       <section className="kb-grid">
         {sources.map((d) => (
           <a key={d.file} className="card kb-card" href={d.url || undefined} target="_blank" rel="noreferrer">

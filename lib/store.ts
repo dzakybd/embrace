@@ -77,7 +77,10 @@ class MemoryStore implements Store {
     return structuredClone(t)
   }
   async list(agencyId: string) {
-    return [...this.tickets.values()].filter((t) => t.agency_id === agencyId).sort(newestFirst).map((t) => structuredClone(t))
+    return [...this.tickets.values()]
+      .filter((t) => t.agency_id === agencyId)
+      .sort(newestFirst)
+      .map((t) => structuredClone(t))
   }
   async clear(agencyId: string) {
     for (const [id, t] of this.tickets) if (t.agency_id === agencyId) this.tickets.delete(id)
@@ -233,10 +236,18 @@ class FirestoreStore implements Store {
     await (await this.db).collection('integrations').doc(agencyId).set(fields, { merge: true })
   }
   async listNotifications(agencyId: string, to: string) {
-    const snap = await (await this.db).collection('notifications').where('agency_id', '==', agencyId).where('to', '==', to).get()
-    return snap.docs.map((d) => ({ ...(d.data() as Notification), id: d.id })).sort((a, b) => b.at.localeCompare(a.at)).slice(0, 30)
+    const snap = await (await this.db)
+      .collection('notifications')
+      .where('agency_id', '==', agencyId)
+      .where('to', '==', to)
+      .get()
+    return snap.docs
+      .map((d) => ({ ...(d.data() as Notification), id: d.id }))
+      .sort((a, b) => b.at.localeCompare(a.at))
+      .slice(0, 30)
   }
 }
 
 const g = globalThis as unknown as { __embraceStore?: Store }
-export const STORE: Store = (g.__embraceStore ??= process.env.EMBRACE_STORE === 'firestore' ? new FirestoreStore() : new MemoryStore())
+export const STORE: Store = (g.__embraceStore ??=
+  process.env.EMBRACE_STORE === 'firestore' ? new FirestoreStore() : new MemoryStore())

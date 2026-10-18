@@ -31,7 +31,11 @@ const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
   { href: '/staff/settings', label: 'Settings', icon: 'form', roles: ['supervisor'] },
 ]
 
-export const HOME: Record<Role, string> = { leader: '/staff/insights', supervisor: '/staff/inbox', officer: '/staff/inbox' }
+export const HOME: Record<Role, string> = {
+  leader: '/staff/insights',
+  supervisor: '/staff/inbox',
+  officer: '/staff/inbox',
+}
 
 function allowed(path: string, role: Role) {
   if (path.startsWith('/staff/cases')) return true
@@ -69,13 +73,17 @@ function Frame({ children }: { children: ReactNode }) {
           const on = path.startsWith(n.href) || (n.href === '/staff/inbox' && path.startsWith('/staff/cases'))
           return (
             <Link key={n.href} href={n.href} className={on ? 'on' : ''} aria-current={on ? 'page' : undefined}>
-              <span className="rail-ic"><Icon name={n.icon} size={20} /></span>
+              <span className="rail-ic">
+                <Icon name={n.icon} size={20} />
+              </span>
               <span>{t(n.label)}</span>
             </Link>
           )
         })}
         <Link href={`/report?agency=${agency.id}`} className="rail-out" title={t('Open the citizen report form')}>
-          <span className="rail-ic"><Icon name="send" size={20} /></span>
+          <span className="rail-ic">
+            <Icon name="send" size={20} />
+          </span>
           <span>{t('Citizen form')}</span>
         </Link>
       </nav>
@@ -101,7 +109,13 @@ function Pickers() {
         <select value={me.id} onChange={(e) => pickMe(e.target.value)} aria-label={t('Signed in as')}>
           {ROLES.map((r) => (
             <optgroup key={r.id} label={t(r.label)}>
-              {agency.team.filter((m) => m.role === r.id).map((m) => <option key={m.id} value={m.id}>{m.name} · {m.title}</option>)}
+              {agency.team
+                .filter((m) => m.role === r.id)
+                .map((m) => (
+                  <option key={m.id} value={m.id}>
+                    {m.name} · {m.title}
+                  </option>
+                ))}
             </optgroup>
           ))}
         </select>
@@ -116,13 +130,20 @@ function Bell() {
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
   useEffect(() => {
-    const close = (e: MouseEvent) => { if (!ref.current?.contains(e.target as Node)) setOpen(false) }
+    const close = (e: MouseEvent) => {
+      if (!ref.current?.contains(e.target as Node)) setOpen(false)
+    }
     addEventListener('click', close)
     return () => removeEventListener('click', close)
   }, [])
   return (
     <div className="bell" ref={ref}>
-      <button className="icon-btn" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t('Notifications ({n})', { n: notes.length })}>
+      <button
+        className="icon-btn"
+        onClick={() => setOpen(!open)}
+        aria-expanded={open}
+        aria-label={t('Notifications ({n})', { n: notes.length })}
+      >
         <Icon name="bell" size={20} />
         {notes.length > 0 && <span className="bell-n">{notes.length}</span>}
       </button>
@@ -131,9 +152,16 @@ function Bell() {
           <h3>{t('Notifications for {name}', { name: me.name.split(' ')[0] })}</h3>
           {notes.length === 0 && <p className="muted small">{t('Nothing new.')}</p>}
           {notes.slice(0, 8).map((n) => (
-            <Link key={n.id ?? n.at + n.ticket_id} href={`/staff/cases/${n.ticket_id}`} className={`note ${n.kind}`} onClick={() => setOpen(false)}>
+            <Link
+              key={n.id ?? n.at + n.ticket_id}
+              href={`/staff/cases/${n.ticket_id}`}
+              className={`note ${n.kind}`}
+              onClick={() => setOpen(false)}
+            >
               <span>{n.text}</span>
-              <small className="muted">{ago(n.at, t)} · {t('delivered via Pub/Sub')}</small>
+              <small className="muted">
+                {ago(n.at, t)} · {t('delivered via Pub/Sub')}
+              </small>
             </Link>
           ))}
         </div>

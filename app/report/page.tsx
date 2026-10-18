@@ -13,9 +13,14 @@ export default async function ReportPage() {
     <div className="public">
       <header className="top">
         <Brand sub="Report a problem" />
-        <nav className="top-links" aria-label="Main"><Link href="/">{t('All agencies')}</Link><LangSwitch /></nav>
+        <nav className="top-links" aria-label="Main">
+          <Link href="/">{t('All agencies')}</Link>
+          <LangSwitch />
+        </nav>
       </header>
-      <main className="citizen"><Report /></main>
+      <main className="citizen">
+        <Report />
+      </main>
       <Footer />
     </div>
   )

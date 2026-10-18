@@ -11,7 +11,8 @@ export function rateLimit(req: Request, bucket: string, limit: number, windowMin
   const key = `${bucket}|${ip}`
   const since = Date.now() - windowMin * 60_000
   const recent = (hits.get(key) ?? []).filter((t) => t > since)
-  if (recent.length >= limit) return error(429, `Demo limit reached (${limit} per ${windowMin} min). Please try again later.`)
+  if (recent.length >= limit)
+    return error(429, `Demo limit reached (${limit} per ${windowMin} min). Please try again later.`)
   recent.push(Date.now())
   hits.set(key, recent)
   return null

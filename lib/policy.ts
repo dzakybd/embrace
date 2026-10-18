@@ -9,7 +9,13 @@ export const CONFIDENCE_FLOOR = 0.7
 const RANK: Record<Urgency, number> = { low: 0, normal: 1, high: 2, critical: 3 }
 
 /** `injection`: the input guardrail found instructions aimed at the model; a person then checks the case. */
-export function decide(agency: Agency, text: string, triage: Triage | null, media: Media | null = null, injection = false): Policy {
+export function decide(
+  agency: Agency,
+  text: string,
+  triage: Triage | null,
+  media: Media | null = null,
+  injection = false,
+): Policy {
   const esc = agency.escalation
   const lowered = `${text} ${media?.transcript ?? ''}`.toLowerCase()
   const hits = esc.keywords.filter((k) => lowered.includes(k))

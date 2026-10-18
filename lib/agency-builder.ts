@@ -20,41 +20,64 @@ export const NewAgency = z.object({
   emergency_line_id: z.string().trim().max(200).default(''),
   emergency_line: z.string().trim().min(2).max(200),
   reply_signature: z.string().trim().min(2).max(160),
-  categories: z.array(z.object({
-    id: z.string().max(40).optional(),
-    label: name,
-    team: name,
-    escalate: z.boolean().default(false),
-    min_urgency: z.enum(['low', 'normal', 'high']).optional(),
-  })).min(1).max(20),
-  team: z.array(z.object({
-    id: z.string().max(40).optional(),
-    name: z.string().trim().min(2).max(60),
-    role: z.enum(['leader', 'supervisor', 'officer']),
-    title: z.string().trim().min(2).max(100),
-    teams: z.array(name).max(10).default([]),
-  })).min(3).max(20),
+  categories: z
+    .array(
+      z.object({
+        id: z.string().max(40).optional(),
+        label: name,
+        team: name,
+        escalate: z.boolean().default(false),
+        min_urgency: z.enum(['low', 'normal', 'high']).optional(),
+      }),
+    )
+    .min(1)
+    .max(20),
+  team: z
+    .array(
+      z.object({
+        id: z.string().max(40).optional(),
+        name: z.string().trim().min(2).max(60),
+        role: z.enum(['leader', 'supervisor', 'officer']),
+        title: z.string().trim().min(2).max(100),
+        teams: z.array(name).max(10).default([]),
+      }),
+    )
+    .min(3)
+    .max(20),
   keywords: z.array(z.string().trim().min(2).max(40)).max(60).default([]),
   escalate_flags: z.array(z.enum(FLAGS)).optional(),
-  sla_hours: z.object({
-    critical: z.number().int().min(1).max(720),
-    high: z.number().int().min(1).max(720),
-    normal: z.number().int().min(1).max(2000),
-    low: z.number().int().min(1).max(2000),
-  }).optional(),
+  sla_hours: z
+    .object({
+      critical: z.number().int().min(1).max(720),
+      high: z.number().int().min(1).max(720),
+      normal: z.number().int().min(1).max(2000),
+      low: z.number().int().min(1).max(2000),
+    })
+    .optional(),
   confidence_floor: z.number().min(0.5).max(0.95).optional(),
   keep_template_docs: z.boolean().default(true),
   /** Editing: source files of the current documents to drop. */
   drop_docs: z.array(z.string().max(200)).max(50).default([]),
-  docs: z.array(z.object({
-    title: z.string().trim().min(2).max(160),
-    text: z.string().max(200_000).default(''),
-    pdf_base64: z.string().max(6_000_000).optional(),
-  })).max(8).default([]),
+  docs: z
+    .array(
+      z.object({
+        title: z.string().trim().min(2).max(160),
+        text: z.string().max(200_000).default(''),
+        pdf_base64: z.string().max(6_000_000).optional(),
+      }),
+    )
+    .max(8)
+    .default([]),
 })
 export type NewAgency = z.infer<typeof NewAgency>
 
-const slug = (s: string) => s.toLowerCase().normalize('NFKD').replace(/[^a-z0-9]+/g, '_').replace(/^_|_$/g, '').slice(0, 30) || 'x'
+const slug = (s: string) =>
+  s
+    .toLowerCase()
+    .normalize('NFKD')
+    .replace(/[^a-z0-9]+/g, '_')
+    .replace(/^_|_$/g, '')
+    .slice(0, 30) || 'x'
 
 async function pdfUnits(b64: string): Promise<{ loc: string; text: string }[]> {
   const { extractText, getDocumentProxy } = await import('unpdf')
@@ -93,7 +116,10 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     // A category kept from the template keeps its Indonesian label (if the label is unchanged) and its laws.
     const was = base.categories.find((b) => b.id === c.id)
     return {
-      id: c.id || slug(c.label), label: c.label, queue: queueId(c.team), ...(c.min_urgency ? { min_urgency: c.min_urgency } : {}),
+      id: c.id || slug(c.label),
+      label: c.label,
+      queue: queueId(c.team),
+      ...(c.min_urgency ? { min_urgency: c.min_urgency } : {}),
       ...(was?.label_id && was.label === c.label ? { label_id: was.label_id } : {}),
       ...(was?.laws ? { laws: was.laws } : {}),
     }
@@ -112,7 +138,9 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
   const passages: Passage[] = []
   // Documents shipped with a built-in agency are kept by reference; other agencies' documents are copied.
   const template = input.keep_template_docs && isShippedDocs(base.id) ? base.id : undefined
-  const keepShorts = sourcesFor(base.id).filter((s) => !input.drop_docs.includes(s.file)).map((s) => s.short)
+  const keepShorts = sourcesFor(base.id)
+    .filter((s) => !input.drop_docs.includes(s.file))
+    .map((s) => s.short)
   if (input.keep_template_docs && !template) {
     const keep = sourcesFor(base.id).filter((s) => !input.drop_docs.includes(s.file))
     const shorts = new Set(keep.map((s) => s.short))
@@ -120,7 +148,14 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     passages.push(...indexFor(base.id).passages.filter((p) => shorts.has(p.doc)))
   }
   for (const [i, d] of input.docs.entries()) {
-    const src: Source = { file: `upload-${Date.now().toString(36)}-${i + 1}`, title: d.title, short: d.title.slice(0, 40), url: '', issuer: input.name, kind: 'uploaded' }
+    const src: Source = {
+      file: `upload-${Date.now().toString(36)}-${i + 1}`,
+      title: d.title,
+      short: d.title.slice(0, 40),
+      url: '',
+      issuer: input.name,
+      kind: 'uploaded',
+    }
     let units: { loc: string; text: string }[]
     try {
       units = d.pdf_base64 ? await pdfUnits(d.pdf_base64) : markdownUnits(d.text)
@@ -136,7 +171,13 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
 
   const agency: Agency = {
     id: existing?.id ?? `${slug(input.short_name)}_${randomBytes(2).toString('hex')}`,
-    code: existing?.code ?? (input.short_name.replace(/[^A-Za-z0-9]/g, '').slice(0, 5).toUpperCase() || 'AG'),
+    code:
+      existing?.code ??
+      (input.short_name
+        .replace(/[^A-Za-z0-9]/g, '')
+        .slice(0, 5)
+        .toUpperCase() ||
+        'AG'),
     name: input.name,
     short_name: input.short_name,
     country: input.country,
@@ -161,7 +202,18 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     ...(existing?.telegram_bot ? { telegram_bot: existing.telegram_bot } : {}),
     ...(existing?.logo ? { logo: existing.logo } : {}),
     ...(base.required_details ? { required_details: base.required_details } : {}),
-    ...(base.procedures ? { procedures: keptProcedures(base.procedures, categories.map((c) => c.id)) } : {}),
+    ...(base.procedures
+      ? {
+          procedures: keptProcedures(
+            base.procedures,
+            categories.map((c) => c.id),
+          ),
+        }
+      : {}),
   }
-  return { ...agency, docs: { sources, passages, ...(template ? { template, keep: keepShorts } : {}) }, created_at: new Date().toISOString() }
+  return {
+    ...agency,
+    docs: { sources, passages, ...(template ? { template, keep: keepShorts } : {}) },
+    created_at: new Date().toISOString(),
+  }
 }

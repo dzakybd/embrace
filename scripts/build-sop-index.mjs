@@ -51,7 +51,8 @@ for (const id of readdirSync(AGENCIES)) {
       continue
     }
     for (const p of parts) {
-      for (const text of chunks(p.text)) passages.push({ doc: src.short, title: src.title, url: src.url, loc: p.loc, text })
+      for (const text of chunks(p.text))
+        passages.push({ doc: src.short, title: src.title, url: src.url, loc: p.loc, text })
     }
   }
   writeFileSync(join(AGENCIES, id, 'sop-index.json'), JSON.stringify({ sources, passages }))

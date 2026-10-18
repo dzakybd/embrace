@@ -2,7 +2,9 @@ import { beforeEach, describe, expect, it, vi } from 'vitest'
 
 const sent: string[] = []
 vi.mock('@/lib/telegram', () => ({
-  send: vi.fn(async (_token: string, _chat: string, text: string) => { sent.push(text) }),
+  send: vi.fn(async (_token: string, _chat: string, text: string) => {
+    sent.push(text)
+  }),
   answerCallback: vi.fn(async () => undefined),
   typing: vi.fn(async () => undefined),
   download: vi.fn(async () => null),
@@ -18,7 +20,10 @@ const key = (c: number) => `dinsos_demak:${c}`
 
 let nextId = 1000
 let chat = 1
-const msg = (text: string, c = chat) => ({ update_id: nextId++, message: { message_id: 1, chat: { id: c, type: 'private' }, date: 0, text } })
+const msg = (text: string, c = chat) => ({
+  update_id: nextId++,
+  message: { message_id: 1, chat: { id: c, type: 'private' }, date: 0, text },
+})
 const REPORT = 'My food voucher did not arrive this month and my neighbours already got theirs.'
 
 describe('telegram bot gatekeeping (no AI)', () => {
@@ -40,7 +45,12 @@ describe('telegram bot gatekeeping (no AI)', () => {
   })
 
   it('keeps chats with two agencies apart', async () => {
-    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: null })
+    await STORE.setChat(key(chat), {
+      agency_id: 'dinsos_demak',
+      open_ticket: 'DMK-TEST',
+      open_since: new Date().toISOString(),
+      awaiting: null,
+    })
     const kpai = { ...BOT, agency_id: 'kpai', username: 'embrace_kpai_bot' }
     const job = await bot.handleUpdate(kpai, msg(REPORT))
     expect(job).toMatchObject({ agency_id: 'kpai' })
@@ -73,7 +83,16 @@ describe('telegram bot gatekeeping (no AI)', () => {
   })
 
   it('speaks Indonesian when the Telegram app is in Indonesian, and switches with /language', async () => {
-    const id = (text: string) => ({ update_id: nextId++, message: { message_id: 1, chat: { id: chat, type: 'private' }, from: { id: chat, language_code: 'id' }, date: 0, text } })
+    const id = (text: string) => ({
+      update_id: nextId++,
+      message: {
+        message_id: 1,
+        chat: { id: chat, type: 'private' },
+        from: { id: chat, language_code: 'id' },
+        date: 0,
+        text,
+      },
+    })
     await handleUpdate(id('halo'))
     expect(sent.at(-1)).toContain('ceritakan apa yang terjadi')
     await handleUpdate(id('/language'))
@@ -84,22 +103,54 @@ describe('telegram bot gatekeeping (no AI)', () => {
   })
 
   it('asks the missing details one by one, then hands the answers to the agents', async () => {
-    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: 'details', pending: ['location', 'incident_time'], answers: {} })
+    await STORE.setChat(key(chat), {
+      agency_id: 'dinsos_demak',
+      open_ticket: 'DMK-TEST',
+      open_since: new Date().toISOString(),
+      awaiting: 'details',
+      pending: ['location', 'incident_time'],
+      answers: {},
+    })
     expect(await handleUpdate(msg('Desa Bedono, Sayung'))).toBeNull()
     expect(sent.at(-1)).toContain('When did this happen')
     const job = await handleUpdate(msg('since this morning, still flooding'))
-    expect(job).toMatchObject({ details: { ticket_id: 'DMK-TEST', answers: { location: 'Desa Bedono, Sayung', incident_time: 'since this morning, still flooding' } } })
+    expect(job).toMatchObject({
+      details: {
+        ticket_id: 'DMK-TEST',
+        answers: { location: 'Desa Bedono, Sayung', incident_time: 'since this morning, still flooding' },
+      },
+    })
     expect((await STORE.getChat(key(chat)))?.awaiting).toBeNull()
   })
 
   it('lets the citizen skip the remaining questions', async () => {
-    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: 'details', pending: ['incident_time'], answers: { location: 'Sayung' } })
-    const job = await handleUpdate({ update_id: nextId++, callback_query: { id: 'q', data: 'skip', from: { id: chat }, message: { message_id: 1, chat: { id: chat, type: 'private' }, date: 0 } } })
+    await STORE.setChat(key(chat), {
+      agency_id: 'dinsos_demak',
+      open_ticket: 'DMK-TEST',
+      open_since: new Date().toISOString(),
+      awaiting: 'details',
+      pending: ['incident_time'],
+      answers: { location: 'Sayung' },
+    })
+    const job = await handleUpdate({
+      update_id: nextId++,
+      callback_query: {
+        id: 'q',
+        data: 'skip',
+        from: { id: chat },
+        message: { message_id: 1, chat: { id: chat, type: 'private' }, date: 0 },
+      },
+    })
     expect(job).toMatchObject({ details: { answers: { location: 'Sayung' } } })
   })
 
   it('adds messages after a report to the open case instead of running AI again', async () => {
-    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: null })
+    await STORE.setChat(key(chat), {
+      agency_id: 'dinsos_demak',
+      open_ticket: 'DMK-TEST',
+      open_since: new Date().toISOString(),
+      awaiting: null,
+    })
     expect(await handleUpdate(msg('Also, my card number ends in 1234 and the shop is on Maple Street.'))).toBeNull()
     expect(sent.at(-1)).toContain('Added to your report')
   })

@@ -25,3 +25,20 @@ env:
     secret: telegram-webhook-secret
   - variable: EMBRACE_PUBLIC_URL
     value: https://embrace.nalaria.ai.id
+  # Firebase web config for Analytics in the browser: inlined at build time, so available at BUILD. The API key is
+  # public once shipped (restricted to Firebase Installations/Management and our domains) but kept out of the repo.
+  - variable: NEXT_PUBLIC_FIREBASE_API_KEY
+    secret: firebase-web-api-key
+    availability: [BUILD]
+  - variable: NEXT_PUBLIC_FIREBASE_PROJECT_ID
+    value: embrace-23a9c
+    availability: [BUILD]
+  - variable: NEXT_PUBLIC_FIREBASE_SENDER_ID
+    value: "714975767018"
+    availability: [BUILD]
+  - variable: NEXT_PUBLIC_FIREBASE_APP_ID
+    value: 1:714975767018:web:69fb4464cffd7e30fe2a93
+    availability: [BUILD]
+  - variable: NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID
+    value: G-5PX7TF5KPH
+    availability: [BUILD]

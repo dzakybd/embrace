@@ -13,9 +13,14 @@ export default async function NewAgencyPage() {
     <div className="public">
       <header className="top">
         <Brand sub="Create an agency" />
-        <nav className="top-links" aria-label="Main"><Link href="/">{t('All agencies')}</Link><LangSwitch /></nav>
+        <nav className="top-links" aria-label="Main">
+          <Link href="/">{t('All agencies')}</Link>
+          <LangSwitch />
+        </nav>
       </header>
-      <main><AgencyForm /></main>
+      <main>
+        <AgencyForm />
+      </main>
       <Footer />
     </div>
   )

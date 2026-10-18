@@ -21,15 +21,51 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 const STAFF = [
   { as: 'officer', page: 'inbox', icon: 'inbox', title: 'Caseworker', body: 'My cases and AI-drafted replies' },
   { as: 'supervisor', page: 'inbox', icon: 'alert', title: 'Supervisor', body: 'Escalations first, delegate cases' },
-  { as: 'leader', page: 'insights', icon: 'chart', title: 'Head of office', body: 'KPIs, weekly AI brief, early warnings' },
+  {
+    as: 'leader',
+    page: 'insights',
+    icon: 'chart',
+    title: 'Head of office',
+    body: 'KPIs, weekly AI brief, early warnings',
+  },
 ]
 
 const MANAGE = [
-  { as: 'supervisor', page: 'integrations', icon: 'chat', title: 'Channels', body: 'Telegram bot token, WhatsApp, email and more' },
-  { as: 'supervisor', page: 'knowledge', icon: 'book', title: 'Knowledge base', body: 'Laws, SOPs and service flows the replies cite' },
-  { as: 'supervisor', page: 'case-types', icon: 'rules', title: 'Case types', body: 'Procedures, stages, who does what and the legal basis' },
-  { as: 'supervisor', page: 'settings', icon: 'form', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
-  { as: 'supervisor', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
+  {
+    as: 'supervisor',
+    page: 'integrations',
+    icon: 'chat',
+    title: 'Channels',
+    body: 'Telegram bot token, WhatsApp, email and more',
+  },
+  {
+    as: 'supervisor',
+    page: 'knowledge',
+    icon: 'book',
+    title: 'Knowledge base',
+    body: 'Laws, SOPs and service flows the replies cite',
+  },
+  {
+    as: 'supervisor',
+    page: 'case-types',
+    icon: 'rules',
+    title: 'Case types',
+    body: 'Procedures, stages, who does what and the legal basis',
+  },
+  {
+    as: 'supervisor',
+    page: 'settings',
+    icon: 'form',
+    title: 'Settings',
+    body: 'Names, rules, categories, teams, staff and documents',
+  },
+  {
+    as: 'supervisor',
+    page: 'ai',
+    icon: 'shield',
+    title: 'AI control tower',
+    body: 'Models, API key, guardrails, traces and metrics',
+  },
 ]
 
 const FLOW = [
@@ -51,13 +87,22 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
     <div className="public">
       <header className="top">
         <Brand sub={agency.short_name} />
-        <nav className="top-links" aria-label="Main"><Link href="/"><Icon name="back" size={16} /> {t('All agencies')}</Link><LangSwitch /></nav>
+        <nav className="top-links" aria-label="Main">
+          <Link href="/">
+            <Icon name="back" size={16} /> {t('All agencies')}
+          </Link>
+          <LangSwitch />
+        </nav>
       </header>
       <main className="agency-page">
         <section className="hero agency-hero">
           <Monogram agency={{ id: agency.id, short_name: agency.short_name, logo: agency.logo ?? null }} size={64} />
           <div>
-            <p className="muted small">{agency.country}{agency.custom ? ` · ${t('created in Embrace')}` : ''}{agency.logo ? ` · ${t('independent demo, not an official service')}` : ''}</p>
+            <p className="muted small">
+              {agency.country}
+              {agency.custom ? ` · ${t('created in Embrace')}` : ''}
+              {agency.logo ? ` · ${t('independent demo, not an official service')}` : ''}
+            </p>
             <h1>{agency.name}</h1>
             {agency.description && <p className="lead clamp">{agency.description}</p>}
           </div>
@@ -66,39 +111,71 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
         <h2 className="pick-h">{t('Get help')}</h2>
         <section className="hub-grid">
           <Link href={`/report?agency=${agency.id}`} className="role-card main">
-            <span className="entry-ic"><Icon name="form" size={24} /></span>
+            <span className="entry-ic">
+              <Icon name="form" size={24} />
+            </span>
             <b>{t('Report a problem')}</b>
             <span className="muted">{t('Text, voice note or photo')}</span>
-            <span className="go">{t('Open the form')} <Icon name="send" size={14} /></span>
+            <span className="go">
+              {t('Open the form')} <Icon name="send" size={14} />
+            </span>
           </Link>
           {tg && (
             <a href={tg} target="_blank" rel="noreferrer" className="role-card">
-              <span className="entry-ic brand-ic" style={{ background: '#26A5E4' }}><SiTelegram size={24} color="#fff" aria-hidden="true" /></span>
+              <span className="entry-ic brand-ic" style={{ background: '#26A5E4' }}>
+                <SiTelegram size={24} color="#fff" aria-hidden="true" />
+              </span>
               <b>Telegram</b>
               <span className="muted">@{agency.telegram_bot}</span>
-              <span className="go">{t('Open chat')} <Icon name="send" size={14} /></span>
+              <span className="go">
+                {t('Open chat')} <Icon name="send" size={14} />
+              </span>
             </a>
           )}
           <div className="role-card off">
-            <span className="entry-ic brand-ic" style={{ background: '#25D366' }}><SiWhatsapp size={24} color="#fff" aria-hidden="true" /></span>
-            <b>WhatsApp <span className="soon">{t('Soon')}</span></b>
+            <span className="entry-ic brand-ic" style={{ background: '#25D366' }}>
+              <SiWhatsapp size={24} color="#fff" aria-hidden="true" />
+            </span>
+            <b>
+              WhatsApp <span className="soon">{t('Soon')}</span>
+            </b>
             <span className="muted channel-row">
-              <ChannelIcon c="instagram" /> <ChannelIcon c="threads" /> <ChannelIcon c="email" /> {t('and more, same inbox')}
+              <ChannelIcon c="instagram" /> <ChannelIcon c="threads" /> <ChannelIcon c="email" />{' '}
+              {t('and more, same inbox')}
             </span>
           </div>
           <TrackBox />
         </section>
 
-        <h2 className="pick-h">{t('How a report is handled')} {(agency.procedures?.length ?? 0) > 0 && <Link className="h-link" href={`/a/${agency.id}/guide`}>{t('Every case type, step by step')} →</Link>}</h2>
+        <h2 className="pick-h">
+          {t('How a report is handled')}{' '}
+          {(agency.procedures?.length ?? 0) > 0 && (
+            <Link className="h-link" href={`/a/${agency.id}/guide`}>
+              {t('Every case type, step by step')} →
+            </Link>
+          )}
+        </h2>
         <ol className="steps-row flow">
-          {FLOW.map((f, i) => <li key={f.text}><span className="entry-ic small"><Icon name={f.icon} size={18} /></span><span><small className="muted">{t('Step {n}', { n: i + 1 })}</small>{t(f.text)}</span></li>)}
+          {FLOW.map((f, i) => (
+            <li key={f.text}>
+              <span className="entry-ic small">
+                <Icon name={f.icon} size={18} />
+              </span>
+              <span>
+                <small className="muted">{t('Step {n}', { n: i + 1 })}</small>
+                {t(f.text)}
+              </span>
+            </li>
+          ))}
         </ol>
 
         <h2 className="pick-h">{t('Staff workspace')}</h2>
         <section className="hub-grid three">
           {STAFF.map((s) => (
             <Link key={s.as} href={`/staff/${s.page}?agency=${agency.id}&as=${s.as}`} className="role-card staff-tile">
-              <span className="entry-ic small"><Icon name={s.icon} size={22} /></span>
+              <span className="entry-ic small">
+                <Icon name={s.icon} size={22} />
+              </span>
               <span>
                 <b>{t(s.title)}</b>
                 <span className="muted">{t(s.body)}</span>
@@ -111,20 +188,31 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
         <h2 className="pick-h">{t('Manage this agency')}</h2>
         <section className="hub-grid three">
           {MANAGE.map((s) => (
-            <Link key={s.page} href={`/staff/${s.page}?agency=${agency.id}&as=${s.as}`} className="role-card staff-tile">
-              <span className="entry-ic small"><Icon name={s.icon} size={22} /></span>
+            <Link
+              key={s.page}
+              href={`/staff/${s.page}?agency=${agency.id}&as=${s.as}`}
+              className="role-card staff-tile"
+            >
+              <span className="entry-ic small">
+                <Icon name={s.icon} size={22} />
+              </span>
               <span>
                 <b>{t(s.title)}</b>
                 <span className="muted">{t(s.body)}</span>
               </span>
               <span className="tile-marks" aria-hidden="true">
-                {s.page === 'integrations' && <><ChannelIcon c="telegram" size={18} /><ChannelIcon c="whatsapp" size={18} /><ChannelIcon c="email" size={18} /></>}
+                {s.page === 'integrations' && (
+                  <>
+                    <ChannelIcon c="telegram" size={18} />
+                    <ChannelIcon c="whatsapp" size={18} />
+                    <ChannelIcon c="email" size={18} />
+                  </>
+                )}
               </span>
               <Icon name="send" size={16} />
             </Link>
           ))}
         </section>
-
       </main>
       <Footer />
     </div>

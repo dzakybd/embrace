@@ -36,7 +36,8 @@ const findClusters = new FunctionTool({
 
 const searchTickets = new FunctionTool({
   name: 'search_tickets',
-  description: 'Up to 15 tickets whose masked summary or entities mention `keyword` (case-insensitive). Returns no personal data.',
+  description:
+    'Up to 15 tickets whose masked summary or entities mention `keyword` (case-insensitive). Returns no personal data.',
   parameters: z.object({ keyword: z.string().min(2) }),
   execute: async ({ keyword }, ctx) => {
     const { tickets } = await load(ctx)

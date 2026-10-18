@@ -32,7 +32,14 @@ function rng(seed: number) {
 }
 
 export function prefix(agency: Agency) {
-  return agency.code ?? agency.id.split('_').map((w) => w[0]).join('').toUpperCase()
+  return (
+    agency.code ??
+    agency.id
+      .split('_')
+      .map((w) => w[0])
+      .join('')
+      .toUpperCase()
+  )
 }
 
 export function build(agency: Agency): Ticket[] {
@@ -71,7 +78,8 @@ export function build(agency: Agency): Ticket[] {
       { at: iso(created), actor: 'system', action: 'received', note: `via ${r.channel}` },
       { at: iso(created), actor: 'agents', action: policy.route, note: policy.reasons.join('; ') },
     ]
-    if (responded) history.push({ at: iso(responded), actor: 'officer', action: 'send_reply', note: 'Reply approved and sent' })
+    if (responded)
+      history.push({ at: iso(responded), actor: 'officer', action: 'send_reply', note: 'Reply approved and sent' })
     if (resolved) history.push({ at: iso(resolved), actor: 'officer', action: 'resolve', note: 'Case resolved' })
     const ymd = iso(created).slice(2, 10).replaceAll('-', '')
     return {
@@ -88,7 +96,13 @@ export function build(agency: Agency): Ticket[] {
       attachments: [],
       intake: {
         language: '',
-        entities: { location: r.location, institution: r.institution, aid_program: r.aid_program, victim_age: null, incident_time: null },
+        entities: {
+          location: r.location,
+          institution: r.institution,
+          aid_program: r.aid_program,
+          victim_age: null,
+          incident_time: null,
+        },
         pii_types: [],
         masked_text: r.text,
         restated: r.summary,

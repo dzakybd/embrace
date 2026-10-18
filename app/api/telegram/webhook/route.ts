@@ -12,7 +12,8 @@ export async function POST(req: Request) {
   const agencyId = new URL(req.url).searchParams.get('agency') ?? ''
   await loadAgencies()
   const bot = agencyId ? await telegramBot(agencyId) : null
-  if (!bot?.secret || req.headers.get('x-telegram-bot-api-secret-token') !== bot.secret) return new Response('forbidden', { status: 403 })
+  if (!bot?.secret || req.headers.get('x-telegram-bot-api-secret-token') !== bot.secret)
+    return new Response('forbidden', { status: 403 })
   const update = (await req.json().catch(() => null)) as TgUpdate | null
   if (!update?.update_id) return Response.json({ ok: true })
   try {

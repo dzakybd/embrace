@@ -33,19 +33,35 @@ const PATHS: Record<string, string> = {
   plus: 'M12 5v14M5 12h14',
   building: 'M4 21V5l8-3 8 3v16M9 9h1m4 0h1M9 13h1m4 0h1M10 21v-4h4v4',
   bell: 'M6 16V11a6 6 0 0 1 12 0v5l2 2H4zM10 20a2 2 0 0 0 4 0',
-  share: 'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm12 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',
+  share:
+    'M18 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM6 15a3 3 0 1 0 0-6 3 3 0 0 0 0 6zm12 7a3 3 0 1 0 0-6 3 3 0 0 0 0 6zM8.6 13.5l6.8 4M15.4 6.5l-6.8 4',
 }
 
 export function Icon({ name, size = 16 }: { name: keyof typeof PATHS | string; size?: number }) {
   return (
-    <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={2}
-      strokeLinecap="round" strokeLinejoin="round" aria-hidden="true" className="icon">
+    <svg
+      width={size}
+      height={size}
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth={2}
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      aria-hidden="true"
+      className="icon"
+    >
       <path d={PATHS[name] ?? PATHS.spark} />
     </svg>
   )
 }
 
-export const URGENCY_LABEL: Record<Urgency, string> = { critical: 'Critical', high: 'High', normal: 'Normal', low: 'Low' }
+export const URGENCY_LABEL: Record<Urgency, string> = {
+  critical: 'Critical',
+  high: 'High',
+  normal: 'Normal',
+  low: 'Low',
+}
 const URGENCY_ICON: Record<Urgency, string> = { critical: 'alert', high: 'alert', normal: 'clock', low: 'check' }
 
 export function UrgencyBadge({ u }: { u: Urgency | null | undefined }) {
@@ -72,7 +88,13 @@ export function StatusBadge({ s }: { s: Status }) {
   return <span className={`status st-${s}`}>{t(STATUS_LABEL[s])}</span>
 }
 
-export const CHANNEL_LABEL: Record<string, string> = { web: 'Web form', whatsapp: 'WhatsApp', email: 'Email', social: 'Social media', telegram: 'Telegram' }
+export const CHANNEL_LABEL: Record<string, string> = {
+  web: 'Web form',
+  whatsapp: 'WhatsApp',
+  email: 'Email',
+  social: 'Social media',
+  telegram: 'Telegram',
+}
 
 /** Brand marks in brand colours for messaging channels; the web form and generic social media use the app's own icons. */
 const BRANDS: Record<string, [IconType, string]> = {
@@ -110,17 +132,27 @@ const pageLink = (url: string, loc: string) => {
   return page && url.includes('.pdf') ? `${url}#page=${page}` : url
 }
 
-export function Citations({ items }: { items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[] }) {
+export function Citations({
+  items,
+}: {
+  items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[]
+}) {
   const t = useT()
-  if (!items.length) return <p className="muted small">{t('No matching SOP passage: the caseworker confirms the procedure.')}</p>
+  if (!items.length)
+    return <p className="muted small">{t('No matching SOP passage: the caseworker confirms the procedure.')}</p>
   return (
     <ol className="cites">
       {items.map((c, i) => (
         <li key={`${c.doc}-${c.loc}-${i}`}>
           <span className="cite-n">[{c.n ?? i + 1}]</span>
           <div>
-            <a href={pageLink(c.url, c.loc)} target="_blank" rel="noreferrer" title={c.title}><b>{c.doc}</b>, {c.loc}</a>
-            <p>{c.text.slice(0, 260)}{c.text.length > 260 ? '…' : ''}</p>
+            <a href={pageLink(c.url, c.loc)} target="_blank" rel="noreferrer" title={c.title}>
+              <b>{c.doc}</b>, {c.loc}
+            </a>
+            <p>
+              {c.text.slice(0, 260)}
+              {c.text.length > 260 ? '…' : ''}
+            </p>
           </div>
         </li>
       ))}
@@ -128,14 +160,26 @@ export function Citations({ items }: { items: { n?: number; doc: string; title: 
   )
 }
 
-export function Card({ title, icon, action, children, className = '' }: {
-  title?: ReactNode; icon?: string; action?: ReactNode; children: ReactNode; className?: string
+export function Card({
+  title,
+  icon,
+  action,
+  children,
+  className = '',
+}: {
+  title?: ReactNode
+  icon?: string
+  action?: ReactNode
+  children: ReactNode
+  className?: string
 }) {
   return (
     <section className={`card ${className}`}>
       {title && (
         <header className="card-h">
-          <h2>{icon && <Icon name={icon} />} {title}</h2>
+          <h2>
+            {icon && <Icon name={icon} />} {title}
+          </h2>
           {action}
         </header>
       )}
@@ -160,5 +204,7 @@ export function slaLeft(created: string, slaHours: number | null | undefined, re
   const left = slaHours * 3600_000 - (Date.now() - new Date(created).getTime())
   const h = Math.abs(left) / 3600_000
   const txt = h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(h < 10 ? 1 : 0)} h`
-  return left < 0 ? { text: t('SLA breached {d}', { d: txt }), tone: 'bad' as const } : { text: t('{d} left', { d: txt }), tone: h < 1 ? ('warn' as const) : ('ok' as const) }
+  return left < 0
+    ? { text: t('SLA breached {d}', { d: txt }), tone: 'bad' as const }
+    : { text: t('{d} left', { d: txt }), tone: h < 1 ? ('warn' as const) : ('ok' as const) }
 }

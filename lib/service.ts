@@ -40,7 +40,11 @@ type Outputs = Record<string, unknown>
 /** Runs the agent pipeline on a report and yields one trace step per agent, with the model and tokens it used.
  * A model failure never means silence: the keyword rules decide and a human reviews. */
 async function* runAgents(
-  agency: Agency, id: string, text: string, channel: Channel, media: { mime: string; data: string }[],
+  agency: Agency,
+  id: string,
+  text: string,
+  channel: Channel,
+  media: { mime: string; data: string }[],
   opts: { noAi?: string; injection: boolean; state?: Record<string, unknown>; rerun?: boolean },
   outputs: Outputs,
 ): AsyncGenerator<TraceStep> {
@@ -49,7 +53,10 @@ async function* runAgents(
   try {
     // Over the AI budget (rate limit): no model call; the same fallback as a model failure decides.
     if (opts.noAi) throw new Error(opts.noAi)
-    const parts: Part[] = [{ text: 'Process this complaint.' }, ...media.map((m) => ({ inlineData: { mimeType: m.mime, data: m.data } }))]
+    const parts: Part[] = [
+      { text: 'Process this complaint.' },
+      ...media.map((m) => ({ inlineData: { mimeType: m.mime, data: m.data } })),
+    ]
     const events = pipelineRunner.runEphemeral({
       userId: agency.id,
       newMessage: { role: 'user', parts },
@@ -66,8 +73,18 @@ async function* runAgents(
         const kind = key === 'policy' ? 'rules' : key === 'sop' ? 'search' : 'llm'
         const call = kind === 'llm' ? governance.last(ev.invocationId, ev.author!) : undefined
         yield {
-          agent: ev.author!, kind, ms: call?.ms ?? ms, output: delta[key],
-          ...(call ? { model: call.model, tokens_in: call.tokens_in, tokens_out: call.tokens_out, ...(call.trace_id ? { trace_id: call.trace_id } : {}) } : {}),
+          agent: ev.author!,
+          kind,
+          ms: call?.ms ?? ms,
+          output: delta[key],
+          ...(call
+            ? {
+                model: call.model,
+                tokens_in: call.tokens_in,
+                tokens_out: call.tokens_out,
+                ...(call.trace_id ? { trace_id: call.trace_id } : {}),
+              }
+            : {}),
           ...(opts.rerun ? { rerun: true } : {}),
         }
       }
@@ -76,7 +93,14 @@ async function* runAgents(
     log('ERROR', 'pipeline_failed', { ticket: id, agency: agency.id, error: String(err).slice(0, 300) })
     if (!outputs.policy) {
       outputs.policy = decide(agency, text, null)
-      yield { agent: 'policy_agent', kind: 'rules', ms: 0, output: outputs.policy, fallback: String(err).slice(0, 200), ...(opts.rerun ? { rerun: true } : {}) }
+      yield {
+        agent: 'policy_agent',
+        kind: 'rules',
+        ms: 0,
+        output: outputs.policy,
+        fallback: String(err).slice(0, 200),
+        ...(opts.rerun ? { rerun: true } : {}),
+      }
     }
   } finally {
     if (invocation) governance.take(invocation)
@@ -88,7 +112,12 @@ function guardDraft(agency: Agency, id: string, text: string, outputs: Outputs):
   const draft = outputs.draft as { reply?: string } | undefined
   if (!draft?.reply) return []
   const sop = (outputs.sop as { url?: string }[] | undefined) ?? []
-  const { warnings } = checkDraft(draft.reply, { original: text, ticketId: id, sopCount: sop.length, allowedUrls: sop.map((c) => c.url ?? '').filter(Boolean) })
+  const { warnings } = checkDraft(draft.reply, {
+    original: text,
+    ticketId: id,
+    sopCount: sop.length,
+    allowedUrls: sop.map((c) => c.url ?? '').filter(Boolean),
+  })
   if (warnings.length) recordGuard('draft', agency.id, id)
   return warnings
 }
@@ -98,9 +127,22 @@ async function notify(agency: Agency, id: string, policy: Policy, summary: strin
     if (policy.route === 'escalated') {
       const sup = supervisor(agency)
       const pic = agency.team.find((m) => m.id === picId) ?? sup
-      await publish({ kind: 'escalated', agency_id: agency.id, ticket_id: id, to: [...new Set([sup.id, pic.id])], text: `Escalated: ${summary}`, contact: `${sup.name} and ${pic.name}` })
+      await publish({
+        kind: 'escalated',
+        agency_id: agency.id,
+        ticket_id: id,
+        to: [...new Set([sup.id, pic.id])],
+        text: `Escalated: ${summary}`,
+        contact: `${sup.name} and ${pic.name}`,
+      })
     } else {
-      await publish({ kind: 'assigned', agency_id: agency.id, ticket_id: id, to: [picId], text: `New case: ${summary}` })
+      await publish({
+        kind: 'assigned',
+        agency_id: agency.id,
+        ticket_id: id,
+        to: [picId],
+        text: `New case: ${summary}`,
+      })
     }
   } catch (err) {
     log('ERROR', 'case_event_failed', { ticket: id, error: String(err).slice(0, 200) }) // the ticket is saved and visible in the queue either way
@@ -147,7 +189,15 @@ export async function* submit(
 
   const trace: TraceStep[] = []
   const outputs: Outputs = {}
-  for await (const step of runAgents(agency, id, text, channel, media, { noAi: opts.noAi, injection: screen.injection && guard.injection === 'review' }, outputs)) {
+  for await (const step of runAgents(
+    agency,
+    id,
+    text,
+    channel,
+    media,
+    { noAi: opts.noAi, injection: screen.injection && guard.injection === 'review' },
+    outputs,
+  )) {
     trace.push(step)
     yield { type: 'step', ...step }
   }
@@ -186,7 +236,11 @@ export async function* submit(
 export async function addDetails(id: string, answers: Partial<Record<Slot, string>>): Promise<Ticket | null> {
   const t = await STORE.get(id)
   if (!t || !t.details) return null
-  const given = Object.fromEntries(Object.entries(answers).filter(([k, v]) => t.details!.missing.includes(k) && v?.trim()).map(([k, v]) => [k, v!.trim().slice(0, 300)]))
+  const given = Object.fromEntries(
+    Object.entries(answers)
+      .filter(([k, v]) => t.details!.missing.includes(k) && v?.trim())
+      .map(([k, v]) => [k, v!.trim().slice(0, 300)]),
+  )
   if (!Object.keys(given).length) return t
   const agency = (await agencyById(t.agency_id))!
   const addition = detailsText(given)
@@ -197,16 +251,31 @@ export async function addDetails(id: string, answers: Partial<Record<Slot, strin
   const steps: TraceStep[] = []
   // Media was read on the first run; pass what it found instead of the files.
   const state = t.media ? { media: t.media } : {}
-  for await (const step of runAgents(agency, id, text, t.channel, [], { injection: (screen.injection || !!t.guard?.injection.length) && (await agencyAi(agency.id)).guard.injection === 'review', state, rerun: true }, outputs)) steps.push(step)
+  for await (const step of runAgents(
+    agency,
+    id,
+    text,
+    t.channel,
+    [],
+    {
+      injection:
+        (screen.injection || !!t.guard?.injection.length) && (await agencyAi(agency.id)).guard.injection === 'review',
+      state,
+      rerun: true,
+    },
+    outputs,
+  ))
+    steps.push(step)
 
   const before = t.policy!
   const after = outputs.policy as Policy
   const RANK = { low: 0, normal: 1, high: 2, critical: 3 }
   // Safety ratchet: an escalated case stays escalated; urgency only goes up.
   const keep = before.route === 'escalated' || RANK[after.final_urgency] < RANK[before.final_urgency]
-  const policy: Policy = keep && after.route !== 'escalated'
-    ? { ...before, reasons: [...before.reasons, 'Details added; urgency kept (re-runs never lower it)'] }
-    : after
+  const policy: Policy =
+    keep && after.route !== 'escalated'
+      ? { ...before, reasons: [...before.reasons, 'Details added; urgency kept (re-runs never lower it)'] }
+      : after
   const newlyEscalated = policy.route === 'escalated' && before.route !== 'escalated'
   const fields: Partial<Ticket> = {
     intake: (outputs.intake as Ticket['intake']) ?? t.intake,
@@ -214,22 +283,42 @@ export async function addDetails(id: string, answers: Partial<Record<Slot, strin
     policy,
     trace: [...t.trace, ...steps],
     details: { ...t.details, answers: { ...t.details.answers, ...given }, refined_at: now() },
-    history: [...t.history, entry('citizen', 'details_added', addition.slice(0, 300)), entry('agents', 'rerun', policy.reasons.join('; '))],
+    history: [
+      ...t.history,
+      entry('citizen', 'details_added', addition.slice(0, 300)),
+      entry('agents', 'rerun', policy.reasons.join('; ')),
+    ],
     updated_at: now(),
   }
   if (!t.sent_reply && outputs.draft) {
     fields.draft = outputs.draft as Ticket['draft']
     fields.sop = (outputs.sop as Ticket['sop']) ?? t.sop
-    fields.guard = { injection: [...(t.guard?.injection ?? []), ...screen.matches], draft: guardDraft(agency, id, text, outputs) }
+    fields.guard = {
+      injection: [...(t.guard?.injection ?? []), ...screen.matches],
+      draft: guardDraft(agency, id, text, outputs),
+    }
   }
   if (newlyEscalated) {
     fields.status = 'escalated'
     fields.alerted_at = now()
   }
   const updated = await STORE.update(id, fields)
-  if (newlyEscalated) await notify(agency, id, policy, fields.triage?.summary ?? t.text.slice(0, 120), t.assignee ?? picFor(agency, policy.queue).id)
+  if (newlyEscalated)
+    await notify(
+      agency,
+      id,
+      policy,
+      fields.triage?.summary ?? t.text.slice(0, 120),
+      t.assignee ?? picFor(agency, policy.queue).id,
+    )
   else if (t.assignee) {
-    await publish({ kind: 'followup', agency_id: t.agency_id, ticket_id: id, to: [t.assignee], text: `Details added to ${id}` }).catch((e) => log('ERROR', 'case_event_failed', { ticket: id, error: String(e).slice(0, 200) }))
+    await publish({
+      kind: 'followup',
+      agency_id: t.agency_id,
+      ticket_id: id,
+      to: [t.assignee],
+      text: `Details added to ${id}`,
+    }).catch((e) => log('ERROR', 'case_event_failed', { ticket: id, error: String(e).slice(0, 200) }))
   }
   return updated
 }
@@ -244,7 +333,15 @@ const ACTIONS: Record<string, [Ticket['status'] | null, string]> = {
 }
 export const ACTION_NAMES = Object.keys(ACTIONS)
 
-export async function act(id: string, action: string, officer: string, note = '', reply?: string, queue?: string, assignee?: string) {
+export async function act(
+  id: string,
+  action: string,
+  officer: string,
+  note = '',
+  reply?: string,
+  queue?: string,
+  assignee?: string,
+) {
   const t = await STORE.get(id)
   if (!t) return null
   const [status, label0] = ACTIONS[action]
@@ -285,7 +382,13 @@ export async function act(id: string, action: string, officer: string, note = ''
   fields.history = [...t.history, entry(officer, action, (note ? `${label}: ${note}` : label) + delivery)]
   const updated = await STORE.update(id, fields)
   if (member && member.id !== t.assignee) {
-    await publish({ kind: 'assigned', agency_id: t.agency_id, ticket_id: id, to: [member.id], text: `${officer} delegated a case to you: ${t.triage?.summary ?? t.text.slice(0, 120)}${note ? ` (${note})` : ''}` }).catch((e) => console.error('case event failed', e))
+    await publish({
+      kind: 'assigned',
+      agency_id: t.agency_id,
+      ticket_id: id,
+      to: [member.id],
+      text: `${officer} delegated a case to you: ${t.triage?.summary ?? t.text.slice(0, 120)}${note ? ` (${note})` : ''}`,
+    }).catch((e) => console.error('case event failed', e))
   }
   return updated
 }
@@ -302,7 +405,10 @@ export async function setStage(id: string, procedure: string, stage: number, don
   return STORE.update(id, {
     progress: { procedure, done: next },
     updated_at: now(),
-    history: [...t.history, entry(officer, done ? 'stage_done' : 'stage_undone', `${proc.title}: ${proc.stages[stage].title}`)],
+    history: [
+      ...t.history,
+      entry(officer, done ? 'stage_done' : 'stage_undone', `${proc.title}: ${proc.stages[stage].title}`),
+    ],
   })
 }
 
@@ -336,7 +442,13 @@ export async function addFollowup(id: string, text: string) {
     updated_at: at,
   })
   if (t.assignee) {
-    await publish({ kind: 'followup', agency_id: t.agency_id, ticket_id: id, to: [t.assignee], text: `New message on ${id}: ${text.slice(0, 120)}` }).catch((e) => console.error('case event failed', e))
+    await publish({
+      kind: 'followup',
+      agency_id: t.agency_id,
+      ticket_id: id,
+      to: [t.assignee],
+      text: `New message on ${id}: ${text.slice(0, 120)}`,
+    }).catch((e) => console.error('case event failed', e))
   }
   return updated
 }

@@ -13,8 +13,14 @@ export const FLAGS = [
 ] as const
 
 export const MediaResult = z.object({
-  transcript: z.string().nullable().describe('Verbatim transcript of the voice note in its own language; null if no audio'),
-  photo_description: z.string().nullable().describe('What the photos show, in English, with ID and card numbers masked; null if no photo'),
+  transcript: z
+    .string()
+    .nullable()
+    .describe('Verbatim transcript of the voice note in its own language; null if no audio'),
+  photo_description: z
+    .string()
+    .nullable()
+    .describe('What the photos show, in English, with ID and card numbers masked; null if no photo'),
   safety_concern: z.boolean().describe('True if the media shows injury, ongoing danger or a threat to someone'),
   safety_reason: z.string().describe('Short reason when safety_concern is true, else empty'),
 })
@@ -28,8 +34,14 @@ export const IntakeResult = z.object({
     victim_age: z.string().nullable().describe('Age or age group of the affected person'),
     incident_time: z.string().nullable().describe('When it happened, as stated'),
   }),
-  pii_types: z.array(z.string()).describe('Kinds of personal data present: name, phone, id_number, address, child_name, ...'),
-  masked_text: z.string().describe('The complaint in its original language with personal data replaced by [NAME], [ID], [PHONE], [ADDRESS], [CHILD_NAME]'),
+  pii_types: z
+    .array(z.string())
+    .describe('Kinds of personal data present: name, phone, id_number, address, child_name, ...'),
+  masked_text: z
+    .string()
+    .describe(
+      'The complaint in its original language with personal data replaced by [NAME], [ID], [PHONE], [ADDRESS], [CHILD_NAME]',
+    ),
   restated: z.string().describe('One-paragraph neutral restatement in English'),
 })
 

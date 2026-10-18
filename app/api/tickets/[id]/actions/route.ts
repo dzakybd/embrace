@@ -15,6 +15,14 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const parsed = Body.safeParse(await req.json().catch(() => null))
   if (!parsed.success) return error(422, parsed.error.issues[0]?.message ?? 'invalid body')
   const b = parsed.data
-  const t = await act((await params).id, b.action, b.officer, b.note, b.reply ?? undefined, b.queue ?? undefined, b.assignee ?? undefined)
+  const t = await act(
+    (await params).id,
+    b.action,
+    b.officer,
+    b.note,
+    b.reply ?? undefined,
+    b.queue ?? undefined,
+    b.assignee ?? undefined,
+  )
   return t ? Response.json(t) : error(404, 'not found')
 }

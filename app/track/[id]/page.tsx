@@ -9,8 +9,13 @@ export default async function TrackPage({ params }: { params: Promise<{ id: stri
   const { id } = await params
   return (
     <div className="public">
-      <header className="top"><Brand sub="Track a report" /><LangSwitch /></header>
-      <main className="citizen"><Track id={id} /></main>
+      <header className="top">
+        <Brand sub="Track a report" />
+        <LangSwitch />
+      </header>
+      <main className="citizen">
+        <Track id={id} />
+      </main>
       <Footer />
     </div>
   )

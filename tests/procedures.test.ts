@@ -10,7 +10,10 @@ describe('agency procedures', () => {
     it(`${a.id}: every case type has a procedure and its laws are agency documents`, () => {
       const docs = new Set(sourcesFor(a.id).map((s) => s.short))
       for (const c of a.categories) {
-        expect(a.procedures?.some((p) => p.categories.includes(c.id)), c.id).toBe(true)
+        expect(
+          a.procedures?.some((p) => p.categories.includes(c.id)),
+          c.id,
+        ).toBe(true)
         expect(c.laws?.length, c.id).toBeGreaterThan(0)
         for (const l of c.laws ?? []) expect(docs.has(l), `${c.id}: ${l}`).toBe(true)
       }

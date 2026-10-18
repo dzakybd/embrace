@@ -15,14 +15,22 @@ const Body = z
     attachments: z
       .array(
         z.object({
-          mime: z.string().regex(/^(image\/(jpeg|png|webp|heic)|audio\/(mpeg|mp3|mp4|m4a|x-m4a|aac|wav|x-wav|ogg|flac|webm))$/),
-          data: z.string().max(10_000_000).regex(/^[A-Za-z0-9+/=]*$/, 'attachment is not valid base64'),
+          mime: z
+            .string()
+            .regex(/^(image\/(jpeg|png|webp|heic)|audio\/(mpeg|mp3|mp4|m4a|x-m4a|aac|wav|x-wav|ogg|flac|webm))$/),
+          data: z
+            .string()
+            .max(10_000_000)
+            .regex(/^[A-Za-z0-9+/=]*$/, 'attachment is not valid base64'),
         }),
       )
       .max(3)
       .default([]),
   })
-  .refine((b) => b.text.trim().length >= 10 || b.attachments.length > 0, 'Write at least 10 characters or attach a voice note or photo')
+  .refine(
+    (b) => b.text.trim().length >= 10 || b.attachments.length > 0,
+    'Write at least 10 characters or attach a voice note or photo',
+  )
 
 /** Streams agent progress as Server-Sent Events; the final `done` event carries the ticket. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
@@ -37,7 +45,13 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   const stream = new ReadableStream({
     async start(controller) {
       try {
-        for await (const ev of submit(id, b.text, b.channel, { name: b.reporter_name, contact: b.reporter_contact }, b.attachments)) {
+        for await (const ev of submit(
+          id,
+          b.text,
+          b.channel,
+          { name: b.reporter_name, contact: b.reporter_contact },
+          b.attachments,
+        )) {
           controller.enqueue(enc.encode(`data: ${JSON.stringify(ev)}\n\n`))
         }
       } catch (e) {
@@ -48,6 +62,10 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
     },
   })
   return new Response(stream, {
-    headers: { 'content-type': 'text/event-stream', 'cache-control': 'no-cache, no-transform', 'x-accel-buffering': 'no' },
+    headers: {
+      'content-type': 'text/event-stream',
+      'cache-control': 'no-cache, no-transform',
+      'x-accel-buffering': 'no',
+    },
   })
 }

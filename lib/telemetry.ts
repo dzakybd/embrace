@@ -35,7 +35,15 @@ export async function startTelemetry() {
       project: process.env.GOOGLE_CLOUD_PROJECT ?? process.env.GCLOUD_PROJECT ?? null,
     }
   } catch (err) {
-    g.__embraceTelemetry = { tracing: false, metrics: false, logging: !!process.env.K_SERVICE, project: null, error: String(err).slice(0, 200) }
-    console.error(JSON.stringify({ severity: 'ERROR', message: 'telemetry_setup_failed', error: String(err).slice(0, 300) }))
+    g.__embraceTelemetry = {
+      tracing: false,
+      metrics: false,
+      logging: !!process.env.K_SERVICE,
+      project: null,
+      error: String(err).slice(0, 200),
+    }
+    console.error(
+      JSON.stringify({ severity: 'ERROR', message: 'telemetry_setup_failed', error: String(err).slice(0, 300) }),
+    )
   }
 }

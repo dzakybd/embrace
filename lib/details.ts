@@ -16,14 +16,20 @@ export const QUESTION: Record<Slot, string> = {
   victim_age: 'How old is the person affected? If it is a child, an approximate age is fine.',
   incident_time: 'When did this happen, and is it still happening now?',
 }
-export const LABEL: Record<Slot, string> = { location: 'Where', victim_age: 'Age of the person affected', incident_time: 'When' }
+export const LABEL: Record<Slot, string> = {
+  location: 'Where',
+  victim_age: 'Age of the person affected',
+  incident_time: 'When',
+}
 
 export const requiredDetails = (agency: Agency): Slot[] =>
   (agency.required_details ?? DEFAULT_REQUIRED).filter((s): s is Slot => (SLOTS as readonly string[]).includes(s))
 
 /** The agency's required details that the intake agent did not find in the report, in the agency's order. */
 export function missingDetails(agency: Agency, intake: Intake | null | undefined): Slot[] {
-  return requiredDetails(agency).filter((s) => !intake?.entities?.[s]?.trim()).slice(0, MAX_QUESTIONS)
+  return requiredDetails(agency)
+    .filter((s) => !intake?.entities?.[s]?.trim())
+    .slice(0, MAX_QUESTIONS)
 }
 
 /** The citizen's answers as one block appended to the report text, so the agents read them in context. */

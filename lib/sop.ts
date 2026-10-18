@@ -164,7 +164,10 @@ export function registerDocs(agencyId: string, docs: IndexFile): void {
   const base = docs.template ? SHIPPED[docs.template] : undefined
   const kept = (short: string) => (docs.keep ?? []).includes(short)
   FILES[agencyId] = base
-    ? { sources: [...base.sources.filter((s) => kept(s.short)), ...docs.sources], passages: [...base.passages.filter((p) => kept(p.doc)), ...docs.passages] }
+    ? {
+        sources: [...base.sources.filter((s) => kept(s.short)), ...docs.sources],
+        passages: [...base.passages.filter((p) => kept(p.doc)), ...docs.passages],
+      }
     : docs
   cache.delete(agencyId)
 }
@@ -193,7 +196,9 @@ function chunks(text: string): string[] {
 
 /** Passages of one uploaded document: "## " sections for Markdown, pages for PDFs, else the whole text. */
 export function passagesFor(src: Source, units: { loc: string; text: string }[]): Passage[] {
-  return units.flatMap((u) => chunks(u.text).map((text) => ({ doc: src.short, title: src.title, url: src.url, loc: u.loc, text })))
+  return units.flatMap((u) =>
+    chunks(u.text).map((text) => ({ doc: src.short, title: src.title, url: src.url, loc: u.loc, text })),
+  )
 }
 
 export function markdownUnits(text: string): { loc: string; text: string }[] {

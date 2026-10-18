@@ -1,17 +1,20 @@
-// Firebase web SDK: Analytics on the client (page views and demo usage). The web config is public by design.
+// Firebase web SDK: Analytics on the client (page views and demo usage). The config comes from NEXT_PUBLIC_FIREBASE_*
+// at build time (apphosting.yaml; the API key from Secret Manager); without it Analytics is simply off.
 import { getApps, initializeApp } from 'firebase/app'
 
+const projectId = process.env.NEXT_PUBLIC_FIREBASE_PROJECT_ID
 const firebaseConfig = {
-  apiKey: 'AIzaSyD4L9qc_jiCdRG62V1tMe--PF8gsUvcCpw',
-  authDomain: 'embrace-23a9c.firebaseapp.com',
-  projectId: 'embrace-23a9c',
-  storageBucket: 'embrace-23a9c.firebasestorage.app',
-  messagingSenderId: '714975767018',
-  appId: '1:714975767018:web:69fb4464cffd7e30fe2a93',
-  measurementId: 'G-5PX7TF5KPH',
+  apiKey: process.env.NEXT_PUBLIC_FIREBASE_API_KEY,
+  authDomain: `${projectId}.firebaseapp.com`,
+  projectId,
+  storageBucket: `${projectId}.firebasestorage.app`,
+  messagingSenderId: process.env.NEXT_PUBLIC_FIREBASE_SENDER_ID,
+  appId: process.env.NEXT_PUBLIC_FIREBASE_APP_ID,
+  measurementId: process.env.NEXT_PUBLIC_FIREBASE_MEASUREMENT_ID,
 }
 
 export async function startAnalytics() {
+  if (!firebaseConfig.apiKey || !projectId || !firebaseConfig.appId) return null
   const { getAnalytics, isSupported, logEvent } = await import('firebase/analytics')
   if (!(await isSupported())) return null
   const analytics = getAnalytics(getApps()[0] ?? initializeApp(firebaseConfig))

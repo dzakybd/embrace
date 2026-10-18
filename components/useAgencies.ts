@@ -11,7 +11,11 @@ export function useAgencies() {
   const [all, setAll] = useState<Agency[]>([])
   const [agencyId, setAgencyId] = useState('')
   const [error, setError] = useState('')
-  const reload = () => api.agencies().then(setAll).catch((e) => setError(String(e)))
+  const reload = () =>
+    api
+      .agencies()
+      .then(setAll)
+      .catch((e) => setError(String(e)))
   useEffect(() => {
     const fromUrl = new URLSearchParams(location.search).get('agency')
     if (fromUrl) save('agency', fromUrl)

@@ -151,12 +151,43 @@ export function taxonomyText(a: Agency): string {
 
 /** What the browser needs to know about an agency. */
 export function publicAgency(a: Agency) {
-  const { id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, custom, edited } = a
+  const {
+    id,
+    name,
+    short_name,
+    country,
+    description,
+    categories,
+    queues,
+    sla_hours,
+    emergency_line,
+    team,
+    custom,
+    edited,
+  } = a
   return {
-    id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, telegram_bot: a.telegram_bot ?? null, logo: a.logo ?? null,
-    name_id: a.name_id ?? '', short_name_id: a.short_name_id ?? '', description_id: a.description_id ?? '', emergency_line_id: a.emergency_line_id ?? '',
-    custom: !!custom, edited: !!edited, escalation_contact: a.escalation.escalation_contact,
-    escalation: a.escalation, reply_signature: a.reply_signature, procedures: a.procedures ?? [],
+    id,
+    name,
+    short_name,
+    country,
+    description,
+    categories,
+    queues,
+    sla_hours,
+    emergency_line,
+    team,
+    telegram_bot: a.telegram_bot ?? null,
+    logo: a.logo ?? null,
+    name_id: a.name_id ?? '',
+    short_name_id: a.short_name_id ?? '',
+    description_id: a.description_id ?? '',
+    emergency_line_id: a.emergency_line_id ?? '',
+    custom: !!custom,
+    edited: !!edited,
+    escalation_contact: a.escalation.escalation_contact,
+    escalation: a.escalation,
+    reply_signature: a.reply_signature,
+    procedures: a.procedures ?? [],
   }
 }
 export type PublicAgency = ReturnType<typeof publicAgency>

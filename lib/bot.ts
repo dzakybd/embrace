@@ -20,7 +20,19 @@ export const LIMITS = {
   aiDay: { limit: 300, window: 24 * HOUR }, // all chats; past this, cases are routed by rules only
 }
 // Danger words in a few languages, checked in code before any AI so the emergency number goes out immediately.
-const DANGER = ['suicide', 'kill myself', 'bunuh diri', 'help me now', 'tolong sekarang', 'he will kill', 'trapped', 'bleeding', 'berdarah', 'diperkosa', 'raped']
+const DANGER = [
+  'suicide',
+  'kill myself',
+  'bunuh diri',
+  'help me now',
+  'tolong sekarang',
+  'he will kill',
+  'trapped',
+  'bleeding',
+  'berdarah',
+  'diperkosa',
+  'raped',
+]
 const GREETING = /^(hi|hello|hey|halo|hallo|hai|pagi|siang|sore|malam|assalamu.?alaikum|test|tes|p|ping|\/?menu)\W*$/i
 
 export interface ReportJob {
@@ -38,7 +50,10 @@ export interface ReportJob {
 class Chat {
   readonly key: string
   lang: Lang = 'en'
-  constructor(readonly bot: TelegramBot, readonly id: string) {
+  constructor(
+    readonly bot: TelegramBot,
+    readonly id: string,
+  ) {
     this.key = `${bot.agency_id}:${id}`
   }
   /** The agency with its name in the chat's language. */
@@ -71,23 +86,42 @@ class Chat {
 }
 
 const menu = (c: Chat): Button[][] => [
-  [{ text: c.t('New report'), callback_data: 'new' }, { text: c.t('Track my report'), callback_data: 'track' }],
+  [
+    { text: c.t('New report'), callback_data: 'new' },
+    { text: c.t('Track my report'), callback_data: 'track' },
+  ],
   [{ text: c.t('Emergency numbers'), callback_data: 'emergency' }],
-  [c.lang === 'id' ? { text: 'English', callback_data: 'lang:en' } : { text: 'Bahasa Indonesia', callback_data: 'lang:id' }],
+  [
+    c.lang === 'id'
+      ? { text: 'English', callback_data: 'lang:en' }
+      : { text: 'Bahasa Indonesia', callback_data: 'lang:id' },
+  ],
 ]
 
 async function welcome(c: Chat) {
   await c.say(
     `<b>${esc(c.agency.name)}</b>\n\n` +
-      c.t('Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the supervisor at once, and a real caseworker reviews every reply.') + '\n\n' +
-      c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) }) + '\n\n' +
-      c.t('Only {agency} staff see your report. By sending it, you agree to how it is handled.', { agency: esc(c.agency.short_name) }) +
+      c.t(
+        'Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the supervisor at once, and a real caseworker reviews every reply.',
+      ) +
+      '\n\n' +
+      c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) }) +
+      '\n\n' +
+      c.t('Only {agency} staff see your report. By sending it, you agree to how it is handled.', {
+        agency: esc(c.agency.short_name),
+      }) +
       ` <a href="${publicUrl()}/privacy">${c.t('How your report is handled')}</a>`,
-    menu(c))
+    menu(c),
+  )
 }
 
 async function emergency(c: Chat) {
-  await c.say(c.t('If anyone is in danger right now, call {line}. Then tell us what happened here; urgent reports alert a supervisor at once.', { line: esc(c.agency.emergency_line) }))
+  await c.say(
+    c.t(
+      'If anyone is in danger right now, call {line}. Then tell us what happened here; urgent reports alert a supervisor at once.',
+      { line: esc(c.agency.emergency_line) },
+    ),
+  )
 }
 
 /** Asks one missing detail, with a way to skip the rest. */
@@ -97,14 +131,30 @@ async function askDetail(c: Chat, slot: string, first: boolean) {
 }
 
 /** Ends the questions; the answers given so far go to the agents as a job. */
-async function finishDetails(c: Chat, state: ChatState, updateId: number, answers: Record<string, string>): Promise<ReportJob | null> {
+async function finishDetails(
+  c: Chat,
+  state: ChatState,
+  updateId: number,
+  answers: Record<string, string>,
+): Promise<ReportJob | null> {
   await c.set({ awaiting: null, pending: [], answers: {} })
   if (!state.open_ticket || !Object.keys(answers).length) {
     await c.say(c.t('No problem. Anything you send here in the next 24 hours is added to your report.'))
     return null
   }
-  await c.say(c.t('Thank you. Your answers were added to report <b>{id}</b> and the team is updating the case.', { id: state.open_ticket }))
-  return { update_id: updateId, chat_id: c.id, agency_id: c.bot.agency_id, text: '', media: [], details: { ticket_id: state.open_ticket, answers } }
+  await c.say(
+    c.t('Thank you. Your answers were added to report <b>{id}</b> and the team is updating the case.', {
+      id: state.open_ticket,
+    }),
+  )
+  return {
+    update_id: updateId,
+    chat_id: c.id,
+    agency_id: c.bot.agency_id,
+    text: '',
+    media: [],
+    details: { ticket_id: state.open_ticket, answers },
+  }
 }
 
 /** Switches the chat's language and greets again in it. */
@@ -122,8 +172,19 @@ async function track(c: Chat, state: ChatState, id?: string) {
     return
   }
   const a = c.agency
-  const status = c.t(t.resolved_at ? 'resolved' : t.responded_at ? 'replied, still open' : t.status === 'escalated' ? 'urgent, a supervisor has been alerted' : 'with the team')
-  await c.say(`${c.t('Report')} <b>${t.id}</b>: ${status}.\n${c.t('Team')}: ${esc(t.policy ? a.queues[t.policy.queue] ?? '' : '')}`, [[{ text: c.t('Open status page'), url: `${publicUrl()}/track/${t.id}` }]])
+  const status = c.t(
+    t.resolved_at
+      ? 'resolved'
+      : t.responded_at
+        ? 'replied, still open'
+        : t.status === 'escalated'
+          ? 'urgent, a supervisor has been alerted'
+          : 'with the team',
+  )
+  await c.say(
+    `${c.t('Report')} <b>${t.id}</b>: ${status}.\n${c.t('Team')}: ${esc(t.policy ? (a.queues[t.policy.queue] ?? '') : '')}`,
+    [[{ text: c.t('Open status page'), url: `${publicUrl()}/track/${t.id}` }]],
+  )
 }
 
 /** Handles one webhook update for an agency's bot without any model call. Returns a job when the AI should run. */
@@ -145,7 +206,8 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
     } else if (data === 'lang:en' || data === 'lang:id') await setLang(c, data === 'lang:id' ? 'id' : 'en')
     else if (data === 'track') await track(c, state)
     else if (data === 'emergency') await emergency(c)
-    else if (data === 'skip' && state.awaiting === 'details') return finishDetails(c, state, u.update_id, state.answers ?? {})
+    else if (data === 'skip' && state.awaiting === 'details')
+      return finishDetails(c, state, u.update_id, state.answers ?? {})
     return null
   }
 
@@ -178,7 +240,10 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
   if (cmd === '/track') return track(c, state, text.split(/\s+/)[1]).then(() => null)
   if (cmd === '/emergency') return emergency(c).then(() => null)
   if (cmd) {
-    await c.say(c.t('Commands: /new report, /track your report, /emergency numbers, /language to switch language.'), menu(c))
+    await c.say(
+      c.t('Commands: /new report, /track your report, /emergency numbers, /language to switch language.'),
+      menu(c),
+    )
     return null
   }
 
@@ -204,26 +269,57 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
   }
 
   // A message after a report joins that case for 24 hours, unless the citizen started a new report.
-  if (state.open_ticket && state.awaiting !== 'report' && state.open_since && Date.now() - Date.parse(state.open_since) < FOLLOWUP_WINDOW_MS) {
-    await addFollowup(state.open_ticket, text || (media.length ? `[${media.map((x) => x.mime.split('/')[0]).join(', ')} sent on Telegram]` : ''))
-    await c.say(c.t('Added to your report <b>{id}</b>; the person in charge has been notified.', { id: state.open_ticket }), menu(c))
+  if (
+    state.open_ticket &&
+    state.awaiting !== 'report' &&
+    state.open_since &&
+    Date.now() - Date.parse(state.open_since) < FOLLOWUP_WINDOW_MS
+  ) {
+    await addFollowup(
+      state.open_ticket,
+      text || (media.length ? `[${media.map((x) => x.mime.split('/')[0]).join(', ')} sent on Telegram]` : ''),
+    )
+    await c.say(
+      c.t('Added to your report <b>{id}</b>; the person in charge has been notified.', { id: state.open_ticket }),
+      menu(c),
+    )
     return null
   }
   if (!media.length && (text.length < 12 || GREETING.test(text))) {
-    await c.say(c.t('Hello! To make a report to <b>{agency}</b>, tell us what happened, where and when, in a sentence or two. You can also send a voice note.', { agency: esc(agency.short_name) }), menu(c))
+    await c.say(
+      c.t(
+        'Hello! To make a report to <b>{agency}</b>, tell us what happened, where and when, in a sentence or two. You can also send a voice note.',
+        { agency: esc(agency.short_name) },
+      ),
+      menu(c),
+    )
     return null
   }
 
-  if (!(await STORE.hit(`tg-rh-${chatId}`, LIMITS.reportsHour.limit, LIMITS.reportsHour.window)) ||
-      !(await STORE.hit(`tg-rd-${chatId}`, LIMITS.reportsDay.limit, LIMITS.reportsDay.window))) {
-    await c.say(c.t('You have sent several reports recently. Please add details to your last report, or try again later. If anyone is in danger, call the emergency number now.'), menu(c))
+  if (
+    !(await STORE.hit(`tg-rh-${chatId}`, LIMITS.reportsHour.limit, LIMITS.reportsHour.window)) ||
+    !(await STORE.hit(`tg-rd-${chatId}`, LIMITS.reportsDay.limit, LIMITS.reportsDay.window))
+  ) {
+    await c.say(
+      c.t(
+        'You have sent several reports recently. Please add details to your last report, or try again later. If anyone is in danger, call the emergency number now.',
+      ),
+      menu(c),
+    )
     return null
   }
   const aiOk = await STORE.hit('ai-daily', LIMITS.aiDay.limit, LIMITS.aiDay.window)
   await c.set({ awaiting: null })
   await c.say(c.t('Thank you. We received your report and are reading it now…'))
   await typing(bot.token, chatId)
-  return { update_id: u.update_id, chat_id: chatId, agency_id: agency.id, text, media, ...(aiOk ? {} : { no_ai: 'Daily AI budget reached; routed by rules' }) }
+  return {
+    update_id: u.update_id,
+    chat_id: chatId,
+    agency_id: agency.id,
+    text,
+    media,
+    ...(aiOk ? {} : { no_ai: 'Daily AI budget reached; routed by rules' }),
+  }
 }
 
 function mediaOf(m: TgMessage): { file_id: string; mime: string }[] {
@@ -253,7 +349,9 @@ export async function processReport(job: ReportJob) {
     if (!before || before.telegram_chat_id !== job.chat_id) return
     const t = await addDetails(job.details.ticket_id, job.details.answers)
     if (t?.policy?.route === 'escalated' && before.policy?.route !== 'escalated') {
-      await c.say(`<b>${c.t('Marked urgent: a supervisor has been alerted now.')}</b> ${c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) })}`)
+      await c.say(
+        `<b>${c.t('Marked urgent: a supervisor has been alerted now.')}</b> ${c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) })}`,
+      )
     }
     return
   }
@@ -263,7 +361,10 @@ export async function processReport(job: ReportJob) {
     if (data) media.push({ mime: f.mime, data })
   }
   let ticket = null
-  for await (const ev of submit(job.agency_id, job.text, 'telegram', {}, media, { telegramChatId: job.chat_id, noAi: job.no_ai })) {
+  for await (const ev of submit(job.agency_id, job.text, 'telegram', {}, media, {
+    telegramChatId: job.chat_id,
+    noAi: job.no_ai,
+  })) {
     if (ev.type === 'done') ticket = ev.ticket
   }
   if (!ticket?.policy) return
@@ -271,11 +372,22 @@ export async function processReport(job: ReportJob) {
   await c.set({ open_ticket: ticket.id, open_since: now(), awaiting: null })
   const urgent = ticket.policy.route === 'escalated'
   await c.say(
-    c.t('Your report number is <b>{id}</b>.', { id: ticket.id }) + '\n' +
-      (urgent ? `<b>${c.t('Marked urgent: a supervisor has been alerted now.')}</b> ${c.t('If anyone is in danger right now, call {line}.', { line: esc(a.emergency_line) })}\n` : '') +
-      c.t('It is with the <b>{team}</b>. You will hear back within {h} hours; a caseworker reviews every reply before it is sent.', { team: esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue), h: ticket.policy.sla_hours }) + '\n\n' +
+    c.t('Your report number is <b>{id}</b>.', { id: ticket.id }) +
+      '\n' +
+      (urgent
+        ? `<b>${c.t('Marked urgent: a supervisor has been alerted now.')}</b> ${c.t('If anyone is in danger right now, call {line}.', { line: esc(a.emergency_line) })}\n`
+        : '') +
+      c.t(
+        'It is with the <b>{team}</b>. You will hear back within {h} hours; a caseworker reviews every reply before it is sent.',
+        { team: esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue), h: ticket.policy.sla_hours },
+      ) +
+      '\n\n' +
       c.t('Anything you send here in the next 24 hours is added to this report.'),
-    [[{ text: c.t('Track this report'), url: `${publicUrl()}/track/${ticket.id}` }], [{ text: c.t('New report'), callback_data: 'new' }]])
+    [
+      [{ text: c.t('Track this report'), url: `${publicUrl()}/track/${ticket.id}` }],
+      [{ text: c.t('New report'), callback_data: 'new' }],
+    ],
+  )
   const missing = ticket.details?.missing ?? []
   if (missing.length) {
     await c.set({ awaiting: 'details', pending: missing, answers: {} })

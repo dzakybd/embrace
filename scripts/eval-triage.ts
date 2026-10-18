@@ -29,7 +29,16 @@ for (const agencyId of ['kpai', 'dinsos_demak']) {
     }
     const t = state.triage as Triage | undefined
     const p = state.policy as Policy | undefined
-    rows.push({ agency: agencyId, index: c.index, want_category: c.category, want_urgency: c.urgency, category: t?.category, urgency: t?.urgency, final: p?.final_urgency, route: p?.route })
+    rows.push({
+      agency: agencyId,
+      index: c.index,
+      want_category: c.category,
+      want_urgency: c.urgency,
+      category: t?.category,
+      urgency: t?.urgency,
+      final: p?.final_urgency,
+      route: p?.route,
+    })
     process.stdout.write(t?.category === c.category ? '.' : 'x')
   }
 }
@@ -42,7 +51,10 @@ const summary = {
   n,
   category_accuracy: pct(rows.filter((r) => r.category === r.want_category).length, n),
   urgency_exact: pct(rows.filter((r) => r.urgency === r.want_urgency).length, n),
-  urgency_within_one: pct(rows.filter((r) => r.urgency && Math.abs(RANK[r.urgency as U] - RANK[r.want_urgency as U]) <= 1).length, n),
+  urgency_within_one: pct(
+    rows.filter((r) => r.urgency && Math.abs(RANK[r.urgency as U] - RANK[r.want_urgency as U]) <= 1).length,
+    n,
+  ),
   critical_recall_model: pct(crit.filter((r) => r.urgency === 'critical').length, crit.length),
   critical_recall_with_rules: pct(crit.filter((r) => r.route === 'escalated').length, crit.length),
   critical_cases: crit.length,

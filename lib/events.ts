@@ -41,7 +41,15 @@ export async function publish(ev: CaseEvent): Promise<void> {
 async function deliver(ev: CaseEvent) {
   const at = now()
   for (const to of ev.to) {
-    const n: Notification = { agency_id: ev.agency_id, to, ticket_id: ev.ticket_id, kind: ev.kind, text: ev.text, at, read: false }
+    const n: Notification = {
+      agency_id: ev.agency_id,
+      to,
+      ticket_id: ev.ticket_id,
+      kind: ev.kind,
+      text: ev.text,
+      at,
+      read: false,
+    }
     await STORE.addNotification(n)
   }
   if (ev.kind === 'escalated') {
@@ -49,7 +57,15 @@ async function deliver(ev: CaseEvent) {
     if (!t) return
     const fields: Partial<Ticket> = {
       alert_delivered_at: at,
-      history: [...t.history, { at, actor: 'case-events', action: 'alert_delivered', note: `Alert delivered to ${ev.contact ?? ev.to.join(', ')}` }],
+      history: [
+        ...t.history,
+        {
+          at,
+          actor: 'case-events',
+          action: 'alert_delivered',
+          note: `Alert delivered to ${ev.contact ?? ev.to.join(', ')}`,
+        },
+      ],
     }
     await STORE.update(ev.ticket_id, fields)
   }

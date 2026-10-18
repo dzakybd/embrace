@@ -20,8 +20,14 @@ export interface ModelCall {
 }
 
 const meter = metrics.getMeter('embrace')
-const tokenUsage = meter.createHistogram('gen_ai.client.token.usage', { unit: '{token}', description: 'Tokens per model call' })
-const opDuration = meter.createHistogram('gen_ai.client.operation.duration', { unit: 's', description: 'Model call latency' })
+const tokenUsage = meter.createHistogram('gen_ai.client.token.usage', {
+  unit: '{token}',
+  description: 'Tokens per model call',
+})
+const opDuration = meter.createHistogram('gen_ai.client.operation.duration', {
+  unit: 's',
+  description: 'Model call latency',
+})
 const guardEvents = meter.createCounter('embrace.guardrail.events', { description: 'Guardrail findings by kind' })
 
 /** Structured log for Cloud Logging (Cloud Run reads JSON lines from stdout). Never pass complaint text here. */
@@ -34,7 +40,12 @@ export function recordGuard(kind: string, agencyId: string, ticketId: string) {
   log('WARNING', 'guardrail', { kind, agency: agencyId, ticket: ticketId })
 }
 
-export interface AiConfig { models: Record<string, string>; guard: GuardConfig; updated_by?: string; updated_at?: string }
+export interface AiConfig {
+  models: Record<string, string>
+  guard: GuardConfig
+  updated_by?: string
+  updated_at?: string
+}
 
 /** Models and guardrail settings chosen by an agency, cached briefly so the control tower takes effect within a minute. */
 const choices = new Map<string, { at: number; cfg: AiConfig }>()
@@ -42,7 +53,12 @@ export async function agencyAi(agencyId: string): Promise<AiConfig> {
   const hit = choices.get(agencyId)
   if (hit && Date.now() - hit.at < 30_000) return hit.cfg
   const ai = (await STORE.getIntegration(agencyId).catch(() => null))?.ai
-  const cfg: AiConfig = { models: ai?.models ?? {}, guard: { ...GUARD_DEFAULTS, ...ai?.guard }, updated_by: ai?.updated_by, updated_at: ai?.updated_at }
+  const cfg: AiConfig = {
+    models: ai?.models ?? {},
+    guard: { ...GUARD_DEFAULTS, ...ai?.guard },
+    updated_by: ai?.updated_by,
+    updated_at: ai?.updated_at,
+  }
   choices.set(agencyId, { at: Date.now(), cfg })
   return cfg
 }
@@ -84,20 +100,35 @@ export class GovernancePlugin extends BasePlugin {
     if (this.calls.size > 500) this.calls.delete(this.calls.keys().next().value!)
   }
 
-  override async beforeModelCallback({ callbackContext: ctx, llmRequest }: { callbackContext: Context; llmRequest: LlmRequest }) {
+  override async beforeModelCallback({
+    callbackContext: ctx,
+    llmRequest,
+  }: {
+    callbackContext: Context
+    llmRequest: LlmRequest
+  }) {
     const agencyId = ctx.state.get('agency_id') as string | undefined
     if (agencyId) {
       const cfg = await agencyAi(agencyId)
       const model = modelFor(ctx.agentName, cfg.models)
       if (model) llmRequest.model = model
       // The drafter writes to the public; every other agent reads reports.
-      llmRequest.config = { ...llmRequest.config, safetySettings: safetyAt(ctx.agentName === 'drafter_agent' ? cfg.guard.write : cfg.guard.read) }
+      llmRequest.config = {
+        ...llmRequest.config,
+        safetySettings: safetyAt(ctx.agentName === 'drafter_agent' ? cfg.guard.write : cfg.guard.read),
+      }
     }
     this.started.set(`${ctx.invocationId}:${ctx.agentName}`, { at: Date.now(), model: llmRequest.model ?? 'gemini' })
     return undefined
   }
 
-  override async afterModelCallback({ callbackContext: ctx, llmResponse }: { callbackContext: Context; llmResponse: LlmResponse }) {
+  override async afterModelCallback({
+    callbackContext: ctx,
+    llmResponse,
+  }: {
+    callbackContext: Context
+    llmResponse: LlmResponse
+  }) {
     const key = `${ctx.invocationId}:${ctx.agentName}`
     const start = this.started.get(key)
     const ms = Date.now() - (start?.at ?? Date.now())
@@ -106,26 +137,61 @@ export class GovernancePlugin extends BasePlugin {
     // The model the request was sent to; structured-output responses do not always echo modelVersion.
     const model = llmResponse.modelVersion ?? start?.model ?? 'gemini'
     const call: ModelCall = {
-      agent: ctx.agentName, model, ms, tokens_in: u?.promptTokenCount ?? 0, tokens_out: (u?.candidatesTokenCount ?? 0) + (u?.thoughtsTokenCount ?? 0),
+      agent: ctx.agentName,
+      model,
+      ms,
+      tokens_in: u?.promptTokenCount ?? 0,
+      tokens_out: (u?.candidatesTokenCount ?? 0) + (u?.thoughtsTokenCount ?? 0),
       trace_id: trace.getActiveSpan()?.spanContext().traceId,
     }
     this.push(ctx, call)
-    const attrs = { 'gen_ai.agent.name': ctx.agentName, 'gen_ai.request.model': model, 'gen_ai.provider.name': 'gcp.gemini', 'gen_ai.operation.name': 'generate_content' }
+    const attrs = {
+      'gen_ai.agent.name': ctx.agentName,
+      'gen_ai.request.model': model,
+      'gen_ai.provider.name': 'gcp.gemini',
+      'gen_ai.operation.name': 'generate_content',
+    }
     tokenUsage.record(call.tokens_in, { ...attrs, 'gen_ai.token.type': 'input' })
     tokenUsage.record(call.tokens_out, { ...attrs, 'gen_ai.token.type': 'output' })
     opDuration.record(ms / 1000, attrs)
-    log('INFO', 'model_call', { agent: ctx.agentName, model, ms, tokens_in: call.tokens_in, tokens_out: call.tokens_out, finish: llmResponse.finishReason, invocation: ctx.invocationId })
+    log('INFO', 'model_call', {
+      agent: ctx.agentName,
+      model,
+      ms,
+      tokens_in: call.tokens_in,
+      tokens_out: call.tokens_out,
+      finish: llmResponse.finishReason,
+      invocation: ctx.invocationId,
+    })
     return undefined
   }
 
-  override async onModelErrorCallback({ callbackContext: ctx, error }: { callbackContext: Context; llmRequest: LlmRequest; error: Error }) {
+  override async onModelErrorCallback({
+    callbackContext: ctx,
+    error,
+  }: {
+    callbackContext: Context
+    llmRequest: LlmRequest
+    error: Error
+  }) {
     const key = `${ctx.invocationId}:${ctx.agentName}`
     const start = this.started.get(key)
     const ms = Date.now() - (start?.at ?? Date.now())
     this.started.delete(key)
-    this.push(ctx, { agent: ctx.agentName, model: start?.model ?? 'gemini', ms, tokens_in: 0, tokens_out: 0, error: String(error).slice(0, 160) })
+    this.push(ctx, {
+      agent: ctx.agentName,
+      model: start?.model ?? 'gemini',
+      ms,
+      tokens_in: 0,
+      tokens_out: 0,
+      error: String(error).slice(0, 160),
+    })
     opDuration.record(ms / 1000, { 'gen_ai.agent.name': ctx.agentName, 'error.type': error.name || 'Error' })
-    log('ERROR', 'model_error', { agent: ctx.agentName, error: String(error).slice(0, 300), invocation: ctx.invocationId })
+    log('ERROR', 'model_error', {
+      agent: ctx.agentName,
+      error: String(error).slice(0, 300),
+      invocation: ctx.invocationId,
+    })
     return undefined
   }
 }

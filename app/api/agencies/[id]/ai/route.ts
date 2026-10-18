@@ -1,4 +1,3 @@
-import { createHash } from 'node:crypto'
 import { z } from 'zod'
 import { agencyById } from '@/lib/agencies'
 import { aiReport } from '@/lib/ai-report'
@@ -36,8 +35,24 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
   const chosen = cfg.models
   const key = process.env.GOOGLE_GENAI_API_KEY?.trim()
   return Response.json({
-    models: Object.entries(AGENT_MODEL_KEY).map(([agent, k]) => ({ agent, key: k, role: ROLE[agent], default: MODELS[k], chosen: chosen[k] ?? null })),
-    choices: MODEL_CHOICES.map((m) => ({ model: m, price: PRICES[m] ?? null, eval: (triageModels as Record<string, { category_accuracy: number; critical_recall_with_rules: number; urgency_within_one: number }>)[m] ?? null })),
+    models: Object.entries(AGENT_MODEL_KEY).map(([agent, k]) => ({
+      agent,
+      key: k,
+      role: ROLE[agent],
+      default: MODELS[k],
+      chosen: chosen[k] ?? null,
+    })),
+    choices: MODEL_CHOICES.map((m) => ({
+      model: m,
+      price: PRICES[m] ?? null,
+      eval:
+        (
+          triageModels as Record<
+            string,
+            { category_accuracy: number; critical_recall_with_rules: number; urgency_within_one: number }
+          >
+        )[m] ?? null,
+    })),
     guard: cfg.guard,
     thresholds: THRESHOLDS,
     changed: cfg.updated_at ? { by: cfg.updated_by, at: cfg.updated_at } : null,
@@ -45,29 +60,43 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
       provider: 'Gemini API (Google AI)',
       store: 'Google Secret Manager: gemini-api-key, injected into Cloud Run at deploy',
       configured: !!key,
-      // A short hash lets staff confirm which key is live without the key ever leaving the server.
-      fingerprint: key ? createHash('sha256').update(key).digest('hex').slice(0, 10) : null,
+      // The last 4 characters let staff confirm which key is live (as Google Cloud console shows keys) without the
+      // key leaving the server.
+      hint: key ? `…${key.slice(-4)}` : null,
     },
     telemetry: telemetryStatus(),
     safety: {
       confidence_floor: agency.escalation.confidence_floor ?? CONFIDENCE_FLOOR,
       escalate_flags: agency.escalation.escalate_flags,
       keywords: agency.escalation.keywords.length,
-      limits: { reports_per_hour: LIMITS.reportsHour.limit, reports_per_day: LIMITS.reportsDay.limit, ai_reports_per_day: LIMITS.aiDay.limit },
+      limits: {
+        reports_per_hour: LIMITS.reportsHour.limit,
+        reports_per_day: LIMITS.reportsDay.limit,
+        ai_reports_per_day: LIMITS.aiDay.limit,
+      },
       details: { required: requiredDetails(agency), max_questions: MAX_QUESTIONS },
     },
     eval: evalResults.summary,
     eval_at: evalResults.at,
-    attacks: { ...attackResults.summary, at: attackResults.at, rows: attackResults.rows.map(({ id, kind, screened, held, caught }) => ({ id, kind, screened, held, caught })) },
+    attacks: {
+      ...attackResults.summary,
+      at: attackResults.at,
+      rows: attackResults.rows.map(({ id, kind, screened, held, caught }) => ({ id, kind, screened, held, caught })),
+    },
     report: aiReport(await STORE.list(id), 30, PRICES),
   })
 }
 
 const Body = z.object({
   models: z.partialRecord(z.enum(Object.keys(MODELS) as [keyof typeof MODELS]), z.string()),
-  guard: z.object({
-    read: z.enum(THRESHOLDS), write: z.enum(THRESHOLDS), injection: z.enum(['review', 'flag']), questions: z.number().int().min(0).max(2),
-  }).optional(),
+  guard: z
+    .object({
+      read: z.enum(THRESHOLDS),
+      write: z.enum(THRESHOLDS),
+      injection: z.enum(['review', 'flag']),
+      questions: z.number().int().min(0).max(2),
+    })
+    .optional(),
   by: z.string().max(80),
 })
 
@@ -84,9 +113,13 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   if (bad) return error(422, `model not allowed: ${bad}`)
   const by = agency.team.find((m) => m.name === parsed.data.by)
   if (by?.role !== 'supervisor') return error(403, 'only the supervisor changes AI settings')
-  const models = Object.fromEntries(Object.entries(parsed.data.models).filter(([k, v]) => v && v !== MODELS[k as keyof typeof MODELS]))
+  const models = Object.fromEntries(
+    Object.entries(parsed.data.models).filter(([k, v]) => v && v !== MODELS[k as keyof typeof MODELS]),
+  )
   const guard = parsed.data.guard ?? (await agencyAi(id)).guard
-  await STORE.setIntegration(id, { ai: { models: models as Record<string, string>, guard, updated_by: by.name, updated_at: now() } })
+  await STORE.setIntegration(id, {
+    ai: { models: models as Record<string, string>, guard, updated_by: by.name, updated_at: now() },
+  })
   forgetAgencyModels(id)
   log('INFO', 'ai_config_changed', { agency: id, by: by.name, models, guard })
   return Response.json({ ok: true, models, guard })

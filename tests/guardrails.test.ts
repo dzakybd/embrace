@@ -9,11 +9,28 @@ import { decide } from '@/lib/policy'
 import type { Intake, Ticket, Triage } from '@/lib/schemas'
 
 const triage = (over: Partial<Triage> = {}): Triage => ({
-  category: 'education', urgency: 'normal', urgency_reason: 'x', sentiment: 'neutral', flags: [], summary: 's', confidence: 0.9, ...over,
+  category: 'education',
+  urgency: 'normal',
+  urgency_reason: 'x',
+  sentiment: 'neutral',
+  flags: [],
+  summary: 's',
+  confidence: 0.9,
+  ...over,
 })
 const intake = (entities: Partial<Intake['entities']>): Intake => ({
-  language: 'id', pii_types: [], masked_text: '', restated: '',
-  entities: { location: null, institution: null, aid_program: null, victim_age: null, incident_time: null, ...entities },
+  language: 'id',
+  pii_types: [],
+  masked_text: '',
+  restated: '',
+  entities: {
+    location: null,
+    institution: null,
+    aid_program: null,
+    victim_age: null,
+    incident_time: null,
+    ...entities,
+  },
 })
 
 describe('input guardrail', () => {
@@ -26,11 +43,15 @@ describe('input guardrail', () => {
   it('leaves ordinary reports alone, including urgent ones', () => {
     expect(screenInput('My neighbour beats her son every night in Bekasi, please help').injection).toBe(false)
     expect(screenInput('Bantuan PKH saya belum cair, saya sudah lapor ke desa').injection).toBe(false)
-    expect(screenInput('Tolong tunjukkan aturan pendaftaran bantuan lansia, anda adalah petugas yang baik').injection).toBe(false)
+    expect(
+      screenInput('Tolong tunjukkan aturan pendaftaran bantuan lansia, anda adalah petugas yang baik').injection,
+    ).toBe(false)
   })
 
   it('flags every attack in the red-team set that it is meant to catch', () => {
-    const attacks: { id: string; text: string; screen: boolean }[] = JSON.parse(readFileSync('data/eval/attacks.json', 'utf8'))
+    const attacks: { id: string; text: string; screen: boolean }[] = JSON.parse(
+      readFileSync('data/eval/attacks.json', 'utf8'),
+    )
     expect(attacks.filter((a) => a.screen && !screenInput(a.text).injection).map((a) => a.id)).toEqual([])
   })
 
@@ -46,14 +67,24 @@ describe('input guardrail', () => {
 })
 
 describe('output guardrail on drafts', () => {
-  const ctx = { original: 'Call me on 0812-3456-7890, my NIK 3201123456789012', ticketId: 'KPAI-1', sopCount: 2, allowedUrls: ['https://jdih.example.go.id'] }
+  const ctx = {
+    original: 'Call me on 0812-3456-7890, my NIK 3201123456789012',
+    ticketId: 'KPAI-1',
+    sopCount: 2,
+    allowedUrls: ['https://jdih.example.go.id'],
+  }
 
   it('passes a clean draft', () => {
-    expect(checkDraft('Your report KPAI-1 is with the team. We will respond within 72 hours [1].', ctx).warnings).toEqual([])
+    expect(
+      checkDraft('Your report KPAI-1 is with the team. We will respond within 72 hours [1].', ctx).warnings,
+    ).toEqual([])
   })
 
   it('catches copied personal data, foreign links, missing citations and promises', () => {
-    const w = checkDraft('We will call 0812-3456-7890. See https://evil.example/x and [3]. Bantuan dijamin cair.', ctx).warnings
+    const w = checkDraft(
+      'We will call 0812-3456-7890. See https://evil.example/x and [3]. Bantuan dijamin cair.',
+      ctx,
+    ).warnings
     expect(w.join(' ')).toMatch(/personal data/)
     expect(w.join(' ')).toMatch(/link/)
     expect(w.join(' ')).toMatch(/Cites \[3\]/)
@@ -62,7 +93,10 @@ describe('output guardrail on drafts', () => {
   })
 
   it('catches a draft that leaks its instructions or closes the case', () => {
-    const w = checkDraft('KPAI-1 [1]. Status kasus ini adalah selesai. You draft the first reply from KPAI. Original complaint: <<< x >>>', ctx).warnings.join(' ')
+    const w = checkDraft(
+      'KPAI-1 [1]. Status kasus ini adalah selesai. You draft the first reply from KPAI. Original complaint: <<< x >>>',
+      ctx,
+    ).warnings.join(' ')
     expect(w).toMatch(/instructions/)
     expect(w).toMatch(/case is closed/)
     expect(checkDraft('KPAI-1 [1]. Your report has been closed.', ctx).warnings.join()).toMatch(/case is closed/)
@@ -90,24 +124,47 @@ describe('multi-turn intake', () => {
   })
 
   it('turns answers into a block the agents read with the report', () => {
-    expect(detailsText({ location: ' Bekasi ', victim_age: '' })).toBe('Additional details from the citizen:\n- Where: Bekasi')
+    expect(detailsText({ location: ' Bekasi ', victim_age: '' })).toBe(
+      'Additional details from the citizen:\n- Where: Bekasi',
+    )
     expect(detailsText({})).toBe('')
   })
 })
 
 describe('AI control tower report', () => {
   const base = (over: Partial<Ticket>): Ticket => ({
-    id: 'T', agency_id: 'kpai', channel: 'web', text: '', reporter: {}, status: 'assigned', created_at: new Date().toISOString(),
-    updated_at: '', attachments: [], trace: [], history: [], seeded: false, ...over,
+    id: 'T',
+    agency_id: 'kpai',
+    channel: 'web',
+    text: '',
+    reporter: {},
+    status: 'assigned',
+    created_at: new Date().toISOString(),
+    updated_at: '',
+    attachments: [],
+    trace: [],
+    history: [],
+    seeded: false,
+    ...over,
   })
 
   it('aggregates model calls, tokens, guardrails and human edits from live cases only', () => {
     const r = aiReport([
-      base({ id: 'A', trace: [
-        { agent: 'intake_agent', kind: 'llm', ms: 1000, output: {}, model: 'm1', tokens_in: 100, tokens_out: 50 },
-        { agent: 'policy_agent', kind: 'rules', ms: 1, output: {} },
-      ], guard: { injection: ['ignore'], draft: [] }, sent_reply: 'x', reply_edited: true }),
-      base({ id: 'B', trace: [{ agent: 'policy_agent', kind: 'rules', ms: 0, output: {}, fallback: 'down' }], sent_reply: 'y' }),
+      base({
+        id: 'A',
+        trace: [
+          { agent: 'intake_agent', kind: 'llm', ms: 1000, output: {}, model: 'm1', tokens_in: 100, tokens_out: 50 },
+          { agent: 'policy_agent', kind: 'rules', ms: 1, output: {} },
+        ],
+        guard: { injection: ['ignore'], draft: [] },
+        sent_reply: 'x',
+        reply_edited: true,
+      }),
+      base({
+        id: 'B',
+        trace: [{ agent: 'policy_agent', kind: 'rules', ms: 0, output: {}, fallback: 'down' }],
+        sent_reply: 'y',
+      }),
       base({ id: 'S', seeded: true, trace: [{ agent: 'intake_agent', kind: 'llm', ms: 9, output: {} }] }),
     ])
     expect(r.cases).toBe(2)
@@ -120,14 +177,39 @@ describe('AI control tower report', () => {
   })
 
   it('estimates cost from list prices and counts output checks by kind', () => {
-    const r = aiReport([
-      base({ id: 'A', trace: [{ agent: 'triage_agent', kind: 'llm', ms: 900, output: {}, model: 'm1', tokens_in: 1_000_000, tokens_out: 100_000, trace_id: 'abc' }],
-        guard: { injection: [], draft: ['Does not mention the report number', 'Cites [4] but only 3 SOP passages were retrieved'] } }),
-    ], 30, { m1: [0.25, 1.5] })
+    const r = aiReport(
+      [
+        base({
+          id: 'A',
+          trace: [
+            {
+              agent: 'triage_agent',
+              kind: 'llm',
+              ms: 900,
+              output: {},
+              model: 'm1',
+              tokens_in: 1_000_000,
+              tokens_out: 100_000,
+              trace_id: 'abc',
+            },
+          ],
+          guard: {
+            injection: [],
+            draft: ['Does not mention the report number', 'Cites [4] but only 3 SOP passages were retrieved'],
+          },
+        }),
+      ],
+      30,
+      { m1: [0.25, 1.5] },
+    )
     expect(r.usd).toBeCloseTo(0.25 + 0.15)
     expect(r.daily).toHaveLength(14)
     expect(r.daily.at(-1)).toMatchObject({ calls: 1, tokens: 1_100_000 })
-    expect(Object.fromEntries(r.draft_checks.map((c) => [c.check, c.count]))).toMatchObject({ 'report number': 1, citations: 1, links: 0 })
+    expect(Object.fromEntries(r.draft_checks.map((c) => [c.check, c.count]))).toMatchObject({
+      'report number': 1,
+      citations: 1,
+      links: 0,
+    })
     expect(r.recent[0].trace_id).toBe('abc')
     expect(r.events.map((e) => e.kind)).toEqual(['draft', 'draft'])
   })
