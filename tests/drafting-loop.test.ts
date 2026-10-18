@@ -1,6 +1,6 @@
-import { BaseAgent, InMemoryRunner, LoopAgent, createEvent, type InvocationContext } from '@google/adk'
+import { BaseAgent, InMemoryRunner, Workflow, createEvent, type InvocationContext } from '@google/adk'
 import { describe, expect, it } from 'vitest'
-import { DRAFT_TRIES, DraftCheckAgent } from '@/lib/agents/pipeline'
+import { DraftCheckAgent, draftLoop } from '@/lib/agents/pipeline'
 
 /** Stands in for the Gemini drafter: a reply that promises an outcome, then a clean one once it gets feedback. */
 class StubDrafter extends BaseAgent {
@@ -25,11 +25,8 @@ class StubDrafter extends BaseAgent {
 describe('drafting loop', () => {
   it('sends a flagged draft back once with the findings, then stops when it passes', async () => {
     const drafter = new StubDrafter({ name: 'drafter_agent' })
-    const loop = new LoopAgent({
-      name: 'drafting_loop',
-      maxIterations: DRAFT_TRIES,
-      subAgents: [drafter, new DraftCheckAgent({ name: 'draft_check_agent' })],
-    })
+    const check = new DraftCheckAgent({ name: 'draft_check_agent' })
+    const loop = new Workflow({ name: 'drafting', dynamicEntry: (ctx) => draftLoop(ctx, drafter, check) })
     const checks: { warnings: string[]; rewrite: boolean }[] = []
     const run = new InMemoryRunner({ agent: loop, appName: 't' }).runEphemeral({
       userId: 'u',

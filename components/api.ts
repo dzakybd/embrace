@@ -98,7 +98,6 @@ export interface NewAgency {
   sla_hours: Record<Urgency, number>
   confidence_floor: number
   keep_template_docs: boolean
-  drop_docs: string[]
   docs: { title: string; text: string; pdf_base64?: string }[]
 }
 

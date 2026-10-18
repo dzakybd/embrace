@@ -62,7 +62,6 @@ export async function agencyAi(agencyId: string): Promise<AiConfig> {
   choices.set(agencyId, { at: Date.now(), cfg })
   return cfg
 }
-export const agencyModels = async (agencyId: string) => (await agencyAi(agencyId)).models
 export const forgetAgencyModels = (agencyId: string) => choices.delete(agencyId)
 
 /** The model an agent runs for an agency: its allow-listed choice, else the deployment default. */

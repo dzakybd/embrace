@@ -8,7 +8,7 @@ import { FLAGS } from './schemas'
 const text = (min: number, max: number) => z.string().trim().min(min).max(max)
 const opt = (max: number) => z.string().trim().max(max).default('')
 
-export const Profile = z.object({
+const Profile = z.object({
   name: text(2, 160),
   short_name: text(2, 40),
   country: text(2, 60),
@@ -21,7 +21,7 @@ export const Profile = z.object({
   reply_signature: text(2, 160),
 })
 
-export const People = z
+const People = z
   .array(
     z.object({
       id: z.string().max(40).optional(),
@@ -34,7 +34,7 @@ export const People = z
   .min(3)
   .max(30)
 
-export const Rules = z.object({
+const Rules = z.object({
   categories: z
     .array(
       z.object({

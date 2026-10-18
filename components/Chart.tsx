@@ -41,7 +41,7 @@ export const COLORS = {
   series: ['#0b57d0', '#7cacf8', '#146c2e', '#fbbc04', '#e8710a', '#b3261e', '#8e4ec6', '#00897b'],
 }
 
-export const BASE: echarts.EChartsCoreOption = {
+const BASE: echarts.EChartsCoreOption = {
   color: COLORS.series,
   textStyle: { fontFamily: "'Google Sans', 'Google Sans Text', system-ui, sans-serif", color: COLORS.ink2 },
   animationDuration: 900,

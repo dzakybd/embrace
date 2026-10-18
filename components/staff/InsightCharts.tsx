@@ -1,7 +1,7 @@
 'use client'
 
 import { useRouter } from 'next/navigation'
-import { useMemo } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 import type { Agency, Overview } from '../api'
 import { Chart, COLORS, useMap } from '../Chart'
 import { useLang } from '../Lang'
@@ -10,6 +10,10 @@ import { CHANNEL_LABEL, URGENCY_LABEL } from '../ui'
 
 const reports = (t: (k: string, v?: Record<string, string | number>) => string, n: number) =>
   n === 1 ? t('1 report') : t('{n} reports', { n })
+
+/** Tooltips are HTML: every value put into one is escaped. */
+const esc = (v: unknown) =>
+  String(v).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' })[c]!)
 
 const URG = ['critical', 'high', 'normal', 'low'] as const
 const URG_COLOR = { critical: COLORS.critical, high: COLORS.high, normal: COLORS.normal, low: COLORS.low }
@@ -20,6 +24,15 @@ export function CaseMap({ ov }: { ov: Overview }) {
   const { t } = useLang()
   const router = useRouter()
   const map = useMap(ov.map?.file)
+  // On a phone the colour scale goes under the map so the whole country fits.
+  const [narrow, setNarrow] = useState(false)
+  useEffect(() => {
+    const q = matchMedia('(max-width: 600px)')
+    const on = () => setNarrow(q.matches)
+    on()
+    q.addEventListener('change', on)
+    return () => q.removeEventListener('change', on)
+  }, [])
   const option = useMemo(() => {
     const max = Math.max(1, ...ov.by_region.map((r) => r.count))
     const byName = Object.fromEntries(ov.by_region.map((r) => [r.name, r]))
@@ -28,17 +41,19 @@ export function CaseMap({ ov }: { ov: Overview }) {
         trigger: 'item',
         formatter: (p: { name: string }) => {
           const r = byName[p.name]
-          if (!r) return `<b>${p.name}</b><br/>${t('No reports')}`
-          return `<b>${p.name}</b><br/>${reports(t, r.count)} · ${t('{n} escalated', { n: r.escalated })} · ${t('{n} open', { n: r.open })}${r.top_category ? `<br/><span style="color:#5f6368">${r.top_category}</span>` : ''}`
+          if (!r) return `<b>${esc(p.name)}</b><br/>${esc(t('No reports'))}`
+          const line = `${reports(t, r.count)} · ${t('{n} escalated', { n: r.escalated })} · ${t('{n} open', { n: r.open })}`
+          const top = r.top_category ? `<br/><span style="color:#5f6368">${esc(r.top_category)}</span>` : ''
+          return `<b>${esc(p.name)}</b><br/>${esc(line)}${top}`
         },
       },
       visualMap: {
         min: 0,
         max,
-        left: 12,
-        bottom: 12,
+        ...(narrow
+          ? { orient: 'horizontal', left: 'center', bottom: 0, itemWidth: 10, itemHeight: 140 }
+          : { left: 12, bottom: 12, itemHeight: 90 }),
         calculable: true,
-        itemHeight: 90,
         text: [t('More'), t('Fewer')],
         inRange: { color: ['#eef3fd', '#a8c7fa', '#4c8df6', '#0b57d0', '#041e49'] },
         textStyle: { color: COLORS.ink2, fontSize: 11 },
@@ -50,10 +65,10 @@ export function CaseMap({ ov }: { ov: Overview }) {
           roam: true,
           scaleLimit: { min: 1, max: 12 },
           aspectScale: ov.map?.level === 'province' ? 1 : 0.95,
-          left: 70,
+          left: narrow ? 4 : 70,
           right: 8,
           top: 8,
-          bottom: 8,
+          bottom: narrow ? 40 : 8,
           label: {
             show: ov.map?.level === 'kecamatan',
             fontSize: 10,
@@ -72,14 +87,14 @@ export function CaseMap({ ov }: { ov: Overview }) {
         },
       ],
     }
-  }, [ov, map, t])
+  }, [ov, map, t, narrow])
   if (!ov.map) return null
   if (!map) return <div className="shimmer" style={{ height: 380 }} />
   return (
     <div className="map-wrap">
       <Chart
         option={option}
-        height={ov.map.level === 'province' ? 400 : 440}
+        height={narrow ? (ov.map.level === 'province' ? 260 : 380) : ov.map.level === 'province' ? 400 : 440}
         label={t('Map of reports by region')}
         onClick={(p) => router.push(`/staff/inbox?q=${encodeURIComponent(p.name)}`)}
       />
@@ -207,7 +222,7 @@ export function DailyChart({ ov }: { ov: Overview }) {
 }
 
 /** A donut with the total in the middle. */
-export function Donut({
+function Donut({
   data,
   label,
   onClick,

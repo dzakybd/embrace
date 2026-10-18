@@ -1,7 +1,6 @@
-// Complaint pipeline as one ADK SequentialAgent:
-// media (only with attachments) -> intake -> triage -> policy rules -> SOP lookup (BM25) -> [drafter -> draft check]
-// where the bracket is a LoopAgent: a draft the output guardrail flags is rewritten once with the findings.
-import { BaseAgent, LlmAgent, LoopAgent, SequentialAgent, createEvent, type InvocationContext } from '@google/adk'
+// Complaint pipeline as one ADK Workflow: media (only with attachments) -> intake -> triage -> policy rules ->
+// SOP lookup (BM25) -> drafter -> draft check, where a draft the output guardrail flags is rewritten once.
+import { BaseAgent, LlmAgent, Workflow, createEvent, type InvocationContext, type NodeContext } from '@google/adk'
 import { getAgency, taxonomyText, type Agency } from '../agencies'
 import { decide } from '../policy'
 import { DraftReply, IntakeResult, MediaResult, TriageResult, type Intake, type Media, type Triage } from '../schemas'
@@ -35,17 +34,6 @@ ${DATA_RULE}`,
   outputKey: 'media',
   generateContentConfig: READ,
 })
-
-/** Runs the media reader only when the complaint has attachments, so text-only tickets cost nothing extra. */
-class MediaAgent extends BaseAgent {
-  protected async *runAsyncImpl(ctx: InvocationContext) {
-    if (!ctx.session.state['has_media']) return
-    yield* this.subAgents[0].runAsync(ctx)
-  }
-  protected async *runLiveImpl(ctx: InvocationContext) {
-    yield* this.runAsyncImpl(ctx)
-  }
-}
 
 const intakeAgent = new LlmAgent({
   name: 'intake_agent',
@@ -266,10 +254,10 @@ procedure the officer must confirm.`,
 })
 
 /** Tries per report before the draft goes to the caseworker with its warnings: the first draft and one rewrite. */
-export const DRAFT_TRIES = 2
+const DRAFT_TRIES = 2
 
 /** Deterministic critic in the drafting loop: runs the output guardrail on the draft. A clean draft (or the last try)
- * ends the loop; otherwise the findings go back to the drafter as feedback. No model call. */
+ * ends the loop (`rewrite: false`); otherwise the findings go back to the drafter as feedback. No model call. */
 export class DraftCheckAgent extends BaseAgent {
   protected async *runAsyncImpl(ctx: InvocationContext) {
     const s = ctx.session.state
@@ -288,7 +276,6 @@ export class DraftCheckAgent extends BaseAgent {
       invocationId: ctx.invocationId,
       content: { role: 'model', parts: [{ text: warnings.length ? warnings.join('; ') : 'Draft passed the checks' }] },
       actions: {
-        escalate: done,
         stateDelta: {
           draft_attempt: attempt,
           draft_check: { attempt, warnings, rewrite: !done },
@@ -308,30 +295,43 @@ const policyAgent = () =>
   new PolicyAgent({ name: 'policy_agent', description: "Applies the agency's escalation and routing rules." })
 
 /** Intake, triage and rules only: what the eval script measures. */
-export const triageOnly = new SequentialAgent({
+const triageSteps = [intakeAgent.clone(), triageAgent.clone(), policyAgent()]
+export const triageOnly = new Workflow({
   name: 'embrace_triage_eval',
-  subAgents: [intakeAgent.clone(), triageAgent.clone(), policyAgent()],
+  dynamicEntry: async (ctx) => {
+    for (const step of triageSteps) await ctx.runNode(step)
+  },
 })
 
-export const pipeline = new SequentialAgent({
+/** Drafts, checks, and rewrites once when the check flags the draft. */
+export async function draftLoop(ctx: NodeContext, drafter: BaseAgent, check: BaseAgent) {
+  for (let i = 0; i < DRAFT_TRIES; i++) {
+    await ctx.runNode(drafter, undefined, { runId: `draft-${i}` })
+    await ctx.runNode(check, undefined, { runId: `check-${i}` })
+    if (!(ctx.state.get('draft_check') as { rewrite?: boolean } | undefined)?.rewrite) break
+  }
+}
+
+const policy = policyAgent()
+const sopLookup = new SopLookupAgent({
+  name: 'sop_agent',
+  description: "Looks up the agency's SOP passages for the case.",
+})
+const draftCheck = new DraftCheckAgent({
+  name: 'draft_check_agent',
+  description: 'Runs the output guardrail on the draft.',
+})
+
+/** The report pipeline as an ADK Workflow: each step reads the session state the previous ones wrote. Media is read only
+ * when the report has attachments (text-only reports cost nothing extra), and a flagged draft is rewritten once. */
+export const pipeline = new Workflow({
   name: 'embrace_pipeline',
   description: 'Inbound complaint to routed ticket with a drafted reply.',
-  subAgents: [
-    new MediaAgent({ name: 'media_agent', description: 'Reads voice notes and photos.', subAgents: [mediaReader] }),
-    intakeAgent,
-    triageAgent,
-    policyAgent(),
-    new SopLookupAgent({ name: 'sop_agent', description: "Looks up the agency's SOP passages for the case." }),
-    new LoopAgent({
-      name: 'drafting_loop',
-      description: 'Drafts the reply and rewrites it once when the output guardrail flags it.',
-      maxIterations: DRAFT_TRIES,
-      subAgents: [
-        drafterAgent,
-        new DraftCheckAgent({ name: 'draft_check_agent', description: 'Runs the output guardrail on the draft.' }),
-      ],
-    }),
-  ],
+  dynamicEntry: async (ctx) => {
+    if (ctx.state.get('has_media')) await ctx.runNode(mediaReader)
+    for (const step of [intakeAgent, triageAgent, policy, sopLookup]) await ctx.runNode(step)
+    await draftLoop(ctx, drafterAgent, draftCheck)
+  },
 })
 
 /** Agents whose state output becomes a trace step, and the state key they write. */

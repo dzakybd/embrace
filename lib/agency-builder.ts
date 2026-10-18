@@ -56,8 +56,6 @@ export const NewAgency = z.object({
     .optional(),
   confidence_floor: z.number().min(0.5).max(0.95).optional(),
   keep_template_docs: z.boolean().default(true),
-  /** Editing: source files of the current documents to drop. */
-  drop_docs: z.array(z.string().max(200)).max(50).default([]),
   docs: z
     .array(
       z.object({
@@ -86,10 +84,6 @@ export async function pdfUnits(b64: string): Promise<{ loc: string; text: string
   return text.map((t, i) => ({ loc: `p. ${i + 1}`, text: t }))
 }
 
-/**
- * Returns the stored agency, or an error message the form can show. With `existing` (editing), ids of categories,
- * teams and staff are kept so open cases, saved sign-ins and eval labels still match; its documents are the base.
- */
 /** The template's procedures that still apply to at least one of the agency's categories. */
 function keptProcedures(procedures: Procedure[], ids: string[]): Procedure[] {
   return procedures
@@ -97,8 +91,10 @@ function keptProcedures(procedures: Procedure[], ids: string[]): Procedure[] {
     .filter((p) => p.categories.length > 0)
 }
 
-export async function buildAgency(input: NewAgency, existing?: Agency): Promise<StoredAgency | string> {
-  const base = existing ?? AGENCIES[input.template]
+/** A new agency built from the Create agency form and its template, or an error message the form can show. Once
+ * created, each part is edited on its own (lib/agency-setup.ts, procedures, resources, knowledge base). */
+export async function buildAgency(input: NewAgency): Promise<StoredAgency | string> {
+  const base = AGENCIES[input.template]
   if (!base) return 'Unknown template'
   const roles = new Set(input.team.map((m) => m.role))
   if (!roles.has('leader') || !roles.has('supervisor') || !roles.has('officer')) {
@@ -106,9 +102,8 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
   }
 
   const queues: Record<string, string> = {}
-  const known = Object.fromEntries(Object.entries(existing?.queues ?? {}).map(([id, n]) => [n, id]))
   const queueId = (team: string) => {
-    const id = known[team] ?? slug(team)
+    const id = slug(team)
     queues[id] ??= team
     return id
   }
@@ -138,11 +133,9 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
   const passages: Passage[] = []
   // Documents shipped with a built-in agency are kept by reference; other agencies' documents are copied.
   const template = input.keep_template_docs && isShippedDocs(base.id) ? base.id : undefined
-  const keepShorts = sourcesFor(base.id)
-    .filter((s) => !input.drop_docs.includes(s.file))
-    .map((s) => s.short)
+  const keepShorts = sourcesFor(base.id).map((s) => s.short)
   if (input.keep_template_docs && !template) {
-    const keep = sourcesFor(base.id).filter((s) => !input.drop_docs.includes(s.file))
+    const keep = sourcesFor(base.id)
     const shorts = new Set(keep.map((s) => s.short))
     sources.push(...keep)
     passages.push(...indexFor(base.id).passages.filter((p) => shorts.has(p.doc)))
@@ -170,14 +163,12 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
   if (passages.length > 700) return 'Documents are too long for the demo (about 600 pages of text at most)'
 
   const agency: Agency = {
-    id: existing?.id ?? `${slug(input.short_name)}_${randomBytes(2).toString('hex')}`,
+    id: `${slug(input.short_name)}_${randomBytes(2).toString('hex')}`,
     code:
-      existing?.code ??
-      (input.short_name
+      input.short_name
         .replace(/[^A-Za-z0-9]/g, '')
         .slice(0, 5)
-        .toUpperCase() ||
-        'AG'),
+        .toUpperCase() || 'AG',
     name: input.name,
     short_name: input.short_name,
     country: input.country,
@@ -199,8 +190,6 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     emergency_line: input.emergency_line,
     reply_signature: input.reply_signature,
     team,
-    ...(existing?.telegram_bot ? { telegram_bot: existing.telegram_bot } : {}),
-    ...(existing?.logo ? { logo: existing.logo } : {}),
     ...(base.required_details ? { required_details: base.required_details } : {}),
     ...(base.procedures
       ? {
@@ -213,9 +202,7 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     // A copied agency keeps the template's hotlines and partners; its own channels and social media are its own.
     ...(base.resources
       ? {
-          resources: existing
-            ? base.resources
-            : base.resources.filter((r) => r.kind === 'hotline' || r.kind === 'partner'),
+          resources: base.resources.filter((r) => r.kind === 'hotline' || r.kind === 'partner'),
         }
       : {}),
   }

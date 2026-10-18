@@ -8,7 +8,7 @@ import { loadKnowledge, markdownUnits, passagesFor, type KnowledgeDoc, type Sour
 import { STORE, now } from './store'
 
 /** Kinds of document, for the badge and the filter. Not only SOPs: laws, court decisions, guidelines, templates. */
-export const KNOWLEDGE_KINDS = [
+const KNOWLEDGE_KINDS = [
   'law',
   'regulation',
   'sop',

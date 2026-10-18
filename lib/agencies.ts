@@ -104,15 +104,8 @@ const SHIPPED: Record<string, Agency> = Object.fromEntries(BUILT_IN.map((a) => [
 
 /** Built-in agencies; custom agencies are merged in by loadAgencies(). */
 export const AGENCIES: Record<string, Agency> = Object.fromEntries(BUILT_IN.map((a) => [a.id, a]))
-export const DEFAULT_AGENCY = 'dinsos_demak'
-
 export function getAgency(id: string): Agency | undefined {
   return AGENCIES[id]
-}
-
-/** Every agency citizens and staff can use. */
-export function liveAgencies(): Agency[] {
-  return Object.values(AGENCIES)
 }
 
 /** The agency as shipped in agencies/<id>/, before any edits made in the app. */

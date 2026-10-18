@@ -8,7 +8,7 @@ import { Card, Citations, Icon } from '../ui'
 import { useLang } from '../Lang'
 import { useStaff } from './StaffProvider'
 
-export const KIND: Record<string, string> = {
+const KIND: Record<string, string> = {
   law: 'Law',
   regulation: 'Regulation',
   sop: 'SOP',

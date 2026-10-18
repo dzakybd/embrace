@@ -186,6 +186,16 @@ function Editor() {
 
       {tab === 'types' && cat && (
         <div className="ct-grid">
+          <label className="field ct-pick">
+            <span>{t('Case type')}</span>
+            <select value={cat.id} onChange={(e) => setSel(e.target.value)}>
+              {rules.categories.map((c) => (
+                <option key={c.id} value={c.id}>
+                  {label(c).split(' (')[0]}
+                </option>
+              ))}
+            </select>
+          </label>
           <nav className="ct-list" aria-label={t('Case types')}>
             {rules.categories.map((c) => {
               const lv = levelOf(c)

@@ -160,7 +160,6 @@ export default function AgencyForm() {
         sla_hours: f.sla,
         confidence_floor: f.floor,
         keep_template_docs: keepDocs,
-        drop_docs: [],
         docs: allDocs.map(({ title, text, pdf_base64 }) => ({ title, text, pdf_base64 })),
       }
       const created = await api.createAgency(body)

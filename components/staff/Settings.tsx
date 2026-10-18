@@ -100,24 +100,27 @@ function Editor() {
       <span className="set-l">{t(label)}</span>
       {[en, id].map((k, n) =>
         k ? (
-          opts.long ? (
-            <textarea
-              key={k}
-              rows={2}
-              value={profile[k]}
-              aria-label={`${t(label)} (${n ? t('Indonesian') : t('English')})`}
-              placeholder={n ? t('Indonesian') : opts.ph}
-              onChange={(e) => setP({ [k]: e.target.value })}
-            />
-          ) : (
-            <input
-              key={k}
-              value={profile[k]}
-              aria-label={`${t(label)} (${n ? t('Indonesian') : t('English')})`}
-              placeholder={n ? t('Indonesian') : opts.ph}
-              onChange={(e) => setP({ [k]: e.target.value })}
-            />
-          )
+          <span key={k} className="set-in">
+            <span className="set-lang" aria-hidden="true">
+              {n ? 'ID' : 'EN'}
+            </span>
+            {opts.long ? (
+              <textarea
+                rows={2}
+                value={profile[k]}
+                aria-label={`${t(label)} (${n ? t('Indonesian') : t('English')})`}
+                placeholder={n ? t('Indonesian') : opts.ph}
+                onChange={(e) => setP({ [k]: e.target.value })}
+              />
+            ) : (
+              <input
+                value={profile[k]}
+                aria-label={`${t(label)} (${n ? t('Indonesian') : t('English')})`}
+                placeholder={n ? t('Indonesian') : opts.ph}
+                onChange={(e) => setP({ [k]: e.target.value })}
+              />
+            )}
+          </span>
         ) : (
           <span key="none" />
         ),

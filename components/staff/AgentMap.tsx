@@ -53,7 +53,7 @@ const LANES = [
 const col = (c: number) => 150 + c * 200
 const lane = (l: number) => l * LANE_H + 28
 
-/** The report pipeline as ADK runs it (lib/agents/pipeline.ts and lib/service.ts): a SequentialAgent whose agents
+/** The report pipeline as ADK runs it (lib/agents/pipeline.ts and lib/service.ts): a Workflow whose agents
  * pass their output to the next through session state, code guardrails and rules around them, people at the end. */
 const PIPELINE: Agent[] = [
   {
@@ -163,7 +163,7 @@ const PIPELINE: Agent[] = [
     id: 'drafter_agent',
     kind: 'llm',
     label: 'Reply drafter',
-    does: 'Drafts the reply in the citizen’s language; an ADK LoopAgent rewrites it once if the output guardrail flags it',
+    does: 'Drafts the reply in the citizen’s language; the ADK Workflow rewrites it once if the output guardrail flags it',
     input: 'Report (or its restatement if flagged), triage, routing, passages, procedure, contacts, check findings',
     output: 'Reply with citations, next step for the caseworker',
     x: col(5),
@@ -173,7 +173,7 @@ const PIPELINE: Agent[] = [
     id: 'output_guard',
     kind: 'code',
     label: 'Output guardrail',
-    does: 'Checks the draft before staff see it; a flagged draft goes back to the drafter once (LoopAgent)',
+    does: 'Checks the draft before staff see it; a flagged draft goes back to the drafter once',
     input: 'Draft reply',
     output: 'Warnings: personal data, links, citations, promises, leaked instructions',
     x: col(6),
@@ -378,7 +378,15 @@ const PIPE_LINKS: Link[] = [
     toSide: 'l',
   },
   { id: 'draft', from: 'drafter_agent', to: 'output_guard', label: 'draft with citations', fromSide: 'r', toSide: 'b' },
-  { id: 'rewrite', from: 'output_guard', to: 'drafter_agent', label: 'findings: rewrite once', fromSide: 'l', toSide: 't', optional: true },
+  {
+    id: 'rewrite',
+    from: 'output_guard',
+    to: 'drafter_agent',
+    label: 'findings: rewrite once',
+    fromSide: 'l',
+    toSide: 't',
+    optional: true,
+  },
   { id: 'review', from: 'output_guard', to: 'human', label: 'draft and warnings', fromSide: 't', toSide: 'b' },
   { id: 'delegate', from: 'supervisor', to: 'human', label: 'delegates', fromSide: 'r', toSide: 'l' },
   { id: 'reply', from: 'human', to: 'report', label: 'approved reply', fromSide: 't', toSide: 't' },
@@ -782,7 +790,7 @@ const TOOLS: { name: string; kind: string; by: string; what: string }[] = [
     name: 'Output guardrail (checkDraft)',
     kind: 'Code',
     by: 'After the drafter',
-    what: 'Finds personal data, links, wrong citations, a missing ticket number, promised outcomes and leaked instructions. Inside an ADK LoopAgent: a flagged draft is rewritten once with the findings; what remains is shown to the caseworker.',
+    what: 'Finds personal data, links, wrong citations, a missing ticket number, promised outcomes and leaked instructions. In the ADK Workflow: a flagged draft is rewritten once with the findings; what remains is shown to the caseworker.',
   },
   {
     name: 'Case events (Pub/Sub, Cloud Function)',
@@ -942,7 +950,7 @@ export function AgentMap({ models, stats }: { models: Record<string, string>; st
         <p className="muted small">
           {view === 'pipeline'
             ? t(
-                'Every report runs one ADK SequentialAgent: each Gemini agent reads the state the previous ones wrote, with code guardrails and rules around them and a person at the end. Pick a box to see what goes in and out.',
+                'Every report runs one ADK Workflow: each Gemini agent reads the state the previous ones wrote, with code guardrails and rules around them and a person at the end. Pick a box to see what goes in and out.',
               )
             : view === 'staff'
               ? t(
