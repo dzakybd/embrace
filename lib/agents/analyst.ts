@@ -3,6 +3,7 @@ import { FunctionTool, LlmAgent, type Context } from '@google/adk'
 import { z } from 'zod'
 import { getAgency } from '../agencies'
 import { clusters, overview } from '../analytics'
+import { SAFETY } from '../guardrails'
 import { STORE } from '../store'
 import { CFG, MODELS, gemini } from './models'
 
@@ -58,7 +59,7 @@ const searchTickets = new FunctionTool({
 export const analystAgent = new LlmAgent({
   name: 'analyst_agent',
   model: gemini(MODELS.analyst),
-  generateContentConfig: CFG,
+  generateContentConfig: { ...CFG, safetySettings: SAFETY.reading },
   description: 'Answers questions about complaint trends using live aggregates.',
   instruction: `You are the data analyst for {agency_name}'s complaint desk, talking to the agency's leadership.
 Always call tools before answering; never guess numbers. Answer in the language of the question

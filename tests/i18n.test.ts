@@ -3,7 +3,7 @@ import { describe, expect, it } from 'vitest'
 import { ID } from '@/lib/i18n-id'
 import { translator } from '@/lib/i18n'
 
-const files = [...globSync('app/**/*.tsx'), ...globSync('components/**/*.tsx'), 'lib/bot.ts'].filter((f) => !f.endsWith('layout.tsx'))
+const files = [...globSync('app/**/*.tsx'), ...globSync('components/**/*.tsx'), 'lib/bot.ts', 'lib/details.ts'].filter((f) => !f.endsWith('layout.tsx'))
 const src = files.map((f) => [f, readFileSync(f, 'utf8')] as const)
 
 // Object-literal labels that reach t() through a variable (nav items, filters, statuses, agent names...).

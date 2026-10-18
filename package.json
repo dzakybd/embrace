@@ -1,6 +1,7 @@
 {
   "name": "embrace",
   "private": true,
+  "license": "UNLICENSED",
   "version": "0.1.0",
   "type": "module",
   "scripts": {
@@ -14,6 +15,8 @@
     "eval": "tsx scripts/eval-triage.ts"
   },
   "dependencies": {
+    "@google-cloud/opentelemetry-cloud-monitoring-exporter": "^0.21.0",
+    "@google-cloud/opentelemetry-cloud-trace-exporter": "^3.1.0",
     "@google-cloud/pubsub": "^6.3.0",
     "@google/adk": "^2.3.0",
     "@google/genai": "^2.30.0",

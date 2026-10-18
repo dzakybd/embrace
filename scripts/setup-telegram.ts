@@ -8,7 +8,7 @@ import { call } from '../lib/telegram'
 
 const secret = process.env.TELEGRAM_WEBHOOK_SECRET?.trim()
 if (!secret) throw new Error('TELEGRAM_WEBHOOK_SECRET is not set')
-const photo = readFileSync(new URL('../docs/brand/bot-avatar.jpg', import.meta.url))
+const photo = readFileSync(new URL('./assets/bot-avatar.jpg', import.meta.url))
 
 for (const a of liveAgencies()) {
   const token = process.env[`TELEGRAM_BOT_TOKEN_${a.id.toUpperCase()}`]?.trim()

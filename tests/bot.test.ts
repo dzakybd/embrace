@@ -83,6 +83,21 @@ describe('telegram bot gatekeeping (no AI)', () => {
     expect(sent.at(-1)).toContain('tell us what happened')
   })
 
+  it('asks the missing details one by one, then hands the answers to the agents', async () => {
+    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: 'details', pending: ['location', 'incident_time'], answers: {} })
+    expect(await handleUpdate(msg('Desa Bedono, Sayung'))).toBeNull()
+    expect(sent.at(-1)).toContain('When did this happen')
+    const job = await handleUpdate(msg('since this morning, still flooding'))
+    expect(job).toMatchObject({ details: { ticket_id: 'DMK-TEST', answers: { location: 'Desa Bedono, Sayung', incident_time: 'since this morning, still flooding' } } })
+    expect((await STORE.getChat(key(chat)))?.awaiting).toBeNull()
+  })
+
+  it('lets the citizen skip the remaining questions', async () => {
+    await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: 'details', pending: ['incident_time'], answers: { location: 'Sayung' } })
+    const job = await handleUpdate({ update_id: nextId++, callback_query: { id: 'q', data: 'skip', from: { id: chat }, message: { message_id: 1, chat: { id: chat, type: 'private' }, date: 0 } } })
+    expect(job).toMatchObject({ details: { answers: { location: 'Sayung' } } })
+  })
+
   it('adds messages after a report to the open case instead of running AI again', async () => {
     await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: null })
     expect(await handleUpdate(msg('Also, my card number ends in 1234 and the shop is on Maple Street.'))).toBeNull()

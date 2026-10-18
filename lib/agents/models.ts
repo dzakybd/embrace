@@ -11,6 +11,19 @@ export const MODELS = {
   drafter: env('EMBRACE_DRAFTER_MODEL', 'gemini-3.1-flash-lite'),
   analyst: env('EMBRACE_ANALYST_MODEL', 'gemini-3.1-flash-lite'),
 }
+export type ModelKey = keyof typeof MODELS
+
+/** Models an agency may pick in the AI control tower. Anything else is ignored. */
+export const MODEL_CHOICES = ['gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.5-flash']
+
+/** ADK agent name -> the model setting it uses. */
+export const AGENT_MODEL_KEY: Record<string, ModelKey> = {
+  media_reader: 'media',
+  intake_agent: 'intake',
+  triage_agent: 'triage',
+  drafter_agent: 'drafter',
+  analyst_agent: 'analyst',
+}
 
 /** Uses GOOGLE_GENAI_API_KEY explicitly, so stray GOOGLE_API_KEY / GEMINI_API_KEY in a shell never win. */
 export function gemini(model: string) {

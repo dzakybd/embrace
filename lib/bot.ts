@@ -4,7 +4,8 @@ import { getAgency, loadAgencies } from './agencies'
 import { publicUrl, telegramBot, type TelegramBot } from './channels'
 import { localize, translator, type Lang } from './i18n'
 import { publishTo, pubsubOn } from './events'
-import { addFollowup, submit } from './service'
+import { QUESTION, type Slot } from './details'
+import { addDetails, addFollowup, submit } from './service'
 import { STORE, now, type ChatState } from './store'
 import { answerCallback, download, esc, send, typing, type Button, type TgMessage, type TgUpdate } from './telegram'
 
@@ -29,6 +30,8 @@ export interface ReportJob {
   text: string
   media: { file_id: string; mime: string }[]
   no_ai?: string
+  /** Answers to the missing-detail questions, to join the case and re-run the agents. */
+  details?: { ticket_id: string; answers: Record<string, string> }
 }
 
 /** One conversation with an agency's bot: the same person chatting with two agencies has two separate states. */
@@ -85,6 +88,23 @@ async function emergency(c: Chat) {
   await c.say(c.t('If anyone is in danger right now, call {line}. Then tell us what happened here; urgent reports alert a supervisor at once.', { line: esc(c.agency.emergency_line) }))
 }
 
+/** Asks one missing detail, with a way to skip the rest. */
+async function askDetail(c: Chat, slot: string, first: boolean) {
+  const lead = first ? c.t('To help the team act faster:') + ' ' : ''
+  await c.say(lead + c.t(QUESTION[slot as Slot] ?? slot), [[{ text: c.t('Skip'), callback_data: 'skip' }]])
+}
+
+/** Ends the questions; the answers given so far go to the agents as a job. */
+async function finishDetails(c: Chat, state: ChatState, updateId: number, answers: Record<string, string>): Promise<ReportJob | null> {
+  await c.set({ awaiting: null, pending: [], answers: {} })
+  if (!state.open_ticket || !Object.keys(answers).length) {
+    await c.say(c.t('No problem. Anything you send here in the next 24 hours is added to your report.'))
+    return null
+  }
+  await c.say(c.t('Thank you. Your answers were added to report <b>{id}</b> and the team is updating the case.', { id: state.open_ticket }))
+  return { update_id: updateId, chat_id: c.id, agency_id: c.bot.agency_id, text: '', media: [], details: { ticket_id: state.open_ticket, answers } }
+}
+
 /** Switches the chat's language and greets again in it. */
 async function setLang(c: Chat, lang: Lang) {
   c.lang = lang
@@ -123,6 +143,7 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
     } else if (data === 'lang:en' || data === 'lang:id') await setLang(c, data === 'lang:id' ? 'id' : 'en')
     else if (data === 'track') await track(c, state)
     else if (data === 'emergency') await emergency(c)
+    else if (data === 'skip' && state.awaiting === 'details') return finishDetails(c, state, u.update_id, state.answers ?? {})
     return null
   }
 
@@ -167,6 +188,18 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
   const agency = c.agency
   const lowered = text.toLowerCase()
   if ([...DANGER, ...agency.escalation.keywords].some((k) => lowered.includes(k))) await emergency(c)
+
+  // Multi-turn intake: the answer to the pending question; the last answer re-runs the agents on the fuller report.
+  if (state.awaiting === 'details' && state.open_ticket && state.pending?.length && text) {
+    const [slot, ...rest] = state.pending
+    const answers = { ...state.answers, [slot]: text.slice(0, 300) }
+    if (rest.length) {
+      await c.set({ pending: rest, answers })
+      await askDetail(c, rest[0], false)
+      return null
+    }
+    return finishDetails(c, state, u.update_id, answers)
+  }
 
   // A message after a report joins that case for 24 hours, unless the citizen started a new report.
   if (state.open_ticket && state.awaiting !== 'report' && state.open_since && Date.now() - Date.parse(state.open_since) < FOLLOWUP_WINDOW_MS) {
@@ -213,6 +246,15 @@ export async function processReport(job: ReportJob) {
   if (!bot) return
   const c = new Chat(bot, job.chat_id)
   await c.open()
+  if (job.details) {
+    const before = await STORE.get(job.details.ticket_id)
+    if (!before || before.telegram_chat_id !== job.chat_id) return
+    const t = await addDetails(job.details.ticket_id, job.details.answers)
+    if (t?.policy?.route === 'escalated' && before.policy?.route !== 'escalated') {
+      await c.say(`<b>${c.t('Marked urgent: a supervisor has been alerted now.')}</b> ${c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) })}`)
+    }
+    return
+  }
   const media: { mime: string; data: string }[] = []
   for (const f of job.media) {
     const data = await download(bot.token, f.file_id).catch(() => null)
@@ -232,4 +274,9 @@ export async function processReport(job: ReportJob) {
       c.t('It is with the <b>{team}</b>. You will hear back within {h} hours; a caseworker reviews every reply before it is sent.', { team: esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue), h: ticket.policy.sla_hours }) + '\n\n' +
       c.t('Anything you send here in the next 24 hours is added to this report.'),
     [[{ text: c.t('Track this report'), url: `${publicUrl()}/track/${ticket.id}` }], [{ text: c.t('New report'), callback_data: 'new' }]])
+  const missing = ticket.details?.missing ?? []
+  if (missing.length) {
+    await c.set({ awaiting: 'details', pending: missing, answers: {} })
+    await askDetail(c, missing[0], true)
+  }
 }

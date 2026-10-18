@@ -16,7 +16,6 @@ export interface Agency {
   description?: string
   reply_signature: string
   escalation: { always_escalate_categories: string[]; keywords: string[]; escalate_flags: string[]; confidence_floor?: number }
-  template: boolean
   custom: boolean
   edited: boolean
   telegram_bot: string | null
@@ -121,6 +120,10 @@ export interface TraceStep {
   ms: number
   output: Record<string, unknown> | Citation[]
   fallback?: string
+  model?: string
+  tokens_in?: number
+  tokens_out?: number
+  rerun?: boolean
 }
 export interface SopSource {
   file: string
@@ -153,6 +156,8 @@ export interface Ticket {
   draft?: Draft | null
   sop?: Citation[]
   sent_reply?: string
+  guard?: { injection: string[]; draft: string[] }
+  details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean
@@ -218,6 +223,9 @@ export const api = {
   tickets: (t: string, status?: string) =>
     fetch(`/api/agencies/${t}/tickets${status ? `?status=${status}` : ''}`).then(json<Row[]>),
   ticket: (id: string) => fetch(`/api/tickets/${id}`).then(json<Ticket>),
+  details: (id: string, answers: Record<string, string>) =>
+    fetch(`/api/tickets/${id}/details`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ answers }) })
+      .then(json<Pick<Ticket, 'id' | 'status' | 'details'>>),
   act: (id: string, body: { action: string; officer?: string; note?: string; reply?: string; queue?: string; assignee?: string }) =>
     fetch(`/api/tickets/${id}/actions`, {
       method: 'POST',
@@ -236,6 +244,9 @@ export const api = {
     fetch(`/api/agencies/${t}/sop?q=${encodeURIComponent(q)}`).then(
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,
     ),
+  ai: (t: string) => fetch(`/api/agencies/${t}/ai`).then(json<import('./staff/AiTower').Tower>),
+  setAiModels: (t: string, models: Record<string, string>, by: string) =>
+    fetch(`/api/agencies/${t}/ai`, { method: 'PATCH', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ models, by }) }).then(json<{ ok: boolean }>),
   notifications: (t: string, member: string) => fetch(`/api/agencies/${t}/notifications?for=${member}`).then(json<Notification[]>),
   createAgency: (body: NewAgency) =>
     fetch('/api/agencies', { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),

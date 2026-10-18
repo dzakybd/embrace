@@ -8,7 +8,7 @@ import { STORE } from '@/lib/store'
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
   const agency = await agencyById(id)
-  if (!agency || agency.template) return error(404, 'unknown agency')
+  if (!agency) return error(404, 'unknown agency')
   const limited = rateLimit(req, 'agency-edit', 20)
   if (limited) return limited
   const parsed = NewAgency.safeParse(await req.json().catch(() => null))

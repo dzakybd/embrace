@@ -31,6 +31,8 @@ export interface Store {
 
 export interface Integrations {
   telegram?: { token: string; username: string; secret: string; connected_at: string } | null
+  /** Models chosen in the AI control tower, per model setting (see lib/agents/models.ts). */
+  ai?: { models: Record<string, string>; updated_by: string; updated_at: string } | null
 }
 
 /** Conversation state of one Telegram chat. */
@@ -38,7 +40,10 @@ export interface ChatState {
   agency_id: string
   open_ticket?: string | null
   open_since?: string | null
-  awaiting?: 'report' | null
+  awaiting?: 'report' | 'details' | null
+  /** Missing-detail questions still to ask, and the answers so far (multi-turn intake). */
+  pending?: string[]
+  answers?: Record<string, string>
   warned_at?: string | null
   /** Language the bot speaks in this chat; starts from the Telegram app language. */
   lang?: 'en' | 'id'

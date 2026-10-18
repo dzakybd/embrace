@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { api, type Agency, type Citation, type TeamMember, type Ticket, type TraceStep } from '../api'
 import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
+import { LABEL, type Slot } from '@/lib/details'
 import { useT } from '../Lang'
 import { useStaff } from './StaffProvider'
 
@@ -83,6 +84,9 @@ export default function Case({ id }: { id: string }) {
           </span>
         </div>
       )}
+      {!!t.guard?.injection.length && (
+        <div className="banner warn"><Icon name="shield" /><span>{tr('Input guardrail: this report contains instructions aimed at the AI, so a person checks its triage.')} <code>{t.guard.injection[0]}</code></span></div>
+      )}
       <div className="tabs" role="tablist">
         {TABS.map((x) => (
           <button key={x.id} role="tab" aria-selected={tab === x.id} className={tab === x.id ? 'on' : ''} onClick={() => setTab(x.id)}>{tr(x.label)}</button>
@@ -146,6 +150,14 @@ function Report({ t }: { t: Ticket }) {
       {t.followups?.map((f, i) => (
         <p key={i} className="followup"><Icon name="chat" size={13} /> <b>{tr('Follow-up')} {new Date(f.at).toLocaleString()}:</b> {f.text}</p>
       ))}
+      {t.details && Object.keys(t.details.answers).length > 0 && (
+        <div className="followup"><Icon name="spark" size={13} /> <b>{tr('Details added by the citizen')}:</b>
+          <ul className="reasons">{Object.entries(t.details.answers).map(([k, v]) => <li key={k}>{tr(LABEL[k as Slot] ?? k)}: {v}</li>)}</ul>
+        </div>
+      )}
+      {t.details && !Object.keys(t.details.answers).length && t.details.missing.length > 0 && (
+        <p className="muted small"><Icon name="clock" size={12} /> {tr('Asked the citizen for:')} {t.details.missing.map((k) => tr(LABEL[k as Slot] ?? k)).join(', ')}</p>
+      )}
       {t.media?.transcript && <p className="media-out"><Icon name="mic" size={13} /> <b>{tr('Voice note')}:</b> “{t.media.transcript}”</p>}
       {t.media?.photo_description && <p className="media-out"><Icon name="image" size={13} /> <b>{tr('Photo:')}</b> {t.media.photo_description}</p>}
       {!reveal && t.intake?.pii_types?.length ? (
@@ -170,6 +182,9 @@ function Reply({ t, busy, act, readOnly }: { t: Ticket; busy: boolean; act: (a: 
         <>
           <p className="muted small"><Icon name="spark" size={13} /> {tr('Drafted by AI from the agency SOP. Edit freely; nothing is sent until you approve.')}
             {t.telegram_chat_id && <> {tr('Approving sends it to the citizen’s Telegram chat.')}</>}</p>
+          {!!t.guard?.draft.length && (
+            <div className="banner warn"><Icon name="shield" /><span><b>{tr('Output guardrail')}:</b> {t.guard.draft.map((w) => tr(w)).join(' · ')}</span></div>
+          )}
           <textarea rows={9} value={reply} onChange={(e) => setReply(e.target.value)} aria-label={tr('Reply draft')} readOnly={readOnly} />
           {t.sop && t.sop.length > 0 && (
             <details className="sources"><summary>{tr('Sources cited in this draft ({n})', { n: t.sop.length })}</summary><Citations items={t.sop} /></details>
@@ -228,11 +243,13 @@ function Trace({ t }: { t: Ticket }) {
         <Card title={tr('Why this case is here')} icon="spark">
           {t.trace.length === 0 && t.policy && <p className="muted">{tr('Historical case: routed by the policy rules from its labels.')}</p>}
           <ol className="trace">
-            {t.trace.map((s) => (
-              <li key={s.agent} className={s.kind}>
+            {t.trace.map((s, i) => (
+              <li key={`${s.agent}-${i}`} className={s.kind}>
                 <div className="trace-h">
                   <b>{tr(AGENT_META[s.agent]?.label ?? s.agent)}</b>
-                  <span className="muted">{s.kind === 'rules' ? tr('deterministic rules') : s.kind === 'search' ? tr('SOP search, no AI tokens') : `Gemini · ${(s.ms / 1000).toFixed(1)} s`}</span>
+                  {s.rerun && <span className="tag">{tr('after details')}</span>}
+                  <span className="muted">{s.kind === 'rules' ? tr('deterministic rules') : s.kind === 'search' ? tr('SOP search, no AI tokens')
+                    : `${s.model ?? 'Gemini'} · ${(s.ms / 1000).toFixed(1)} s${s.tokens_in != null ? ` · ${s.tokens_in} → ${s.tokens_out} ${tr('tokens')}` : ''}`}</span>
                 </div>
                 <TraceBody agent={s.agent} out={s.output} />
               </li>

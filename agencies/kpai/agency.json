@@ -105,6 +105,7 @@
   },
   "emergency_line": "110 (police) or SAPA 129 (WhatsApp 08111-129-129); KPAI complaints 0811-1002-7727",
   "emergency_line_id": "110 (polisi) atau SAPA 129 (WhatsApp 08111-129-129); pengaduan KPAI 0811-1002-7727",
+  "required_details": ["location", "victim_age", "incident_time"],
   "reply_signature": "Complaints Unit, Indonesian Child Protection Commission (KPAI)",
   "team": [
     {

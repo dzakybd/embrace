@@ -93,6 +93,12 @@ export interface TraceStep {
   ms: number
   output: unknown
   fallback?: string
+  /** Model calls only: the model that answered and its token usage (from the governance plugin). */
+  model?: string
+  tokens_in?: number
+  tokens_out?: number
+  /** Set on steps of the re-run after the citizen added details. */
+  rerun?: boolean
 }
 
 export interface HistoryItem {
@@ -129,6 +135,10 @@ export interface Ticket {
   /** Set when the report came from Telegram; approved replies are sent back to this chat. */
   telegram_chat_id?: string | null
   followups?: { at: string; text: string }[]
+  /** Guardrail findings: instructions aimed at the AI in the report, problems in the drafted reply. */
+  guard?: { injection: string[]; draft: string[] }
+  /** Details the agency needs that the report lacks, and the citizen's answers once given. */
+  details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean

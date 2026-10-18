@@ -24,6 +24,7 @@ const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
   { href: '/staff/team', label: 'Team', icon: 'user', roles: ['leader', 'supervisor'] },
   { href: '/staff/knowledge', label: 'Knowledge', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/integrations', label: 'Channels', icon: 'chat', roles: ['leader', 'supervisor'] },
+  { href: '/staff/ai', label: 'AI control', icon: 'shield', roles: ['leader', 'supervisor'] },
   { href: '/staff/settings', label: 'Settings', icon: 'rules', roles: ['leader'] },
 ]
 

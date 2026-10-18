@@ -28,6 +28,7 @@ const STAFF = [
 const MANAGE = [
   { as: 'supervisor', page: 'integrations', icon: 'chat', title: 'Channels', body: 'Telegram bot token, WhatsApp, email and more' },
   { as: 'leader', page: 'settings', icon: 'rules', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
+  { as: 'leader', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
 ]
 
 const FLOW = [
@@ -40,7 +41,7 @@ const FLOW = [
 /** Agency home: the citizen's ways in, the staff workspace by role, and what the agency handles. */
 export default async function AgencyPage({ params }: { params: Promise<{ id: string }> }) {
   const found = await agencyById((await params).id)
-  if (!found || found.template) notFound()
+  if (!found) notFound()
   const lang = await getLang()
   const t = translator(lang)
   const agency = localize(found, lang)
@@ -105,7 +106,7 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
         </section>
 
         <h2 className="pick-h">{t('Manage this agency')}</h2>
-        <section className="hub-grid two">
+        <section className="hub-grid three">
           {MANAGE.map((s) => (
             <Link key={s.page} href={`/staff/${s.page}?agency=${agency.id}&as=${s.as}`} className="role-card staff-tile">
               <span className="entry-ic small"><Icon name={s.icon} size={22} /></span>

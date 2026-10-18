@@ -2,8 +2,6 @@
 // plus agencies created in the app, which live in the store and are loaded on demand.
 import dinsosDemak from '@/agencies/dinsos_demak/agency.json'
 import kpai from '@/agencies/kpai/agency.json'
-import socialServices from '@/agencies/social_services/agency.json'
-import childProtection from '@/agencies/child_protection/agency.json'
 import type { Urgency } from './schemas'
 import { registerDocs, resetDocs, type Passage, type Source } from './sop'
 import { STORE } from './store'
@@ -31,8 +29,6 @@ export interface Agency {
   emergency_line: string
   reply_signature: string
   team: TeamMember[]
-  /** Starting point for new agencies only, not a live desk. */
-  template?: boolean
   /** Created in the app (stored), not shipped in agencies/. */
   custom?: boolean
   /** A built-in agency whose settings were edited in the app (stored as an override). */
@@ -44,6 +40,8 @@ export interface Agency {
   short_name_id?: string
   description_id?: string
   emergency_line_id?: string
+  /** Details a report needs before the agency can act (lib/details.ts); the bot and form ask for missing ones. */
+  required_details?: string[]
   /** Public path of the agency's emblem, shown on its cards and home. */
   logo?: string | null
 }
@@ -63,10 +61,10 @@ export interface StoredAgency extends Agency {
   override?: boolean
 }
 
-const BUILT_IN = [dinsosDemak, kpai, socialServices, childProtection] as Agency[]
+const BUILT_IN = [dinsosDemak, kpai] as Agency[]
 const SHIPPED: Record<string, Agency> = Object.fromEntries(BUILT_IN.map((a) => [a.id, a]))
 
-/** Live agencies plus templates; custom agencies are merged in by loadAgencies(). */
+/** Built-in agencies; custom agencies are merged in by loadAgencies(). */
 export const AGENCIES: Record<string, Agency> = Object.fromEntries(BUILT_IN.map((a) => [a.id, a]))
 export const DEFAULT_AGENCY = 'dinsos_demak'
 
@@ -74,9 +72,9 @@ export function getAgency(id: string): Agency | undefined {
   return AGENCIES[id]
 }
 
-/** Agencies citizens and staff can use (templates excluded). */
+/** Every agency citizens and staff can use. */
 export function liveAgencies(): Agency[] {
-  return Object.values(AGENCIES).filter((a) => !a.template)
+  return Object.values(AGENCIES)
 }
 
 /** The agency as shipped in agencies/<id>/, before any edits made in the app. */
@@ -104,7 +102,7 @@ export async function loadAgencies(force = false): Promise<void> {
       }
       for (const { docs, override, ...a } of stored) {
         if (override && !SHIPPED[a.id]) continue
-        AGENCIES[a.id] = override ? { ...a, template: SHIPPED[a.id].template, edited: true } : { ...a, custom: true }
+        AGENCIES[a.id] = override ? { ...a, edited: true } : { ...a, custom: true }
         registerDocs(a.id, docs ?? { sources: [], passages: [] })
       }
       loadedAt = Date.now()
@@ -136,11 +134,11 @@ export function taxonomyText(a: Agency): string {
 
 /** What the browser needs to know about an agency. */
 export function publicAgency(a: Agency) {
-  const { id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, template, custom, edited } = a
+  const { id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, custom, edited } = a
   return {
     id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, telegram_bot: a.telegram_bot ?? null, logo: a.logo ?? null,
     name_id: a.name_id ?? '', short_name_id: a.short_name_id ?? '', description_id: a.description_id ?? '', emergency_line_id: a.emergency_line_id ?? '',
-    template: !!template, custom: !!custom, edited: !!edited, escalation_contact: a.escalation.escalation_contact,
+    custom: !!custom, edited: !!edited, escalation_contact: a.escalation.escalation_contact,
     escalation: a.escalation, reply_signature: a.reply_signature,
   }
 }

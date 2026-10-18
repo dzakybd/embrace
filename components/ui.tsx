@@ -100,6 +100,7 @@ export const AGENT_META: Record<string, { label: string; role: string }> = {
   policy_agent: { label: 'Policy rules', role: 'Deterministic escalation & routing' },
   sop_agent: { label: 'SOP lookup', role: 'Finds the agency’s procedure, no AI tokens' },
   drafter_agent: { label: 'Reply drafter', role: 'Reply in the citizen’s language, for approval' },
+  analyst_agent: { label: 'Analyst agent', role: 'Insights, weekly brief, questions' },
 }
 
 export function Citations({ items }: { items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[] }) {

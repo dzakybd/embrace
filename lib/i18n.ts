@@ -2,7 +2,6 @@
 import { ID } from './i18n-id'
 
 export type Lang = 'en' | 'id'
-export const LANGS: Lang[] = ['en', 'id']
 export const LANG_COOKIE = 'lang'
 
 export const asLang = (v: string | undefined | null): Lang => (v === 'id' ? 'id' : 'en')

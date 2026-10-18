@@ -3,8 +3,8 @@ import { AGENCIES } from '@/lib/agencies'
 import { decide } from '@/lib/policy'
 import type { Triage } from '@/lib/schemas'
 
-const cp = AGENCIES.child_protection
-const sa = AGENCIES.social_services
+const cp = AGENCIES.kpai
+const sa = AGENCIES.dinsos_demak
 const triage = (over: Partial<Triage>): Triage => ({
   category: 'education',
   urgency: 'normal',
@@ -71,7 +71,7 @@ describe('policy rules', () => {
   it('escalates a safety concern found in an attachment, and keywords in a transcript', () => {
     const media = { transcript: null, photo_description: 'bruises', safety_concern: true, safety_reason: 'visible bruises' }
     expect(decide(cp, 'see photo', triage({}), media).route).toBe('escalated')
-    const voice = { transcript: 'he said he will kill myself', photo_description: null, safety_concern: false, safety_reason: '' }
+    const voice = { transcript: 'he said he will commit suicide tonight', photo_description: null, safety_concern: false, safety_reason: '' }
     expect(decide(cp, '', triage({}), voice).route).toBe('escalated')
   })
 })

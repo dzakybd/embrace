@@ -1,8 +1,6 @@
 // SOP lookup without model tokens: BM25 over the agency's SOP passages (built by scripts/build-sop-index.mjs).
 import dinsosDemak from '@/agencies/dinsos_demak/sop-index.json'
 import kpai from '@/agencies/kpai/sop-index.json'
-import childProtection from '@/agencies/child_protection/sop-index.json'
-import socialServices from '@/agencies/social_services/sop-index.json'
 
 export interface Passage {
   doc: string
@@ -27,8 +25,6 @@ interface IndexFile {
 const FILES: Record<string, IndexFile> = {
   dinsos_demak: dinsosDemak,
   kpai,
-  child_protection: childProtection,
-  social_services: socialServices,
 }
 
 const STOPWORDS = new Set(

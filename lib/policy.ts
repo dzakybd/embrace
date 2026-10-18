@@ -8,7 +8,8 @@ import type { Media, Policy, Triage, Urgency } from './schemas'
 export const CONFIDENCE_FLOOR = 0.7
 const RANK: Record<Urgency, number> = { low: 0, normal: 1, high: 2, critical: 3 }
 
-export function decide(agency: Agency, text: string, triage: Triage | null, media: Media | null = null): Policy {
+/** `injection`: the input guardrail found instructions aimed at the model; a person then checks the case. */
+export function decide(agency: Agency, text: string, triage: Triage | null, media: Media | null = null, injection = false): Policy {
   const esc = agency.escalation
   const lowered = `${text} ${media?.transcript ?? ''}`.toLowerCase()
   const hits = esc.keywords.filter((k) => lowered.includes(k))
@@ -56,6 +57,10 @@ export function decide(agency: Agency, text: string, triage: Triage | null, medi
   }
 
   const cat = categories[triage.category]
+  if (injection) {
+    reasons.push('Input guardrail: the message contains instructions aimed at the AI; a person checks the triage')
+    return make(agency, 'manual_review', cat?.queue ?? 'general', urgency, reasons)
+  }
   if (!cat) {
     reasons.push(`Unknown category '${triage.category}'`)
     return make(agency, 'manual_review', 'general', urgency, reasons)

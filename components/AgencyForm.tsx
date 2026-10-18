@@ -82,7 +82,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
     setF(settingsOf(t, false))
   }
   useEffect(() => {
-    if (!editing && !template && templates.length) apply(templates.find((t) => t.id === 'social_services')?.id ?? templates[0].id)
+    if (!editing && !template && templates.length) apply(templates[0].id)
   })
   useEffect(() => {
     if (agency) api.sop(agency.id, '').then((r) => setSources(r.sources)).catch(() => setSources([]))

@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { Fragment, useRef, useState } from 'react'
-import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
+import { api, submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
+import { QUESTION, type Slot } from '@/lib/details'
 import { localize } from '@/lib/i18n'
 import { useLang, useT } from '../Lang'
 import { useAgencies } from '../useAgencies'
@@ -192,6 +193,7 @@ export default function Report() {
             </p>
           )}
           {error && <p className="error">{error}</p>}
+          {ticket && <DetailsCard ticket={ticket} />}
           <div className="actions">
             <Link className="btn" href={`/track/${ticketId}`}>{t('Track this report')}</Link>
             <button onClick={reset}>{t('Send another report')}</button>
@@ -319,6 +321,42 @@ export default function Report() {
         <p className="muted small"><Icon name="shield" size={12} /> {t('Your name, phone and ID numbers are hidden from staff by default.')}</p>
       </section>
     </div>
+  )
+}
+
+/** Multi-turn intake on the web: asks for the details the agency needs that the report lacked. */
+function DetailsCard({ ticket }: { ticket: Ticket }) {
+  const t = useT()
+  const missing = (ticket.details?.missing ?? []) as Slot[]
+  const [answers, setAnswers] = useState<Record<string, string>>({})
+  const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle')
+  const [err, setErr] = useState('')
+  if (!missing.length) return null
+  if (state === 'done') return <p className="ok-note"><Icon name="check" size={14} /> {t('Thank you. Your answers were added and the team is updating the case.')}</p>
+  const send = async () => {
+    setState('busy')
+    setErr('')
+    try {
+      await api.details(ticket.id, answers)
+      setState('done')
+    } catch (e) {
+      setErr(String(e).replace(/^Error: \d+ /, ''))
+      setState('idle')
+    }
+  }
+  return (
+    <form className="details-card" onSubmit={(e) => { e.preventDefault(); send() }}>
+      <b><Icon name="spark" size={16} /> {t('A few more details help the team act faster')}</b>
+      {missing.map((s) => (
+        <label key={s} className="field"><span>{t(QUESTION[s])}</span>
+          <input value={answers[s] ?? ''} maxLength={300} onChange={(e) => setAnswers({ ...answers, [s]: e.target.value })} />
+        </label>
+      ))}
+      {err && <p className="error">{err}</p>}
+      <button className="primary" disabled={state === 'busy' || !Object.values(answers).some((v) => v.trim())}>
+        {state === 'busy' ? t('Sending…') : t('Add details')}
+      </button>
+    </form>
   )
 }
 

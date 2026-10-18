@@ -4,8 +4,8 @@ import { indexFor, sourcesFor } from '@/lib/sop'
 const top = (agency: string, q: string) => indexFor(agency).search(q, 3).map((r) => `${r.doc} ${r.loc}`)
 
 describe('SOP search', () => {
-  it('every agency and template has sources and passages', () => {
-    for (const id of ['dinsos_demak', 'kpai', 'child_protection', 'social_services']) {
+  it('every agency has sources and passages', () => {
+    for (const id of ['dinsos_demak', 'kpai']) {
       expect(sourcesFor(id).length).toBeGreaterThan(0)
       expect(indexFor(id).passages.length).toBeGreaterThan(0)
     }
@@ -25,8 +25,6 @@ describe('SOP search', () => {
     ['dinsos_demak', 'e-warong agent deducts money, illegal levy', 'Response standard (sample) section 5'],
     ['kpai', 'online complaint, data incomplete, when will you contact me', 'KPAI complaint SOP section 3'],
     ['kpai', 'which days can I complain in person and what documents', 'KPAI complaint SOP section 1'],
-    ['child_protection', 'child beaten with injury by stepfather', 'Sample CP SOP section 3'],
-    ['social_services', 'flood water in the house no shelter tonight', 'Sample social services SOP section 10'],
   ])('%s: "%s" finds %s', (agency, q, want) => {
     expect(top(agency, q)).toContain(want)
   })

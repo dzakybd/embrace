@@ -7,7 +7,6 @@ Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build
 - Live prototype: https://embrace.nalaria.ai.id (also https://embrace--embrace-23a9c.asia-southeast1.hosted.app)
 - Demo video: [Google Drive](https://drive.google.com/drive/folders/1vu12gJthTznQft9KAmY7A5rueKGBmqYE?usp=sharing)
 - Telegram bots: [@embrace_dinsos_demak_bot](https://t.me/embrace_dinsos_demak_bot) (Demak Social Affairs) and [@embrace_kpai_bot](https://t.me/embrace_kpai_bot) (KPAI)
-- Pitch deck: [`docs/submission/`](docs/submission/) (PPTX and PDF), brief description in [`docs/submission/description.md`](docs/submission/description.md)
 
 > Prototype with synthetic data only. The two demo agencies, the Demak Regency Social Affairs Office (Dinsos P2PA Kabupaten Demak) and the Indonesian Child Protection Commission (KPAI), use their real unit structure, published service flows and public regulations; staff names and complaints are fictional, and neither agency endorses this prototype. Demo complaints and documents are in English so anyone can follow them; the agents read Indonesian and Javanese too (see the eval set and the labelled Indonesian samples on the report form), and the Indonesian originals of the service flows are kept next to the translations.
 
@@ -29,7 +28,7 @@ Systems that work today start after a human has read, sorted and typed the case 
 | 5 | Reply drafter (Gemini) | Reply in the citizen's language with ticket number, team, response time in hours, and only procedures from the SOP passages, cited [1], [2]. Waits for caseworker approval. |
 | – | Analyst agent (Gemini + tools) | Answers leaders' questions and writes the weekly brief by calling tools over live Firestore data (`get_overview`, `find_clusters`, `search_tickets`). |
 
-![Case page in the staff workspace](docs/screenshots/case.png)
+![Case page in the staff workspace](.github/assets/case.png)
 
 **Telegram chat channel.** Each agency has its own bot ([@embrace_dinsos_demak_bot](https://t.me/embrace_dinsos_demak_bot), [@embrace_kpai_bot](https://t.me/embrace_kpai_bot)); an agency created in the app connects its bot by pasting the token from @BotFather on its **Channels** page, and Embrace sets the webhook, commands and description. Built-in bots' tokens live in Secret Manager; connected tokens are stored server-side in Firestore. Citizens can chat instead of using the web form. An open chat must not call Gemini on every message, so the webhook (`lib/bot.ts`) handles everything it can in plain code first: it verifies Telegram's secret header and deduplicates updates; answers `/start`, `/new`, `/track`, `/emergency` and greetings; ignores stickers; sends the emergency number at once when danger words appear; adds messages within 24 hours of a report to that case (notifying the person in charge) instead of running the AI again; and enforces Firestore-backed limits per chat (15 messages a minute, 3 new reports an hour, 10 a day) and a global daily AI budget, past which cases are routed by rules and sent to manual review. Real reports are queued on Pub/Sub (`telegram-reports`) so the webhook returns at once; a push subscription runs the ADK pipeline, tells the citizen the report number, team and response time, and the officer's approved reply is sent back to the chat.
 
@@ -39,17 +38,16 @@ The app opens on a main menu of agency cards (or create a new one). Each agency 
 
 ## Built for the world: agency packs
 
-Each built-in agency is a folder under [`agencies/`](agencies/): `agency.json` (categories, queues, team, escalation rules, SLA hours, emergency line, signature), `sop/` (its own SOPs, service flows and regulations with a `sources.json`) and `seed.json` (synthetic demo history). Any other agency is created in the app at `/agencies/new`: start from a template, edit categories, teams, staff and escalation words, upload PDFs or Markdown, and it is stored in Firestore and live on the web form, the Telegram bot and the staff workspace at once. No code changes per agency.
+Each built-in agency is a folder under [`agencies/`](agencies/): `agency.json` (categories, queues, team, escalation rules, SLA hours, emergency line, signature), `sop/` (its own SOPs, service flows and regulations with a `sources.json`) and `seed.json` (synthetic demo history). Any other agency is created in the app at `/agencies/new`: start from a copy of a built-in agency, edit categories, teams, staff and escalation words, upload PDFs or Markdown, and it is stored in Firestore and live on the web form, the Telegram bot and the staff workspace at once. No code changes per agency.
 
 | Pack | What it shows |
 |---|---|
 | `dinsos_demak` | **Demak Regency Social Affairs Office (Dinsos P2PA Demak)**, a district office: UPTD PPA, social protection and security (PKH, BPNT/Sembako), SLRT / Puskesos (DTSEN, PBI/UHC), social rehabilitation, disaster victim protection (tidal floods in Sayung), child marriage and adoption, distribution oversight. Knowledge: its 13 published service flows (English translation and Indonesian original), PermenPANRB 5/2025, Permensos 1/2018 and 4/2023, an example UPTD PPA standard. Demo complaints in English. |
 | `kpai` | **Indonesian Child Protection Commission (KPAI)**, a national commission: complaints unit and clusters (special protection, family and alternative care, education, health and welfare). Knowledge: KPAI's complaint SOP (in person, online, assessment, oversight, monitoring, closing cases; English and Indonesian), UU 35/2014, Perpres 61/2016, PermenPANRB 5/2025, UN CRC. |
-| `social_services`, `child_protection` | Generic templates (any country, English sample SOPs) for creating new agencies. |
 
-Why these two: the team is in contact with people at both agencies, and they cover the two ends of social complaints, a district office that delivers services and a national commission that refers and oversees. How their published processes compare with SP4N-LAPOR! and with Embrace: [`docs/research/complaint-processes.md`](docs/research/complaint-processes.md).
+Why these two: the team is in contact with people at both agencies, and they cover the two ends of social complaints, a district office that delivers services and a national commission that refers and oversees.
 
-Prospective users are social affairs offices and child protection commissions, starting with the two above; Embrace is an open-source blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
+Prospective users are social affairs offices and child protection commissions, starting with the two above; Embrace is a blueprint each agency deploys in its own Firebase project, so complaint data stays with the agency.
 
 ## How it uses Google Cloud
 
@@ -76,7 +74,7 @@ Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 
 Remaining misses are borderline: a shared bullying video and two school beatings read as violence rather than online harm or education, and an office-hours question read as registration.
 In local test runs a text complaint went through all five steps in about 6 seconds.
 
-**Load test on production** ([`docs/research/load-test.md`](docs/research/load-test.md)): ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm Cloud Run instance; case list API 63 req/s (p50 277 ms); 10 AI reports at once all completed in about 4.7 s each, first progress event within 0.23 s (`scripts/load-burst.mjs`).
+**Load test on production**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm Cloud Run instance; case list API 63 req/s (p50 277 ms); 10 AI reports at once all completed in about 4.7 s each, first progress event within 0.23 s (`scripts/load-burst.mjs`).
 
 **Agency pages, channels and settings.** Every agency has a public page (`/a/<id>`) with its channels, emergency line, what it handles and the documents its replies follow. The head of office edits the agency under **Settings**: SLA hours per urgency, which AI safety signals force escalation, escalation words, the confidence threshold for manual review, per category the team, always-escalate and a minimum urgency, the staff, and the documents (PDF/Markdown upload). Built-in agencies keep the edits as an override; **Reset demo data** restores them. Two things are fixed for every agency: escalation is decided by rules, and a person approves every reply.
 
@@ -128,4 +126,4 @@ tests/            vitest: policy and SOP search
 
 ## License
 
-Apache-2.0. Indonesian regulations and the UN CRC are public documents redistributed with their source URLs in each `sources.json`.
+All rights reserved: the code is public for review, not open source (see [LICENSE](LICENSE)). Third-party documents, emblems, icons and dependencies keep their own terms, listed in [NOTICE.md](NOTICE.md).

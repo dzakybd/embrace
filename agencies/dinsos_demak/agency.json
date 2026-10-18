@@ -121,6 +121,7 @@
   },
   "emergency_line": "110 (police) or 112; for violence against women and children SAPA 129 (WhatsApp 08111-129-129)",
   "emergency_line_id": "110 (polisi) atau 112; untuk kekerasan terhadap perempuan dan anak SAPA 129 (WhatsApp 08111-129-129)",
+  "required_details": ["location", "incident_time"],
   "reply_signature": "Complaints Desk, Demak Regency Social Affairs Office (Dinsos P2PA Demak)",
   "team": [
     {

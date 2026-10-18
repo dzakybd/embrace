@@ -11,3 +11,5 @@ scratch/
 .DS_Store
 reference/
 .vitest/
+docs/
+video/

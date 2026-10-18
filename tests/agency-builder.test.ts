@@ -5,7 +5,7 @@ import { indexFor, registerDocs } from '@/lib/sop'
 import type { Triage } from '@/lib/schemas'
 
 const form = (over: Partial<NewAgency> = {}) => NewAgency.parse({
-  template: 'social_services',
+  template: 'dinsos_demak',
   name: 'Department of Social Welfare, Cebu City',
   short_name: 'DSWD Cebu',
   country: 'Philippines',
@@ -56,6 +56,6 @@ describe('agency builder', () => {
   it('can keep the template documents', async () => {
     const a = await buildAgency(form({ keep_template_docs: true, docs: [] }))
     if (typeof a === 'string') throw new Error(a)
-    expect(a.docs!.sources.map((s) => s.short)).toContain('Sample social services SOP')
+    expect(a.docs!.sources.map((s) => s.short)).toContain('Demak service flows')
   })
 })
