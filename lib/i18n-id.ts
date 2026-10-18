@@ -540,4 +540,16 @@ export const ID: Record<string, string> = {
   '{n} guardrail': '{n} pengaman',
   'model call': 'panggilan model',
   'SOP search': 'pencarian SOP',
+
+  // Web report chat
+  'Continue on Telegram': 'Lanjut di Telegram',
+  'Hello! Tell us what happened, where and when, in your own words. You can also send a voice note or a photo.': 'Halo! Ceritakan apa yang terjadi, di mana, dan kapan, dengan kata-kata Anda sendiri. Anda juga bisa mengirim pesan suara atau foto.',
+  'Try a sample report': 'Coba contoh laporan',
+  'Demo: arrives as {channel}': 'Demo: masuk sebagai {channel}',
+  'Thank you. Your report number is': 'Terima kasih. Nomor laporan Anda',
+  'Adding your answers…': 'Menambahkan jawaban Anda…',
+  'Type your answer…': 'Ketik jawaban Anda…',
+  'Message': 'Pesan',
+  'Send': 'Kirim',
+  'Add name and contact (optional)': 'Tambah nama dan kontak (opsional)',
 }

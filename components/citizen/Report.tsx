@@ -1,10 +1,11 @@
 'use client'
 
 import Link from 'next/link'
-import { Fragment, useRef, useState } from 'react'
+import { Fragment, useEffect, useRef, useState } from 'react'
 import { api, submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
 import { QUESTION, type Slot } from '@/lib/details'
 import { localize } from '@/lib/i18n'
+import { Monogram } from '../AgencyPicker'
 import { useLang, useT } from '../Lang'
 import { useAgencies } from '../useAgencies'
 import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
@@ -73,21 +74,32 @@ function toAttachment(blob: Blob, name: string): Promise<File_> {
   })
 }
 
+type Phase = 'compose' | 'running' | 'details' | 'done'
+
+/** The web report desk as a chat, like the agency's Telegram bot: the citizen writes, the agents answer in the thread,
+ * and missing details are asked one at a time after the case exists. */
 export default function Report() {
   const { t, lang } = useLang()
-  const { agencies, agency, pick, error: loadError } = useAgencies()
+  const { agencies, agency: raw, pick, error: loadError } = useAgencies()
   const [text, setText] = useState('')
   const [channel, setChannel] = useState<Channel>('web')
   const [name, setName] = useState('')
   const [contact, setContact] = useState('')
-  const [running, setRunning] = useState(false)
+  const [showContact, setShowContact] = useState(false)
+  const [phase, setPhase] = useState<Phase>('compose')
+  const [sent, setSent] = useState<{ text: string; files: File_[] } | null>(null)
   const [ticketId, setTicketId] = useState('')
   const [steps, setSteps] = useState<TraceStep[]>([])
   const [ticket, setTicket] = useState<Ticket | null>(null)
   const [error, setError] = useState('')
   const [files, setFiles] = useState<File_[]>([])
   const [recording, setRecording] = useState(false)
+  const [answers, setAnswers] = useState<{ slot: Slot; text: string }[]>([])
+  const [detailsSent, setDetailsSent] = useState<'no' | 'busy' | 'yes'>('no')
   const recorder = useRef<MediaRecorder | null>(null)
+  const end = useRef<HTMLDivElement>(null)
+
+  useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [steps.length, ticket, answers.length, detailsSent, phase])
 
   const addFiles = async (list: FileList | null) => {
     setError('')
@@ -120,244 +132,240 @@ export default function Report() {
     }
   }
 
-  const submit = async () => {
-    setRunning(true)
+  const missing = ((ticket?.details?.missing ?? []) as Slot[])
+  const asking = phase === 'details' ? missing[answers.length] : undefined
+
+  const finishDetails = async (all: { slot: Slot; text: string }[]) => {
+    setPhase('done')
+    if (!ticket || !all.length) return
+    setDetailsSent('busy')
+    try {
+      await api.details(ticket.id, Object.fromEntries(all.map((a) => [a.slot, a.text])))
+      setDetailsSent('yes')
+    } catch (e) {
+      setError(String(e).replace(/^Error: \d+ /, ''))
+      setDetailsSent('no')
+    }
+  }
+
+  const send = async () => {
+    const body = text.trim()
+    if (phase === 'details' && asking) {
+      if (!body) return
+      const all = [...answers, { slot: asking, text: body.slice(0, 300) }]
+      setAnswers(all)
+      setText('')
+      if (all.length >= missing.length) await finishDetails(all)
+      return
+    }
+    setSent({ text: body, files })
+    setText('')
+    setPhase('running')
     setSteps([])
     setTicket(null)
     setTicketId('')
     setError('')
+    let done: Ticket | null = null
     try {
       await submitComplaint(
         agency.id,
-        {
-          text, channel, reporter_name: name || undefined, reporter_contact: contact || undefined,
-          attachments: files.map(({ mime, data }) => ({ mime, data })),
-        },
+        { text: body, channel, reporter_name: name || undefined, reporter_contact: contact || undefined, attachments: files.map(({ mime, data }) => ({ mime, data })) },
         (e) => {
           if (e.type === 'received') setTicketId(e.ticket_id)
           if (e.type === 'step') setSteps((s) => [...s, e])
-          if (e.type === 'done') setTicket(e.ticket)
+          if (e.type === 'done') { setTicket(e.ticket); done = e.ticket }
           if (e.type === 'error') setError(e.message)
         },
       )
     } catch (e) {
       setError(String(e))
-    } finally {
-      setRunning(false)
     }
+    setFiles([])
+    const t2 = done as Ticket | null
+    setPhase(t2?.details?.missing.length ? 'details' : 'done')
   }
 
-  const byAgent = Object.fromEntries(steps.map((s) => [s.agent, s]))
-  const order = files.length || byAgent.media_reader ? ['media_reader', ...ORDER] : ORDER
-  const activeIdx = running ? steps.length : -1
-  const reset = () => { setTicketId(''); setTicket(null); setSteps([]); setText(''); setFiles([]); setError('') }
+  const reset = () => {
+    setPhase('compose'); setSent(null); setTicketId(''); setTicket(null); setSteps([]); setText(''); setFiles([])
+    setError(''); setAnswers([]); setDetailsSent('no'); setChannel('web')
+  }
 
   if (loadError) return <p className="error pad">{t('Could not reach the service:')} {loadError}</p>
-  if (!agency) return <div className="shimmer tall" />
-
-  if (ticketId) {
-    const done = byAgent.policy_agent?.output as unknown as Policy | undefined
-    const team = done ? agency.queues[done.queue] ?? done.queue : ''
-    const progress = [
-      { key: 'received', label: t('Report received'), ok: true },
-      { key: 'read', label: files.length ? t('Reading your message, voice note and photos') : t('Reading your message'), ok: !!byAgent.intake_agent },
-      { key: 'urgency', label: t('Checking how urgent it is'), ok: !!byAgent.triage_agent },
-      { key: 'team', label: t('Finding the right team and person'), ok: !!byAgent.policy_agent },
-      { key: 'reply', label: t('Preparing a first reply for a caseworker to check'), ok: !!byAgent.drafter_agent || !!ticket },
-    ]
-    return (
-      <div className="citizen-done">
-        <section className="card done-card">
-          <p className="muted small">{t('Report number')}</p>
-          <h1 className="tid-big">{ticketId}</h1>
-          <ol className="progress">
-            {progress.map((p, i) => {
-              const active = !p.ok && progress.slice(0, i).every((x) => x.ok) && running
-              return (
-                <li key={p.key} className={p.ok ? 'ok' : active ? 'active' : ''}>
-                  <span className="pdot">{p.ok ? <Icon name="check" size={14} /> : i + 1}</span>{p.label}
-                </li>
-              )
-            })}
-          </ol>
-          {done && done.route === 'escalated' && (
-            <div className="banner crit">
-              <Icon name="alert" />
-              <span><b>{t('A supervisor has been alerted now.')}</b> {t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}</span>
-            </div>
-          )}
-          {done && (
-            <p className="lead">
-              {t('Your report is with:')} <b>{team}</b>. {t('You will hear back within {h} hours.', { h: done.sla_hours })}
-              {' '}{t('A caseworker reviews every reply before it is sent.')}
-            </p>
-          )}
-          {error && <p className="error">{error}</p>}
-          {ticket && <DetailsCard ticket={ticket} />}
-          <div className="actions">
-            <Link className="btn" href={`/track/${ticketId}`}>{t('Track this report')}</Link>
-            <button onClick={reset}>{t('Send another report')}</button>
-          </div>
-        </section>
-
-        <details className="card staff-view" open={running || undefined}>
-          <summary><Icon name="spark" /> {t('Staff view: what the AI agents decided')} <span className="muted small">{t('(shown for the demo)')}</span></summary>
-          <ol className="steps">
-            {order.map((a, i) => {
-              const s = byAgent[a]
-              const state = s ? 'done' : i === activeIdx ? 'active' : 'idle'
-              const kindClass = a === 'policy_agent' || a === 'sop_agent' ? 'rules' : ''
-              return (
-                <li key={a} className={`step ${state} ${kindClass}`}>
-                  <div className="dot" aria-hidden="true">{s ? <Icon name="check" size={14} /> : i + 1}</div>
-                  <div className="body">
-                    <div className="step-h">
-                      <b>{t(AGENT_META[a].label)}</b>
-                      <span className="muted">{t(AGENT_META[a].role)}</span>
-                      {s && <span className="ms">{s.kind === 'llm' ? `${(s.ms / 1000).toFixed(1)} s` : s.kind === 'search' ? t('search, no AI') : t('rules')}</span>}
-                    </div>
-                    {state === 'active' && <div className="shimmer" />}
-                    {s && <StepOutput agent={a} out={s.output} />}
-                  </div>
-                </li>
-              )
-            })}
-          </ol>
-          {ticket && <Link className="btn" href={`/staff/cases/${ticket.id}`}>{t('Open the case in the staff workspace')} →</Link>}
-        </details>
-      </div>
-    )
-  }
+  if (!raw) return <div className="shimmer tall" />
+  const agency = localize(raw, lang)
+  const tg = telegramUrl(agency.telegram_bot)
+  const byAgent = Object.fromEntries(steps.map((s) => [s.agent, s]))
+  const order = sent?.files.length || byAgent.media_reader ? ['media_reader', ...ORDER] : ORDER
+  const activeIdx = phase === 'running' ? steps.length : -1
+  const policy = (ticket?.policy ?? byAgent.policy_agent?.output) as Policy | undefined
+  const team = policy ? agency.queues[policy.queue] ?? policy.queue : ''
+  const progress = [
+    { key: 'read', label: sent?.files.length ? t('Reading your message, voice note and photos') : t('Reading your message'), ok: !!byAgent.intake_agent },
+    { key: 'urgency', label: t('Checking how urgent it is'), ok: !!byAgent.triage_agent },
+    { key: 'team', label: t('Finding the right team and person'), ok: !!byAgent.policy_agent },
+    { key: 'reply', label: t('Preparing a first reply for a caseworker to check'), ok: !!byAgent.drafter_agent || !!ticket },
+  ]
+  const canSend = phase === 'details' ? !!text.trim() : phase === 'compose' && !recording && (text.trim().length >= 10 || files.length > 0)
 
   return (
-    <div className="citizen-form">
-      <section className="card intake-form">
-        <h1>{t('Report a problem')}</h1>
-        <p className="muted">
-          {t('Tell us in your own words. You can also record a voice note or add a photo.')}
-          {' '}{t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}
-        </p>
-        <div className="reach" role="group" aria-label={t('How do you want to reach us?')}>
-          <span className="reach-opt on" aria-current="true"><ChannelIcon c="web" size={20} /> {t('Web form')}</span>
-          {agency.telegram_bot && (
-            <a className="reach-opt" href={telegramUrl(agency.telegram_bot)!} target="_blank" rel="noreferrer" title={`@${agency.telegram_bot}`}>
-              <ChannelIcon c="telegram" size={20} /> Telegram
-            </a>
-          )}
-          {['whatsapp', 'email'].map((c) => (
-            <span key={c} className="reach-opt off" aria-disabled="true"><ChannelIcon c={c} size={20} /> {t(CHANNEL_LABEL[c])} <small className="soon">{t('Soon')}</small></span>
-          ))}
-        </div>
-        <label className="field">
-          <span>{t('Send to')}</span>
-          <select value={agency.id} onChange={(e) => pick(e.target.value)}>
+    <div className="chat-desk">
+      <header className="chat-head">
+        <Monogram agency={{ id: agency.id, short_name: agency.short_name, logo: agency.logo ?? null }} size={40} />
+        <div className="chat-who">
+          <b>{agency.short_name}</b>
+          <select value={raw.id} onChange={(e) => { pick(e.target.value); reset() }} aria-label={t('Send to')} disabled={phase === 'running'}>
             {agencies.map((a) => <option key={a.id} value={a.id}>{localize(a, lang).name}</option>)}
           </select>
-        </label>
-        <div className="demo-box">
-          <span className="muted small">{t('Demo: try a sample report and the channel it arrives on')}</span>
-          <div className="samples" role="group" aria-label={t('Sample reports')}>
-            {SAMPLES[agency.id]?.map((s) => (
+        </div>
+        {tg && <a className="btn tonal small" href={tg} target="_blank" rel="noreferrer"><ChannelIcon c="telegram" size={16} /> {t('Continue on Telegram')}</a>}
+      </header>
+
+      <div className="chat-log" aria-live="polite">
+        <Bubble from="bot">
+          <p>{t('Hello! Tell us what happened, where and when, in your own words. You can also send a voice note or a photo.')}</p>
+          <p className="danger-line"><Icon name="alert" size={14} /> {t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}</p>
+        </Bubble>
+
+        {phase === 'compose' && !sent && (
+          <div className="chat-chips" role="group" aria-label={t('Sample reports')}>
+            <span className="muted small">{t('Try a sample report')}</span>
+            {SAMPLES[raw.id]?.map((s) => (
               <button key={s.label} className="chip" onClick={() => { setText(s.text); setChannel(s.channel) }}>
                 <ChannelIcon c={s.channel} size={14} /> {t(s.label)}
               </button>
             ))}
           </div>
-          <fieldset className="channels">
-            <legend className="sr">{t('Arrives via')}</legend>
-            {(['web', 'whatsapp', 'email', 'social'] as Channel[]).map((c) => (
-              <label key={c} className={channel === c ? 'on' : ''}>
-                <input type="radio" name="channel" value={c} checked={channel === c} onChange={() => setChannel(c)} />
-                <ChannelIcon c={c} size={14} /> {t(CHANNEL_LABEL[c])}
-              </label>
-            ))}
-          </fieldset>
-        </div>
-        <label className="field">
-          <span>{t('What happened?')}</span>
-          <textarea rows={7} value={text} onChange={(e) => setText(e.target.value)}
-            placeholder={t('What happened, where and when. Any language is fine.')} />
-        </label>
-        <div className="attach">
-          <span className="attach-h">{t('Voice note or photo (optional)')}</span>
-          <div className="attach-row">
-            <label className={`btn tonal small ${files.length >= 3 ? 'disabled' : ''}`}>
-              <Icon name="image" size={14} /> {t('Add photo or audio')}
-              <input type="file" accept="image/jpeg,image/png,image/webp,audio/*" multiple hidden
-                disabled={files.length >= 3} onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
-            </label>
-            <button type="button" className={`small ${recording ? 'rec' : ''}`} onClick={toggleRecording}
-              disabled={!recording && files.length >= 3} aria-pressed={recording}>
-              <Icon name={recording ? 'stop' : 'mic'} size={14} /> {recording ? t('Stop recording') : t('Record voice note')}
-            </button>
-          </div>
+        )}
+
+        {sent && (
+          <Bubble from="me">
+            {sent.text && <p>{sent.text}</p>}
+            {sent.files.map((f) => f.mime.startsWith('image/') ? <img key={f.url} src={f.url} alt={f.name} /> : <audio key={f.url} controls src={f.url} />)}
+            {channel !== 'web' && <small className="via"><ChannelIcon c={channel} size={12} /> {t('Demo: arrives as {channel}', { channel: t(CHANNEL_LABEL[channel]) })}</small>}
+          </Bubble>
+        )}
+
+        {sent && (
+          <Bubble from="bot">
+            {ticketId ? <p>{t('Thank you. Your report number is')} <b className="tid">{ticketId}</b></p> : <p>{t('Thank you. We received your report and are reading it now…')}</p>}
+            <ol className="progress compact">
+              {progress.map((p, i) => {
+                const active = !p.ok && progress.slice(0, i).every((x) => x.ok) && phase === 'running'
+                return <li key={p.key} className={p.ok ? 'ok' : active ? 'active' : ''}><span className="pdot">{p.ok ? <Icon name="check" size={12} /> : i + 1}</span>{p.label}</li>
+              })}
+            </ol>
+          </Bubble>
+        )}
+
+        {ticket && policy && (
+          <Bubble from="bot">
+            {policy.route === 'escalated' && (
+              <p className="urgent"><Icon name="alert" size={14} /> <b>{t('A supervisor has been alerted now.')}</b> {t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}</p>
+            )}
+            <p>{t('Your report is with:')} <b>{team}</b>. {t('You will hear back within {h} hours.', { h: policy.sla_hours })} {t('A caseworker reviews every reply before it is sent.')}</p>
+            <div className="chat-actions">
+              <Link className="btn small" href={`/track/${ticket.id}`}>{t('Track this report')}</Link>
+            </div>
+          </Bubble>
+        )}
+
+        {ticket && missing.slice(0, phase === 'details' ? answers.length + 1 : answers.length).map((slot, i) => (
+          <Fragment key={slot}>
+            <Bubble from="bot"><p>{i === 0 && <>{t('To help the team act faster:')} </>}{t(QUESTION[slot])}</p></Bubble>
+            {answers[i] && <Bubble from="me"><p>{answers[i].text}</p></Bubble>}
+          </Fragment>
+        ))}
+
+        {detailsSent !== 'no' && (
+          <Bubble from="bot"><p>{detailsSent === 'busy' ? t('Adding your answers…') : t('Thank you. Your answers were added and the team is updating the case.')}</p></Bubble>
+        )}
+
+        {error && <Bubble from="bot"><p className="error">{error}</p></Bubble>}
+
+        {(steps.length > 0 || phase === 'running') && (
+          <details className="card staff-view" open={phase === 'running' || undefined}>
+            <summary><Icon name="spark" /> {t('Staff view: what the AI agents decided')} <span className="muted small">{t('(shown for the demo)')}</span></summary>
+            <ol className="steps">
+              {order.map((a, i) => {
+                const s = byAgent[a]
+                const state = s ? 'done' : i === activeIdx ? 'active' : 'idle'
+                const kindClass = a === 'policy_agent' || a === 'sop_agent' ? 'rules' : ''
+                return (
+                  <li key={a} className={`step ${state} ${kindClass}`}>
+                    <div className="dot" aria-hidden="true">{s ? <Icon name="check" size={14} /> : i + 1}</div>
+                    <div className="body">
+                      <div className="step-h">
+                        <b>{t(AGENT_META[a].label)}</b>
+                        <span className="muted">{t(AGENT_META[a].role)}</span>
+                        {s && <span className="ms">{s.kind === 'llm' ? `${(s.ms / 1000).toFixed(1)} s` : s.kind === 'search' ? t('search, no AI') : t('rules')}</span>}
+                      </div>
+                      {state === 'active' && <div className="shimmer" />}
+                      {s && <StepOutput agent={a} out={s.output} />}
+                    </div>
+                  </li>
+                )
+              })}
+            </ol>
+            {ticket && <Link className="btn" href={`/staff/cases/${ticket.id}`}>{t('Open the case in the staff workspace')} →</Link>}
+          </details>
+        )}
+        <div ref={end} />
+      </div>
+
+      {phase === 'done' ? (
+        <div className="chat-done"><button className="primary" onClick={reset}><Icon name="plus" size={16} /> {t('Send another report')}</button></div>
+      ) : (
+        <form className="composer" onSubmit={(e) => { e.preventDefault(); if (canSend) send() }}>
+          {phase === 'compose' && !sent && showContact && (
+            <div className="row2">
+              <input value={name} onChange={(e) => setName(e.target.value)} placeholder={t('Your name (optional)')} aria-label={t('Your name (optional)')} />
+              <input value={contact} onChange={(e) => setContact(e.target.value)} placeholder={t('Phone or email for the reply (optional)')} aria-label={t('Phone or email for the reply (optional)')} />
+            </div>
+          )}
           {files.length > 0 && (
             <ul className="files">
               {files.map((f, i) => (
                 <li key={f.url}>
                   {f.mime.startsWith('image/') ? <img src={f.url} alt={f.name} /> : <audio controls src={f.url} />}
                   <span className="small">{f.name}</span>
-                  <button type="button" className="ghost small" aria-label={t('Remove {name}', { name: f.name })}
-                    onClick={() => setFiles((fs) => fs.filter((_, j) => j !== i))}><Icon name="close" size={12} /></button>
+                  <button type="button" className="ghost small" aria-label={t('Remove {name}', { name: f.name })} onClick={() => setFiles((fs) => fs.filter((_, j) => j !== i))}><Icon name="close" size={12} /></button>
                 </li>
               ))}
             </ul>
           )}
-        </div>
-        <div className="row2">
-          <label className="field">
-            <span>{t('Your name (optional)')}</span>
-            <input value={name} onChange={(e) => setName(e.target.value)} />
-          </label>
-          <label className="field">
-            <span>{t('Phone or email for the reply (optional)')}</span>
-            <input value={contact} onChange={(e) => setContact(e.target.value)} />
-          </label>
-        </div>
-        <button className="primary" disabled={running || recording || (text.trim().length < 10 && !files.length)} onClick={submit}>
-          {running ? t('Sending…') : t('Send report')}
-        </button>
-        {error && <p className="error">{error}</p>}
-        <p className="muted small"><Icon name="shield" size={12} /> {t('Your name, phone and ID numbers are hidden from staff by default.')}</p>
-      </section>
+          <div className="composer-row">
+            {phase === 'compose' && (
+              <>
+                <label className={`icon-btn ${files.length >= 3 ? 'disabled' : ''}`} title={t('Add photo or audio')}>
+                  <Icon name="image" size={20} />
+                  <input type="file" accept="image/jpeg,image/png,image/webp,audio/*" multiple hidden disabled={files.length >= 3}
+                    onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
+                </label>
+                <button type="button" className={`icon-btn ${recording ? 'rec' : ''}`} onClick={toggleRecording} aria-pressed={recording}
+                  title={recording ? t('Stop recording') : t('Record voice note')} disabled={!recording && files.length >= 3}>
+                  <Icon name={recording ? 'stop' : 'mic'} size={20} />
+                </button>
+              </>
+            )}
+            <textarea rows={phase === 'details' ? 1 : 2} value={text} disabled={phase === 'running'} onChange={(e) => setText(e.target.value)}
+              onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (canSend) send() } }}
+              placeholder={phase === 'details' ? t('Type your answer…') : t('What happened, where and when. Any language is fine.')} aria-label={t('Message')} />
+            <button className="send" disabled={!canSend} aria-label={t('Send')}><Icon name="send" size={20} /></button>
+          </div>
+          <div className="composer-foot">
+            {phase === 'details'
+              ? <button type="button" className="ghost small" onClick={() => finishDetails(answers)}>{t('Skip')}</button>
+              : !sent && <button type="button" className="ghost small" onClick={() => setShowContact(!showContact)}>{t('Add name and contact (optional)')}</button>}
+            <span className="muted small"><Icon name="shield" size={12} /> {t('Your name, phone and ID numbers are hidden from staff by default.')}</span>
+          </div>
+        </form>
+      )}
     </div>
   )
 }
 
-/** Multi-turn intake on the web: asks for the details the agency needs that the report lacked. */
-function DetailsCard({ ticket }: { ticket: Ticket }) {
-  const t = useT()
-  const missing = (ticket.details?.missing ?? []) as Slot[]
-  const [answers, setAnswers] = useState<Record<string, string>>({})
-  const [state, setState] = useState<'idle' | 'busy' | 'done'>('idle')
-  const [err, setErr] = useState('')
-  if (!missing.length) return null
-  if (state === 'done') return <p className="ok-note"><Icon name="check" size={14} /> {t('Thank you. Your answers were added and the team is updating the case.')}</p>
-  const send = async () => {
-    setState('busy')
-    setErr('')
-    try {
-      await api.details(ticket.id, answers)
-      setState('done')
-    } catch (e) {
-      setErr(String(e).replace(/^Error: \d+ /, ''))
-      setState('idle')
-    }
-  }
-  return (
-    <form className="details-card" onSubmit={(e) => { e.preventDefault(); send() }}>
-      <b><Icon name="spark" size={16} /> {t('A few more details help the team act faster')}</b>
-      {missing.map((s) => (
-        <label key={s} className="field"><span>{t(QUESTION[s])}</span>
-          <input value={answers[s] ?? ''} maxLength={300} onChange={(e) => setAnswers({ ...answers, [s]: e.target.value })} />
-        </label>
-      ))}
-      {err && <p className="error">{err}</p>}
-      <button className="primary" disabled={state === 'busy' || !Object.values(answers).some((v) => v.trim())}>
-        {state === 'busy' ? t('Sending…') : t('Add details')}
-      </button>
-    </form>
-  )
+function Bubble({ from, children }: { from: 'bot' | 'me'; children: React.ReactNode }) {
+  return <div className={`bubble ${from}`}>{children}</div>
 }
 
 function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] }) {

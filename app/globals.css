@@ -558,3 +558,49 @@ a.reach-opt:hover { border-color: #26A5E4; background: color-mix(in srgb, #26A5E
 .seg.intake_agent { background: #4285f4; }
 .seg.triage_agent { background: #0b57d0; }
 .seg.drafter_agent { background: #041e49; }
+
+/* Web report desk as a chat */
+.chat-desk { width: 100%; max-width: 760px; display: flex; flex-direction: column; background: var(--surface); border-radius: 24px; box-shadow: var(--shadow); overflow: hidden; min-height: calc(100vh - 140px); }
+.chat-head { display: flex; align-items: center; gap: 12px; padding: 12px 16px; border-bottom: 1px solid var(--surface-2); }
+.chat-head .monogram { margin: 0; }
+.chat-who { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.chat-who b { font-weight: 500; }
+.chat-who select { border: 0; padding: 0; font-size: 12px; color: var(--muted); background: transparent; max-width: 100%; text-overflow: ellipsis; }
+.chat-head .btn { display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; text-decoration: none; }
+.chat-log { flex: 1; display: flex; flex-direction: column; gap: 10px; padding: 20px 16px; background: var(--bg); overflow-y: auto; }
+.bubble { max-width: 82%; padding: 10px 14px; border-radius: 18px; font-size: 15px; line-height: 1.45; display: flex; flex-direction: column; gap: 6px; }
+.bubble p { margin: 0; }
+.bubble.bot { align-self: flex-start; background: var(--surface); box-shadow: var(--shadow); border-bottom-left-radius: 6px; }
+.bubble.me { align-self: flex-end; background: var(--brand); color: #fff; border-bottom-right-radius: 6px; white-space: pre-wrap; }
+.bubble.me img { max-width: 220px; border-radius: 12px; }
+.bubble.me audio { max-width: 240px; }
+.bubble .via { opacity: 0.85; display: inline-flex; gap: 4px; align-items: center; }
+.bubble .danger-line { font-size: 13px; color: var(--crit); display: flex; gap: 6px; align-items: flex-start; }
+.bubble .danger-line .icon { margin-top: 3px; }
+.bubble .urgent { background: var(--crit-soft); border-radius: 12px; padding: 8px 10px; font-size: 14px; }
+.bubble .tid { font-family: 'Google Sans Code', monospace; }
+.bubble .progress.compact { gap: 6px; font-size: 13px; }
+.bubble .progress.compact .pdot { width: 22px; height: 22px; font-size: 11px; }
+.chat-chips { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding-left: 4px; }
+.chat-chips .chip { border-radius: 999px; }
+.chat-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+.chat-actions .btn { text-decoration: none; }
+.chat-log .staff-view { margin-top: 8px; }
+.composer { border-top: 1px solid var(--surface-2); padding: 10px 12px 12px; display: flex; flex-direction: column; gap: 8px; background: var(--surface); position: sticky; bottom: 0; }
+.composer-row { display: flex; gap: 6px; align-items: flex-end; }
+.composer textarea { flex: 1; resize: none; border-radius: 20px; padding: 10px 14px; min-height: 44px; max-height: 160px; }
+.composer .icon-btn { width: 44px; height: 44px; display: grid; place-items: center; border-radius: 50%; border: 0; background: transparent; color: var(--ink-2); cursor: pointer; flex: none; }
+.composer .icon-btn:hover { background: var(--surface-2); }
+.composer .icon-btn.rec { color: var(--crit); background: var(--crit-soft); }
+.composer .icon-btn.disabled { opacity: 0.4; pointer-events: none; }
+.composer .send { width: 44px; height: 44px; padding: 0; justify-content: center; border-radius: 50%; background: var(--brand); color: #fff; border: 0; flex: none; }
+.composer .send:disabled { background: var(--surface-2); color: var(--muted); opacity: 1; }
+.composer-foot { display: flex; justify-content: space-between; align-items: center; gap: 8px; flex-wrap: wrap; }
+.composer .files img { width: 40px; height: 40px; object-fit: cover; border-radius: 8px; }
+.chat-done { padding: 14px; display: flex; justify-content: center; border-top: 1px solid var(--surface-2); }
+@media (max-width: 560px) {
+  .chat-desk { border-radius: 0; min-height: calc(100vh - 64px); }
+  .citizen:has(.chat-desk) { padding: 0; }
+  .bubble { max-width: 90%; }
+  .chat-head .btn span, .chat-head .btn { font-size: 12px; }
+}
