@@ -10,7 +10,7 @@ const description =
 
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.EMBRACE_PUBLIC_URL || 'https://embrace.nalaria.ai.id'),
-  title: { default: 'Embrace · The AI front door for social complaints', template: '%s · Embrace' },
+  title: { default: 'Embrace · The AI service desk for social services', template: '%s · Embrace' },
   description,
   applicationName: 'Embrace',
   openGraph: { title: 'Embrace', description, type: 'website', siteName: 'Embrace' },
