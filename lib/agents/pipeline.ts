@@ -117,12 +117,16 @@ export function procedureText(agency: Agency, category: string | undefined): str
   const p = agency.procedures?.find((x) => x.categories.includes(category ?? ''))
   if (!p) return '(no published procedure for this case type)'
   const laws = agency.categories.find((c) => c.id === category)?.laws ?? []
+  const contacts = (agency.resources ?? [])
+    .filter((r) => r.kind === 'hotline' || r.kind === 'partner')
+    .map((r) => (r.phone ? `${r.name}: ${r.phone}` : r.name))
   return [
     p.title,
     ...p.stages.map((s, i) => `${i + 1}. ${s.title} [${s.who ?? 'caseworker'}]`),
     p.requirements?.length ? `What to bring: ${p.requirements.join('; ')}` : '',
     p.note ? `Note: ${p.note}` : '',
     laws.length ? `Legal basis: ${laws.join(', ')}` : '',
+    contacts.length ? `Hotlines and partner services the reply may name (no links): ${contacts.join('; ')}` : '',
   ]
     .filter(Boolean)
     .join('\n')
@@ -213,6 +217,7 @@ Rules:
 - Write in the language of the complaint (intake.language; if it mixes languages, use the main one) with a warm, plain, respectful tone; short paragraphs.
 - Acknowledge the specific issue in one sentence, give the ticket number, say which team handles it and the
   expected first response time from sla_hours (in hours, e.g. "within 72 hours"). Never promise an outcome.
+- Name a hotline or partner service only from the list given with the procedure, with its number as given.
 - If a published procedure is given: say in one sentence what happens next (the next one or two stages, in plain
   words) and, if it lists what to bring, what the citizen should prepare. Do not number the stages or add others.
 - If route is "escalated": say a supervisor has been alerted now; if anyone is in immediate danger, ask them to

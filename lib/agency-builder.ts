@@ -210,6 +210,14 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
           ),
         }
       : {}),
+    // A copied agency keeps the template's hotlines and partners; its own channels and social media are its own.
+    ...(base.resources
+      ? {
+          resources: existing
+            ? base.resources
+            : base.resources.filter((r) => r.kind === 'hotline' || r.kind === 'partner'),
+        }
+      : {}),
   }
   return {
     ...agency,

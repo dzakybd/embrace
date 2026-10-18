@@ -289,5 +289,76 @@
         }
       ]
     }
+  ],
+  "resources": [
+    {
+      "id": "kpai_web",
+      "kind": "official",
+      "name": "KPAI website",
+      "name_id": "Situs web KPAI",
+      "url": "https://www.kpai.go.id",
+      "public": true
+    },
+    {
+      "id": "kpai_complaints",
+      "kind": "official",
+      "name": "KPAI complaints (phone or WhatsApp)",
+      "name_id": "Pengaduan KPAI (telepon atau WhatsApp)",
+      "phone": "0811-1002-7727",
+      "note": "Also by email: pengaduan@kpai.go.id. In person Monday to Friday, 09:00 to 15:00 WIB, Jl. Teuku Umar 10-12, Menteng, Central Jakarta.",
+      "note_id": "Juga lewat email: pengaduan@kpai.go.id. Datang langsung Senin sampai Jumat, 09.00 sampai 15.00 WIB, Jl. Teuku Umar 10-12, Menteng, Jakarta Pusat.",
+      "public": true
+    },
+    {
+      "id": "kpai_instagram",
+      "kind": "social",
+      "name": "Instagram @kpai_official",
+      "url": "https://www.instagram.com/kpai_official/",
+      "public": true
+    },
+    {
+      "id": "sapa129",
+      "kind": "hotline",
+      "name": "SAPA 129 (women and child protection hotline)",
+      "name_id": "SAPA 129 (layanan pengaduan perempuan dan anak)",
+      "phone": "129 · WhatsApp 08111-129-129",
+      "note": "Ministry of Women Empowerment and Child Protection; for violence against women and children.",
+      "note_id": "Kementerian PPPA; untuk kekerasan terhadap perempuan dan anak.",
+      "public": true
+    },
+    {
+      "id": "police110",
+      "kind": "hotline",
+      "name": "Police emergency",
+      "name_id": "Darurat polisi",
+      "phone": "110",
+      "public": true
+    },
+    {
+      "id": "emergency112",
+      "kind": "hotline",
+      "name": "General emergency",
+      "name_id": "Darurat umum",
+      "phone": "112",
+      "public": true
+    },
+    {
+      "id": "uptd_ppa",
+      "kind": "partner",
+      "name": "UPTD PPA of the child’s district",
+      "name_id": "UPTD PPA kabupaten/kota tempat anak tinggal",
+      "note": "Local women and child protection unit: case management, psychological and legal support. KPAI refers cases there.",
+      "note_id": "Unit perlindungan perempuan dan anak setempat: penanganan kasus, pendampingan psikologis dan hukum. KPAI merujuk kasus ke sana.",
+      "public": false
+    },
+    {
+      "id": "unit_ppa_police",
+      "kind": "partner",
+      "name": "Police women and children unit (Unit PPA) of the local police",
+      "name_id": "Unit PPA Polres setempat",
+      "note": "For crimes against children; reached through the local police station or 110.",
+      "note_id": "Untuk tindak pidana terhadap anak; melalui Polres setempat atau 110.",
+      "public": false
+    }
   ]
 }

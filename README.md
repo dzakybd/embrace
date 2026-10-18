@@ -81,6 +81,8 @@ In local test runs a text complaint went through all five steps in about 6 secon
 
 **Case types and procedures.** Each agency's published service flows are structured procedures (`procedures` in `agency.json`): stages in English and Indonesian, who does each stage (citizen, front desk, caseworker, supervisor, head of office, partner agency), what to bring, and per case type its legal basis in Indonesian law. The supervisor or the head of office edits them under **Case types** with a live swimlane diagram; the public guide (`/a/<id>/guide`), the case checklist, the citizen's tracking page and the reply drafter (which tells the citizen what happens next) all use what is saved.
 
+**Resources.** Each agency keeps its links and contacts under **Resources**: official channels, social media, hotlines, partner agencies (police PPA unit, hospital, disaster agency) and other links, in English and Indonesian. Public official channels and social media show on the agency page; the reply drafter may name hotlines and partners from this list, and only from it.
+
 **Seeing the agents.** The AI control tower maps the pipeline (channels, guardrails, each agent with its model, the document-search tool, the analyst agent and its tools, Firestore, Pub/Sub and telemetry); pick a box for its input, output and live figures. On each case the agent trace reads as a conversation: what every agent did, what it read and wrote, model, time, tokens and a link to the Cloud Trace span. The audit trail lists every action on the case.
 
 **Document search.** The demo uses BM25 (no model tokens, works offline, explainable). Next: hybrid search, BM25 plus Gemini embeddings, for questions phrased far from the documents' wording.

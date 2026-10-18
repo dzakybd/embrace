@@ -54,6 +54,13 @@ const MANAGE = [
   },
   {
     as: 'supervisor',
+    page: 'resources',
+    icon: 'globe',
+    title: 'Resources',
+    body: 'Official channels, social media, hotlines and partner agencies',
+  },
+  {
+    as: 'supervisor',
     page: 'settings',
     icon: 'form',
     title: 'Settings',
@@ -83,6 +90,10 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
   const t = translator(lang)
   const agency = localize(found, lang)
   const tg = telegramUrl(agency.telegram_bot)
+  // Official channels, social media and links only: emergency numbers are not shown as a banner here (user, 18 Oct).
+  const publicRes = (agency.resources ?? []).filter(
+    (r) => r.public && r.kind !== 'hotline' && r.kind !== 'partner' && (r.url || r.phone),
+  )
   return (
     <div className="public">
       <header className="top">
@@ -146,6 +157,27 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
           </div>
           <TrackBox />
         </section>
+        {publicRes.length > 0 && (
+          <ul className="official-links" aria-label={t('Official links')}>
+            {publicRes.map((r) => {
+              const name = lang === 'id' && r.name_id ? r.name_id : r.name
+              return (
+                <li key={r.id}>
+                  {r.url ? (
+                    <a className="chip" href={r.url} target="_blank" rel="noreferrer">
+                      {r.kind === 'social' ? <ChannelIcon c="instagram" size={14} /> : <Icon name="globe" size={14} />}{' '}
+                      {name}
+                    </a>
+                  ) : (
+                    <span className="chip">
+                      <Icon name="chat" size={14} /> {name}: <b>{r.phone}</b>
+                    </span>
+                  )}
+                </li>
+              )
+            })}
+          </ul>
+        )}
 
         <h2 className="pick-h">
           {t('How a report is handled')}{' '}

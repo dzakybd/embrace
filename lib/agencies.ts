@@ -3,7 +3,7 @@
 import dinsosDemak from '@/agencies/dinsos_demak/agency.json'
 import kpai from '@/agencies/kpai/agency.json'
 import type { Urgency } from './schemas'
-import { registerDocs, resetDocs, type IndexFile } from './sop'
+import { registerDocs, resetDocs, sourcesFor, type IndexFile } from './sop'
 import { STORE } from './store'
 
 export interface Agency {
@@ -47,6 +47,22 @@ export interface Agency {
   logo?: string | null
   /** The agency's published service procedures, the stages a case goes through (shown to staff and the public). */
   procedures?: Procedure[]
+  /** Links and contacts: official channels, social media, hotlines, partner agencies. `public` ones show on the agency
+   * page; partners and hotlines may be named in drafted replies. */
+  resources?: Resource[]
+}
+
+export const RESOURCE_KINDS = ['official', 'social', 'hotline', 'partner', 'link'] as const
+export interface Resource {
+  id: string
+  kind: (typeof RESOURCE_KINDS)[number]
+  name: string
+  name_id?: string
+  note?: string
+  note_id?: string
+  url?: string
+  phone?: string
+  public: boolean
 }
 
 export interface Procedure {
@@ -130,6 +146,24 @@ export async function loadAgencies(force = false): Promise<void> {
   return loading
 }
 
+/** Saves edited fields of an agency (procedures, resources). A built-in agency's first edit becomes a stored override
+ * whose documents stay the shipped ones, by reference; Reset demo removes it. */
+export async function saveAgencyFields(agency: Agency, fields: Partial<Agency>) {
+  if (agency.custom || agency.edited) await STORE.patchAgency(agency.id, fields)
+  else {
+    const override: StoredAgency = {
+      ...agency,
+      ...fields,
+      override: true,
+      docs: { sources: [], passages: [], template: agency.id, keep: sourcesFor(agency.id).map((s) => s.short) },
+    }
+    delete override.custom
+    delete override.edited
+    await STORE.putAgency(override)
+  }
+  AGENCIES[agency.id] = { ...agency, ...fields, ...(agency.custom ? {} : { edited: true }) }
+}
+
 /** The agency with this id, loading custom agencies from the store when it is not known yet. */
 export async function agencyById(id: string): Promise<Agency | undefined> {
   await loadAgencies(!AGENCIES[id])
@@ -188,6 +222,7 @@ export function publicAgency(a: Agency) {
     escalation: a.escalation,
     reply_signature: a.reply_signature,
     procedures: a.procedures ?? [],
+    resources: a.resources ?? [],
   }
 }
 export type PublicAgency = ReturnType<typeof publicAgency>

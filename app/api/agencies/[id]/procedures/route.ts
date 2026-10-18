@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { AGENCIES, agencyById, publicAgency, type StoredAgency } from '@/lib/agencies'
+import { AGENCIES, agencyById, publicAgency, saveAgencyFields } from '@/lib/agencies'
 import { log } from '@/lib/agents/governance'
 import { error, rateLimit } from '@/lib/http'
 import { sourcesFor } from '@/lib/sop'
@@ -61,21 +61,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   )
     return error(400, 'unknown document')
   const categories = agency.categories.map((c) => ({ ...c, laws: laws[c.id] ?? c.laws ?? [] }))
-  const fields = { procedures, categories }
-  if (agency.custom || agency.edited) await STORE.patchAgency(id, fields)
-  else {
-    // First edit of a built-in agency: store it as an override; its documents stay the shipped ones, by reference.
-    const override: StoredAgency = {
-      ...agency,
-      ...fields,
-      override: true,
-      docs: { sources: [], passages: [], template: id, keep: [...docs] },
-    }
-    delete override.custom
-    delete override.edited
-    await STORE.putAgency(override)
-  }
-  AGENCIES[id] = { ...agency, ...fields, ...(agency.custom ? {} : { edited: true }) }
+  await saveAgencyFields(agency, { procedures, categories })
   log('INFO', 'procedures_changed', { agency: id, by: by.name, procedures: procedures.length })
   return Response.json(publicAgency(AGENCIES[id]))
 }

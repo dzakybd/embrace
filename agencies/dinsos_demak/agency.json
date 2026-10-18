@@ -756,5 +756,75 @@
         }
       ]
     }
+  ],
+  "resources": [
+    {
+      "id": "dinsos_web",
+      "kind": "official",
+      "name": "Dinsos P2PA Demak website",
+      "name_id": "Situs web Dinsos P2PA Demak",
+      "url": "https://dinsosp2pa.demakkab.go.id",
+      "public": true
+    },
+    {
+      "id": "demak_portal",
+      "kind": "link",
+      "name": "Demak Regency portal",
+      "name_id": "Portal Pemerintah Kabupaten Demak",
+      "url": "https://demakkab.go.id",
+      "public": true
+    },
+    {
+      "id": "sapa129",
+      "kind": "hotline",
+      "name": "SAPA 129 (women and child protection hotline)",
+      "name_id": "SAPA 129 (layanan pengaduan perempuan dan anak)",
+      "phone": "129 · WhatsApp 08111-129-129",
+      "note": "For violence against women and children.",
+      "note_id": "Untuk kekerasan terhadap perempuan dan anak.",
+      "public": true
+    },
+    {
+      "id": "police110",
+      "kind": "hotline",
+      "name": "Police emergency",
+      "name_id": "Darurat polisi",
+      "phone": "110",
+      "public": true
+    },
+    {
+      "id": "emergency112",
+      "kind": "hotline",
+      "name": "General emergency",
+      "name_id": "Darurat umum",
+      "phone": "112",
+      "public": true
+    },
+    {
+      "id": "unit_ppa_demak",
+      "kind": "partner",
+      "name": "Unit PPA, Demak Police (Polres Demak)",
+      "name_id": "Unit PPA Polres Demak",
+      "note": "Police unit for women and children; first response and investigation in violence cases (stage 2 of the UPTD PPA procedure).",
+      "note_id": "Unit kepolisian untuk perempuan dan anak; penanganan awal dan penyidikan kasus kekerasan (tahap 2 prosedur UPTD PPA).",
+      "public": false
+    },
+    {
+      "id": "rsud_demak",
+      "kind": "partner",
+      "name": "RSUD Sunan Kalijaga Demak",
+      "note": "Regional hospital, Jl. Sultan Fatah, Demak: medical examination (visum) and treatment.",
+      "note_id": "Rumah sakit daerah, Jl. Sultan Fatah, Demak: pemeriksaan medis (visum) dan perawatan.",
+      "public": false
+    },
+    {
+      "id": "bpbd_demak",
+      "kind": "partner",
+      "name": "BPBD Demak (regional disaster management agency)",
+      "name_id": "BPBD Kabupaten Demak",
+      "note": "Disaster response and evacuation, with Dinsos for aid to victims.",
+      "note_id": "Tanggap darurat dan evakuasi bencana, bersama Dinsos untuk bantuan korban.",
+      "public": false
+    }
   ]
 }

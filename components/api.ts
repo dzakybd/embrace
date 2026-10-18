@@ -1,5 +1,17 @@
 import type { ProcedureT } from './Procedures'
 
+export interface Resource {
+  id: string
+  kind: 'official' | 'social' | 'hotline' | 'partner' | 'link'
+  name: string
+  name_id?: string
+  note?: string
+  note_id?: string
+  url?: string
+  phone?: string
+  public: boolean
+}
+
 export type Urgency = 'critical' | 'high' | 'normal' | 'low'
 export type Status = 'received' | 'escalated' | 'manual_review' | 'assigned' | 'in_progress' | 'resolved'
 export type Channel = 'web' | 'whatsapp' | 'email' | 'social' | 'telegram'
@@ -12,6 +24,7 @@ export interface Agency {
   queues: Record<string, string>
   country: string
   procedures: ProcedureT[]
+  resources: Resource[]
   sla_hours: Record<Urgency, number>
   emergency_line: string
   escalation_contact: string
@@ -323,6 +336,12 @@ export const api = {
   setupTelegram: (t: string) =>
     fetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(json<{ steps: SetupStep[]; status: BotStatus }>),
   disconnectTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
+  saveResources: (t: string, body: { resources: Resource[]; by: { name: string; role: string } }) =>
+    fetch(`/api/agencies/${t}/resources`, {
+      method: 'PUT',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<Agency>),
   saveProcedures: (
     t: string,
     body: { procedures: ProcedureT[]; laws: Record<string, string[]>; by: { name: string; role: string } },

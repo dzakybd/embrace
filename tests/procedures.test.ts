@@ -27,6 +27,7 @@ describe('agency procedures', () => {
     expect(text).toMatch(/1\. Complaint registered \[citizen\]/)
     expect(text).toMatch(/What to bring:/)
     expect(text).toMatch(/UU 12\/2022/)
+    expect(text).toMatch(/SAPA 129 .*: 129 · WhatsApp 08111-129-129/)
     expect(procedureText(AGENCIES.kpai, 'nope')).toMatch(/no published procedure/)
   })
 })
