@@ -32,6 +32,10 @@ function settingsOf(t: Agency, withNames: boolean) {
     short: withNames ? t.short_name : '',
     country: t.country,
     description: withNames ? t.description ?? '' : '',
+    nameId: withNames ? t.name_id ?? '' : '',
+    shortId: withNames ? t.short_name_id ?? '' : '',
+    descId: withNames ? t.description_id ?? '' : '',
+    emergencyId: withNames ? t.emergency_line_id ?? '' : '',
     emergency: t.emergency_line,
     signature: withNames ? t.reply_signature : '',
     cats: t.categories.map((c) => ({
@@ -113,6 +117,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
       const allDocs = paste.text.trim() ? [...docs, { title: paste.title || 'Pasted document', text: paste.text, size: paste.text.length }] : docs
       const body: NewAgency = {
         template: agency?.id ?? template, name: f.name, short_name: f.short, country: f.country, description: f.description,
+        name_id: f.nameId, short_name_id: f.shortId, description_id: f.descId, emergency_line_id: f.emergencyId,
         emergency_line: f.emergency, reply_signature: f.signature || `Complaints desk, ${f.name}`,
         categories: f.cats.filter((c) => c.label.trim() && c.team.trim()),
         team: f.team.filter((m) => m.name.trim()).map((m) => ({ ...m, teams: m.role === 'officer' ? m.teams.filter((t) => teams.includes(t)) : [] })),
@@ -170,6 +175,10 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
           <label className="field"><span>{tr('Emergency line given in urgent replies')}</span><input required value={f.emergency} onChange={(e) => set({ emergency: e.target.value })} /></label>
           <label className="field"><span>{tr('Reply signature')}</span><input value={f.signature} onChange={(e) => set({ signature: e.target.value })} placeholder={f.name ? `Complaints desk, ${f.name}` : 'Complaints desk, …'} /></label>
           <label className="field"><span>{tr('What the agency does (optional)')}</span><input value={f.description} onChange={(e) => set({ description: e.target.value })} maxLength={400} /></label>
+          <label className="field"><span>{tr('Full name in Indonesian (optional)')}</span><input value={f.nameId} onChange={(e) => set({ nameId: e.target.value })} maxLength={160} /></label>
+          <label className="field"><span>{tr('Short name in Indonesian (optional)')}</span><input value={f.shortId} onChange={(e) => set({ shortId: e.target.value })} maxLength={40} /></label>
+          <label className="field"><span>{tr('What the agency does, in Indonesian (optional)')}</span><input value={f.descId} onChange={(e) => set({ descId: e.target.value })} maxLength={400} /></label>
+          <label className="field"><span>{tr('Emergency line in Indonesian (optional)')}</span><input value={f.emergencyId} onChange={(e) => set({ emergencyId: e.target.value })} maxLength={200} /></label>
         </div>
       </Card>
 

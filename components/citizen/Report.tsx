@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { Fragment, useRef, useState } from 'react'
 import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
-import { useT } from '../Lang'
+import { localize } from '@/lib/i18n'
+import { useLang, useT } from '../Lang'
 import { useAgencies } from '../useAgencies'
 import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
 
@@ -72,7 +73,7 @@ function toAttachment(blob: Blob, name: string): Promise<File_> {
 }
 
 export default function Report() {
-  const t = useT()
+  const { t, lang } = useLang()
   const { agencies, agency, pick, error: loadError } = useAgencies()
   const [text, setText] = useState('')
   const [channel, setChannel] = useState<Channel>('web')
@@ -248,7 +249,7 @@ export default function Report() {
         <label className="field">
           <span>{t('Send to')}</span>
           <select value={agency.id} onChange={(e) => pick(e.target.value)}>
-            {agencies.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
+            {agencies.map((a) => <option key={a.id} value={a.id}>{localize(a, lang).name}</option>)}
           </select>
         </label>
         <div className="demo-box">

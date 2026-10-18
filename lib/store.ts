@@ -40,6 +40,8 @@ export interface ChatState {
   open_since?: string | null
   awaiting?: 'report' | null
   warned_at?: string | null
+  /** Language the bot speaks in this chat; starts from the Telegram app language. */
+  lang?: 'en' | 'id'
 }
 
 const newestFirst = (a: Ticket, b: Ticket) => b.created_at.localeCompare(a.created_at)

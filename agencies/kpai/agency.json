@@ -5,6 +5,9 @@
   "short_name": "KPAI",
   "country": "Indonesia",
   "description": "Indonesian Child Protection Commission: receives complaints about violations of children's rights, assesses them, refers children to service providers (UPTD PPA, Dinas Sosial, police) and oversees how agencies follow up.",
+  "name_id": "Komisi Perlindungan Anak Indonesia (KPAI)",
+  "short_name_id": "KPAI",
+  "description_id": "Komisi Perlindungan Anak Indonesia: menerima pengaduan pelanggaran hak anak, menelaahnya, merujuk anak ke penyedia layanan (UPTD PPA, Dinas Sosial, kepolisian), dan mengawasi tindak lanjut instansi.",
   "categories": [
     {
       "id": "physical_emotional_abuse",
@@ -101,6 +104,7 @@
     "low": 336
   },
   "emergency_line": "110 (police) or SAPA 129 (WhatsApp 08111-129-129); KPAI complaints 0811-1002-7727",
+  "emergency_line_id": "110 (polisi) atau SAPA 129 (WhatsApp 08111-129-129); pengaduan KPAI 0811-1002-7727",
   "reply_signature": "Complaints Unit, Indonesian Child Protection Commission (KPAI)",
   "team": [
     {

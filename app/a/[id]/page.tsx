@@ -8,20 +8,26 @@ import { TrackBox } from '@/components/citizen/TrackBox'
 import { LangSwitch } from '@/components/Lang'
 import { ChannelIcon, Icon, telegramUrl } from '@/components/ui'
 import { agencyById } from '@/lib/agencies'
-import { getT } from '@/lib/i18n-server'
+import { localize, translator } from '@/lib/i18n'
+import { getLang } from '@/lib/i18n-server'
 import { sourcesFor } from '@/lib/sop'
 
 export const dynamic = 'force-dynamic'
 
 export async function generateMetadata({ params }: { params: Promise<{ id: string }> }): Promise<Metadata> {
   const agency = await agencyById((await params).id)
-  return { title: agency?.short_name ?? 'Agency' }
+  return { title: agency ? localize(agency, await getLang()).short_name : 'Agency' }
 }
 
 const STAFF = [
   { as: 'officer', page: 'inbox', icon: 'inbox', title: 'Caseworker', body: 'My cases and AI-drafted replies' },
   { as: 'supervisor', page: 'inbox', icon: 'alert', title: 'Duty supervisor', body: 'Escalations first, delegate cases' },
   { as: 'leader', page: 'insights', icon: 'chart', title: 'Head of office', body: 'KPIs, weekly AI brief, early warnings' },
+]
+
+const MANAGE = [
+  { as: 'supervisor', page: 'integrations', icon: 'chat', title: 'Channels', body: 'Telegram bot token, WhatsApp, email and more' },
+  { as: 'leader', page: 'settings', icon: 'rules', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
 ]
 
 const FLOW = [
@@ -33,9 +39,11 @@ const FLOW = [
 
 /** Agency home: the citizen's ways in, the staff workspace by role, and what the agency handles. */
 export default async function AgencyPage({ params }: { params: Promise<{ id: string }> }) {
-  const agency = await agencyById((await params).id)
-  if (!agency || agency.template) notFound()
-  const t = await getT()
+  const found = await agencyById((await params).id)
+  if (!found || found.template) notFound()
+  const lang = await getLang()
+  const t = translator(lang)
+  const agency = localize(found, lang)
   const tg = telegramUrl(agency.telegram_bot)
   const byTeam = Object.entries(agency.queues).map(([q, team]) => ({ team, cats: agency.categories.filter((c) => c.queue === q) })).filter((t) => t.cats.length)
   const docs = sourcesFor(agency.id).filter((s) => !s.title.includes('(Indonesian original)'))
@@ -90,6 +98,23 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
               <span>
                 <b>{t(s.title)}</b>
                 <span className="muted">{t(s.body)}</span>
+              </span>
+              <Icon name="send" size={16} />
+            </Link>
+          ))}
+        </section>
+
+        <h2 className="pick-h">{t('Manage this agency')}</h2>
+        <section className="hub-grid two">
+          {MANAGE.map((s) => (
+            <Link key={s.page} href={`/staff/${s.page}?agency=${agency.id}&as=${s.as}`} className="role-card staff-tile">
+              <span className="entry-ic small"><Icon name={s.icon} size={22} /></span>
+              <span>
+                <b>{t(s.title)}</b>
+                <span className="muted">{t(s.body)}</span>
+              </span>
+              <span className="tile-marks" aria-hidden="true">
+                {s.page === 'integrations' && <><ChannelIcon c="telegram" size={18} /><ChannelIcon c="whatsapp" size={18} /><ChannelIcon c="email" size={18} /></>}
               </span>
               <Icon name="send" size={16} />
             </Link>

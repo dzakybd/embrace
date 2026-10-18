@@ -61,5 +61,5 @@ export interface TgMessage {
 export interface TgUpdate {
   update_id: number
   message?: TgMessage
-  callback_query?: { id: string; data?: string; message?: TgMessage; from: { id: number } }
+  callback_query?: { id: string; data?: string; message?: TgMessage; from: { id: number; language_code?: string } }
 }

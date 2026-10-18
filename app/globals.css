@@ -518,3 +518,6 @@ a.reach-opt:hover { border-color: #26A5E4; background: color-mix(in srgb, #26A5E
 .soon-card input { background: var(--surface); }
 @media (max-width: 560px) { .reach { grid-template-columns: 1fr 1fr; } }
 .soon-card form button { align-self: flex-start; }
+.hub-grid.two { grid-template-columns: repeat(2, 1fr); }
+.tile-marks { display: inline-flex; gap: 6px; }
+@media (max-width: 560px) { .hub-grid.two { grid-template-columns: 1fr; } .tile-marks { display: none; } }

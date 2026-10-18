@@ -2,6 +2,7 @@
 // code (no AI); only a real report reaches the AI pipeline, as a Pub/Sub job so the webhook can return at once.
 import { getAgency, loadAgencies } from './agencies'
 import { publicUrl, telegramBot, type TelegramBot } from './channels'
+import { localize, translator, type Lang } from './i18n'
 import { publishTo, pubsubOn } from './events'
 import { addFollowup, submit } from './service'
 import { STORE, now, type ChatState } from './store'
@@ -33,11 +34,22 @@ export interface ReportJob {
 /** One conversation with an agency's bot: the same person chatting with two agencies has two separate states. */
 class Chat {
   readonly key: string
+  lang: Lang = 'en'
   constructor(readonly bot: TelegramBot, readonly id: string) {
     this.key = `${bot.agency_id}:${id}`
   }
+  /** The agency with its name in the chat's language. */
   get agency() {
-    return getAgency(this.bot.agency_id)!
+    return localize(getAgency(this.bot.agency_id)!, this.lang)
+  }
+  t(s: string, vars?: Record<string, string | number>) {
+    return translator(this.lang)(s, vars)
+  }
+  /** Loads the chat state and its language: the one picked in the chat, else the Telegram app language. */
+  async open(appLang?: string): Promise<ChatState> {
+    const st = await this.state()
+    this.lang = st.lang ?? (appLang?.toLowerCase().startsWith('id') ? 'id' : 'en')
+    return st
   }
   /** Sends without failing the request: a blocked bot or a bad chat id must never break case handling. */
   async say(text: string, buttons?: Button[][]) {
@@ -55,34 +67,41 @@ class Chat {
   }
 }
 
-const menu = (): Button[][] => [
-  [{ text: 'New report', callback_data: 'new' }, { text: 'Track my report', callback_data: 'track' }],
-  [{ text: 'Emergency numbers', callback_data: 'emergency' }],
+const menu = (c: Chat): Button[][] => [
+  [{ text: c.t('New report'), callback_data: 'new' }, { text: c.t('Track my report'), callback_data: 'track' }],
+  [{ text: c.t('Emergency numbers'), callback_data: 'emergency' }],
+  [c.lang === 'id' ? { text: 'English', callback_data: 'lang:en' } : { text: 'Bahasa Indonesia', callback_data: 'lang:id' }],
 ]
 
 async function welcome(c: Chat) {
   await c.say(
     `<b>${esc(c.agency.name)}</b>\n\n` +
-      'Tell us what happened, where and when, in your own words and language. You can also send a voice note or a photo. ' +
-      'Urgent reports reach the duty supervisor at once, and a real caseworker reviews every reply.\n\n' +
-      `If anyone is in danger right now, call ${esc(c.agency.emergency_line)}.`,
-    menu())
+      c.t('Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the duty supervisor at once, and a real caseworker reviews every reply.') + '\n\n' +
+      c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) }),
+    menu(c))
 }
 
 async function emergency(c: Chat) {
-  await c.say(`If anyone is in danger right now, call ${esc(c.agency.emergency_line)}. Then tell us what happened here; urgent reports alert a supervisor at once.`)
+  await c.say(c.t('If anyone is in danger right now, call {line}. Then tell us what happened here; urgent reports alert a supervisor at once.', { line: esc(c.agency.emergency_line) }))
+}
+
+/** Switches the chat's language and greets again in it. */
+async function setLang(c: Chat, lang: Lang) {
+  c.lang = lang
+  await c.set({ lang })
+  await welcome(c)
 }
 
 async function track(c: Chat, state: ChatState, id?: string) {
   const ticketId = id || state.open_ticket
   const t = ticketId ? await STORE.get(ticketId) : null
   if (!t || t.telegram_chat_id !== c.id || t.agency_id !== c.bot.agency_id) {
-    await c.say('No open report found for this chat. Send /new to make one.')
+    await c.say(c.t('No open report found for this chat. Send /new to make one.'))
     return
   }
   const a = c.agency
-  const status = t.resolved_at ? 'resolved' : t.responded_at ? 'replied, still open' : t.status === 'escalated' ? 'urgent, a supervisor has been alerted' : 'with the team'
-  await c.say(`Report <b>${t.id}</b>: ${status}.\nTeam: ${esc(t.policy ? a.queues[t.policy.queue] ?? '' : '')}`, [[{ text: 'Open status page', url: `${publicUrl()}/track/${t.id}` }]])
+  const status = c.t(t.resolved_at ? 'resolved' : t.responded_at ? 'replied, still open' : t.status === 'escalated' ? 'urgent, a supervisor has been alerted' : 'with the team')
+  await c.say(`${c.t('Report')} <b>${t.id}</b>: ${status}.\n${c.t('Team')}: ${esc(t.policy ? a.queues[t.policy.queue] ?? '' : '')}`, [[{ text: c.t('Open status page'), url: `${publicUrl()}/track/${t.id}` }]])
 }
 
 /** Handles one webhook update for an agency's bot without any model call. Returns a job when the AI should run. */
@@ -96,12 +115,13 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
     const cq = u.callback_query
     await answerCallback(bot.token, cq.id)
     const c = new Chat(bot, String(cq.message?.chat.id ?? cq.from.id))
-    const state = await c.state()
+    const state = await c.open(cq.from.language_code)
     const data = cq.data ?? ''
     if (data === 'new') {
       await c.set({ awaiting: 'report', open_ticket: null })
-      await c.say('Tell us what happened, where and when. A voice note or photo is fine too.')
-    } else if (data === 'track') await track(c, state)
+      await c.say(c.t('Tell us what happened, where and when. A voice note or photo is fine too.'))
+    } else if (data === 'lang:en' || data === 'lang:id') await setLang(c, data === 'lang:id' ? 'id' : 'en')
+    else if (data === 'track') await track(c, state)
     else if (data === 'emergency') await emergency(c)
     return null
   }
@@ -110,13 +130,14 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
   if (!m || m.chat.type !== 'private') return null
   const c = new Chat(bot, String(m.chat.id))
   const chatId = c.id
+  await c.open(m.from?.language_code)
 
   // Flood control: drop bursts, warn once per ten minutes.
   if (!(await STORE.hit(`tg-flood-${chatId}`, LIMITS.flood.limit, LIMITS.flood.window))) {
     const st = await c.state()
     if (!st.warned_at || Date.now() - Date.parse(st.warned_at) > 10 * MIN) {
       await c.set({ warned_at: now() })
-      await c.say('You are sending messages very fast. Please wait a minute; nothing you sent before is lost.')
+      await c.say(c.t('You are sending messages very fast. Please wait a minute; nothing you sent before is lost.'))
     }
     return null
   }
@@ -127,19 +148,20 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
   if (cmd === '/start') return welcome(c).then(() => null)
   if (cmd === '/new') {
     await c.set({ awaiting: 'report', open_ticket: null })
-    await c.say('Tell us what happened, where and when. A voice note or photo is fine too.')
+    await c.say(c.t('Tell us what happened, where and when. A voice note or photo is fine too.'))
     return null
   }
+  if (cmd === '/language' || cmd === '/bahasa') return setLang(c, c.lang === 'id' ? 'en' : 'id').then(() => null)
   if (cmd === '/track') return track(c, state, text.split(/\s+/)[1]).then(() => null)
   if (cmd === '/emergency') return emergency(c).then(() => null)
   if (cmd) {
-    await c.say('Commands: /new report, /track your report, /emergency numbers.', menu())
+    await c.say(c.t('Commands: /new report, /track your report, /emergency numbers, /language to switch language.'), menu(c))
     return null
   }
 
   const media = mediaOf(m)
   if (!text && !media.length) {
-    await c.say('Please describe the problem in words, a voice note or a photo.')
+    await c.say(c.t('Please describe the problem in words, a voice note or a photo.'))
     return null
   }
   const agency = c.agency
@@ -149,22 +171,22 @@ export async function handleUpdate(bot: TelegramBot, u: TgUpdate): Promise<Repor
   // A message after a report joins that case for 24 hours, unless the citizen started a new report.
   if (state.open_ticket && state.awaiting !== 'report' && state.open_since && Date.now() - Date.parse(state.open_since) < FOLLOWUP_WINDOW_MS) {
     await addFollowup(state.open_ticket, text || (media.length ? `[${media.map((x) => x.mime.split('/')[0]).join(', ')} sent on Telegram]` : ''))
-    await c.say(`Added to your report <b>${state.open_ticket}</b>; the person in charge has been notified.`, menu())
+    await c.say(c.t('Added to your report <b>{id}</b>; the person in charge has been notified.', { id: state.open_ticket }), menu(c))
     return null
   }
   if (!media.length && (text.length < 12 || GREETING.test(text))) {
-    await c.say(`Hello! To make a report to <b>${esc(agency.short_name)}</b>, tell us what happened, where and when, in a sentence or two. You can also send a voice note.`, menu())
+    await c.say(c.t('Hello! To make a report to <b>{agency}</b>, tell us what happened, where and when, in a sentence or two. You can also send a voice note.', { agency: esc(agency.short_name) }), menu(c))
     return null
   }
 
   if (!(await STORE.hit(`tg-rh-${chatId}`, LIMITS.reportsHour.limit, LIMITS.reportsHour.window)) ||
       !(await STORE.hit(`tg-rd-${chatId}`, LIMITS.reportsDay.limit, LIMITS.reportsDay.window))) {
-    await c.say('You have sent several reports recently. Please add details to your last report, or try again later. If anyone is in danger, call the emergency number now.', menu())
+    await c.say(c.t('You have sent several reports recently. Please add details to your last report, or try again later. If anyone is in danger, call the emergency number now.'), menu(c))
     return null
   }
   const aiOk = await STORE.hit('ai-daily', LIMITS.aiDay.limit, LIMITS.aiDay.window)
   await c.set({ awaiting: null })
-  await c.say('Thank you. We received your report and are reading it now…')
+  await c.say(c.t('Thank you. We received your report and are reading it now…'))
   await typing(bot.token, chatId)
   return { update_id: u.update_id, chat_id: chatId, agency_id: agency.id, text, media, ...(aiOk ? {} : { no_ai: 'Daily AI budget reached; routed by rules' }) }
 }
@@ -190,6 +212,7 @@ export async function processReport(job: ReportJob) {
   const bot = await telegramBot(job.agency_id)
   if (!bot) return
   const c = new Chat(bot, job.chat_id)
+  await c.open()
   const media: { mime: string; data: string }[] = []
   for (const f of job.media) {
     const data = await download(bot.token, f.file_id).catch(() => null)
@@ -204,9 +227,9 @@ export async function processReport(job: ReportJob) {
   await c.set({ open_ticket: ticket.id, open_since: now(), awaiting: null })
   const urgent = ticket.policy.route === 'escalated'
   await c.say(
-    `Your report number is <b>${ticket.id}</b>.\n` +
-      (urgent ? `<b>Marked urgent: a supervisor has been alerted now.</b> If anyone is in danger right now, call ${esc(a.emergency_line)}.\n` : '') +
-      `It is with the <b>${esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue)}</b>. You will hear back within ${ticket.policy.sla_hours} hours; a caseworker reviews every reply before it is sent.\n\n` +
-      'Anything you send here in the next 24 hours is added to this report.',
-    [[{ text: 'Track this report', url: `${publicUrl()}/track/${ticket.id}` }], [{ text: 'New report', callback_data: 'new' }]])
+    c.t('Your report number is <b>{id}</b>.', { id: ticket.id }) + '\n' +
+      (urgent ? `<b>${c.t('Marked urgent: a supervisor has been alerted now.')}</b> ${c.t('If anyone is in danger right now, call {line}.', { line: esc(a.emergency_line) })}\n` : '') +
+      c.t('It is with the <b>{team}</b>. You will hear back within {h} hours; a caseworker reviews every reply before it is sent.', { team: esc(a.queues[ticket.policy.queue] ?? ticket.policy.queue), h: ticket.policy.sla_hours }) + '\n\n' +
+      c.t('Anything you send here in the next 24 hours is added to this report.'),
+    [[{ text: c.t('Track this report'), url: `${publicUrl()}/track/${ticket.id}` }], [{ text: c.t('New report'), callback_data: 'new' }]])
 }

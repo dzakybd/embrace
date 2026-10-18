@@ -72,6 +72,17 @@ describe('telegram bot gatekeeping (no AI)', () => {
     expect(sent[0]).toContain('in danger right now')
   })
 
+  it('speaks Indonesian when the Telegram app is in Indonesian, and switches with /language', async () => {
+    const id = (text: string) => ({ update_id: nextId++, message: { message_id: 1, chat: { id: chat, type: 'private' }, from: { id: chat, language_code: 'id' }, date: 0, text } })
+    await handleUpdate(id('halo'))
+    expect(sent.at(-1)).toContain('ceritakan apa yang terjadi')
+    await handleUpdate(id('/language'))
+    expect((await STORE.getChat(key(chat)))?.lang).toBe('en')
+    expect(sent.at(-1)).toContain('Tell us what happened')
+    await handleUpdate(id('halo'))
+    expect(sent.at(-1)).toContain('tell us what happened')
+  })
+
   it('adds messages after a report to the open case instead of running AI again', async () => {
     await STORE.setChat(key(chat), { agency_id: 'dinsos_demak', open_ticket: 'DMK-TEST', open_since: new Date().toISOString(), awaiting: null })
     expect(await handleUpdate(msg('Also, my card number ends in 1234 and the shop is on Maple Street.'))).toBeNull()

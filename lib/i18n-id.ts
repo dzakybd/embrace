@@ -49,6 +49,9 @@ export const ID: Record<string, string> = {
   'Escalations first, delegate cases': 'Eskalasi lebih dulu, delegasikan kasus',
   'KPIs, weekly AI brief, early warnings': 'KPI, ringkasan mingguan AI, peringatan dini',
   'How a report is handled': 'Cara laporan ditangani',
+  'Manage this agency': 'Kelola instansi ini',
+  'Telegram bot token, WhatsApp, email and more': 'Token bot Telegram, WhatsApp, email, dan lainnya',
+  'Names, rules, categories, teams, staff and documents': 'Nama, aturan, kategori, tim, petugas, dan dokumen',
   'Step {n}': 'Langkah {n}',
   'Report number in seconds, personal data masked': 'Nomor laporan dalam hitungan detik, data pribadi disamarkan',
   'Urgent cases alert the duty supervisor': 'Kasus mendesak memberi tahu supervisor piket',
@@ -361,6 +364,10 @@ export const ID: Record<string, string> = {
   'Emergency line given in urgent replies': 'Nomor darurat yang dicantumkan di balasan mendesak',
   'Reply signature': 'Tanda tangan balasan',
   'What the agency does (optional)': 'Tugas instansi (opsional)',
+  'Full name in Indonesian (optional)': 'Nama lengkap dalam bahasa Indonesia (opsional)',
+  'Short name in Indonesian (optional)': 'Nama singkat dalam bahasa Indonesia (opsional)',
+  'What the agency does, in Indonesian (optional)': 'Tugas instansi dalam bahasa Indonesia (opsional)',
+  'Emergency line in Indonesian (optional)': 'Nomor darurat dalam bahasa Indonesia (opsional)',
   'Rules': 'Aturan',
   '3. Rules': '3. Aturan',
   'Deterministic rules decide escalation, never the AI alone. A caseworker always approves every reply before it is sent.':
@@ -417,4 +424,34 @@ export const ID: Record<string, string> = {
   'Saved. New reports follow these settings.': 'Tersimpan. Laporan baru mengikuti pengaturan ini.',
   'Demo: created agencies are public to everyone using this prototype; use made-up staff names.':
     'Demo: instansi yang dibuat terlihat oleh semua pengguna prototipe ini; gunakan nama petugas rekaan.',
+
+  // Telegram bot
+  'New report': 'Laporan baru',
+  'Track my report': 'Lacak laporan saya',
+  'Emergency numbers': 'Nomor darurat',
+  'Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the duty supervisor at once, and a real caseworker reviews every reply.':
+    'Ceritakan apa yang terjadi, di mana, dan kapan, dengan kata-kata Anda sendiri. Anda juga bisa mengirim pesan suara atau foto. Laporan mendesak langsung sampai ke supervisor piket, dan petugas sungguhan memeriksa setiap balasan.',
+  'If anyone is in danger right now, call {line}. Then tell us what happened here; urgent reports alert a supervisor at once.':
+    'Jika ada yang dalam bahaya sekarang, hubungi {line}. Lalu ceritakan di sini apa yang terjadi; laporan mendesak langsung memberi tahu supervisor.',
+  'No open report found for this chat. Send /new to make one.': 'Tidak ada laporan terbuka di chat ini. Kirim /new untuk membuat laporan.',
+  'resolved': 'selesai',
+  'replied, still open': 'sudah dibalas, masih terbuka',
+  'urgent, a supervisor has been alerted': 'mendesak, supervisor sudah diberi tahu',
+  'with the team': 'sedang ditangani tim',
+  'Open status page': 'Buka halaman status',
+  'Tell us what happened, where and when. A voice note or photo is fine too.': 'Ceritakan apa yang terjadi, di mana, dan kapan. Pesan suara atau foto juga boleh.',
+  'You are sending messages very fast. Please wait a minute; nothing you sent before is lost.': 'Anda mengirim pesan terlalu cepat. Mohon tunggu sebentar; pesan sebelumnya tidak hilang.',
+  'Commands: /new report, /track your report, /emergency numbers, /language to switch language.': 'Perintah: /new laporan baru, /track lacak laporan, /emergency nomor darurat, /language ganti bahasa.',
+  'Please describe the problem in words, a voice note or a photo.': 'Mohon jelaskan masalahnya dengan kata-kata, pesan suara, atau foto.',
+  'Added to your report <b>{id}</b>; the person in charge has been notified.': 'Ditambahkan ke laporan Anda <b>{id}</b>; penanggung jawab sudah diberi tahu.',
+  'Hello! To make a report to <b>{agency}</b>, tell us what happened, where and when, in a sentence or two. You can also send a voice note.':
+    'Halo! Untuk melapor ke <b>{agency}</b>, ceritakan apa yang terjadi, di mana, dan kapan dalam satu atau dua kalimat. Anda juga bisa mengirim pesan suara.',
+  'You have sent several reports recently. Please add details to your last report, or try again later. If anyone is in danger, call the emergency number now.':
+    'Anda sudah mengirim beberapa laporan baru-baru ini. Tambahkan detail ke laporan terakhir Anda, atau coba lagi nanti. Jika ada yang dalam bahaya, segera hubungi nomor darurat.',
+  'Thank you. We received your report and are reading it now…': 'Terima kasih. Laporan Anda sudah kami terima dan sedang dibaca…',
+  'Your report number is <b>{id}</b>.': 'Nomor laporan Anda <b>{id}</b>.',
+  'Marked urgent: a supervisor has been alerted now.': 'Ditandai mendesak: supervisor sudah diberi tahu sekarang.',
+  'It is with the <b>{team}</b>. You will hear back within {h} hours; a caseworker reviews every reply before it is sent.':
+    'Laporan ditangani <b>{team}</b>. Anda akan menerima balasan dalam {h} jam; petugas memeriksa setiap balasan sebelum dikirim.',
+  'Anything you send here in the next 24 hours is added to this report.': 'Apa pun yang Anda kirim di sini dalam 24 jam ke depan akan ditambahkan ke laporan ini.',
 }

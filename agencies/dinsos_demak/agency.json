@@ -5,6 +5,9 @@
   "short_name": "Demak Social Affairs",
   "country": "Indonesia",
   "description": "Demak Regency Office of Social Affairs, Women's Empowerment and Child Protection: social aid, DTSEN registry, health insurance support, disability and elderly care, homelessness, disaster relief and violence against women and children (UPTD PPA).",
+  "name_id": "Dinas Sosial, Pemberdayaan Perempuan dan Perlindungan Anak Kabupaten Demak (Dinsos P2PA Demak)",
+  "short_name_id": "Dinsos P2PA Demak",
+  "description_id": "Dinas Sosial, Pemberdayaan Perempuan dan Perlindungan Anak Kabupaten Demak: bantuan sosial, pendaftaran DTSEN, bantuan jaminan kesehatan, layanan disabilitas dan lansia, tunawisma, bencana, serta kekerasan terhadap perempuan dan anak (UPTD PPA).",
   "categories": [
     {
       "id": "domestic_violence",
@@ -117,6 +120,7 @@
     "low": 120
   },
   "emergency_line": "110 (police) or 112; for violence against women and children SAPA 129 (WhatsApp 08111-129-129)",
+  "emergency_line_id": "110 (polisi) atau 112; untuk kekerasan terhadap perempuan dan anak SAPA 129 (WhatsApp 08111-129-129)",
   "reply_signature": "Complaints Desk, Demak Regency Social Affairs Office (Dinsos P2PA Demak)",
   "team": [
     {

@@ -14,6 +14,10 @@ export const NewAgency = z.object({
   short_name: z.string().trim().min(2).max(40),
   country: z.string().trim().min(2).max(60),
   description: z.string().trim().max(400).default(''),
+  name_id: z.string().trim().max(160).default(''),
+  short_name_id: z.string().trim().max(40).default(''),
+  description_id: z.string().trim().max(400).default(''),
+  emergency_line_id: z.string().trim().max(200).default(''),
   emergency_line: z.string().trim().min(2).max(200),
   reply_signature: z.string().trim().min(2).max(160),
   categories: z.array(z.object({
@@ -121,6 +125,10 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     short_name: input.short_name,
     country: input.country,
     description: input.description,
+    ...(input.name_id ? { name_id: input.name_id } : {}),
+    ...(input.short_name_id ? { short_name_id: input.short_name_id } : {}),
+    ...(input.description_id ? { description_id: input.description_id } : {}),
+    ...(input.emergency_line_id ? { emergency_line_id: input.emergency_line_id } : {}),
     categories,
     queues,
     escalation: {

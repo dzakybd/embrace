@@ -7,6 +7,15 @@ export const LANG_COOKIE = 'lang'
 
 export const asLang = (v: string | undefined | null): Lang => (v === 'id' ? 'id' : 'en')
 
+/** An agency's names, description and emergency line in the UI language, falling back to English. */
+export function localize<A extends { name: string; short_name: string; description?: string; emergency_line: string; name_id?: string; short_name_id?: string; description_id?: string; emergency_line_id?: string }>(a: A, lang: Lang): A {
+  if (lang !== 'id') return a
+  return {
+    ...a, name: a.name_id || a.name, short_name: a.short_name_id || a.short_name, description: a.description_id || a.description,
+    emergency_line: a.emergency_line_id || a.emergency_line,
+  }
+}
+
 export type T = (s: string, vars?: Record<string, string | number>) => string
 
 export function translator(lang: Lang): T {

@@ -21,6 +21,10 @@ export interface Agency {
   edited: boolean
   telegram_bot: string | null
   logo: string | null
+  name_id: string
+  short_name_id: string
+  description_id: string
+  emergency_line_id: string
 }
 
 export interface Integrations {
@@ -34,6 +38,10 @@ export interface NewAgency {
   short_name: string
   country: string
   description: string
+  name_id: string
+  short_name_id: string
+  description_id: string
+  emergency_line_id: string
   emergency_line: string
   reply_signature: string
   categories: { id?: string; label: string; team: string; escalate: boolean; min_urgency?: 'low' | 'normal' | 'high' }[]

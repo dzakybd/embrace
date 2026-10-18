@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useState } from 'react'
 import { api, type Agency } from './api'
-import { useT } from './Lang'
+import { localize } from '@/lib/i18n'
+import { useLang } from './Lang'
 import { Icon } from './ui'
 import { useAgencies } from './useAgencies'
 
@@ -23,8 +24,9 @@ export function Monogram({ agency, size = 48 }: { agency: Pick<Agency, 'id' | 's
 
 /** Main menu: every agency as a card that opens its home, plus creating a new one. */
 export function AgencyPicker() {
-  const t = useT()
-  const { agencies, pick, reload } = useAgencies()
+  const { t, lang } = useLang()
+  const { agencies: all, pick, reload } = useAgencies()
+  const agencies = all.map((a) => localize(a, lang))
   const [confirm, setConfirm] = useState('')
   if (!agencies.length) return <div className="agency-grid"><div className="shimmer" style={{ height: 180 }} /><div className="shimmer" style={{ height: 180 }} /></div>
   const remove = async (id: string) => {

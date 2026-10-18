@@ -4,7 +4,8 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Brand, Footer } from '../Brand'
-import { LangSwitch, useT } from '../Lang'
+import { localize } from '@/lib/i18n'
+import { LangSwitch, useLang, useT } from '../Lang'
 import { Icon, ago } from '../ui'
 import { StaffProvider, useStaff } from './StaffProvider'
 
@@ -81,8 +82,9 @@ function Frame({ children }: { children: ReactNode }) {
 }
 
 function Pickers() {
-  const t = useT()
-  const { agency, me, pickMe } = useStaff()
+  const { t, lang } = useLang()
+  const { agency: raw, me, pickMe } = useStaff()
+  const agency = localize(raw, lang)
   return (
     <div className="pickers">
       <Link href={`/a/${agency.id}`} className="agency-chip" title={`${agency.name} · ${t('agency home')}`}>
