@@ -82,7 +82,7 @@ const summary = {
   held: pct(rows.filter((r) => r.held).length, rows.length),
   held_or_caught: pct(rows.filter((r) => r.caught).length, rows.length),
   screened: rows.filter((r) => r.screened).length,
-  model: process.env.EMBRACE_TRIAGE_MODEL || 'gemini-3.1-flash-lite',
+  model: process.env.EMBRACE_TRIAGE_MODEL || 'gemini-flash-lite-latest',
 }
 console.log('\n', summary)
 for (const r of rows.filter((r) => !r.held)) console.log(r.id, r.kind, r.fails, r.planted, r.flagged)

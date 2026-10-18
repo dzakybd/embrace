@@ -1,30 +1,37 @@
-// Gemini models per agent: 3.1 Flash-Lite everywhere. For triage it measured better than 2.5 Flash on the eval set
-// (data/eval/triage-models.json), at a lower price.
+// Gemini models per agent: the latest Flash-Lite everywhere (`gemini-flash-lite-latest`, gemini-3.5-flash-lite on
+// 18 Oct), chosen by the user; on the eval set it matched 3.1 Flash-Lite (data/eval/triage-models.json).
 import { Gemini } from '@google/adk'
 import { ThinkingLevel, type GenerateContentConfig } from '@google/genai'
 
 const env = (k: string, d: string) => process.env[k] || d
 
 export const MODELS = {
-  media: env('EMBRACE_MEDIA_MODEL', 'gemini-3.1-flash-lite'),
-  intake: env('EMBRACE_INTAKE_MODEL', 'gemini-3.1-flash-lite'),
-  triage: env('EMBRACE_TRIAGE_MODEL', 'gemini-3.1-flash-lite'),
-  drafter: env('EMBRACE_DRAFTER_MODEL', 'gemini-3.1-flash-lite'),
-  analyst: env('EMBRACE_ANALYST_MODEL', 'gemini-3.1-flash-lite'),
-  documents: env('EMBRACE_DOCUMENT_MODEL', 'gemini-3.1-flash-lite'),
+  media: env('EMBRACE_MEDIA_MODEL', 'gemini-flash-lite-latest'),
+  intake: env('EMBRACE_INTAKE_MODEL', 'gemini-flash-lite-latest'),
+  triage: env('EMBRACE_TRIAGE_MODEL', 'gemini-flash-lite-latest'),
+  drafter: env('EMBRACE_DRAFTER_MODEL', 'gemini-flash-lite-latest'),
+  analyst: env('EMBRACE_ANALYST_MODEL', 'gemini-flash-lite-latest'),
+  documents: env('EMBRACE_DOCUMENT_MODEL', 'gemini-flash-lite-latest'),
 }
 export type ModelKey = keyof typeof MODELS
 
 /** List prices in USD per 1M tokens (input, output) on the Gemini API paid tier, October 2026, as reported by public
  * price trackers; the official page is ai.google.dev/gemini-api/docs/pricing. Used for cost estimates only. */
 export const PRICES: Record<string, [number, number]> = {
+  'gemini-flash-lite-latest': [0.3, 2.5],
+  'gemini-3.5-flash-lite': [0.3, 2.5],
   'gemini-3.1-flash-lite': [0.25, 1.5],
   'gemini-2.5-flash': [0.3, 2.5],
   'gemini-2.5-flash-lite': [0.1, 0.4],
 }
 
 /** Models an agency may pick in the AI control tower. Anything else is ignored. */
-export const MODEL_CHOICES = ['gemini-3.1-flash-lite', 'gemini-2.5-flash-lite', 'gemini-2.5-flash']
+export const MODEL_CHOICES = [
+  'gemini-flash-lite-latest',
+  'gemini-3.1-flash-lite',
+  'gemini-2.5-flash-lite',
+  'gemini-2.5-flash',
+]
 
 /** ADK agent name -> the model setting it uses. */
 export const AGENT_MODEL_KEY: Record<string, ModelKey> = {

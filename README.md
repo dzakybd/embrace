@@ -64,7 +64,7 @@ Why these two: the team is in contact with people at both agencies, and they cov
 
 ## How it uses Google Cloud
 
-- **Gemini API** (`gemini-3.1-flash-lite` for every agent, chosen on the eval below and switchable per agent): multilingual understanding, audio transcription, image reading, structured output, tool calling, safety filters; about US$0.0013 per report.
+- **Gemini API** (`gemini-flash-lite-latest`, the latest Flash-Lite, for every agent; switchable per agent in the AI control tower): multilingual understanding, audio transcription, image reading, structured output, tool calling, safety filters; about US$0.002 per report.
 - **Agent Development Kit (ADK) for TypeScript 2.3**: the pipeline is a `Workflow` of Gemini `LlmAgent`s with Zod schemas and custom `BaseAgent`s for rules, search and the draft check; the analyst and document agents are `LlmAgent`s with `FunctionTool`s; a governance plugin applies each agency's models and records latency and tokens; ADK OpenTelemetry goes to Cloud Trace.
 - **Firebase App Hosting on Cloud Run** (`asia-southeast1`): builds and serves the Next.js app and its API; agent progress streams over Server-Sent Events. No Firebase SDK or key in the browser.
 - **Cloud Firestore**: cases with the agent trace and audit trail, agencies, the knowledge base, integrations and notifications; rules deny all client access.
@@ -75,17 +75,17 @@ Why these two: the team is in contact with people at both agencies, and they cov
 
 ## Quality
 
-Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 30 per agency), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json). `gemini-3.1-flash-lite` beat `gemini-2.5-flash` on the same set ([`triage-models.json`](data/eval/triage-models.json)).
+Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 30 per agency), `npm run eval`, results in [`data/eval/results.json`](data/eval/results.json). Model comparison on the same set in [`triage-models.json`](data/eval/triage-models.json): `gemini-flash-lite-latest` (3.5 Flash-Lite, in use) and `gemini-3.1-flash-lite` are on par and both beat `gemini-2.5-flash`.
 
 | Metric | Result |
 |---|---|
-| Category accuracy | 95% |
-| Urgency exact / within one level | 77% / 100% |
+| Category accuracy | 93% |
+| Urgency exact / within one level | 80% / 100% |
 | Critical cases escalated (9 cases), model alone and with rules | 100% / 100% |
-| Escalations that were truly high or critical (19) | 95% |
+| Escalations that were truly high or critical (18) | 94% |
 | Sent to manual review | 0% |
 
-The three misses are borderline: a school beating read as violence rather than education, a mother and children thrown out of home at night read as homelessness rather than domestic violence (still escalated), and a Javanese question on how to register for aid read as registration rather than general information.
+The four category misses are borderline: two beatings at school read as violence rather than education (both still sent to the right team for violence), a missing food-aid payment read as a registration problem, and a Javanese question on how to register for aid read as registration rather than general information.
 
 **Attack tests on the public chat**: 14 synthetic attacks in English and Indonesian ([`data/eval/attacks.json`](data/eval/attacks.json)) through the full pipeline (`npm run eval:attacks`): prompt injection, fake system tags, prompt leaks, role play, urgency tricks, planted links and promises, data exfiltration. 14 of 14 held ([`attacks-results.json`](data/eval/attacks-results.json)).
 
