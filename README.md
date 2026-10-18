@@ -91,7 +91,7 @@ The four category misses are borderline: two beatings at school read as violence
 
 **Load test on production**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm instance; 10 AI reports at once completed in about 4.7 s each (`scripts/load-burst.mjs`).
 
-**Tests**: 79 vitest tests without model calls (rules, durations, setup sections, guardrails, the drafting loop, citations, maps, the settings password, procedures, the bot gate, translations).
+**Tests**: 80 vitest tests without model calls (rules, durations, setup sections, guardrails, the drafting loop, citations, maps, the settings password, procedures, the bot gate, translations).
 
 ## Run it
 
@@ -101,7 +101,7 @@ Requirements: Node 22+, a Gemini API key.
 npm install
 cp .env.example .env.local     # set GOOGLE_GENAI_API_KEY (and EMBRACE_ADMIN_PASSWORD to protect setup changes)
 npm run dev                    # http://localhost:3000, in-memory store
-npm test                       # 79 tests, no model calls
+npm test                       # 80 tests, no model calls
 npm run lint && npm run format # ESLint and Biome
 npm run eval                   # triage eval (60 cases), uses the Gemini key
 npm run eval:attacks           # attack tests through the full pipeline, uses the Gemini key
