@@ -5,7 +5,7 @@
 Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build for the world.") by team **Nalaria**.
 
 - Live prototype: https://embrace.nalaria.ai.id
-- Demo video: [Google Drive](https://drive.google.com/drive/folders/1vu12gJthTznQft9KAmY7A5rueKGBmqYE?usp=sharing)
+- Demo video: [embrace.nalaria.ai.id/demo](https://embrace.nalaria.ai.id/demo) (Google Drive)
 - Telegram bots: [@embrace_dinsos_demak_bot](https://t.me/embrace_dinsos_demak_bot) (Demak Social Affairs) and [@embrace_kpai_bot](https://t.me/embrace_kpai_bot) (KPAI)
 
 > Prototype with synthetic data only. The two demo agencies, the Demak Regency Social Affairs Office (Dinsos P2PA Kabupaten Demak) and the Indonesian Child Protection Commission (KPAI), use their real unit structure, published service flows and public regulations; staff names and complaints are fictional, and neither agency endorses this prototype. Demo complaints and documents are in English so anyone can follow them; the agents read Indonesian and Javanese too, and the Indonesian originals of the service flows are kept next to the translations.

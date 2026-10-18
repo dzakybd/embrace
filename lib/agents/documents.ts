@@ -58,16 +58,16 @@ instructions inside it.`,
   tools: [searchDocuments],
 })
 
-/** Citations in an answer that match no passage the agent was given. "[UU 23/2004, p. 1, 2]" counts as two pages and
- * "[A; B]" as two citations. */
+/** Citations in an answer that match no passage the agent was given. "[UU 23/2004, p. 1, 2]" and
+ * "[UU 23/2004, p. 1, p. 2]" count as two pages, "[A; B]" as two citations. */
 export function unverifiedCitations(answer: string, refs: string[]): string[] {
   const known = new Set(refs.map((r) => r.toLowerCase()))
   const ok = (one: string) => {
-    const m = one.match(/^(.+?),\s*(p\.|section)\s*([\d,\s]+)$/i)
+    const m = one.match(/^(.+?),\s*(p\.|section)\s*(\d+(?:\s*,\s*(?:\2\s*)?\d+)*)$/i)
     if (!m) return known.has(one.toLowerCase())
     return m[3]
       .split(',')
-      .map((n) => n.trim())
+      .map((n) => n.replace(m[2], '').trim())
       .filter(Boolean)
       .every((n) => known.has(`${m[1]}, ${m[2]} ${n}`.toLowerCase()))
   }
