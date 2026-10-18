@@ -20,6 +20,7 @@ export interface Agency {
   custom: boolean
   edited: boolean
   telegram_bot: string | null
+  logo: string | null
 }
 
 export interface Integrations {
@@ -216,7 +217,7 @@ export const api = {
       body: JSON.stringify(body),
     }).then(json<Ticket>),
   overview: (t: string) => fetch(`/api/agencies/${t}/overview`).then(json<Overview>),
-  brief: (t: string, refresh = false) => fetch(`/api/agencies/${t}/brief${refresh ? '?refresh=true' : ''}`).then(json<AnalystAnswer>),
+  brief: (t: string, refresh = false, lang = 'en') => fetch(`/api/agencies/${t}/brief?lang=${lang}${refresh ? '&refresh=true' : ''}`).then(json<AnalystAnswer>),
   ask: (t: string, question: string) =>
     fetch(`/api/agencies/${t}/ask`, {
       method: 'POST',

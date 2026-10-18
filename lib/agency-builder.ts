@@ -135,6 +135,7 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     reply_signature: input.reply_signature,
     team,
     ...(existing?.telegram_bot ? { telegram_bot: existing.telegram_bot } : {}),
+    ...(existing?.logo ? { logo: existing.logo } : {}),
   }
   return { ...agency, docs: { sources, passages }, created_at: new Date().toISOString() }
 }

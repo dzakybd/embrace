@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Brand, Footer } from '../Brand'
+import { LangSwitch, useT } from '../Lang'
 import { Icon, ago } from '../ui'
 import { StaffProvider, useStaff } from './StaffProvider'
 
@@ -34,8 +35,9 @@ function allowed(path: string, role: Role) {
 }
 
 export function StaffShell({ children }: { children: ReactNode }) {
+  const t = useT()
   return (
-    <StaffProvider fallback={<p className="muted pad">Loading…</p>}>
+    <StaffProvider fallback={<p className="muted pad">{t('Loading…')}</p>}>
       <Frame>{children}</Frame>
     </StaffProvider>
   )
@@ -44,6 +46,7 @@ export function StaffShell({ children }: { children: ReactNode }) {
 function Frame({ children }: { children: ReactNode }) {
   const path = usePathname()
   const router = useRouter()
+  const t = useT()
   const { me, agency } = useStaff()
   const ok = allowed(path, me.role)
   // Switching to an account without access to this page sends it to its own start page.
@@ -56,19 +59,19 @@ function Frame({ children }: { children: ReactNode }) {
         <Brand sub="Staff workspace" href="/" />
         <Pickers />
       </header>
-      <nav className="rail" aria-label="Staff">
+      <nav className="rail" aria-label={t('Staff workspace')}>
         {NAV.filter((n) => n.roles.includes(me.role)).map((n) => {
           const on = path.startsWith(n.href) || (n.href === '/staff/inbox' && path.startsWith('/staff/cases'))
           return (
             <Link key={n.href} href={n.href} className={on ? 'on' : ''} aria-current={on ? 'page' : undefined}>
               <span className="rail-ic"><Icon name={n.icon} size={20} /></span>
-              <span>{n.label}</span>
+              <span>{t(n.label)}</span>
             </Link>
           )
         })}
-        <Link href={`/report?agency=${agency.id}`} className="rail-out" title="Open the citizen report form">
+        <Link href={`/report?agency=${agency.id}`} className="rail-out" title={t('Open the citizen report form')}>
           <span className="rail-ic"><Icon name="send" size={20} /></span>
-          <span>Citizen form</span>
+          <span>{t('Citizen form')}</span>
         </Link>
       </nav>
       <main className="staff-main">{ok ? children : null}</main>
@@ -78,18 +81,20 @@ function Frame({ children }: { children: ReactNode }) {
 }
 
 function Pickers() {
+  const t = useT()
   const { agency, me, pickMe } = useStaff()
   return (
     <div className="pickers">
-      <Link href={`/a/${agency.id}`} className="agency-chip" title={`${agency.name} · agency home`}>
+      <Link href={`/a/${agency.id}`} className="agency-chip" title={`${agency.name} · ${t('agency home')}`}>
         <Icon name="building" size={16} /> <span>{agency.short_name}</span>
       </Link>
+      <LangSwitch />
       <Bell />
-      <label className="tenant persona" title="Demo sign-in: switch between team members">
+      <label className="tenant persona" title={t('Demo sign-in: switch between team members')}>
         <span className="avatar" aria-hidden="true">{me.name[0]}</span>
-        <select value={me.id} onChange={(e) => pickMe(e.target.value)} aria-label="Signed in as">
+        <select value={me.id} onChange={(e) => pickMe(e.target.value)} aria-label={t('Signed in as')}>
           {ROLES.map((r) => (
-            <optgroup key={r.id} label={r.label}>
+            <optgroup key={r.id} label={t(r.label)}>
               {agency.team.filter((m) => m.role === r.id).map((m) => <option key={m.id} value={m.id}>{m.name} · {m.title}</option>)}
             </optgroup>
           ))}
@@ -100,6 +105,7 @@ function Pickers() {
 }
 
 function Bell() {
+  const t = useT()
   const { notes, me } = useStaff()
   const [open, setOpen] = useState(false)
   const ref = useRef<HTMLDivElement>(null)
@@ -110,18 +116,18 @@ function Bell() {
   }, [])
   return (
     <div className="bell" ref={ref}>
-      <button className="icon-btn" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={`Notifications (${notes.length})`}>
+      <button className="icon-btn" onClick={() => setOpen(!open)} aria-expanded={open} aria-label={t('Notifications ({n})', { n: notes.length })}>
         <Icon name="bell" size={20} />
         {notes.length > 0 && <span className="bell-n">{notes.length}</span>}
       </button>
       {open && (
         <div className="menu" role="menu">
-          <h3>Notifications for {me.name.split(' ')[0]}</h3>
-          {notes.length === 0 && <p className="muted small">Nothing new.</p>}
+          <h3>{t('Notifications for {name}', { name: me.name.split(' ')[0] })}</h3>
+          {notes.length === 0 && <p className="muted small">{t('Nothing new.')}</p>}
           {notes.slice(0, 8).map((n) => (
             <Link key={n.id ?? n.at + n.ticket_id} href={`/staff/cases/${n.ticket_id}`} className={`note ${n.kind}`} onClick={() => setOpen(false)}>
               <span>{n.text}</span>
-              <small className="muted">{ago(n.at)} · delivered via Pub/Sub</small>
+              <small className="muted">{ago(n.at, t)} · {t('delivered via Pub/Sub')}</small>
             </Link>
           ))}
         </div>

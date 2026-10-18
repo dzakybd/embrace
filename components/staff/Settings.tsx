@@ -3,11 +3,13 @@
 import { useState } from 'react'
 import { api } from '../api'
 import AgencyForm from '../AgencyForm'
+import { useT } from '../Lang'
 import { Icon } from '../ui'
 import { useStaff } from './StaffProvider'
 
 /** Head of office: the agency's rules, categories, teams, staff and documents. Applies to new reports at once. */
 export default function Settings() {
+  const t = useT()
   const { agency, reload } = useStaff()
   const [restoring, setRestoring] = useState(false)
   const restore = async () => {
@@ -19,12 +21,12 @@ export default function Settings() {
     <div className="page">
       <div className="page-h">
         <div>
-          <h1>Settings</h1>
-          <p className="muted">{agency.name} · rules, categories, teams, staff and documents. Changes apply to new reports at once; no code changes.</p>
+          <h1>{t('Settings')}</h1>
+          <p className="muted">{t('Rules, categories, teams, staff and documents. Changes apply to new reports at once.')}</p>
         </div>
         {agency.edited && (
-          <button className="ghost small" onClick={restore} disabled={restoring} title="Back to the settings shipped with the demo">
-            <Icon name="refresh" size={14} /> Restore demo settings
+          <button className="ghost small" onClick={restore} disabled={restoring} title={t('Back to the settings shipped with the demo')}>
+            <Icon name="refresh" size={14} /> {t('Restore demo settings')}
           </button>
         )}
       </div>

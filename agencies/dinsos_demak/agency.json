@@ -190,5 +190,6 @@
       ]
     }
   ],
-  "telegram_bot": "embrace_dinsos_demak_bot"
+  "telegram_bot": "embrace_dinsos_demak_bot",
+  "logo": "/agencies/dinsos_demak.svg"
 }

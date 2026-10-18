@@ -39,6 +39,8 @@ export interface Agency {
   edited?: boolean
   /** Username of the agency's Telegram bot, without @. */
   telegram_bot?: string | null
+  /** Public path of the agency's emblem, shown on its cards and home. */
+  logo?: string | null
 }
 
 export interface TeamMember {
@@ -131,7 +133,7 @@ export function taxonomyText(a: Agency): string {
 export function publicAgency(a: Agency) {
   const { id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, template, custom, edited } = a
   return {
-    id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, telegram_bot: a.telegram_bot ?? null,
+    id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, telegram_bot: a.telegram_bot ?? null, logo: a.logo ?? null,
     template: !!template, custom: !!custom, edited: !!edited, escalation_contact: a.escalation.escalation_contact,
     escalation: a.escalation, reply_signature: a.reply_signature,
   }

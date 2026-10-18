@@ -3,9 +3,11 @@
 import { useEffect, useState } from 'react'
 import { api, type Row } from '../api'
 import { Card } from '../ui'
+import { useT } from '../Lang'
 import { useStaff } from './StaffProvider'
 
 export default function Team() {
+  const t = useT()
   const { agency, me, pickMe } = useStaff()
   const [rows, setRows] = useState<Row[]>([])
   useEffect(() => {
@@ -17,8 +19,8 @@ export default function Team() {
     <div className="page">
       <div className="page-h">
         <div>
-          <h1>Team</h1>
-          <p className="muted">Who handles what at {agency.name}. New cases go to the person in charge of their queue; escalations also alert the supervisor.</p>
+          <h1>{t('Team')}</h1>
+          <p className="muted">{t('Who handles what. New cases go to the person in charge of their team; escalations also alert the supervisor.')}</p>
         </div>
       </div>
       <div className="team-grid">
@@ -31,19 +33,19 @@ export default function Team() {
               <div className="pic-row">
                 <span className="avatar big" aria-hidden="true">{m.name[0]}</span>
                 <div>
-                  <b>{m.name}</b>{m.id === me.id && <span className="tag you">you</span>}
-                  <div className="muted small">{m.title}{m.role === 'supervisor' ? ' · receives escalations' : m.role === 'leader' ? ' · sees Insights' : ''}</div>
+                  <b>{m.name}</b>{m.id === me.id && <span className="tag you">{t('you')}</span>}
+                  <div className="muted small">{m.title}{m.role === 'supervisor' ? ` · ${t('receives escalations')}` : m.role === 'leader' ? ` · ${t('sees Insights')}` : ''}</div>
                 </div>
               </div>
               <div className="tags">
                 {m.queues.map((q) => <span key={q} className="tag">{agency.queues[q]}</span>)}
               </div>
               <ul className="statlist compact">
-                <li><span>Open cases</span><b>{mine.length}</b></li>
-                <li><span>High or critical</span><b>{urgent}</b></li>
-                <li><span>Past SLA</span><b>{late}</b></li>
+                <li><span>{t('Open cases')}</span><b>{mine.length}</b></li>
+                <li><span>{t('High or critical')}</span><b>{urgent}</b></li>
+                <li><span>{t('Past SLA')}</span><b>{late}</b></li>
               </ul>
-              {m.id !== me.id && <button className="ghost small" onClick={() => pickMe(m.id)}>Sign in as {m.name.split(' ')[0]}</button>}
+              {m.id !== me.id && <button className="ghost small" onClick={() => pickMe(m.id)}>{t('Sign in as {name}', { name: m.name.split(' ')[0] })}</button>}
             </Card>
           )
         })}

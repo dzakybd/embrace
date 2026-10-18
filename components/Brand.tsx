@@ -1,7 +1,11 @@
+'use client'
+
 import Link from 'next/link'
 import { SiFirebase, SiGooglecloud, SiGooglegemini } from 'react-icons/si'
+import { useT } from './Lang'
 
 export function Brand({ sub, href = '/' }: { sub?: string; href?: string }) {
+  const t = useT()
   return (
     <Link className="brand" href={href} aria-label="Embrace home">
       <svg viewBox="0 0 32 32" width="30" height="30" aria-hidden="true">
@@ -13,20 +17,21 @@ export function Brand({ sub, href = '/' }: { sub?: string; href?: string }) {
       </svg>
       <span>
         <b>Embrace</b>
-        {sub && <small>{sub}</small>}
+        {sub && <small>{t(sub)}</small>}
       </span>
     </Link>
   )
 }
 
 export function Footer() {
+  const t = useT()
   return (
     <footer className="foot">
-      <span>Built with</span>
+      <span>{t('Built with')}</span>
       <span><SiGooglegemini color="#1a73e8" aria-hidden="true" /> Gemini</span>
       <span><SiGooglecloud color="#4285f4" aria-hidden="true" /> Google ADK</span>
       <span><SiFirebase color="#ffa000" aria-hidden="true" /> Firebase</span>
-      <span className="muted">· AI Builder Cup prototype, synthetic data</span>
+      <span className="muted">· {t('AI Builder Cup prototype, synthetic data')}</span>
     </footer>
   )
 }

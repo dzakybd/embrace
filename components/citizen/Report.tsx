@@ -3,6 +3,7 @@
 import Link from 'next/link'
 import { Fragment, useRef, useState } from 'react'
 import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
+import { useT } from '../Lang'
 import { useAgencies } from '../useAgencies'
 import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
 
@@ -71,6 +72,7 @@ function toAttachment(blob: Blob, name: string): Promise<File_> {
 }
 
 export default function Report() {
+  const t = useT()
   const { agencies, agency, pick, error: loadError } = useAgencies()
   const [text, setText] = useState('')
   const [channel, setChannel] = useState<Channel>('web')
@@ -88,7 +90,7 @@ export default function Report() {
   const addFiles = async (list: FileList | null) => {
     setError('')
     for (const f of Array.from(list ?? [])) {
-      if (f.size > MAX_BYTES) { setError(`${f.name} is larger than 7 MB`); continue }
+      if (f.size > MAX_BYTES) { setError(t('{name} is larger than 7 MB', { name: f.name })); continue }
       const a = await toAttachment(f, f.name)
       setFiles((fs) => [...fs, a].slice(0, 3))
     }
@@ -103,16 +105,16 @@ export default function Report() {
       const chunks: Blob[] = []
       rec.ondataavailable = (e) => chunks.push(e.data)
       rec.onstop = async () => {
-        stream.getTracks().forEach((t) => t.stop())
+        stream.getTracks().forEach((tr) => tr.stop())
         setRecording(false)
-        const a = await toAttachment(new Blob(chunks, { type: rec.mimeType }), 'Voice note')
+        const a = await toAttachment(new Blob(chunks, { type: rec.mimeType }), t('Voice note'))
         setFiles((fs) => [...fs, a].slice(0, 3))
       }
       rec.start()
       recorder.current = rec
       setRecording(true)
     } catch {
-      setError('Microphone not available. Attach an audio file instead.')
+      setError(t('Microphone not available. Attach an audio file instead.'))
     }
   }
 
@@ -148,23 +150,23 @@ export default function Report() {
   const activeIdx = running ? steps.length : -1
   const reset = () => { setTicketId(''); setTicket(null); setSteps([]); setText(''); setFiles([]); setError('') }
 
-  if (loadError) return <p className="error pad">Could not reach the service: {loadError}</p>
+  if (loadError) return <p className="error pad">{t('Could not reach the service:')} {loadError}</p>
   if (!agency) return <div className="shimmer tall" />
 
   if (ticketId) {
     const done = byAgent.policy_agent?.output as unknown as Policy | undefined
     const team = done ? agency.queues[done.queue] ?? done.queue : ''
     const progress = [
-      { key: 'received', label: 'Report received', ok: true },
-      { key: 'read', label: files.length ? 'Reading your message, voice note and photos' : 'Reading your message', ok: !!byAgent.intake_agent },
-      { key: 'urgency', label: 'Checking how urgent it is', ok: !!byAgent.triage_agent },
-      { key: 'team', label: 'Finding the right team and person', ok: !!byAgent.policy_agent },
-      { key: 'reply', label: 'Preparing a first reply for a caseworker to check', ok: !!byAgent.drafter_agent || !!ticket },
+      { key: 'received', label: t('Report received'), ok: true },
+      { key: 'read', label: files.length ? t('Reading your message, voice note and photos') : t('Reading your message'), ok: !!byAgent.intake_agent },
+      { key: 'urgency', label: t('Checking how urgent it is'), ok: !!byAgent.triage_agent },
+      { key: 'team', label: t('Finding the right team and person'), ok: !!byAgent.policy_agent },
+      { key: 'reply', label: t('Preparing a first reply for a caseworker to check'), ok: !!byAgent.drafter_agent || !!ticket },
     ]
     return (
       <div className="citizen-done">
         <section className="card done-card">
-          <p className="muted small">Report number</p>
+          <p className="muted small">{t('Report number')}</p>
           <h1 className="tid-big">{ticketId}</h1>
           <ol className="progress">
             {progress.map((p, i) => {
@@ -179,24 +181,24 @@ export default function Report() {
           {done && done.route === 'escalated' && (
             <div className="banner crit">
               <Icon name="alert" />
-              <span><b>A supervisor has been alerted now.</b> If anyone is in danger right now, call {agency.emergency_line}.</span>
+              <span><b>{t('A supervisor has been alerted now.')}</b> {t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}</span>
             </div>
           )}
           {done && (
             <p className="lead">
-              Your report is with the <b>{team}</b>. You will hear back within <b>{done.sla_hours} hours</b>.
-              {' '}A caseworker reviews every reply before it is sent.
+              {t('Your report is with:')} <b>{team}</b>. {t('You will hear back within {h} hours.', { h: done.sla_hours })}
+              {' '}{t('A caseworker reviews every reply before it is sent.')}
             </p>
           )}
           {error && <p className="error">{error}</p>}
           <div className="actions">
-            <Link className="btn" href={`/track/${ticketId}`}>Track this report</Link>
-            <button onClick={reset}>Send another report</button>
+            <Link className="btn" href={`/track/${ticketId}`}>{t('Track this report')}</Link>
+            <button onClick={reset}>{t('Send another report')}</button>
           </div>
         </section>
 
         <details className="card staff-view" open={running || undefined}>
-          <summary><Icon name="spark" /> Staff view: what the AI agents decided <span className="muted small">(shown for the demo)</span></summary>
+          <summary><Icon name="spark" /> {t('Staff view: what the AI agents decided')} <span className="muted small">{t('(shown for the demo)')}</span></summary>
           <ol className="steps">
             {order.map((a, i) => {
               const s = byAgent[a]
@@ -207,9 +209,9 @@ export default function Report() {
                   <div className="dot" aria-hidden="true">{s ? <Icon name="check" size={14} /> : i + 1}</div>
                   <div className="body">
                     <div className="step-h">
-                      <b>{AGENT_META[a].label}</b>
-                      <span className="muted">{AGENT_META[a].role}</span>
-                      {s && <span className="ms">{s.kind === 'llm' ? `${(s.ms / 1000).toFixed(1)} s` : s.kind === 'search' ? 'search, no AI' : 'rules'}</span>}
+                      <b>{t(AGENT_META[a].label)}</b>
+                      <span className="muted">{t(AGENT_META[a].role)}</span>
+                      {s && <span className="ms">{s.kind === 'llm' ? `${(s.ms / 1000).toFixed(1)} s` : s.kind === 'search' ? t('search, no AI') : t('rules')}</span>}
                     </div>
                     {state === 'active' && <div className="shimmer" />}
                     {s && <StepOutput agent={a} out={s.output} />}
@@ -218,7 +220,7 @@ export default function Report() {
               )
             })}
           </ol>
-          {ticket && <Link className="btn" href={`/staff/cases/${ticket.id}`}>Open the case in the staff workspace →</Link>}
+          {ticket && <Link className="btn" href={`/staff/cases/${ticket.id}`}>{t('Open the case in the staff workspace')} →</Link>}
         </details>
       </div>
     )
@@ -227,58 +229,63 @@ export default function Report() {
   return (
     <div className="citizen-form">
       <section className="card intake-form">
-        <h1>Report a problem</h1>
+        <h1>{t('Report a problem')}</h1>
         <p className="muted">
-          Tell us in your own words and your own language. You can also record a voice note or add a photo.
-          If someone is in danger right now, call {agency.emergency_line}.
+          {t('Tell us in your own words. You can also record a voice note or add a photo.')}
+          {' '}{t('If anyone is in danger right now, call {line}.', { line: agency.emergency_line })}
         </p>
-        {agency.telegram_bot && (
-          <a className="tg-banner" href={telegramUrl(agency.telegram_bot)!} target="_blank" rel="noreferrer">
-            <Icon name="send" size={18} />
-            <span><b>Prefer to chat?</b> Message @{agency.telegram_bot} on Telegram: same service, and the caseworker&apos;s reply comes back to your chat.</span>
-          </a>
-        )}
+        <div className="reach" role="group" aria-label={t('How do you want to reach us?')}>
+          <span className="reach-opt on" aria-current="true"><ChannelIcon c="web" size={20} /> {t('Web form')}</span>
+          {agency.telegram_bot && (
+            <a className="reach-opt" href={telegramUrl(agency.telegram_bot)!} target="_blank" rel="noreferrer" title={`@${agency.telegram_bot}`}>
+              <ChannelIcon c="telegram" size={20} /> Telegram
+            </a>
+          )}
+          {['whatsapp', 'email'].map((c) => (
+            <span key={c} className="reach-opt off" aria-disabled="true"><ChannelIcon c={c} size={20} /> {t(CHANNEL_LABEL[c])} <small className="soon">{t('Soon')}</small></span>
+          ))}
+        </div>
         <label className="field">
-          <span>Send to</span>
+          <span>{t('Send to')}</span>
           <select value={agency.id} onChange={(e) => pick(e.target.value)}>
             {agencies.map((a) => <option key={a.id} value={a.id}>{a.name}</option>)}
           </select>
         </label>
         <div className="demo-box">
-          <span className="muted small">Demo: try a sample report and the channel it arrives on</span>
-          <div className="samples" role="group" aria-label="Sample reports">
+          <span className="muted small">{t('Demo: try a sample report and the channel it arrives on')}</span>
+          <div className="samples" role="group" aria-label={t('Sample reports')}>
             {SAMPLES[agency.id]?.map((s) => (
               <button key={s.label} className="chip" onClick={() => { setText(s.text); setChannel(s.channel) }}>
-                <ChannelIcon c={s.channel} size={14} /> {s.label}
+                <ChannelIcon c={s.channel} size={14} /> {t(s.label)}
               </button>
             ))}
           </div>
           <fieldset className="channels">
-            <legend className="sr">Arrives via</legend>
+            <legend className="sr">{t('Arrives via')}</legend>
             {(['web', 'whatsapp', 'email', 'social'] as Channel[]).map((c) => (
               <label key={c} className={channel === c ? 'on' : ''}>
                 <input type="radio" name="channel" value={c} checked={channel === c} onChange={() => setChannel(c)} />
-                <ChannelIcon c={c} size={14} /> {CHANNEL_LABEL[c]}
+                <ChannelIcon c={c} size={14} /> {t(CHANNEL_LABEL[c])}
               </label>
             ))}
           </fieldset>
         </div>
         <label className="field">
-          <span>What happened?</span>
+          <span>{t('What happened?')}</span>
           <textarea rows={7} value={text} onChange={(e) => setText(e.target.value)}
-            placeholder="What happened, where and when. Any language is fine." />
+            placeholder={t('What happened, where and when. Any language is fine.')} />
         </label>
         <div className="attach">
-          <span className="attach-h">Voice note or photo (optional)</span>
+          <span className="attach-h">{t('Voice note or photo (optional)')}</span>
           <div className="attach-row">
             <label className={`btn tonal small ${files.length >= 3 ? 'disabled' : ''}`}>
-              <Icon name="image" size={14} /> Add photo or audio
+              <Icon name="image" size={14} /> {t('Add photo or audio')}
               <input type="file" accept="image/jpeg,image/png,image/webp,audio/*" multiple hidden
                 disabled={files.length >= 3} onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
             </label>
             <button type="button" className={`small ${recording ? 'rec' : ''}`} onClick={toggleRecording}
               disabled={!recording && files.length >= 3} aria-pressed={recording}>
-              <Icon name={recording ? 'stop' : 'mic'} size={14} /> {recording ? 'Stop recording' : 'Record voice note'}
+              <Icon name={recording ? 'stop' : 'mic'} size={14} /> {recording ? t('Stop recording') : t('Record voice note')}
             </button>
           </div>
           {files.length > 0 && (
@@ -287,7 +294,7 @@ export default function Report() {
                 <li key={f.url}>
                   {f.mime.startsWith('image/') ? <img src={f.url} alt={f.name} /> : <audio controls src={f.url} />}
                   <span className="small">{f.name}</span>
-                  <button type="button" className="ghost small" aria-label={`Remove ${f.name}`}
+                  <button type="button" className="ghost small" aria-label={t('Remove {name}', { name: f.name })}
                     onClick={() => setFiles((fs) => fs.filter((_, j) => j !== i))}><Icon name="close" size={12} /></button>
                 </li>
               ))}
@@ -296,33 +303,34 @@ export default function Report() {
         </div>
         <div className="row2">
           <label className="field">
-            <span>Your name (optional)</span>
+            <span>{t('Your name (optional)')}</span>
             <input value={name} onChange={(e) => setName(e.target.value)} />
           </label>
           <label className="field">
-            <span>Phone or email for the reply (optional)</span>
+            <span>{t('Phone or email for the reply (optional)')}</span>
             <input value={contact} onChange={(e) => setContact(e.target.value)} />
           </label>
         </div>
         <button className="primary" disabled={running || recording || (text.trim().length < 10 && !files.length)} onClick={submit}>
-          {running ? 'Sending…' : 'Send report'}
+          {running ? t('Sending…') : t('Send report')}
         </button>
         {error && <p className="error">{error}</p>}
-        <p className="muted small"><Icon name="shield" size={12} /> Your name, phone and ID numbers are hidden from staff by default.</p>
+        <p className="muted small"><Icon name="shield" size={12} /> {t('Your name, phone and ID numbers are hidden from staff by default.')}</p>
       </section>
     </div>
   )
 }
 
 function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] }) {
+  const t = useT()
   if (agent === 'sop_agent') return <div className="out"><Citations items={out as Citation[]} /></div>
   if (agent === 'media_reader') {
     const o = out as unknown as Media
     return (
       <div className="out">
-        {o.transcript && <p><b>Transcript:</b> “{o.transcript}”</p>}
-        {o.photo_description && <p><b>Photo:</b> {o.photo_description}</p>}
-        {o.safety_concern && <p className="tag flag">Safety concern: {o.safety_reason}</p>}
+        {o.transcript && <p><b>{t('Transcript:')}</b> “{o.transcript}”</p>}
+        {o.photo_description && <p><b>{t('Photo:')}</b> {o.photo_description}</p>}
+        {o.safety_concern && <p className="tag flag">{t('Safety concern:')} {o.safety_reason}</p>}
       </div>
     )
   }
@@ -332,11 +340,11 @@ function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] })
     return (
       <div className="out">
         <div className="kv">
-          <span>Language</span><b>{o.language}</b>
+          <span>{t('Language')}</span><b>{o.language}</b>
           {ents.map(([k, v]) => (<Fragment key={k}><span>{k.replace('_', ' ')}</span><b>{v}</b></Fragment>))}
         </div>
         {o.pii_types?.length > 0 && (
-          <p className="pii"><Icon name="shield" size={13} /> Personal data masked: {o.pii_types.join(', ')}</p>
+          <p className="pii"><Icon name="shield" size={13} /> {t('Personal data masked:')} {o.pii_types.join(', ')}</p>
         )}
       </div>
     )
@@ -350,7 +358,7 @@ function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] })
           <span className="tag">{o.category}</span>
           <span className="tag">{o.sentiment}</span>
           {o.flags.map((f) => <span key={f} className="tag flag">{f.replace('_', ' ')}</span>)}
-          <span className="tag">confidence {Math.round(o.confidence * 100)}%</span>
+          <span className="tag">{t('confidence {n}%', { n: Math.round(o.confidence * 100) })}</span>
         </div>
         <p className="quote">“{o.urgency_reason}”</p>
       </div>
@@ -373,7 +381,7 @@ function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] })
   return (
     <div className="out">
       <pre className="draft">{o.reply}</pre>
-      <p className="muted"><b>Next step for the caseworker:</b> {o.next_step}</p>
+      <p className="muted"><b>{t('Next step for the caseworker:')}</b> {o.next_step}</p>
     </div>
   )
 }

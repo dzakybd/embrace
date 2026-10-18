@@ -164,5 +164,6 @@
       ]
     }
   ],
-  "telegram_bot": "embrace_kpai_bot"
+  "telegram_bot": "embrace_kpai_bot",
+  "logo": "/agencies/kpai.png"
 }

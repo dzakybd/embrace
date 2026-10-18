@@ -1,7 +1,9 @@
 import type { ReactNode } from 'react'
 import type { IconType } from 'react-icons'
 import { SiGmail, SiInstagram, SiTelegram, SiThreads, SiWhatsapp } from 'react-icons/si'
+import type { T } from '@/lib/i18n'
 import type { Status, Urgency } from './api'
+import { useT } from './Lang'
 
 const PATHS: Record<string, string> = {
   inbox: 'M3 13h5l1.5 3h5L16 13h5M5 5h14l2 8v6H3v-6z',
@@ -46,10 +48,11 @@ export const URGENCY_LABEL: Record<Urgency, string> = { critical: 'Critical', hi
 const URGENCY_ICON: Record<Urgency, string> = { critical: 'alert', high: 'alert', normal: 'clock', low: 'check' }
 
 export function UrgencyBadge({ u }: { u: Urgency | null | undefined }) {
+  const t = useT()
   if (!u) return <span className="badge">—</span>
   return (
     <span className={`badge urg-${u}`}>
-      <Icon name={URGENCY_ICON[u]} size={12} /> {URGENCY_LABEL[u]}
+      <Icon name={URGENCY_ICON[u]} size={12} /> {t(URGENCY_LABEL[u])}
     </span>
   )
 }
@@ -64,7 +67,8 @@ export const STATUS_LABEL: Record<Status, string> = {
 }
 
 export function StatusBadge({ s }: { s: Status }) {
-  return <span className={`status st-${s}`}>{STATUS_LABEL[s]}</span>
+  const t = useT()
+  return <span className={`status st-${s}`}>{t(STATUS_LABEL[s])}</span>
 }
 
 export const CHANNEL_LABEL: Record<string, string> = { web: 'Web form', whatsapp: 'WhatsApp', email: 'Email', social: 'Social media', telegram: 'Telegram' }
@@ -99,7 +103,8 @@ export const AGENT_META: Record<string, { label: string; role: string }> = {
 }
 
 export function Citations({ items }: { items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[] }) {
-  if (!items.length) return <p className="muted small">No matching SOP passage: the caseworker confirms the procedure.</p>
+  const t = useT()
+  if (!items.length) return <p className="muted small">{t('No matching SOP passage: the caseworker confirms the procedure.')}</p>
   return (
     <ol className="cites">
       {items.map((c, i) => (
@@ -131,19 +136,21 @@ export function Card({ title, icon, action, children, className = '' }: {
   )
 }
 
-export function ago(iso: string): string {
+const same: T = (s, vars) => Object.entries(vars ?? {}).reduce((o, [k, v]) => o.replaceAll(`{${k}}`, String(v)), s)
+
+export function ago(iso: string, t: T = same): string {
   const m = (Date.now() - new Date(iso).getTime()) / 60000
-  if (m < 1) return 'just now'
-  if (m < 60) return `${Math.round(m)} min ago`
-  if (m < 48 * 60) return `${Math.round(m / 60)} h ago`
-  return `${Math.round(m / 1440)} d ago`
+  if (m < 1) return t('just now')
+  if (m < 60) return t('{n} min ago', { n: Math.round(m) })
+  if (m < 48 * 60) return t('{n} h ago', { n: Math.round(m / 60) })
+  return t('{n} d ago', { n: Math.round(m / 1440) })
 }
 
-export function slaLeft(created: string, slaHours: number | null | undefined, responded?: string | null) {
+export function slaLeft(created: string, slaHours: number | null | undefined, responded?: string | null, t: T = same) {
   if (!slaHours) return null
-  if (responded) return { text: 'Responded', tone: 'ok' as const }
+  if (responded) return { text: t('Responded'), tone: 'ok' as const }
   const left = slaHours * 3600_000 - (Date.now() - new Date(created).getTime())
   const h = Math.abs(left) / 3600_000
   const txt = h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(h < 10 ? 1 : 0)} h`
-  return left < 0 ? { text: `SLA breached ${txt}`, tone: 'bad' as const } : { text: `${txt} left`, tone: h < 1 ? ('warn' as const) : ('ok' as const) }
+  return left < 0 ? { text: t('SLA breached {d}', { d: txt }), tone: 'bad' as const } : { text: t('{d} left', { d: txt }), tone: h < 1 ? ('warn' as const) : ('ok' as const) }
 }

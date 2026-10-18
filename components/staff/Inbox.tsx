@@ -4,6 +4,7 @@ import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Row } from '../api'
 import { ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
+import { useT } from '../Lang'
 import { useStaff } from './StaffProvider'
 
 const FILTERS = [
@@ -25,6 +26,7 @@ const ROLE_FILTERS = {
 const URG_RANK = { critical: 0, high: 1, normal: 2, low: 3 }
 
 export default function Inbox() {
+  const t = useT()
   const { agency, me } = useStaff()
   const [rows, setRows] = useState<Row[] | null>(null)
   const [filter, setFilter] = useState('')
@@ -58,36 +60,36 @@ export default function Inbox() {
     <div className="page">
       <div className="page-h">
         <div>
-          <h1>Inbox</h1>
-          <p className="muted">{agency.name} · signed in as {me.name}, {me.title}</p>
+          <h1>{t('Inbox')}</h1>
+          <p className="muted">{t('Signed in as {name}, {title}', { name: me.name, title: me.title })}</p>
         </div>
-        <button className="ghost small" onClick={() => api.resetDemo(agency.id).then(load)} title="Restore the synthetic demo data">
-          <Icon name="refresh" size={14} /> Reset demo data
+        <button className="ghost small" onClick={() => api.resetDemo(agency.id).then(load)} title={t('Restore the synthetic demo data')}>
+          <Icon name="refresh" size={14} /> {t('Reset demo data')}
         </button>
       </div>
-      <div className="filters" role="tablist" aria-label="Case filters">
+      <div className="filters" role="tablist" aria-label={t('Case filters')}>
         {filters.map((f) => (
           <button key={f.id} role="tab" aria-selected={filter === f.id} className={`filter ${filter === f.id ? 'on' : ''}`} onClick={() => setFilter(f.id)}>
-            <Icon name={f.icon} size={16} /> {f.label}
+            <Icon name={f.icon} size={16} /> {t(f.label)}
             <b className={f.id === 'escalated' && counts[f.id] ? 'hot' : ''}>{counts[f.id]}</b>
           </button>
         ))}
-        <input className="search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder="Search cases" aria-label="Search cases" />
+        <input className="search" type="search" value={query} onChange={(e) => setQuery(e.target.value)} placeholder={t('Search cases')} aria-label={t('Search cases')} />
       </div>
-      <section className="table card" aria-label="Cases">
+      <section className="table card" aria-label={t('Cases')}>
         {rows === null && <div className="shimmer tall" />}
-        {rows && shown.length === 0 && <p className="muted pad">No cases here.</p>}
+        {rows && shown.length === 0 && <p className="muted pad">{t('No cases here.')}</p>}
         {shown.map((r) => {
-          const sla = r.status === 'resolved' ? null : slaLeft(r.created_at, r.sla_hours)
+          const sla = r.status === 'resolved' ? null : slaLeft(r.created_at, r.sla_hours, null, t)
           return (
             <Link key={r.id} href={`/staff/cases/${r.id}`} className="case-row">
               <UrgencyBadge u={r.urgency} />
               <div className="case-main">
                 <p>{r.summary}</p>
-                <span className="muted small"><code>{r.id}</code> · <ChannelIcon c={r.channel} size={12} /> {ago(r.created_at)} · {agency.queues[r.queue ?? ''] ?? '—'}</span>
+                <span className="muted small"><code>{r.id}</code> · <ChannelIcon c={r.channel} size={12} /> {ago(r.created_at, t)} · {agency.queues[r.queue ?? ''] ?? '—'}</span>
               </div>
-              <span className="case-pic"><span className="avatar" aria-hidden="true">{r.assignee ? names[r.assignee]?.[0] : '?'}</span>{r.assignee ? names[r.assignee] : 'Unassigned'}</span>
-              {sla ? <span className={`sla ${sla.tone}`}>{r.sla_breached ? 'SLA breached' : sla.text}</span> : <span className="sla ok">Resolved</span>}
+              <span className="case-pic"><span className="avatar" aria-hidden="true">{r.assignee ? names[r.assignee]?.[0] : '?'}</span>{r.assignee ? names[r.assignee] : t('Unassigned')}</span>
+              {sla ? <span className={`sla ${sla.tone}`}>{r.sla_breached ? t('SLA breached') : sla.text}</span> : <span className="sla ok">{t('Resolved')}</span>}
             </Link>
           )
         })}

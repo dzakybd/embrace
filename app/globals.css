@@ -501,3 +501,20 @@ details.more .docs-list { padding: 0 0 0 18px; }
   .agency-hero { align-items: flex-start; }
   .agency-hero .monogram { width: 48px !important; height: 48px !important; font-size: 18px; }
 }
+
+/* Language switch, report channel choice, agency emblems */
+.lang-switch { display: inline-flex; border: 1px solid var(--line); border-radius: 999px; padding: 2px; background: var(--surface); }
+.lang-switch button { border: 0; padding: 4px 10px; font-size: 12px; color: var(--ink-2); background: transparent; }
+.lang-switch button.on { background: var(--brand-soft); color: var(--brand-soft-ink); }
+.top-links { gap: 12px; }
+.reach { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+.reach-opt { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 12px 8px; border-radius: 16px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); text-decoration: none; font-size: 13px; font-weight: 500; text-align: center; }
+a.reach-opt:hover { border-color: #26A5E4; background: color-mix(in srgb, #26A5E4 6%, var(--surface)); }
+.reach-opt.on { border: 2px solid var(--brand); background: var(--brand-soft); color: var(--brand-soft-ink); }
+.reach-opt.off { background: var(--surface-2); color: var(--muted); border-style: dashed; }
+.reach-opt .soon { font-size: 10px; }
+.monogram.logo { object-fit: contain; background: #fff; padding: 4px; box-shadow: inset 0 0 0 1px var(--line); }
+.soon-card { background: var(--surface-2); }
+.soon-card input { background: var(--surface); }
+@media (max-width: 560px) { .reach { grid-template-columns: 1fr 1fr; } }
+.soon-card form button { align-self: flex-start; }

@@ -2,6 +2,7 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
+import { useT } from '../Lang'
 import { Icon } from '../ui'
 
 interface Tracked {
@@ -19,6 +20,7 @@ interface Tracked {
 }
 
 export default function Track({ id }: { id: string }) {
+  const tr = useT()
   const [t, setT] = useState<Tracked | null>(null)
   const [missing, setMissing] = useState(false)
   useEffect(() => {
@@ -28,22 +30,22 @@ export default function Track({ id }: { id: string }) {
     return () => clearInterval(timer)
   }, [id])
 
-  if (missing) return <section className="card citizen-card"><h1>Report not found</h1><p className="muted">Check the report number {id}.</p><Link className="btn" href="/report">Send a report</Link></section>
+  if (missing) return <section className="card citizen-card"><h1>{tr('Report not found')}</h1><p className="muted">{tr('Check the report number {id}.', { id })}</p><Link className="btn" href="/report">{tr('Send a report')}</Link></section>
   if (!t) return <section className="card citizen-card"><div className="shimmer tall" /></section>
 
   const due = t.sla_hours ? new Date(Date.parse(t.created_at) + t.sla_hours * 3600_000) : null
   const steps = [
-    { label: 'Received', at: t.created_at, ok: true },
-    { label: t.team ? `With the ${t.team}` : 'Being reviewed', at: t.created_at, ok: !!t.team },
-    { label: 'Reply sent', at: t.responded_at, ok: !!t.responded_at },
-    { label: 'Resolved', at: t.resolved_at, ok: !!t.resolved_at },
+    { label: tr('Received'), at: t.created_at, ok: true },
+    { label: t.team ? tr('With: {team}', { team: t.team }) : tr('Being reviewed'), at: t.created_at, ok: !!t.team },
+    { label: tr('Reply sent'), at: t.responded_at, ok: !!t.responded_at },
+    { label: tr('Resolved'), at: t.resolved_at, ok: !!t.resolved_at },
   ]
   return (
     <section className="card citizen-card">
       <p className="muted small">{t.agency}</p>
-      <h1>Report {t.id}</h1>
+      <h1>{tr('Report')} {t.id}</h1>
       {t.escalated && !t.resolved_at && (
-        <div className="banner crit"><Icon name="alert" /><span>Marked urgent: a supervisor has been alerted. If anyone is in danger right now, call {t.emergency_line}.</span></div>
+        <div className="banner crit"><Icon name="alert" /><span>{tr('Marked urgent: a supervisor has been alerted.')} {tr('If anyone is in danger right now, call {line}.', { line: t.emergency_line })}</span></div>
       )}
       <ol className="progress">
         {steps.map((s, i) => (
@@ -53,15 +55,15 @@ export default function Track({ id }: { id: string }) {
           </li>
         ))}
       </ol>
-      {!t.responded_at && due && <p className="lead">First response expected by <b>{due.toLocaleString()}</b>.</p>}
+      {!t.responded_at && due && <p className="lead">{tr('First response expected by')} <b>{due.toLocaleString()}</b>.</p>}
       {t.reply && (
         <div className="reply-box">
-          <p className="muted small">Reply from {t.agency}</p>
+          <p className="muted small">{tr('Reply from {agency}', { agency: t.agency })}</p>
           <pre className="draft">{t.reply}</pre>
         </div>
       )}
       <div className="actions">
-        <Link className="btn tonal" href="/report">Send another report</Link>
+        <Link className="btn tonal" href="/report">{tr('Send another report')}</Link>
       </div>
     </section>
   )
