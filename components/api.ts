@@ -196,6 +196,36 @@ export interface LegalAnswer {
   at?: string
   by?: string
 }
+/** One or more sections of an agency's setup (lib/agency-setup.ts). */
+export interface SetupBody {
+  profile?: {
+    name: string
+    short_name: string
+    country: string
+    description: string
+    name_id: string
+    short_name_id: string
+    description_id: string
+    emergency_line: string
+    emergency_line_id: string
+    reply_signature: string
+  }
+  people?: { id?: string; name: string; role: TeamMember['role']; title: string; queues: string[] }[]
+  rules?: {
+    categories: {
+      id?: string
+      label: string
+      label_id: string
+      team: string
+      always_escalate: boolean
+      min_urgency?: 'normal' | 'high'
+    }[]
+    keywords: string[]
+    flags: string[]
+    confidence_floor: number
+    sla_hours: Record<Urgency, number>
+  }
+}
 export interface AddKnowledge {
   title: string
   kind: string
@@ -406,9 +436,9 @@ export const api = {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     }).then(json<Agency>),
-  updateAgency: (t: string, body: NewAgency) =>
-    adminFetch(`/api/agencies/${t}`, {
-      method: 'PUT',
+  saveSetup: (t: string, body: SetupBody) =>
+    adminFetch(`/api/agencies/${t}/setup`, {
+      method: 'PATCH',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     }).then(json<Agency>),

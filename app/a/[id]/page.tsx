@@ -43,14 +43,14 @@ const MANAGE = [
     page: 'knowledge',
     icon: 'book',
     title: 'Knowledge base',
-    body: 'Laws, SOPs and service flows the replies cite',
+    body: 'Laws, SOPs, court decisions and web pages; legal research',
   },
   {
     as: 'supervisor',
     page: 'case-types',
     icon: 'rules',
-    title: 'Case types',
-    body: 'Procedures, stages, who does what and the legal basis',
+    title: 'Case types and rules',
+    body: 'Who handles each case, when it escalates, its steps and legal basis',
   },
   {
     as: 'supervisor',
@@ -63,8 +63,8 @@ const MANAGE = [
     as: 'supervisor',
     page: 'settings',
     icon: 'form',
-    title: 'Settings',
-    body: 'Names, rules, categories, teams, staff and documents',
+    title: 'Agency settings',
+    body: 'Profile, people and teams',
   },
   {
     as: 'supervisor',

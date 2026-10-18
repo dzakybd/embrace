@@ -2,7 +2,7 @@
 
 import { useRouter } from 'next/navigation'
 import { useEffect, useState } from 'react'
-import { api, type Agency, type NewAgency, type SopSource, type TeamMember, type Urgency } from './api'
+import { api, type Agency, type NewAgency, type TeamMember, type Urgency } from './api'
 import { save } from './storage'
 import { Card, Icon } from './ui'
 import { useT } from './Lang'
@@ -29,33 +29,35 @@ const FLAG_LABEL: Record<string, string> = {
   insufficient_info: 'Not enough information',
 }
 
-/** The editable settings of an agency: from a template when creating, from the agency itself when editing. */
-function settingsOf(t: Agency, withNames: boolean) {
+/** A new agency's settings, copied from a template without its names, staff ids or documents. */
+function settingsOf(t: Agency) {
   return {
-    name: withNames ? t.name : '',
-    short: withNames ? t.short_name : '',
+    name: '',
+    short: '',
     country: t.country,
-    description: withNames ? (t.description ?? '') : '',
-    nameId: withNames ? (t.name_id ?? '') : '',
-    shortId: withNames ? (t.short_name_id ?? '') : '',
-    descId: withNames ? (t.description_id ?? '') : '',
-    emergencyId: withNames ? (t.emergency_line_id ?? '') : '',
+    description: '',
+    nameId: '',
+    shortId: '',
+    descId: '',
+    emergencyId: '',
     emergency: t.emergency_line,
-    signature: withNames ? t.reply_signature : '',
-    cats: t.categories.map((c) => ({
-      id: withNames ? c.id : undefined,
-      label: c.label,
-      team: t.queues[c.queue] ?? c.queue,
-      escalate: t.escalation.always_escalate_categories.includes(c.id),
-      min_urgency: c.min_urgency === 'critical' ? undefined : c.min_urgency,
-    })),
-    team: t.team.map((m) => ({
-      id: withNames ? m.id : undefined,
-      name: m.name,
-      role: m.role,
-      title: m.title,
-      teams: m.queues.map((q) => t.queues[q] ?? q),
-    })),
+    signature: '',
+    cats: t.categories.map(
+      (c): Cat => ({
+        label: c.label,
+        team: t.queues[c.queue] ?? c.queue,
+        escalate: t.escalation.always_escalate_categories.includes(c.id),
+        min_urgency: c.min_urgency === 'critical' ? undefined : c.min_urgency,
+      }),
+    ),
+    team: t.team.map(
+      (m): Member => ({
+        name: m.name,
+        role: m.role,
+        title: m.title,
+        teams: m.queues.map((q) => t.queues[q] ?? q),
+      }),
+    ),
     keywords: t.escalation.keywords.join(', '),
     flags: t.escalation.escalate_flags,
     sla: t.sla_hours,
@@ -70,39 +72,29 @@ const toBase64 = async (f: File) => {
   return btoa(bin)
 }
 
-/** Create a new agency (no `agency`) or edit an existing one's rules, categories, staff and documents. */
-export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSaved?: (a: Agency) => void }) {
+/** Creates a new agency from a template: its profile, rules, case types, staff and documents. Once created, each part
+ * is edited where it is used (Settings, Case types, Knowledge base). */
+export default function AgencyForm() {
   const tr = useT()
   const router = useRouter()
-  const editing = !!agency
   const { templates } = useAgencies()
   const [template, setTemplate] = useState('')
-  const [f, setF] = useState<ReturnType<typeof settingsOf> | null>(agency ? settingsOf(agency, true) : null)
-  const [sources, setSources] = useState<SopSource[]>([])
-  const [drop, setDrop] = useState<string[]>([])
+  const [f, setF] = useState<ReturnType<typeof settingsOf> | null>(null)
   const [keepDocs, setKeepDocs] = useState(true)
   const [docs, setDocs] = useState<Doc[]>([])
   const [paste, setPaste] = useState({ title: '', text: '' })
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
-  const [saved, setSaved] = useState(false)
 
   const apply = (id: string) => {
     const t = templates.find((x) => x.id === id)
     if (!t) return
     setTemplate(id)
-    setF(settingsOf(t, false))
+    setF(settingsOf(t))
   }
   useEffect(() => {
-    if (!editing && !template && templates.length) apply(templates[0].id)
+    if (!template && templates.length) apply(templates[0].id)
   })
-  useEffect(() => {
-    if (agency)
-      api
-        .sop(agency.id, '')
-        .then((r) => setSources(r.sources))
-        .catch(() => setSources([]))
-  }, [agency])
 
   if (!f)
     return (
@@ -112,7 +104,6 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
     )
   const set = (patch: Partial<typeof f>) => {
     setF({ ...f, ...patch })
-    setSaved(false)
   }
   const teams = [...new Set(f.cats.map((c) => c.team.trim()).filter(Boolean))]
   const setCat = (i: number, c: Partial<Cat>) => set({ cats: f.cats.map((x, j) => (j === i ? { ...x, ...c } : x)) })
@@ -146,7 +137,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         ? [...docs, { title: paste.title || 'Pasted document', text: paste.text, size: paste.text.length }]
         : docs
       const body: NewAgency = {
-        template: agency?.id ?? template,
+        template,
         name: f.name,
         short_name: f.short,
         country: f.country,
@@ -168,22 +159,13 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         escalate_flags: f.flags,
         sla_hours: f.sla,
         confidence_floor: f.floor,
-        keep_template_docs: editing || keepDocs,
-        drop_docs: drop,
+        keep_template_docs: keepDocs,
+        drop_docs: [],
         docs: allDocs.map(({ title, text, pdf_base64 }) => ({ title, text, pdf_base64 })),
       }
-      if (agency) {
-        const updated = await api.updateAgency(agency.id, body)
-        setDocs([])
-        setPaste({ title: '', text: '' })
-        setDrop([])
-        setSaved(true)
-        onSaved?.(updated)
-      } else {
-        const created = await api.createAgency(body)
-        save('agency', created.id)
-        router.push(`/a/${created.id}`)
-      }
+      const created = await api.createAgency(body)
+      save('agency', created.id)
+      router.push(`/a/${created.id}`)
     } catch (e2) {
       const msg = String(e2).replace(/^Error: \d+ /, '')
       try {
@@ -199,33 +181,31 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
   const tpl = templates.find((t) => t.id === template)
   return (
     <form className="new-agency" onSubmit={submit}>
-      {!editing && (
-        <>
-          <div>
-            <h1>{tr('Create an agency')}</h1>
-            <p className="muted">
-              {tr(
-                'Every social services desk runs on the same agents; only its rules, categories, teams, staff and documents change.',
-              )}
-            </p>
-          </div>
-          <Card title={tr('1. Start from')} icon="building">
-            <label className="field">
-              <span>{tr('Template (copies categories, teams, roles and rules)')}</span>
-              <select value={template} onChange={(e) => apply(e.target.value)}>
-                {templates.map((t) => (
-                  <option key={t.id} value={t.id}>
-                    {t.name}
-                  </option>
-                ))}
-              </select>
-            </label>
-            {tpl?.description && <p className="hint">{tpl.description}</p>}
-          </Card>
-        </>
-      )}
+      <>
+        <div>
+          <h1>{tr('Create an agency')}</h1>
+          <p className="muted">
+            {tr(
+              'Every social services desk runs on the same agents; only its rules, categories, teams, staff and documents change.',
+            )}
+          </p>
+        </div>
+        <Card title={tr('1. Start from')} icon="building">
+          <label className="field">
+            <span>{tr('Template (copies categories, teams, roles and rules)')}</span>
+            <select value={template} onChange={(e) => apply(e.target.value)}>
+              {templates.map((t) => (
+                <option key={t.id} value={t.id}>
+                  {t.name}
+                </option>
+              ))}
+            </select>
+          </label>
+          {tpl?.description && <p className="hint">{tpl.description}</p>}
+        </Card>
+      </>
 
-      <Card title={editing ? tr('Agency') : tr('2. Agency')} icon="home">
+      <Card title={tr('2. Agency')} icon="home">
         <div className="grid2">
           <label className="field">
             <span>{tr('Full name')}</span>
@@ -285,7 +265,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         </div>
       </Card>
 
-      <Card title={editing ? tr('Rules') : tr('3. Rules')} icon="shield">
+      <Card title={tr('3. Rules')} icon="shield">
         <p className="hint">
           {tr(
             'Deterministic rules decide escalation, never the AI alone. A caseworker always approves every reply before it is sent.',
@@ -338,12 +318,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         </label>
       </Card>
 
-      <Card
-        title={
-          editing ? tr('Categories and the team that handles each') : tr('4. Categories and the team that handles each')
-        }
-        icon="rules"
-      >
+      <Card title={tr('4. Categories and the team that handles each')} icon="rules">
         <p className="hint">
           {tr(
             'Per category: the team that gets it, whether it always escalates, and a minimum urgency the AI cannot go below.',
@@ -415,7 +390,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         </button>
       </Card>
 
-      <Card title={editing ? tr('Staff') : tr('5. Staff')} icon="user">
+      <Card title={tr('5. Staff')} icon="user">
         <p className="hint">
           {tr(
             'Needs a head of office, a supervisor (receives escalations) and caseworkers (each in charge of one or more teams). Use made-up names; clear a name to drop that row.',
@@ -490,43 +465,16 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         </button>
       </Card>
 
-      <Card
-        title={
-          editing
-            ? tr('Knowledge: SOPs, service flows, regulations')
-            : tr('6. Knowledge: SOPs, service flows, regulations')
-        }
-        icon="book"
-      >
+      <Card title={tr('6. Knowledge: SOPs, service flows, regulations')} icon="book">
         <p className="hint">
           {tr(
             'The SOP agent searches these documents and the drafter cites them. Upload PDF (with a text layer, up to 4 MB), Markdown or text, or paste text.',
           )}
         </p>
-        {editing ? (
-          sources.map((s) => (
-            <div key={s.file} className={`doc ${drop.includes(s.file) ? 'dropped' : ''}`}>
-              <span>
-                <Icon name="book" size={14} /> {s.short} <span className="muted small">{s.kind}</span>
-              </span>
-              <button
-                type="button"
-                className="ghost small"
-                onClick={() => {
-                  setDrop(drop.includes(s.file) ? drop.filter((x) => x !== s.file) : [...drop, s.file])
-                  setSaved(false)
-                }}
-              >
-                {drop.includes(s.file) ? tr('Keep') : tr('Remove')}
-              </button>
-            </div>
-          ))
-        ) : (
-          <label className="check">
-            <input type="checkbox" checked={keepDocs} onChange={(e) => setKeepDocs(e.target.checked)} />{' '}
-            {tr('Keep the template’s documents')}
-          </label>
-        )}
+        <label className="check">
+          <input type="checkbox" checked={keepDocs} onChange={(e) => setKeepDocs(e.target.checked)} />{' '}
+          {tr('Keep the template’s documents')}
+        </label>
         <input
           type="file"
           multiple
@@ -573,19 +521,12 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
         </p>
       )}
       <div className="form-actions">
-        <button className="primary" disabled={busy || (!editing && !template)}>
-          {busy ? tr('Saving…') : editing ? tr('Save settings') : tr('Create agency')}
+        <button className="primary" disabled={busy || !template}>
+          {busy ? tr('Saving…') : tr('Create agency')}
         </button>
-        {saved && (
-          <span className="ok-note">
-            <Icon name="check" size={14} /> {tr('Saved. New reports follow these settings.')}
-          </span>
-        )}
-        {!editing && (
-          <span className="muted small">
-            {tr('Demo: created agencies are public to everyone using this prototype; use made-up staff names.')}
-          </span>
-        )}
+        <span className="muted small">
+          {tr('Demo: created agencies are public to everyone using this prototype; use made-up staff names.')}
+        </span>
       </div>
     </form>
   )
