@@ -16,6 +16,7 @@ export type Prices = Record<string, [number, number]>
 
 const DRAFT_CHECKS: [string, RegExp][] = [
   ['personal data', /personal data/], ['links', /link/], ['citations', /Cites/], ['report number', /report number/], ['promises', /Promises/],
+  ['instructions', /instructions/], ['case closed', /case is closed/],
 ]
 
 export function aiReport(tickets: Ticket[], sinceDays = 30, prices: Prices = {}) {

@@ -72,11 +72,10 @@ type Phase = 'compose' | 'running' | 'details' | 'done'
 
 /** The web report desk as a chat, like the agency's Telegram bot: the citizen writes, the agents answer in the thread,
  * and missing details are asked one at a time after the case exists. */
-export default function Report({ agencyId, embed = false }: { agencyId?: string; embed?: boolean } = {}) {
+export default function Report() {
   const { t, lang } = useLang()
   const { agencies, agency: picked, pick, error: loadError } = useAgencies()
-  // Embedded on an agency's site, the chat is fixed to that agency.
-  const raw = (agencyId && agencies.find((a) => a.id === agencyId)) || picked
+  const raw = picked
   const [copied, setCopied] = useState(false)
   const [text, setText] = useState('')
   const [name, setName] = useState('')
@@ -95,7 +94,11 @@ export default function Report({ agencyId, embed = false }: { agencyId?: string;
   const recorder = useRef<MediaRecorder | null>(null)
   const end = useRef<HTMLDivElement>(null)
 
-  useEffect(() => { end.current?.scrollIntoView({ behavior: 'smooth', block: 'end' }) }, [steps.length, ticket, answers.length, detailsSent, phase])
+  const input = useRef<HTMLTextAreaElement>(null)
+  useEffect(() => {
+    const calm = window.matchMedia('(prefers-reduced-motion: reduce)').matches
+    end.current?.scrollIntoView({ behavior: calm ? 'auto' : 'smooth', block: 'end' })
+  }, [steps.length, ticket, answers.length, detailsSent, phase])
 
   const addFiles = async (list: FileList | null) => {
     setError('')
@@ -213,35 +216,32 @@ export default function Report({ agencyId, embed = false }: { agencyId?: string;
   const canSend = phase === 'details' ? !!text.trim() : phase === 'compose' && !recording && (text.trim().length >= 10 || files.length > 0)
 
   return (
-    <div className={`chat-desk${embed ? ' embedded' : ''}`}>
+    <div className="chat-desk">
       <header className="chat-head">
         <Monogram agency={{ id: agency.id, short_name: agency.short_name, logo: agency.logo ?? null }} size={40} />
         <div className="chat-who">
           <b>{agency.short_name}</b>
-          {embed ? <small className="muted">{agency.name}</small> : (
-            <select value={raw.id} onChange={(e) => { pick(e.target.value); reset() }} aria-label={t('Send to')} disabled={phase === 'running'}>
-              {agencies.map((a) => <option key={a.id} value={a.id}>{localize(a, lang).name}</option>)}
-            </select>
-          )}
+          <select value={raw.id} onChange={(e) => { pick(e.target.value); reset() }} aria-label={t('Send to')} disabled={phase === 'running'}>
+            {agencies.map((a) => <option key={a.id} value={a.id}>{localize(a, lang).name}</option>)}
+          </select>
         </div>
-        {!embed && (
-          <button type="button" className="icon-btn" title={copied ? t('Link copied') : t('Share this chat')} aria-label={t('Share this chat')} onClick={() => share(raw.id)}>
-            <Icon name={copied ? 'check' : 'share'} size={18} />
-          </button>
-        )}
-        {tg && <a className="btn tonal small" href={tg} target="_blank" rel="noreferrer"><ChannelIcon c="telegram" size={16} /> {embed ? 'Telegram' : t('Continue on Telegram')}</a>}
+        <button type="button" className="icon-btn" title={copied ? t('Link copied') : t('Share this chat')} aria-label={t('Share this chat')} onClick={() => share(raw.id)}>
+          <Icon name={copied ? 'check' : 'share'} size={18} />
+        </button>
+        {tg && <a className="btn tonal small" href={tg} target="_blank" rel="noreferrer"><ChannelIcon c="telegram" size={16} /> {t('Continue on Telegram')}</a>}
       </header>
 
-      <div className="chat-log" aria-live="polite">
+      <div className="chat-log" role="log" aria-live="polite" aria-label={t('Conversation')}>
         <Bubble from="bot">
           <p>{t('Hello! Tell us what happened, where and when, in your own words. You can also send a voice note or a photo.')}</p>
+          <p className="fine">{t('Only {agency} staff see your report. By sending it, you agree to how it is handled.', { agency: agency.short_name })} <Link href="/privacy">{t('How your report is handled')}</Link></p>
         </Bubble>
 
         {phase === 'compose' && !sent && (
           <div className="chat-chips" role="group" aria-label={t('Sample reports')}>
             <span className="muted small">{t('Try a sample report')}</span>
             {SAMPLES[raw.id]?.map((s) => (
-              <button key={s.label} className="chip" onClick={() => setText(s.text)}>
+              <button key={s.label} className="chip" onClick={() => { setText(s.text); input.current?.focus() }}>
                 <Icon name="chat" size={14} /> {t(s.label)}
               </button>
             ))}
@@ -261,7 +261,7 @@ export default function Report({ agencyId, embed = false }: { agencyId?: string;
             <ol className="progress compact">
               {progress.map((p, i) => {
                 const active = !p.ok && progress.slice(0, i).every((x) => x.ok) && phase === 'running'
-                return <li key={p.key} className={p.ok ? 'ok' : active ? 'active' : ''}><span className="pdot">{p.ok ? <Icon name="check" size={12} /> : i + 1}</span>{p.label}</li>
+                return <li key={p.key} className={p.ok ? 'ok' : active ? 'active' : ''} aria-current={active ? 'step' : undefined}><span className="pdot">{p.ok ? <Icon name="check" size={12} /> : i + 1}</span>{p.label}</li>
               })}
             </ol>
           </Bubble>
@@ -290,7 +290,7 @@ export default function Report({ agencyId, embed = false }: { agencyId?: string;
           <Bubble from="bot"><p>{detailsSent === 'busy' ? t('Adding your answers…') : t('Thank you. Your answers were added and the team is updating the case.')}</p></Bubble>
         )}
 
-        {error && <Bubble from="bot"><p className="error">{error}</p></Bubble>}
+        {error && <Bubble from="bot"><p className="error" role="alert">{error}</p></Bubble>}
 
         {(steps.length > 0 || phase === 'running') && (
           <details className="card staff-view" open={phase === 'running' || undefined}>
@@ -348,16 +348,16 @@ export default function Report({ agencyId, embed = false }: { agencyId?: string;
               <>
                 <label className={`icon-btn ${files.length >= 3 ? 'disabled' : ''}`} title={t('Add photo or audio')}>
                   <Icon name="image" size={20} />
-                  <input type="file" accept="image/jpeg,image/png,image/webp,audio/*" multiple hidden disabled={files.length >= 3}
+                  <input type="file" className="sr-only" aria-label={t('Add photo or audio')} accept="image/jpeg,image/png,image/webp,audio/*" multiple disabled={files.length >= 3}
                     onChange={(e) => { addFiles(e.target.files); e.target.value = '' }} />
                 </label>
-                <button type="button" className={`icon-btn ${recording ? 'rec' : ''}`} onClick={toggleRecording} aria-pressed={recording}
+                <button type="button" className={`icon-btn ${recording ? 'rec' : ''}`} onClick={toggleRecording} aria-pressed={recording} aria-label={t('Record voice note')}
                   title={recording ? t('Stop recording') : t('Record voice note')} disabled={!recording && files.length >= 3}>
                   <Icon name={recording ? 'stop' : 'mic'} size={20} />
                 </button>
               </>
             )}
-            <textarea rows={phase === 'details' ? 1 : 2} value={text} disabled={phase === 'running'} onChange={(e) => setText(e.target.value)}
+            <textarea ref={input} rows={phase === 'details' ? 1 : 2} value={text} disabled={phase === 'running'} onChange={(e) => setText(e.target.value)}
               onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); if (canSend) send() } }}
               placeholder={phase === 'details' ? t('Type your answer…') : t('What happened, where and when. Any language is fine.')} aria-label={t('Message')} />
             <button className="send" disabled={!canSend} aria-label={t('Send')}><Icon name="send" size={20} /></button>
@@ -375,7 +375,8 @@ export default function Report({ agencyId, embed = false }: { agencyId?: string;
 }
 
 function Bubble({ from, children }: { from: 'bot' | 'me'; children: React.ReactNode }) {
-  return <div className={`bubble ${from}`}>{children}</div>
+  const t = useT()
+  return <div className={`bubble ${from}`}><span className="sr-only">{from === 'me' ? t('You:') : t('Agency:')}</span>{children}</div>
 }
 
 function StepOutput({ agent, out }: { agent: string; out: TraceStep['output'] }) {

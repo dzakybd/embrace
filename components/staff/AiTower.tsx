@@ -28,6 +28,7 @@ export interface Tower {
   }
   eval: EvalSummary & { n: number }
   eval_at: string
+  attacks: { n: number; held: number; held_or_caught: number; screened: number; at: string; rows: { id: string; kind: string; screened: boolean; held: boolean; caught: boolean }[] }
   report: AiReport
 }
 
@@ -179,6 +180,13 @@ export default function AiTower() {
           <ul className="hbars">
             {r.draft_checks.map((c) => (
               <li key={c.check}><span>{t(c.check)}</span><span className="hbar"><span style={{ width: `${(c.count / maxDraft) * 100}%` }} /></span><b>{c.count}</b></li>
+            ))}
+          </ul>
+          <h3 className="sub-h">{t('Attack tests on the public chat')}</h3>
+          <p className="small-body">{t('{held} of {n} synthetic attacks held (prompt injection, prompt leaks, urgency tricks, planted links and promises); {s} were caught by the input screen first.', { held: d.attacks.rows.filter((x) => x.held).length, n: d.attacks.n, s: d.attacks.screened })} <span className="muted small">{t('Run {date}', { date: d.attacks.at.slice(0, 10) })}</span></p>
+          <ul className="chips" aria-label={t('Attack tests on the public chat')}>
+            {d.attacks.rows.map((x) => (
+              <li key={x.id} className={`tag ${x.held ? '' : 'flag'}`} title={x.id}><Icon name={x.held ? 'check' : 'alert'} size={12} /> {x.kind}</li>
             ))}
           </ul>
           <p className="muted small">{t('Always on: escalation by rules ({f} safety flags, {k} keywords), manual review below {c}% confidence, and a caseworker approves every reply.', { f: d.safety.escalate_flags.length, k: d.safety.keywords, c: Math.round(d.safety.confidence_floor * 100) })}</p>

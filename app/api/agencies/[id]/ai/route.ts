@@ -12,6 +12,7 @@ import { CONFIDENCE_FLOOR } from '@/lib/policy'
 import { ensureSeeded } from '@/lib/seed'
 import { STORE, now } from '@/lib/store'
 import { telemetryStatus } from '@/lib/telemetry'
+import attackResults from '@/data/eval/attacks-results.json'
 import evalResults from '@/data/eval/results.json'
 import triageModels from '@/data/eval/triage-models.json'
 
@@ -57,6 +58,7 @@ export async function GET(_req: Request, { params }: { params: Promise<{ id: str
     },
     eval: evalResults.summary,
     eval_at: evalResults.at,
+    attacks: { ...attackResults.summary, at: attackResults.at, rows: attackResults.rows.map(({ id, kind, screened, held, caught }) => ({ id, kind, screened, held, caught })) },
     report: aiReport(await STORE.list(id), 30, PRICES),
   })
 }

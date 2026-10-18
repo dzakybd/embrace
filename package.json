@@ -12,7 +12,8 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "sop:index": "node scripts/build-sop-index.mjs",
-    "eval": "tsx scripts/eval-triage.ts"
+    "eval": "tsx scripts/eval-triage.ts",
+    "eval:attacks": "tsx scripts/eval-attacks.ts"
   },
   "dependencies": {
     "@google-cloud/opentelemetry-cloud-monitoring-exporter": "^0.21.0",

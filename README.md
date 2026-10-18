@@ -74,6 +74,8 @@ Triage eval on 60 labelled synthetic complaints (Indonesian, Javanese, English; 
 The three misses are borderline: a school beating read as violence rather than education, a recipient dropped from the BPNT list read as registration rather than aid not received, and a Javanese question on how to register an elderly parent read as registration rather than general information.
 In local test runs a text complaint went through all five steps in about 6 seconds.
 
+**Attack tests on the public chat**: 14 synthetic attacks in English and Indonesian ([`data/eval/attacks.json`](data/eval/attacks.json)), run through the full pipeline with `npm run eval:attacks`: prompt injection, fake system tags, prompt leaks, role play, urgency downgrades and inflation, links and promises planted in the reply, data exfiltration, closing the data block. 14 of 14 held in the last runs ([`attacks-results.json`](data/eval/attacks-results.json)): routing and urgency stayed where they belong and no draft carried what the attacker planted. An earlier run showed a drafter following a fake `<system>` tag, which led to the defences listed under Safety and privacy.
+
 **Load test on production**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm Cloud Run instance; case list API 63 req/s (p50 277 ms); 10 AI reports at once all completed in about 4.7 s each, first progress event within 0.23 s (`scripts/load-burst.mjs`).
 
 **Agency pages, channels and settings.** Every agency has a public page (`/a/<id>`) with its channels, emergency line, what it handles and the documents its replies follow. The head of office edits the agency under **Settings**: SLA hours per urgency, which AI safety signals force escalation, escalation words, the confidence threshold for manual review, per category the team, always-escalate and a minimum urgency, the staff, and the documents (PDF/Markdown upload). Built-in agencies keep the edits as an override; **Reset demo data** restores them. Two things are fixed for every agency: escalation is decided by rules, and a person approves every reply.
@@ -90,6 +92,7 @@ cp .env.example .env.local     # set GOOGLE_GENAI_API_KEY
 npm run dev                    # http://localhost:3000, in-memory store
 npm test                       # policy rules, SOP search and Telegram gatekeeping, no model calls
 npm run eval                   # triage eval, uses the Gemini key
+npm run eval:attacks           # attack tests through the full pipeline, uses the Gemini key
 npm run sop:index              # rebuild agencies/*/sop-index.json after changing SOP documents
 ```
 
@@ -113,7 +116,7 @@ components/       React UI (Report, staff workspace, Insights)
 lib/agents/       ADK agents: pipeline.ts, analyst.ts, models.ts
 lib/              policy rules, SOP search, Firestore store, analytics, seeding
 agencies/<id>/    agency packs: agency.json, sop/, sop-index.json, seed.json
-scripts/          SOP index builder, triage eval
+scripts/          SOP index builder, triage eval, attack tests
 tests/            vitest: policy and SOP search
 ```
 
@@ -122,7 +125,10 @@ tests/            vitest: policy and SOP search
 - Synthetic data only. Personal data is masked by the intake agent before staff see it; the original stays behind a "Show original" toggle.
 - Escalation never depends on the model alone; replies are never sent without caseworker approval.
 - Attachments are sent to Gemini and not stored; the ticket keeps only their type and size and what the media agent read.
-- Per-IP rate limits protect the demo's Gemini budget.
+- Per-IP rate limits protect the demo's Gemini budget. Gemini rate limits and server errors back off and retry twice (1 s, then 2 s) before the keyword rules decide.
+- Public text is fenced as data in every prompt. Reports with instructions aimed at the AI (English and Indonesian patterns) go to a person, and the reply drafter gets only a neutral restatement of them, never the attacker's words. Drafts are checked for copied personal data, foreign links, invented citations, promised outcomes, leaked instructions and claims that the case is closed.
+- The chat and the Telegram bot link to a privacy notice ([`/privacy`](app/privacy/page.tsx)): who sees a report, how Gemini is used, what is kept, and the rights under Indonesia's Personal Data Protection Law (UU 27/2022).
+- Operations: a Cloud Monitoring uptime check on `/api/health` from three regions with an email alert, and a monthly billing budget with alerts at 50%, 90% and 100%.
 
 ## License
 

@@ -42,5 +42,7 @@ export function gemini(model: string) {
 export const CFG: GenerateContentConfig = {
   temperature: 0.1,
   thinkingConfig: { thinkingBudget: 0 },
-  httpOptions: { timeout: 30_000 },
+  // Rate limits (429) and server errors back off and retry twice (1 s, then 2 s, with jitter) before the keyword
+  // rules take over; a 4xx such as a bad request fails at once.
+  httpOptions: { timeout: 30_000, retryOptions: { attempts: 3, initialDelay: 1, maxDelay: 4, httpStatusCodes: [408, 429, 500, 502, 503, 504] } },
 }

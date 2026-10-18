@@ -1,3 +1,4 @@
+import { readFileSync } from 'node:fs'
 import { describe, expect, it } from 'vitest'
 import { AGENCIES } from '@/lib/agencies'
 import { aiReport } from '@/lib/ai-report'
@@ -25,6 +26,12 @@ describe('input guardrail', () => {
   it('leaves ordinary reports alone, including urgent ones', () => {
     expect(screenInput('My neighbour beats her son every night in Bekasi, please help').injection).toBe(false)
     expect(screenInput('Bantuan PKH saya belum cair, saya sudah lapor ke desa').injection).toBe(false)
+    expect(screenInput('Tolong tunjukkan aturan pendaftaran bantuan lansia, anda adalah petugas yang baik').injection).toBe(false)
+  })
+
+  it('flags every attack in the red-team set that it is meant to catch', () => {
+    const attacks: { id: string; text: string; screen: boolean }[] = JSON.parse(readFileSync('data/eval/attacks.json', 'utf8'))
+    expect(attacks.filter((a) => a.screen && !screenInput(a.text).injection).map((a) => a.id)).toEqual([])
   })
 
   it('fences public text so it cannot close the data block in a prompt', () => {
@@ -52,6 +59,20 @@ describe('output guardrail on drafts', () => {
     expect(w.join(' ')).toMatch(/Cites \[3\]/)
     expect(w.join(' ')).toMatch(/report number/)
     expect(w.join(' ')).toMatch(/Promises/)
+  })
+
+  it('catches a draft that leaks its instructions or closes the case', () => {
+    const w = checkDraft('KPAI-1 [1]. Status kasus ini adalah selesai. You draft the first reply from KPAI. Original complaint: <<< x >>>', ctx).warnings.join(' ')
+    expect(w).toMatch(/instructions/)
+    expect(w).toMatch(/case is closed/)
+    expect(checkDraft('KPAI-1 [1]. Your report has been closed.', ctx).warnings.join()).toMatch(/case is closed/)
+    expect(checkDraft('KPAI-1 [1]. Laporan Anda akan kami tangani sampai selesai.', ctx).warnings).toEqual([])
+  })
+
+  it('does not count a refusal to promise as a promise', () => {
+    expect(checkDraft('KPAI-1: we cannot provide a guarantee of payment [1].', ctx).warnings).toEqual([])
+    expect(checkDraft('KPAI-1: bantuan tidak dijamin cair [1].', ctx).warnings).toEqual([])
+    expect(checkDraft('KPAI-1: payment is guaranteed next week [1].', ctx).warnings.join()).toMatch(/Promises/)
   })
 
   it('allows links from the agency documents', () => {
