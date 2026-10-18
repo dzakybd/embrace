@@ -73,7 +73,7 @@ export default function Knowledge() {
   const remove = async (s: SopSource) => {
     setErr('')
     try {
-      await api.removeKnowledge(agency.id, s.id!)
+      await api.removeKnowledge(agency.id, s.id ?? encodeURIComponent(s.file))
       await load()
     } catch (e) {
       setErr(errText(e))
@@ -173,8 +173,13 @@ export default function Knowledge() {
               {d.issuer}
               {d.added_by ? ` · ${t('added by {name}', { name: d.added_by })}` : ''}
             </span>
-            {d.id && canEdit && (
-              <button type="button" className="ghost small danger kb-remove" onClick={() => remove(d)}>
+            {canEdit && (
+              <button
+                type="button"
+                className="ghost small danger kb-remove"
+                title={d.id ? undefined : t('Reset demo data brings built-in documents back')}
+                onClick={() => remove(d)}
+              >
                 {t('Remove')}
               </button>
             )}

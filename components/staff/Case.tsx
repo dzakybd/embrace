@@ -568,6 +568,7 @@ const AGENT_ICON: Record<string, string> = {
   policy_agent: 'rules',
   sop_agent: 'book',
   drafter_agent: 'send',
+  draft_check_agent: 'shield',
 }
 
 /** The agent run as a conversation: the citizen's report, then each agent saying what it did, with what it read and
@@ -877,6 +878,21 @@ function TraceBody({ agent, out: raw, t }: { agent: string; out: TraceStep['outp
         {Array.isArray(out.flags) && out.flags.length > 0 && <> · flags: {(out.flags as string[]).join(', ')}</>}
         <br />
         <span className="quote">“{String(out.urgency_reason)}”</span>
+      </p>
+    )
+  }
+  if (agent === 'draft_check_agent') {
+    const w = (out.warnings as string[] | undefined) ?? []
+    return (
+      <p>
+        {w.length ? (
+          <>
+            {out.rewrite ? 'Flagged, sent back to the drafter: ' : 'Still flagged after the rewrite: '}
+            {w.join('; ')}
+          </>
+        ) : (
+          'Draft passed every check'
+        )}
       </p>
     )
   }

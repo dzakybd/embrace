@@ -77,7 +77,7 @@ async function* runAgents(
         const ms = Date.now() - mark
         mark = Date.now()
         outputs[key] = delta[key]
-        const kind = key === 'policy' ? 'rules' : key === 'sop' ? 'search' : 'llm'
+        const kind = key === 'policy' || key === 'draft_check' ? 'rules' : key === 'sop' ? 'search' : 'llm'
         const call = kind === 'llm' ? governance.last(ev.invocationId, ev.author!) : undefined
         yield {
           agent: ev.author!,

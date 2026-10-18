@@ -169,6 +169,30 @@ export async function saveAgencyFields(agency: Agency, fields: Partial<Agency>) 
   AGENCIES[agency.id] = { ...agency, ...fields, ...(agency.custom ? {} : { edited: true }) }
 }
 
+/** Removes one of an agency's own or template documents (by file) from its knowledge base, and from the legal basis
+ * of its case types. A built-in agency keeps this as part of its override; Reset demo brings the documents back. */
+export async function removeAgencyDoc(agency: Agency, file: string): Promise<boolean> {
+  const src = sourcesFor(agency.id).find((s) => s.file === file)
+  if (!src) return false
+  if (!agency.custom && !agency.edited) await saveAgencyFields(agency, {})
+  const stored = ((await STORE.listAgencies()) as unknown as StoredAgency[]).find((a) => a.id === agency.id)
+  const docs: IndexFile = stored?.docs ?? { sources: [], passages: [], template: agency.id, keep: [] }
+  const next: IndexFile = {
+    ...docs,
+    sources: docs.sources.filter((s) => s.file !== file),
+    passages: docs.passages.filter((p) => p.doc !== src.short || docs.keep?.includes(src.short)),
+    ...(docs.keep ? { keep: docs.keep.filter((k) => k !== src.short) } : {}),
+  }
+  await STORE.patchAgency(agency.id, { docs: next })
+  registerDocs(agency.id, next)
+  const current = AGENCIES[agency.id]
+  if (current.categories.some((c) => c.laws?.includes(src.short)))
+    await saveAgencyFields(current, {
+      categories: current.categories.map((c) => ({ ...c, laws: (c.laws ?? []).filter((l) => l !== src.short) })),
+    })
+  return true
+}
+
 /** The agency with this id, loading custom agencies from the store when it is not known yet. */
 export async function agencyById(id: string): Promise<Agency | undefined> {
   await loadAgencies(!AGENCIES[id])

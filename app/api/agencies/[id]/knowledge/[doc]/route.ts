@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/admin'
-import { agencyById } from '@/lib/agencies'
+import { agencyById, removeAgencyDoc } from '@/lib/agencies'
 import { error } from '@/lib/http'
 import { loadKnowledge } from '@/lib/sop'
 import { STORE } from '@/lib/store'
@@ -20,14 +20,19 @@ export async function GET(_req: Request, { params }: Params) {
   })
 }
 
-/** Removes an added document from the knowledge base (shipped documents cannot be removed). */
+/** Removes a document from the knowledge base: one added on the Knowledge page (by id), or one of the agency's own or
+ * built-in documents (by file name). */
 export async function DELETE(req: Request, { params }: Params) {
   const denied = requireAdmin(req)
   if (denied) return denied
   const { id, doc } = await params
-  if (!(await agencyById(id))) return error(404, 'unknown agency')
+  const agency = await agencyById(id)
+  if (!agency) return error(404, 'unknown agency')
   const d = (await loadKnowledge(id, true)).find((x) => x.id === doc)
-  if (!d) return error(404, 'no such document')
+  if (!d) {
+    if (await removeAgencyDoc(agency, decodeURIComponent(doc))) return Response.json({ ok: true })
+    return error(404, 'no such document')
+  }
   await STORE.deleteKnowledge(id, doc)
   if (d.file_path) await STORE.deleteFile(d.file_path).catch(() => undefined)
   await loadKnowledge(id, true)

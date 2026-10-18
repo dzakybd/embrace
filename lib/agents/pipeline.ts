@@ -1,10 +1,11 @@
 // Complaint pipeline as one ADK SequentialAgent:
-// media (only with attachments) -> intake -> triage -> policy rules -> SOP lookup (BM25) -> drafter.
-import { BaseAgent, LlmAgent, SequentialAgent, createEvent, type InvocationContext } from '@google/adk'
+// media (only with attachments) -> intake -> triage -> policy rules -> SOP lookup (BM25) -> [drafter -> draft check]
+// where the bracket is a LoopAgent: a draft the output guardrail flags is rewritten once with the findings.
+import { BaseAgent, LlmAgent, LoopAgent, SequentialAgent, createEvent, type InvocationContext } from '@google/adk'
 import { getAgency, taxonomyText, type Agency } from '../agencies'
 import { decide } from '../policy'
 import { DraftReply, IntakeResult, MediaResult, TriageResult, type Intake, type Media, type Triage } from '../schemas'
-import { SAFETY } from '../guardrails'
+import { SAFETY, checkDraft } from '../guardrails'
 import { asPrompt, knowledgeIndex, loadKnowledge } from '../sop'
 import { CFG, MODELS, gemini } from './models'
 
@@ -238,6 +239,7 @@ Agency SOP passages (the only procedures you may state):
 {sop_text}
 The agency's published procedure for this case type (stages in order, who does each):
 {procedure_text?}
+{draft_feedback?}
 
 Rules:
 - Write in this language: {reply_language} (ISO code), with a warm, plain, respectful tone; short paragraphs.
@@ -263,6 +265,45 @@ procedure the officer must confirm.`,
   generateContentConfig: WRITE,
 })
 
+/** Tries per report before the draft goes to the caseworker with its warnings: the first draft and one rewrite. */
+export const DRAFT_TRIES = 2
+
+/** Deterministic critic in the drafting loop: runs the output guardrail on the draft. A clean draft (or the last try)
+ * ends the loop; otherwise the findings go back to the drafter as feedback. No model call. */
+export class DraftCheckAgent extends BaseAgent {
+  protected async *runAsyncImpl(ctx: InvocationContext) {
+    const s = ctx.session.state
+    const reply = (s['draft'] as { reply?: string } | undefined)?.reply ?? ''
+    const sop = (s['sop'] as { url?: string }[] | undefined) ?? []
+    const attempt = Number(s['draft_attempt'] ?? 0) + 1
+    const { warnings } = checkDraft(reply, {
+      original: String(s['complaint_text'] ?? ''),
+      ticketId: String(s['ticket_id'] ?? ''),
+      sopCount: sop.length,
+      allowedUrls: sop.map((c) => c.url ?? '').filter(Boolean),
+    })
+    const done = !warnings.length || attempt >= DRAFT_TRIES
+    yield createEvent({
+      author: this.name,
+      invocationId: ctx.invocationId,
+      content: { role: 'model', parts: [{ text: warnings.length ? warnings.join('; ') : 'Draft passed the checks' }] },
+      actions: {
+        escalate: done,
+        stateDelta: {
+          draft_attempt: attempt,
+          draft_check: { attempt, warnings, rewrite: !done },
+          draft_feedback: done
+            ? ''
+            : `Your previous draft failed these checks; write it again and fix every one: ${warnings.join('; ')}.`,
+        },
+      },
+    })
+  }
+  protected async *runLiveImpl(ctx: InvocationContext) {
+    yield* this.runAsyncImpl(ctx)
+  }
+}
+
 const policyAgent = () =>
   new PolicyAgent({ name: 'policy_agent', description: "Applies the agency's escalation and routing rules." })
 
@@ -281,7 +322,15 @@ export const pipeline = new SequentialAgent({
     triageAgent,
     policyAgent(),
     new SopLookupAgent({ name: 'sop_agent', description: "Looks up the agency's SOP passages for the case." }),
-    drafterAgent,
+    new LoopAgent({
+      name: 'drafting_loop',
+      description: 'Drafts the reply and rewrites it once when the output guardrail flags it.',
+      maxIterations: DRAFT_TRIES,
+      subAgents: [
+        drafterAgent,
+        new DraftCheckAgent({ name: 'draft_check_agent', description: 'Runs the output guardrail on the draft.' }),
+      ],
+    }),
   ],
 })
 
@@ -293,6 +342,7 @@ export const STEP_KEYS: Record<string, string> = {
   policy_agent: 'policy',
   sop_agent: 'sop',
   drafter_agent: 'draft',
+  draft_check_agent: 'draft_check',
 }
 
 /** Public text cannot close the <<< >>> data block it is quoted in. */

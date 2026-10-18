@@ -1315,4 +1315,16 @@ export const ID: Record<string, string> = {
   'About the agency': 'Tentang instansi',
   'Emergency line': 'Nomor darurat',
   'Add team': 'Tambah tim',
+  'Reset demo data brings built-in documents back': 'Reset data demo mengembalikan dokumen bawaan',
+  'Draft check': 'Pemeriksaan draf',
+  'Output guardrail; a flagged draft is rewritten once': 'Pengaman keluaran; draf yang ditandai ditulis ulang sekali',
+  'Drafts the reply in the citizen’s language; an ADK LoopAgent rewrites it once if the output guardrail flags it':
+    'Menyusun balasan dalam bahasa warga; ADK LoopAgent menulis ulang sekali bila pengaman keluaran menandainya',
+  'Report (or its restatement if flagged), triage, routing, passages, procedure, contacts, check findings':
+    'Laporan (atau rumusan ulangnya bila ditandai), triase, perutean, kutipan, prosedur, kontak, temuan pemeriksaan',
+  'Checks the draft before staff see it; a flagged draft goes back to the drafter once (LoopAgent)':
+    'Memeriksa draf sebelum dilihat petugas; draf yang ditandai kembali ke penyusun sekali (LoopAgent)',
+  'Finds personal data, links, wrong citations, a missing ticket number, promised outcomes and leaked instructions. Inside an ADK LoopAgent: a flagged draft is rewritten once with the findings; what remains is shown to the caseworker.':
+    'Menemukan data pribadi, tautan, kutipan keliru, nomor tiket yang hilang, janji hasil, dan instruksi yang bocor. Di dalam ADK LoopAgent: draf yang ditandai ditulis ulang sekali dengan temuannya; sisanya ditampilkan ke petugas.',
+  'findings: rewrite once': 'temuan: tulis ulang sekali',
 }
