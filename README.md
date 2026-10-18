@@ -94,7 +94,8 @@ Requirements: Node 22+, a Gemini API key.
 npm install
 cp .env.example .env.local     # set GOOGLE_GENAI_API_KEY
 npm run dev                    # http://localhost:3000, in-memory store
-npm test                       # policy rules, SOP search and Telegram gatekeeping, no model calls
+npm test                       # 59 tests: rules, SOP search, guardrails, procedures, Telegram gatekeeping; no model calls
+npm run format                 # Biome formatter (npm run lint for ESLint)
 npm run eval                   # triage eval, uses the Gemini key
 npm run eval:attacks           # attack tests through the full pipeline, uses the Gemini key
 npm run sop:index              # rebuild agencies/*/sop-index.json after changing SOP documents
@@ -121,7 +122,7 @@ lib/agents/       ADK agents: pipeline.ts, analyst.ts, models.ts
 lib/              policy rules, SOP search, Firestore store, analytics, seeding
 agencies/<id>/    agency packs: agency.json, sop/, sop-index.json, seed.json
 scripts/          SOP index builder, triage eval, attack tests
-tests/            vitest: policy and SOP search
+tests/            vitest: policy, SOP search, guardrails, procedures, bot, i18n
 ```
 
 ## Safety and privacy
