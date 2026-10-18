@@ -806,3 +806,4 @@ pre.json { font: 11px/1.45 'Google Sans Code', monospace; background: var(--surf
 .ct-item > * { text-align: left; }
 .am-flow { align-items: start; }
 .am-chain { align-content: start; }
+.say.search .say-b, .say.rules .say-b { width: 100%; }

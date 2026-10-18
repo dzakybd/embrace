@@ -117,7 +117,7 @@ export function procedureText(agency: Agency, category: string | undefined): str
   if (!p) return '(no published procedure for this case type)'
   const laws = agency.categories.find((c) => c.id === category)?.laws ?? []
   return [
-    `${p.title} (id ${p.id})`,
+    p.title,
     ...p.stages.map((s, i) => `${i + 1}. ${s.title} [${s.who ?? 'caseworker'}]`),
     p.requirements?.length ? `What to bring: ${p.requirements.join('; ')}` : '',
     p.note ? `Note: ${p.note}` : '',
