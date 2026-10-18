@@ -176,8 +176,8 @@
     "normal": 72,
     "low": 120
   },
-  "emergency_line": "110 (police) or 112; for violence against women and children SAPA 129 (WhatsApp 08111-129-129)",
-  "emergency_line_id": "110 (polisi) atau 112; untuk kekerasan terhadap perempuan dan anak SAPA 129 (WhatsApp 08111-129-129)",
+  "emergency_line": "SAPA 129 (women and child protection hotline): 129 · WhatsApp 08111-129-129; Police emergency: 110; General emergency: 112",
+  "emergency_line_id": "SAPA 129 (layanan pengaduan perempuan dan anak): 129 · WhatsApp 08111-129-129; Darurat polisi: 110; Darurat umum: 112",
   "required_details": [
     "location",
     "incident_time"
@@ -255,7 +255,10 @@
       ]
     }
   ],
-  "map": {"file": "geo/demak-kecamatan.json", "level": "kecamatan"},
+  "map": {
+    "file": "geo/demak-kecamatan.json",
+    "level": "kecamatan"
+  },
   "telegram_bot": "embrace_dinsos_demak_bot",
   "logo": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/brand%2Fagencies%2Fdinsos_demak.svg?alt=media",
   "procedures": [
@@ -790,7 +793,8 @@
       "phone": "129 · WhatsApp 08111-129-129",
       "note": "For violence against women and children.",
       "note_id": "Untuk kekerasan terhadap perempuan dan anak.",
-      "public": true
+      "public": true,
+      "urgent": true
     },
     {
       "id": "police110",
@@ -798,7 +802,8 @@
       "name": "Police emergency",
       "name_id": "Darurat polisi",
       "phone": "110",
-      "public": true
+      "public": true,
+      "urgent": true
     },
     {
       "id": "emergency112",
@@ -806,7 +811,8 @@
       "name": "General emergency",
       "name_id": "Darurat umum",
       "phone": "112",
-      "public": true
+      "public": true,
+      "urgent": true
     },
     {
       "id": "unit_ppa_demak",

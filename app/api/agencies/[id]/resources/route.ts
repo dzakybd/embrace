@@ -1,6 +1,6 @@
 import { requireAdmin } from '@/lib/admin'
 import { z } from 'zod'
-import { AGENCIES, agencyById, publicAgency, RESOURCE_KINDS, saveAgencyFields } from '@/lib/agencies'
+import { AGENCIES, agencyById, emergencyFrom, publicAgency, RESOURCE_KINDS, saveAgencyFields } from '@/lib/agencies'
 import { log } from '@/lib/agents/governance'
 import { error, rateLimit } from '@/lib/http'
 
@@ -19,13 +19,15 @@ const Body = z.object({
         url: z.string().trim().url().startsWith('https://').max(500).optional().or(z.literal('')),
         phone: z.string().trim().max(80).optional(),
         public: z.boolean(),
+        urgent: z.boolean().optional(),
       }),
     )
     .max(60),
   by: z.object({ name: z.string().max(80), role: z.string() }),
 })
 
-/** Supervisor or head of office: the agency's links and contacts (official channels, social media, hotlines, partners). */
+/** Supervisor or head of office: the agency's links and contacts (official channels, social media, hotlines, partners).
+ * Hotlines marked urgent become the emergency line. */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const denied = requireAdmin(req)
   if (denied) return denied
@@ -40,7 +42,10 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (by.role !== 'leader' && by.role !== 'supervisor')
     return error(403, 'only the supervisor or the head of office changes resources')
   if (new Set(resources.map((r) => r.id)).size !== resources.length) return error(400, 'two resources have the same id')
-  await saveAgencyFields(agency, { resources: resources.map((r) => ({ ...r, url: r.url || undefined })) })
+  const saved = resources.map((r) => ({ ...r, url: r.url || undefined, urgent: r.kind === 'hotline' && !!r.urgent }))
+  // The urgent hotlines are the agency's emergency line, in replies, the bot and the tracking page.
+  const line = emergencyFrom(saved, { en: agency.emergency_line, id: agency.emergency_line_id })
+  await saveAgencyFields(agency, { resources: saved, ...line })
   log('INFO', 'resources_changed', { agency: id, by: by.name, resources: resources.length })
   return Response.json(publicAgency(AGENCIES[id]))
 }

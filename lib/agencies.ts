@@ -26,6 +26,8 @@ export interface Agency {
     escalation_contact: string
     /** Below this triage confidence a case goes to manual review (default 0.7). */
     confidence_floor?: number
+    /** Safety signals the agency defined; the triage agent raises them, and those in escalate_flags escalate. */
+    custom_signals?: { id: string; label: string; label_id?: string; description: string }[]
   }
   sla_hours: Record<Urgency, number>
   emergency_line: string
@@ -68,6 +70,18 @@ export interface Resource {
   url?: string
   phone?: string
   public: boolean
+  /** A hotline given to citizens in urgent replies, in the bot and on tracking (the agency's emergency line). */
+  urgent?: boolean
+}
+
+/** The emergency line citizens are told to call, from the hotlines marked urgent in Resources (all hotlines when none
+ * is marked). Without hotlines the agency keeps the line it has. */
+export function emergencyFrom(resources: Resource[] | undefined, fallback: { en: string; id?: string }) {
+  const hot = (resources ?? []).filter((r) => r.kind === 'hotline' && r.phone)
+  const pick = hot.some((r) => r.urgent) ? hot.filter((r) => r.urgent) : hot
+  if (!pick.length) return { emergency_line: fallback.en, emergency_line_id: fallback.id ?? '' }
+  const line = (name: (r: Resource) => string) => pick.map((r) => `${name(r)}: ${r.phone}`).join('; ')
+  return { emergency_line: line((r) => r.name), emergency_line_id: line((r) => r.name_id || r.name) }
 }
 
 export interface Procedure {

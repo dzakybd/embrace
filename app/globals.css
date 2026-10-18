@@ -955,3 +955,17 @@ details.more summary { cursor: pointer; color: var(--brand); font-size: 14px; fo
   .ct-pick { display: flex; }
   .ct-list .ct-item { display: none; }
 }
+
+/* Policies: legal basis picker */
+.lb-chosen { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 8px; }
+.lb-chosen li { display: grid; grid-template-columns: minmax(110px, auto) minmax(0, 1fr) auto; gap: 4px 12px; align-items: start; padding: 8px 10px; border-radius: 10px; background: var(--brand-soft); }
+.lb-chosen li b { color: var(--brand-soft-ink); font-weight: 600; font-size: 14px; }
+.lb-pick { margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 14px; animation: rise .3s var(--ease) both; }
+.lb-pick h4 { margin: 0 0 6px; font-size: 12px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--muted); }
+.lb-doc { display: grid; grid-template-columns: 20px minmax(0, 1fr); gap: 10px; padding: 8px 10px; border-radius: 10px; cursor: pointer; }
+.lb-doc:hover { background: var(--surface-2); }
+.lb-doc.on { background: color-mix(in srgb, var(--brand) 6%, var(--surface)); }
+.lb-doc input { margin-top: 3px; }
+.lb-sum { display: block; color: var(--ink-2); margin-top: 2px; }
+.own-signal { margin-top: 12px; padding: 12px; border-radius: 12px; border: 1px dashed var(--line); }
+@media (max-width: 600px) { .lb-chosen li { grid-template-columns: minmax(0, 1fr) auto; } .lb-chosen li .muted { grid-column: 1 / -1; grid-row: 2; } }

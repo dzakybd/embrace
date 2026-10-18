@@ -17,7 +17,7 @@ confirmed issues in the demo within 14 days, and we credit reporters who want it
 | Gemini API key | Google Secret Manager `gemini-api-key`, injected into Cloud Run at deploy | Never in the repository, the browser or logs; the AI control tower shows its last 4 characters only (as the Google Cloud console does) |
 | Telegram bot tokens (built-in agencies) | Secret Manager `telegram-bot-dinsos-demak`, `telegram-bot-kpai` | The Channels page shows where a token is stored and a masked hint, never the token |
 | Telegram bot tokens (agencies created in the app) | Firestore `integrations`, server only | Firestore rules deny every client read and write |
-| Settings password | Secret Manager `embrace-admin-password` | Required for every change to an agency's setup; compared in constant time, wrong guesses rate-limited |
+| Settings password | Secret Manager `embrace-admin-password` | Required for every change to an agency's setup and to view a bot token; checked with scrypt, wrong guesses rate-limited; the browser never stores it, it gets a signed HttpOnly session cookie (8 hours) |
 | Telegram webhook secret | Secret Manager `telegram-webhook-secret` | Every webhook call must carry it in `X-Telegram-Bot-Api-Secret-Token` |
 
 `.env*` files are gitignored. `.env.example` lists the variable names only.

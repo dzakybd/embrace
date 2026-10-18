@@ -39,8 +39,6 @@ function settingsOf(t: Agency) {
     nameId: '',
     shortId: '',
     descId: '',
-    emergencyId: '',
-    emergency: t.emergency_line,
     signature: '',
     cats: t.categories.map(
       (c): Cat => ({
@@ -145,8 +143,6 @@ export default function AgencyForm() {
         name_id: f.nameId,
         short_name_id: f.shortId,
         description_id: f.descId,
-        emergency_line_id: f.emergencyId,
-        emergency_line: f.emergency,
         reply_signature: f.signature || `Complaints desk, ${f.name}`,
         categories: f.cats.filter((c) => c.label.trim() && c.team.trim()),
         team: f.team
@@ -230,10 +226,6 @@ export default function AgencyForm() {
             <input required value={f.country} onChange={(e) => set({ country: e.target.value })} />
           </label>
           <label className="field">
-            <span>{tr('Emergency line given in urgent replies')}</span>
-            <input required value={f.emergency} onChange={(e) => set({ emergency: e.target.value })} />
-          </label>
-          <label className="field">
             <span>{tr('Reply signature')}</span>
             <input
               value={f.signature}
@@ -256,10 +248,6 @@ export default function AgencyForm() {
           <label className="field">
             <span>{tr('What the agency does, in Indonesian (optional)')}</span>
             <input value={f.descId} onChange={(e) => set({ descId: e.target.value })} maxLength={400} />
-          </label>
-          <label className="field">
-            <span>{tr('Emergency line in Indonesian (optional)')}</span>
-            <input value={f.emergencyId} onChange={(e) => set({ emergencyId: e.target.value })} maxLength={200} />
           </label>
         </div>
       </Card>

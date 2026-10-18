@@ -148,6 +148,16 @@ function Editor() {
                         />{' '}
                         {t('Show on the public agency page')}
                       </label>
+                      {r.kind === 'hotline' && (
+                        <label className="check">
+                          <input
+                            type="checkbox"
+                            checked={!!r.urgent}
+                            onChange={(e) => set(i, { urgent: e.target.checked })}
+                          />{' '}
+                          {t('Give in urgent replies (emergency line)')}
+                        </label>
+                      )}
                       <select
                         aria-label={t('Kind')}
                         value={r.kind}
@@ -211,6 +221,7 @@ function ResourceCard({ r, lang, t }: { r: Resource; lang: string; t: (s: string
       <div className="res-h">
         <b>{resName(r, lang)}</b>
         {!r.public && <span className="tag muted">{t('staff only')}</span>}
+        {r.urgent && <span className="tag flag">{t('emergency line')}</span>}
       </div>
       {r.phone && (
         <p className="res-phone">

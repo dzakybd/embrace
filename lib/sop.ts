@@ -18,6 +18,9 @@ export interface Source {
   url: string
   issuer: string
   kind: string
+  /** One or two sentences on what the document covers, in English and Indonesian. */
+  summary?: string
+  summary_id?: string
   /** Set on documents added in the app: their id, who added them, and whether reply drafts may cite them. */
   id?: string
   added_by?: string

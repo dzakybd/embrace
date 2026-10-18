@@ -25,8 +25,6 @@ const profileOf = (a: Agency): Profile => ({
   name_id: a.name_id ?? '',
   short_name_id: a.short_name_id ?? '',
   description_id: a.description_id ?? '',
-  emergency_line: a.emergency_line,
-  emergency_line_id: a.emergency_line_id ?? '',
   reply_signature: a.reply_signature,
 })
 
@@ -148,8 +146,8 @@ function Editor() {
       </div>
 
       <nav className="set-links" aria-label={t('Other setup')}>
-        <Link href="/staff/case-types">
-          <Icon name="rules" size={16} /> {t('Case types and rules')}
+        <Link href="/staff/policies">
+          <Icon name="rules" size={16} /> {t('Policies')}
         </Link>
         <Link href="/staff/knowledge">
           <Icon name="book" size={16} /> {t('Knowledge base')}
@@ -191,7 +189,6 @@ function Editor() {
           {pair('Name', 'name', 'name_id')}
           {pair('Short name', 'short_name', 'short_name_id')}
           {pair('About the agency', 'description', 'description_id', { long: true })}
-          {pair('Emergency line', 'emergency_line', 'emergency_line_id', { ph: 'e.g. 112' })}
           <div className="set-row two">
             <span className="set-l">{t('Reply signature')}</span>
             <input value={profile.reply_signature} onChange={(e) => setP({ reply_signature: e.target.value })} />

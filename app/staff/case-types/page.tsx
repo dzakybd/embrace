@@ -1,8 +1,6 @@
-import type { Metadata } from 'next'
-import CaseTypes from '@/components/staff/CaseTypes'
+import { redirect } from 'next/navigation'
 
-export const metadata: Metadata = { title: 'Case types' }
-
+/** Case types became Policies (case types plus escalation rules). */
 export default function Page() {
-  return <CaseTypes />
+  redirect('/staff/policies')
 }

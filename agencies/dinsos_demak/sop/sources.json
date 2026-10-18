@@ -1,142 +1,174 @@
 [
- {
-  "file": "service-flows-en.md",
-  "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), English translation of the office's public infographics",
-  "short": "Demak service flows",
-  "url": "https://dinsosp2pa.demakkab.go.id",
-  "issuer": "Dinsos P2PA Kabupaten Demak",
-  "kind": "service-flow"
- },
- {
-  "file": "response-standard-en.md",
-  "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025)",
-  "short": "Response standard (sample)",
-  "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/response-standard-en.md",
-  "issuer": "Embrace sample",
-  "kind": "sample-sop"
- },
- {
-  "file": "alur-layanan-dinsos-p2pa-demak.md",
-  "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), transcribed from the office's public infographics (Indonesian original)",
-  "short": "Alur layanan Dinsos P2PA Demak",
-  "url": "https://dinsosp2pa.demakkab.go.id",
-  "issuer": "Dinsos P2PA Kabupaten Demak",
-  "kind": "service-flow"
- },
- {
-  "file": "standar-respons-pengaduan.md",
-  "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025) (Indonesian original)",
-  "short": "Standar respons (sampel)",
-  "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/standar-respons-pengaduan.md",
-  "issuer": "Embrace sample",
-  "kind": "sample-sop"
- },
- {
-  "file": "uu-11-2009-kesejahteraan-sosial.pdf",
-  "title": "Law 11/2009 on Social Welfare",
-  "short": "UU 11/2009",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-11-2009-kesejahteraan-sosial.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu11-2009.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "permensos-1-2018-pkh.pdf",
-  "title": "Minister of Social Affairs Regulation 1/2018 on the Family Hope Programme (PKH)",
-  "short": "Permensos 1/2018",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermensos-1-2018-pkh.pdf?alt=media",
-  "source": "https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf",
-  "issuer": "Ministry of Social Affairs",
-  "kind": "regulation"
- },
- {
-  "file": "permensos-4-2023-program-sembako.pdf",
-  "title": "Minister of Social Affairs Regulation 4/2023 on the Sembako food aid programme",
-  "short": "Permensos 4/2023",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermensos-4-2023-program-sembako.pdf?alt=media",
-  "source": "https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf",
-  "issuer": "Ministry of Social Affairs",
-  "kind": "regulation"
- },
- {
-  "file": "uu-8-2016-penyandang-disabilitas.pdf",
-  "title": "Law 8/2016 on Persons with Disabilities",
-  "short": "UU 8/2016",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-8-2016-penyandang-disabilitas.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu8-2016bt.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "uu-13-1998-lanjut-usia.pdf",
-  "title": "Law 13/1998 on the Welfare of Older Persons",
-  "short": "UU 13/1998",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-13-1998-lanjut-usia.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu13-1998.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "uu-24-2007-penanggulangan-bencana.pdf",
-  "title": "Law 24/2007 on Disaster Management",
-  "short": "UU 24/2007",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-24-2007-penanggulangan-bencana.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu24-2007.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "uu-23-2004-pkdrt.pdf",
-  "title": "Law 23/2004 on the Elimination of Domestic Violence (PKDRT)",
-  "short": "UU 23/2004",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-23-2004-pkdrt.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu23-2004.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "uu-12-2022-tpks.pdf",
-  "title": "Law 12/2022 on Sexual Violence Crimes (TPKS)",
-  "short": "UU 12/2022",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-12-2022-tpks.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu12-2022.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "uu-35-2014-perlindungan-anak.pdf",
-  "title": "Law 35/2014 amending Law 23/2002 on Child Protection",
-  "short": "UU 35/2014",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-35-2014-perlindungan-anak.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu35-2014bt.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "permen-pppa-4-2018-uptd-ppa.pdf",
-  "title": "Minister of Women Empowerment and Child Protection Regulation 4/2018 on establishing UPTD PPA (women and child protection units)",
-  "short": "Permen PPPA 4/2018",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermen-pppa-4-2018-uptd-ppa.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/bn532-2018.pdf",
-  "issuer": "Ministry of Women Empowerment and Child Protection",
-  "kind": "regulation"
- },
- {
-  "file": "uu-16-2019-perkawinan.pdf",
-  "title": "Law 16/2019 amending the Marriage Law (minimum marriage age 19)",
-  "short": "UU 16/2019",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-16-2019-perkawinan.pdf?alt=media",
-  "source": "https://peraturan.go.id/files/uu16-2019bt.pdf",
-  "issuer": "Government of Indonesia",
-  "kind": "law"
- },
- {
-  "file": "permenpanrb-5-2025-sp4n.pdf",
-  "title": "PANRB Ministerial Regulation 5/2025 on public service complaint management",
-  "short": "PermenPANRB 5/2025",
-  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermenpanrb-5-2025-sp4n.pdf?alt=media",
-  "source": "https://jdih.menpan.go.id",
-  "issuer": "Ministry of Administrative and Bureaucratic Reform",
-  "kind": "regulation"
- }
+  {
+    "file": "service-flows-en.md",
+    "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), English translation of the office's public infographics",
+    "short": "Demak service flows",
+    "url": "https://dinsosp2pa.demakkab.go.id",
+    "issuer": "Dinsos P2PA Kabupaten Demak",
+    "kind": "service-flow",
+    "summary": "The 13 published service flows of Dinsos P2PA Demak (Puskesos complaints, DTSEN certificates, PBI health insurance, violence against women and children, disaster aid, disability rehabilitation, adoption and more), in English.",
+    "summary_id": "13 alur layanan resmi Dinsos P2PA Demak (pengaduan Puskesos, SKT DTSEN, PBI kesehatan, kekerasan terhadap perempuan dan anak, bantuan bencana, rehabilitasi disabilitas, adopsi, dan lainnya), terjemahan bahasa Inggris."
+  },
+  {
+    "file": "response-standard-en.md",
+    "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025)",
+    "short": "Response standard (sample)",
+    "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/response-standard-en.md",
+    "issuer": "Embrace sample",
+    "kind": "sample-sop",
+    "summary": "Sample response times and steps for complaints, written for this demo; not an official document.",
+    "summary_id": "Contoh waktu dan langkah respons pengaduan, ditulis untuk demo ini; bukan dokumen resmi."
+  },
+  {
+    "file": "alur-layanan-dinsos-p2pa-demak.md",
+    "title": "Service flows of Dinsos P2PA Demak (Puskesos, SLRT, violence, disaster, disability, adoption and more), transcribed from the office's public infographics (Indonesian original)",
+    "short": "Alur layanan Dinsos P2PA Demak",
+    "url": "https://dinsosp2pa.demakkab.go.id",
+    "issuer": "Dinsos P2PA Kabupaten Demak",
+    "kind": "service-flow",
+    "summary": "Indonesian original of the 13 Dinsos P2PA Demak service flows.",
+    "summary_id": "Naskah asli 13 alur layanan Dinsos P2PA Demak."
+  },
+  {
+    "file": "standar-respons-pengaduan.md",
+    "title": "Sample complaint response standard for Dinsos P2PA Demak (written for this demo from PermenPANRB 5/2025) (Indonesian original)",
+    "short": "Standar respons (sampel)",
+    "url": "https://github.com/dzakybd/embrace/blob/main/agencies/dinsos_demak/sop/standar-respons-pengaduan.md",
+    "issuer": "Embrace sample",
+    "kind": "sample-sop",
+    "summary": "Indonesian version of the sample response standard written for this demo.",
+    "summary_id": "Versi bahasa Indonesia dari contoh standar respons yang ditulis untuk demo ini."
+  },
+  {
+    "file": "uu-11-2009-kesejahteraan-sosial.pdf",
+    "title": "Law 11/2009 on Social Welfare",
+    "short": "UU 11/2009",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-11-2009-kesejahteraan-sosial.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu11-2009.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Social Welfare Law: social rehabilitation, social security, empowerment and protection, and the duties of central and local government and social workers.",
+    "summary_id": "UU Kesejahteraan Sosial: rehabilitasi sosial, jaminan sosial, pemberdayaan, dan perlindungan sosial, serta tugas pemerintah pusat, daerah, dan pekerja sosial."
+  },
+  {
+    "file": "permensos-1-2018-pkh.pdf",
+    "title": "Minister of Social Affairs Regulation 1/2018 on the Family Hope Programme (PKH)",
+    "short": "Permensos 1/2018",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermensos-1-2018-pkh.pdf?alt=media",
+    "source": "https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf",
+    "issuer": "Ministry of Social Affairs",
+    "kind": "regulation",
+    "summary": "Family Hope Programme (PKH): who is eligible, benefit components, family obligations, PKH companions, payments and complaints.",
+    "summary_id": "Program Keluarga Harapan (PKH): syarat penerima, komponen bantuan, kewajiban keluarga, pendamping PKH, penyaluran, dan pengaduan."
+  },
+  {
+    "file": "permensos-4-2023-program-sembako.pdf",
+    "title": "Minister of Social Affairs Regulation 4/2023 on the Sembako food aid programme",
+    "short": "Permensos 4/2023",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermensos-4-2023-program-sembako.pdf?alt=media",
+    "source": "https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf",
+    "issuer": "Ministry of Social Affairs",
+    "kind": "regulation",
+    "summary": "Sembako food aid (BPNT): targeting from the social welfare data, distribution through e-warong agents, amounts, monitoring, complaints and banned practices such as levies.",
+    "summary_id": "Bantuan Sembako (BPNT): penetapan penerima dari data kesejahteraan sosial, penyaluran melalui e-warong, besaran, pemantauan, pengaduan, dan larangan pungutan."
+  },
+  {
+    "file": "uu-8-2016-penyandang-disabilitas.pdf",
+    "title": "Law 8/2016 on Persons with Disabilities",
+    "short": "UU 8/2016",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-8-2016-penyandang-disabilitas.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu8-2016bt.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Persons with Disabilities Law: rights to education, health, work, accessibility and social welfare, and the services government must provide.",
+    "summary_id": "UU Penyandang Disabilitas: hak atas pendidikan, kesehatan, pekerjaan, aksesibilitas, dan kesejahteraan sosial, serta layanan yang wajib disediakan pemerintah."
+  },
+  {
+    "file": "uu-13-1998-lanjut-usia.pdf",
+    "title": "Law 13/1998 on the Welfare of Older Persons",
+    "short": "UU 13/1998",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-13-1998-lanjut-usia.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu13-1998.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Welfare of Older Persons Law: social services, protection and assistance for people aged 60 and over, especially those who are neglected.",
+    "summary_id": "UU Kesejahteraan Lanjut Usia: pelayanan sosial, perlindungan, dan bantuan bagi warga 60 tahun ke atas, terutama yang terlantar."
+  },
+  {
+    "file": "uu-24-2007-penanggulangan-bencana.pdf",
+    "title": "Law 24/2007 on Disaster Management",
+    "short": "UU 24/2007",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-24-2007-penanggulangan-bencana.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu24-2007.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Disaster Management Law: preparedness, emergency response and recovery, the roles of BNPB and BPBD, and affected people's right to aid and basic needs.",
+    "summary_id": "UU Penanggulangan Bencana: kesiapsiagaan, tanggap darurat, dan pemulihan, peran BNPB dan BPBD, serta hak warga terdampak atas bantuan dan kebutuhan dasar."
+  },
+  {
+    "file": "uu-23-2004-pkdrt.pdf",
+    "title": "Law 23/2004 on the Elimination of Domestic Violence (PKDRT)",
+    "short": "UU 23/2004",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-23-2004-pkdrt.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu23-2004.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Domestic Violence Law (PKDRT): physical, psychological and sexual violence and neglect in the household; victims' rights, protection orders, police duties and criminal penalties.",
+    "summary_id": "UU Penghapusan Kekerasan dalam Rumah Tangga (PKDRT): kekerasan fisik, psikis, seksual, dan penelantaran dalam rumah tangga; hak korban, perintah perlindungan, kewajiban polisi, dan sanksi pidana."
+  },
+  {
+    "file": "uu-12-2022-tpks.pdf",
+    "title": "Law 12/2022 on Sexual Violence Crimes (TPKS)",
+    "short": "UU 12/2022",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-12-2022-tpks.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu12-2022.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Sexual Violence Crimes Law (TPKS): defines sexual harassment, forced marriage, sexual exploitation, electronic sexual violence and other offences; victims' rights to treatment, protection, recovery and restitution; services through UPTD PPA.",
+    "summary_id": "UU Tindak Pidana Kekerasan Seksual (TPKS): pelecehan seksual, pemaksaan perkawinan, eksploitasi seksual, kekerasan seksual berbasis elektronik, dan tindak pidana lain; hak korban atas penanganan, pelindungan, pemulihan, dan restitusi; layanan melalui UPTD PPA."
+  },
+  {
+    "file": "uu-35-2014-perlindungan-anak.pdf",
+    "title": "Law 35/2014 amending Law 23/2002 on Child Protection",
+    "short": "UU 35/2014",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-35-2014-perlindungan-anak.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu35-2014bt.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Child Protection Law: children's rights and the duties of the state, parents and society; bans violence, exploitation and sexual abuse of children with criminal sanctions; special protection; establishes KPAI.",
+    "summary_id": "UU Perlindungan Anak: hak anak serta kewajiban negara, orang tua, dan masyarakat; larangan kekerasan, eksploitasi, dan kekerasan seksual terhadap anak beserta sanksi pidana; perlindungan khusus; dasar KPAI."
+  },
+  {
+    "file": "permen-pppa-4-2018-uptd-ppa.pdf",
+    "title": "Minister of Women Empowerment and Child Protection Regulation 4/2018 on establishing UPTD PPA (women and child protection units)",
+    "short": "Permen PPPA 4/2018",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermen-pppa-4-2018-uptd-ppa.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/bn532-2018.pdf",
+    "issuer": "Ministry of Women Empowerment and Child Protection",
+    "kind": "regulation",
+    "summary": "Sets up the UPTD PPA units for women and children: complaint intake, outreach, case management, temporary shelter, mediation and assistance.",
+    "summary_id": "Pembentukan UPTD PPA: penerimaan pengaduan, penjangkauan, pengelolaan kasus, penampungan sementara, mediasi, dan pendampingan bagi perempuan dan anak."
+  },
+  {
+    "file": "uu-16-2019-perkawinan.pdf",
+    "title": "Law 16/2019 amending the Marriage Law (minimum marriage age 19)",
+    "short": "UU 16/2019",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-16-2019-perkawinan.pdf?alt=media",
+    "source": "https://peraturan.go.id/files/uu16-2019bt.pdf",
+    "issuer": "Government of Indonesia",
+    "kind": "law",
+    "summary": "Raises the minimum marriage age to 19 for women and men; a court may grant dispensation only for urgent reasons with supporting evidence.",
+    "summary_id": "Menaikkan batas usia perkawinan menjadi 19 tahun bagi perempuan dan laki-laki; dispensasi pengadilan hanya untuk alasan mendesak dengan bukti pendukung."
+  },
+  {
+    "file": "permenpanrb-5-2025-sp4n.pdf",
+    "title": "PANRB Ministerial Regulation 5/2025 on public service complaint management",
+    "short": "PermenPANRB 5/2025",
+    "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermenpanrb-5-2025-sp4n.pdf?alt=media",
+    "source": "https://jdih.menpan.go.id",
+    "issuer": "Ministry of Administrative and Bureaucratic Reform",
+    "kind": "regulation",
+    "summary": "Public service complaint management: complaint channels including SP4N-LAPOR!, handling deadlines, follow-up and reporting duties of agencies.",
+    "summary_id": "Pengelolaan pengaduan pelayanan publik: kanal pengaduan termasuk SP4N-LAPOR!, batas waktu penanganan, tindak lanjut, dan kewajiban pelaporan instansi."
+  }
 ]

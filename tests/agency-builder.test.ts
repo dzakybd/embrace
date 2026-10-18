@@ -10,7 +10,6 @@ const form = (over: Partial<NewAgency> = {}) =>
     name: 'Department of Social Welfare, Cebu City',
     short_name: 'DSWD Cebu',
     country: 'Philippines',
-    emergency_line: '911',
     reply_signature: 'Complaints desk, DSWD Cebu',
     categories: [
       { label: 'Violence against women and children', team: 'Women and Child Protection', escalate: true },

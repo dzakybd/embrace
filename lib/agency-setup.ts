@@ -16,8 +16,6 @@ const Profile = z.object({
   name_id: opt(160),
   short_name_id: opt(40),
   description_id: opt(400),
-  emergency_line: text(2, 200),
-  emergency_line_id: opt(200),
   reply_signature: text(2, 160),
 })
 
@@ -50,7 +48,23 @@ const Rules = z.object({
     .min(1)
     .max(30),
   keywords: z.array(text(2, 40)).max(80).default([]),
-  flags: z.array(z.enum(FLAGS)).default([]),
+  /** Built-in or the agency's own signal ids that alert the supervisor. */
+  flags: z
+    .array(z.string().regex(/^[a-z0-9_]{2,40}$/))
+    .max(40)
+    .default([]),
+  /** Signals the agency defines for the triage agent (e.g. "tidal flood reaching homes"). */
+  custom_signals: z
+    .array(
+      z.object({
+        id: z.string().regex(/^x_[a-z0-9_]{1,38}$/),
+        label: text(2, 80),
+        label_id: opt(80),
+        description: text(10, 300),
+      }),
+    )
+    .max(12)
+    .default([]),
   confidence_floor: z.number().min(0.5).max(0.95),
   sla_hours: z.object({
     critical: z.number().int().min(1).max(720),
@@ -105,12 +119,15 @@ export function applySetup(agency: Agency, input: Setup): Partial<Agency> | stri
       if (!c.min_urgency) delete c.min_urgency
     }
     if (new Set(categories.map((c) => c.id)).size !== categories.length) return 'Two case types have the same name'
+    const known = new Set<string>([...FLAGS, ...r.custom_signals.map((s) => s.id)])
+    if (r.flags.some((f) => !known.has(f))) return 'Unknown safety signal'
     const ids = categories.map((c) => c.id)
     out.categories = categories
     out.escalation = {
       ...agency.escalation,
       always_escalate_categories: categories.filter((_, i) => r.categories[i].always_escalate).map((c) => c.id),
       escalate_flags: r.flags,
+      custom_signals: r.custom_signals,
       keywords: [...new Set(r.keywords.map((k) => k.toLowerCase()))],
       confidence_floor: r.confidence_floor,
     }

@@ -11,6 +11,7 @@ export interface Resource {
   url?: string
   phone?: string
   public: boolean
+  urgent?: boolean
 }
 
 export type Urgency = 'critical' | 'high' | 'normal' | 'low'
@@ -37,6 +38,7 @@ export interface Agency {
     keywords: string[]
     escalate_flags: string[]
     confidence_floor?: number
+    custom_signals?: { id: string; label: string; label_id?: string; description: string }[]
   }
   custom: boolean
   edited: boolean
@@ -88,8 +90,6 @@ export interface NewAgency {
   name_id: string
   short_name_id: string
   description_id: string
-  emergency_line_id: string
-  emergency_line: string
   reply_signature: string
   categories: { id?: string; label: string; team: string; escalate: boolean; min_urgency?: 'low' | 'normal' | 'high' }[]
   team: { id?: string; name: string; role: TeamMember['role']; title: string; teams: string[] }[]
@@ -180,6 +180,8 @@ export interface SopSource {
   url: string
   issuer: string
   kind: string
+  summary?: string
+  summary_id?: string
   /** Set on documents added in the app. */
   id?: string
   added_by?: string
@@ -205,8 +207,6 @@ export interface SetupBody {
     name_id: string
     short_name_id: string
     description_id: string
-    emergency_line: string
-    emergency_line_id: string
     reply_signature: string
   }
   people?: { id?: string; name: string; role: TeamMember['role']; title: string; queues: string[] }[]
@@ -221,6 +221,7 @@ export interface SetupBody {
     }[]
     keywords: string[]
     flags: string[]
+    custom_signals: { id: string; label: string; label_id: string; description: string }[]
     confidence_floor: number
     sla_hours: Record<Urgency, number>
   }
@@ -230,6 +231,7 @@ export interface AddKnowledge {
   kind: string
   issuer?: string
   for_replies: boolean
+  summary?: string
   url?: string
   text?: string
   pdf_base64?: string

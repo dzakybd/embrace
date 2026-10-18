@@ -8,7 +8,7 @@ import { Card, Citations, Icon } from '../ui'
 import { useLang } from '../Lang'
 import { useStaff } from './StaffProvider'
 
-const KIND: Record<string, string> = {
+export const KIND: Record<string, string> = {
   law: 'Law',
   regulation: 'Regulation',
   sop: 'SOP',
@@ -55,7 +55,7 @@ const errText = (e: unknown) => {
 /** The knowledge base: laws, regulations, SOPs, court decisions, guidelines and web pages the agents and staff use.
  * Search is BM25 (no tokens); Ask runs the legal research agent, which cites the passages it found. */
 export default function Knowledge() {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const { agency, me } = useStaff()
   const canEdit = me.role === 'leader' || me.role === 'supervisor'
   const [sources, setSources] = useState<SopSource[]>([])
@@ -129,8 +129,8 @@ export default function Knowledge() {
 
       <h2 className="section-h">
         {t('Documents ({n})', { n: sources.length })}{' '}
-        <Link className="small" href="/staff/case-types">
-          {t('Case types and their stages')} →
+        <Link className="small" href="/staff/policies">
+          {t('Policies: case types, rules and legal basis')} →
         </Link>
       </h2>
       {err && (
@@ -168,7 +168,7 @@ export default function Knowledge() {
             ) : (
               <b>{d.short}</b>
             )}
-            <span className="muted small clamp">{d.title}</span>
+            <span className="muted small clamp">{(lang === 'id' && d.summary_id) || d.summary || d.title}</span>
             <span className="muted small">
               {d.issuer}
               {d.added_by ? ` · ${t('added by {name}', { name: d.added_by })}` : ''}
@@ -339,6 +339,7 @@ function AddDocument({ onAdded }: { onAdded: () => void }) {
   const [title, setTitle] = useState('')
   const [kind, setKind] = useState('law')
   const [issuer, setIssuer] = useState('')
+  const [summary, setSummary] = useState('')
   const [forReplies, setForReplies] = useState(false)
   const [url, setUrl] = useState('')
   const [text, setText] = useState('')
@@ -352,7 +353,14 @@ function AddDocument({ onAdded }: { onAdded: () => void }) {
     setBusy(true)
     setErr('')
     try {
-      const body = { title: title.trim(), kind, issuer: issuer.trim(), for_replies: forReplies, by: me.name }
+      const body = {
+        title: title.trim(),
+        kind,
+        issuer: issuer.trim(),
+        summary: summary.trim(),
+        for_replies: forReplies,
+        by: me.name,
+      }
       if (from === 'website') await api.addKnowledge(agency.id, { ...body, url: url.trim() })
       else if (from === 'text') await api.addKnowledge(agency.id, { ...body, text })
       else if (file!.size > 6_000_000) throw new Error(t('The file is larger than 6 MB'))
@@ -440,6 +448,16 @@ function AddDocument({ onAdded }: { onAdded: () => void }) {
           value={issuer}
           onChange={(e) => setIssuer(e.target.value)}
           placeholder={t('e.g. Supreme Court, Ministry, the agency')}
+        />
+      </label>
+      <label className="field">
+        <span>{t('Summary (optional; Gemini writes one if left empty)')}</span>
+        <textarea
+          rows={2}
+          value={summary}
+          maxLength={400}
+          onChange={(e) => setSummary(e.target.value)}
+          placeholder={t('What the document covers, in one or two sentences')}
         />
       </label>
       <label className="check">

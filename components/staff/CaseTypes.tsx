@@ -6,6 +6,7 @@ import { api, type Agency, type SetupBody, type SopSource, type Urgency } from '
 import { useLang } from '../Lang'
 import { ACTORS, catLabel, procTitle, type ProcedureT } from '../Procedures'
 import { FlowDiagram } from '../ProcedureFlow'
+import { KIND } from './Knowledge'
 import { Card, Icon, URGENCY_LABEL } from '../ui'
 import { useStaff } from './StaffProvider'
 
@@ -56,6 +57,7 @@ function rulesOf(a: Agency): Rules {
     })),
     keywords: a.escalation.keywords,
     flags: a.escalation.escalate_flags,
+    custom_signals: (a.escalation.custom_signals ?? []).map((x) => ({ ...x, label_id: x.label_id ?? '' })),
     confidence_floor: a.escalation.confidence_floor ?? 0.7,
     sla_hours: a.sla_hours,
   }
@@ -87,9 +89,8 @@ function Editor() {
   const [err, setErr] = useState('')
 
   useEffect(() => {
-    api.sop(agency.id, '').then((r) => setDocs(r.sources))
+    api.knowledge(agency.id).then((r) => setDocs(r.sources))
   }, [agency.id])
-  const legal = useMemo(() => docs.filter((d) => d.kind === 'law' || d.kind === 'regulation'), [docs])
   const teams = [...new Set(rules.categories.map((c) => c.team.trim()).filter(Boolean))]
   const cat = rules.categories.find((c) => c.id === sel) ?? rules.categories[0]
   const label = (c: CaseType) => (lang === 'id' && c.label_id ? c.label_id : c.label)
@@ -154,11 +155,15 @@ function Editor() {
   }
 
   return (
-    <div className="page case-types">
+    <div className="page case-types policies">
       <div className="page-h">
         <div>
-          <h1>{t('Case types and rules')}</h1>
-          <p className="muted">{t('Who handles each kind of case, when it escalates, and the steps it follows.')}</p>
+          <h1>{t('Policies')}</h1>
+          <p className="muted">
+            {t(
+              'Per case type: who handles it, when it escalates, its legal basis and its steps; and the rules for every case.',
+            )}
+          </p>
         </div>
         <Link className="btn tonal small" href={`/a/${agency.id}/guide`} target="_blank">
           {t('Public guide')} ↗
@@ -289,31 +294,15 @@ function Editor() {
               )}
             </Card>
 
-            <Card title={t('Legal basis')} icon="book">
-              <div className="law-pick">
-                {legal.map((d) => {
-                  const on = (laws[cat.id!] ?? []).includes(d.short)
-                  return (
-                    <button
-                      key={d.short}
-                      type="button"
-                      className={`chip ${on ? 'on' : ''}`}
-                      aria-pressed={on}
-                      disabled={!canEdit}
-                      title={d.title}
-                      onClick={() => {
-                        const cur = laws[cat.id!] ?? []
-                        setLaws({ ...laws, [cat.id!]: on ? cur.filter((l) => l !== d.short) : [...cur, d.short] })
-                        touch('procs')
-                      }}
-                    >
-                      {on && <Icon name="check" size={12} />} {d.short}
-                    </button>
-                  )
-                })}
-                {!legal.length && <span className="muted small">{t('Add laws on the Knowledge base page.')}</span>}
-              </div>
-            </Card>
+            <LegalBasis
+              chosen={laws[cat.id!] ?? []}
+              docs={docs}
+              canEdit={canEdit}
+              onChange={(next) => {
+                setLaws({ ...laws, [cat.id!]: next })
+                touch('procs')
+              }}
+            />
 
             <Procedures
               key={cat.id}
@@ -348,6 +337,93 @@ function Editor() {
         </div>
       )}
     </div>
+  )
+}
+
+/** Order of the document categories in the legal-basis picker. */
+const KIND_ORDER = ['law', 'regulation', 'court', 'guideline', 'sop', 'service-flow', 'template', 'website', 'other']
+
+/** The documents that are a case type's legal basis: chosen ones as chips, and every knowledge-base document grouped
+ * by category with its summary, so staff know what "UU 12/2022" is before choosing it. */
+function LegalBasis({
+  chosen,
+  docs,
+  canEdit,
+  onChange,
+}: {
+  chosen: string[]
+  docs: SopSource[]
+  canEdit: boolean
+  onChange: (next: string[]) => void
+}) {
+  const { t, lang } = useLang()
+  const [open, setOpen] = useState(false)
+  const about = (d: SopSource) => (lang === 'id' && d.summary_id) || d.summary || d.title
+  const byShort = Object.fromEntries(docs.map((d) => [d.short, d]))
+  const groups = [...new Set(docs.map((d) => d.kind))].sort(
+    (a, b) => (KIND_ORDER.indexOf(a) + 1 || 99) - (KIND_ORDER.indexOf(b) + 1 || 99),
+  )
+  const toggle = (short: string) =>
+    onChange(chosen.includes(short) ? chosen.filter((x) => x !== short) : [...chosen, short])
+  return (
+    <Card
+      title={t('Legal basis')}
+      icon="book"
+      action={
+        canEdit ? (
+          <button type="button" className={open ? 'primary small' : 'tonal small'} onClick={() => setOpen(!open)}>
+            <Icon name={open ? 'check' : 'plus'} size={14} /> {open ? t('Done') : t('Choose documents')}
+          </button>
+        ) : undefined
+      }
+    >
+      {chosen.length ? (
+        <ul className="lb-chosen">
+          {chosen.map((short) => {
+            const d = byShort[short]
+            return (
+              <li key={short}>
+                <b>{short}</b>
+                <span className="muted small">{d ? about(d) : t('Not in the knowledge base any more')}</span>
+                {canEdit && (
+                  <button
+                    type="button"
+                    className="icon-btn"
+                    aria-label={t('Remove {word}', { word: short })}
+                    onClick={() => toggle(short)}
+                  >
+                    <Icon name="close" size={14} />
+                  </button>
+                )}
+              </li>
+            )
+          })}
+        </ul>
+      ) : (
+        <p className="muted small">{t('No legal basis chosen yet.')}</p>
+      )}
+      {open && (
+        <div className="lb-pick">
+          {groups.map((g) => (
+            <section key={g}>
+              <h4>{t(KIND[g] ?? 'Document')}</h4>
+              {docs
+                .filter((d) => d.kind === g)
+                .map((d) => (
+                  <label key={d.short} className={`lb-doc ${chosen.includes(d.short) ? 'on' : ''}`}>
+                    <input type="checkbox" checked={chosen.includes(d.short)} onChange={() => toggle(d.short)} />
+                    <span>
+                      <b>{d.short}</b> <span className="muted small">{d.title}</span>
+                      <span className="small lb-sum">{about(d)}</span>
+                    </span>
+                  </label>
+                ))}
+            </section>
+          ))}
+          {!docs.length && <p className="muted small">{t('Add laws on the Knowledge base page.')}</p>}
+        </div>
+      )}
+    </Card>
   )
 }
 
@@ -602,8 +678,10 @@ function EscalationRules({
   canEdit: boolean
   set: (p: Partial<Rules>) => void
 }) {
-  const { t } = useLang()
+  const { t, lang } = useLang()
   const [word, setWord] = useState('')
+  const setSignal = (i: number, patch: Partial<Rules['custom_signals'][number]>) =>
+    set({ custom_signals: rules.custom_signals.map((x, j) => (j === i ? { ...x, ...patch } : x)) })
   const addWord = () => {
     const w = word.trim().toLowerCase()
     if (w.length > 1 && !rules.keywords.includes(w)) set({ keywords: [...rules.keywords, w] })
@@ -634,7 +712,15 @@ function EscalationRules({
 
       <Card title={t('Always alert the supervisor when the AI sees')} icon="alert">
         <div className="toggles">
-          {FLAGS.map((f) => {
+          {[
+            ...FLAGS,
+            ...rules.custom_signals.map((x) => ({
+              id: x.id,
+              label: lang === 'id' && x.label_id ? x.label_id : x.label,
+              icon: 'spark',
+              own: true,
+            })),
+          ].map((f) => {
             const on = rules.flags.includes(f.id)
             return (
               <button
@@ -647,12 +733,73 @@ function EscalationRules({
                 onClick={() => set({ flags: on ? rules.flags.filter((x) => x !== f.id) : [...rules.flags, f.id] })}
               >
                 <Icon name={f.icon} size={16} />
-                <span>{t(f.label)}</span>
+                <span>{'own' in f ? f.label : t(f.label)}</span>
                 <span className="switch" aria-hidden="true" />
               </button>
             )
           })}
         </div>
+        <p className="muted small">{t('Turn off the signals your agency does not handle, or add its own.')}</p>
+        {rules.custom_signals.map((x, i) => (
+          <div key={x.id} className="own-signal">
+            <div className="row2">
+              <label className="field">
+                <span>{t('Name (English)')}</span>
+                <input value={x.label} disabled={!canEdit} onChange={(e) => setSignal(i, { label: e.target.value })} />
+              </label>
+              <label className="field">
+                <span>{t('Name (Indonesian)')}</span>
+                <input
+                  value={x.label_id}
+                  disabled={!canEdit}
+                  onChange={(e) => setSignal(i, { label_id: e.target.value })}
+                />
+              </label>
+            </div>
+            <label className="field">
+              <span>{t('When the AI should raise it')}</span>
+              <textarea
+                rows={2}
+                value={x.description}
+                disabled={!canEdit}
+                placeholder={t('e.g. Tidal flood water has entered homes and families cannot stay tonight.')}
+                onChange={(e) => setSignal(i, { description: e.target.value })}
+              />
+            </label>
+            {canEdit && (
+              <button
+                type="button"
+                className="ghost small danger"
+                onClick={() =>
+                  set({
+                    custom_signals: rules.custom_signals.filter((_, j) => j !== i),
+                    flags: rules.flags.filter((f) => f !== x.id),
+                  })
+                }
+              >
+                {t('Remove this signal')}
+              </button>
+            )}
+          </div>
+        ))}
+        {canEdit && (
+          <button
+            type="button"
+            className="ghost small"
+            onClick={() => {
+              const id = `x_${Date.now().toString(36)}`
+              set({
+                custom_signals: [
+                  ...rules.custom_signals,
+                  { id, label: t('New signal'), label_id: '', description: '' },
+                ],
+                flags: [...rules.flags, id],
+              })
+            }}
+          >
+            <Icon name="plus" size={14} /> {t('Add a signal')}
+          </button>
+        )}
       </Card>
 
       <Card title={t('Escalation words')} icon="chat">

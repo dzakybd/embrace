@@ -151,8 +151,8 @@
     "normal": 72,
     "low": 336
   },
-  "emergency_line": "110 (police) or SAPA 129 (WhatsApp 08111-129-129); KPAI complaints 0811-1002-7727",
-  "emergency_line_id": "110 (polisi) atau SAPA 129 (WhatsApp 08111-129-129); pengaduan KPAI 0811-1002-7727",
+  "emergency_line": "SAPA 129 (women and child protection hotline): 129 · WhatsApp 08111-129-129; Police emergency: 110; General emergency: 112",
+  "emergency_line_id": "SAPA 129 (layanan pengaduan perempuan dan anak): 129 · WhatsApp 08111-129-129; Darurat polisi: 110; Darurat umum: 112",
   "required_details": [
     "location",
     "victim_age",
@@ -222,7 +222,10 @@
     }
   ],
   "leader_label": "Chairperson",
-  "map": {"file": "geo/indonesia-provinces.json", "level": "province"},
+  "map": {
+    "file": "geo/indonesia-provinces.json",
+    "level": "province"
+  },
   "telegram_bot": "embrace_kpai_bot",
   "logo": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/brand%2Fagencies%2Fkpai.png?alt=media",
   "procedures": [
@@ -326,7 +329,8 @@
       "phone": "129 · WhatsApp 08111-129-129",
       "note": "Ministry of Women Empowerment and Child Protection; for violence against women and children.",
       "note_id": "Kementerian PPPA; untuk kekerasan terhadap perempuan dan anak.",
-      "public": true
+      "public": true,
+      "urgent": true
     },
     {
       "id": "police110",
@@ -334,7 +338,8 @@
       "name": "Police emergency",
       "name_id": "Darurat polisi",
       "phone": "110",
-      "public": true
+      "public": true,
+      "urgent": true
     },
     {
       "id": "emergency112",
@@ -342,7 +347,8 @@
       "name": "General emergency",
       "name_id": "Darurat umum",
       "phone": "112",
-      "public": true
+      "public": true,
+      "urgent": true
     },
     {
       "id": "uptd_ppa",

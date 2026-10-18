@@ -31,6 +31,15 @@ describe('policy rules', () => {
     expect(p.reasons.join()).toContain('raised from normal')
   })
 
+  it("escalates an agency's own signal only when the agency turned it on", () => {
+    const own = {
+      ...cp,
+      escalation: { ...cp.escalation, escalate_flags: [...cp.escalation.escalate_flags, 'x_flood'] },
+    }
+    expect(decide(own, 'text', triage({ agency_flags: ['x_flood'] })).route).toBe('escalated')
+    expect(decide(cp, 'text', triage({ agency_flags: ['x_flood'] })).route).toBe('assigned')
+  })
+
   it('escalates on keywords the model missed', () => {
     const p = decide(cp, 'he was BLEEDING after', triage({ urgency: 'low' }))
     expect(p.route).toBe('escalated')

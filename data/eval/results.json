@@ -2,13 +2,13 @@
  "summary": {
   "n": 60,
   "category_accuracy": 95,
-  "urgency_exact": 80,
+  "urgency_exact": 77,
   "urgency_within_one": 100,
   "critical_recall_model": 100,
   "critical_recall_with_rules": 100,
   "critical_cases": 9,
-  "escalations": 18,
-  "escalations_high_or_critical_label": 100,
+  "escalations": 19,
+  "escalations_high_or_critical_label": 95,
   "manual_review": 0
  },
  "rows": [
@@ -198,8 +198,8 @@
    "want_category": "education",
    "want_urgency": "normal",
    "category": "education",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
@@ -268,8 +268,8 @@
    "want_category": "health_nutrition",
    "want_urgency": "normal",
    "category": "health_nutrition",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "low",
+   "final": "low",
    "route": "assigned"
   },
   {
@@ -327,7 +327,7 @@
    "index": 1,
    "want_category": "domestic_violence",
    "want_urgency": "critical",
-   "category": "domestic_violence",
+   "category": "social_rehabilitation",
    "urgency": "critical",
    "final": "critical",
    "route": "escalated"
@@ -387,7 +387,7 @@
    "index": 7,
    "want_category": "benefit_not_received",
    "want_urgency": "normal",
-   "category": "eligibility_registration",
+   "category": "benefit_not_received",
    "urgency": "normal",
    "final": "normal",
    "route": "assigned"
@@ -549,8 +549,8 @@
    "want_urgency": "normal",
    "category": "social_rehabilitation",
    "urgency": "high",
-   "final": "high",
-   "route": "assigned"
+   "final": "critical",
+   "route": "escalated"
   },
   {
    "agency": "dinsos_demak",
@@ -558,8 +558,8 @@
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
    "category": "fraud_misconduct",
-   "urgency": "normal",
-   "final": "normal",
+   "urgency": "high",
+   "final": "high",
    "route": "assigned"
   },
   {
@@ -578,8 +578,8 @@
    "want_category": "fraud_misconduct",
    "want_urgency": "high",
    "category": "fraud_misconduct",
-   "urgency": "high",
-   "final": "high",
+   "urgency": "normal",
+   "final": "normal",
    "route": "assigned"
   },
   {
@@ -613,5 +613,5 @@
    "route": "assigned"
   }
  ],
- "at": "2026-10-18T06:34:26.266Z"
+ "at": "2026-10-18T13:15:31.465Z"
 }

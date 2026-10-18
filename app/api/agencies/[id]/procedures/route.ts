@@ -3,7 +3,7 @@ import { z } from 'zod'
 import { AGENCIES, agencyById, publicAgency, saveAgencyFields } from '@/lib/agencies'
 import { log } from '@/lib/agents/governance'
 import { error, rateLimit } from '@/lib/http'
-import { sourcesFor } from '@/lib/sop'
+import { knowledgeSources, loadKnowledge } from '@/lib/sop'
 import { STORE } from '@/lib/store'
 
 const Line = z.string().trim().max(200)
@@ -53,7 +53,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   if (by.role !== 'leader' && by.role !== 'supervisor')
     return error(403, 'only the supervisor or the head of office changes procedures')
   const cats = new Set(agency.categories.map((c) => c.id))
-  const docs = new Set(sourcesFor(id).map((s) => s.short))
+  await loadKnowledge(id)
+  const docs = new Set(knowledgeSources(id).map((s) => s.short))
   if (procedures.some((p) => p.categories.some((c) => !cats.has(c)))) return error(400, 'unknown case type')
   if (new Set(procedures.map((p) => p.id)).size !== procedures.length)
     return error(400, 'two procedures have the same id')

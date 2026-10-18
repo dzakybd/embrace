@@ -38,7 +38,7 @@ export function decide(
     escalate = true
     reasons.push(`Model rated critical: ${triage.urgency_reason}`)
   }
-  const flagged = triage.flags.filter((f) => esc.escalate_flags.includes(f)).sort()
+  const flagged = [...triage.flags, ...(triage.agency_flags ?? [])].filter((f) => esc.escalate_flags.includes(f)).sort()
   if (flagged.length) {
     escalate = true
     reasons.push(`Safety flag: ${[...new Set(flagged)].join(', ')}`)

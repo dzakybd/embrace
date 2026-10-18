@@ -51,6 +51,7 @@ export const TriageResult = z.object({
   urgency_reason: z.string().describe('Short reason, quoting the decisive phrase from the complaint'),
   sentiment: z.enum(['distressed', 'angry', 'worried', 'neutral', 'positive']),
   flags: z.array(z.enum(FLAGS)),
+  agency_flags: z.array(z.string()).optional().describe("Ids of the agency's own signals whose definition is met"),
   summary: z.string().describe('At most 2 sentences in English, no personal data'),
   confidence: z.number().min(0).max(1).describe('Confidence in category and urgency together'),
 })

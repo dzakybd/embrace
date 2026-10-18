@@ -2,7 +2,7 @@
 // names, categories, team and documents. Stored agencies are plain data; no code changes per agency.
 import { randomBytes } from 'node:crypto'
 import { z } from 'zod'
-import { AGENCIES, type Agency, type Procedure, type StoredAgency } from './agencies'
+import { AGENCIES, emergencyFrom, type Agency, type Procedure, type StoredAgency } from './agencies'
 import { FLAGS } from './schemas'
 import { indexFor, isShippedDocs, markdownUnits, passagesFor, sourcesFor, type Passage, type Source } from './sop'
 
@@ -17,8 +17,6 @@ export const NewAgency = z.object({
   name_id: z.string().trim().max(160).default(''),
   short_name_id: z.string().trim().max(40).default(''),
   description_id: z.string().trim().max(400).default(''),
-  emergency_line_id: z.string().trim().max(200).default(''),
-  emergency_line: z.string().trim().min(2).max(200),
   reply_signature: z.string().trim().min(2).max(160),
   categories: z
     .array(
@@ -176,7 +174,6 @@ export async function buildAgency(input: NewAgency): Promise<StoredAgency | stri
     ...(input.name_id ? { name_id: input.name_id } : {}),
     ...(input.short_name_id ? { short_name_id: input.short_name_id } : {}),
     ...(input.description_id ? { description_id: input.description_id } : {}),
-    ...(input.emergency_line_id ? { emergency_line_id: input.emergency_line_id } : {}),
     categories,
     queues,
     escalation: {
@@ -187,7 +184,11 @@ export async function buildAgency(input: NewAgency): Promise<StoredAgency | stri
       confidence_floor: input.confidence_floor ?? base.escalation.confidence_floor,
     },
     sla_hours: input.sla_hours ?? base.sla_hours,
-    emergency_line: input.emergency_line,
+    // The template's hotlines (copied below) are the emergency line; Resources edits them later.
+    ...emergencyFrom(
+      base.resources?.filter((r) => r.kind === 'hotline'),
+      { en: base.emergency_line, id: base.emergency_line_id },
+    ),
     reply_signature: input.reply_signature,
     team,
     ...(base.required_details ? { required_details: base.required_details } : {}),

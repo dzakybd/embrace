@@ -47,9 +47,9 @@ const MANAGE = [
   },
   {
     as: 'supervisor',
-    page: 'case-types',
+    page: 'policies',
     icon: 'rules',
-    title: 'Case types and rules',
+    title: 'Policies',
     body: 'Who handles each case, when it escalates, its steps and legal basis',
   },
   {

@@ -350,13 +350,11 @@ export const ID: Record<string, string> = {
   'Full name': 'Nama lengkap',
   'Short name': 'Nama singkat',
   Country: 'Negara',
-  'Emergency line given in urgent replies': 'Nomor darurat yang dicantumkan di balasan mendesak',
   'Reply signature': 'Tanda tangan balasan',
   'What the agency does (optional)': 'Tugas instansi (opsional)',
   'Full name in Indonesian (optional)': 'Nama lengkap dalam bahasa Indonesia (opsional)',
   'Short name in Indonesian (optional)': 'Nama singkat dalam bahasa Indonesia (opsional)',
   'What the agency does, in Indonesian (optional)': 'Tugas instansi dalam bahasa Indonesia (opsional)',
-  'Emergency line in Indonesian (optional)': 'Nomor darurat dalam bahasa Indonesia (opsional)',
   Rules: 'Aturan',
   '3. Rules': '3. Aturan',
   'Deterministic rules decide escalation, never the AI alone. A caseworker always approves every reply before it is sent.':
@@ -658,7 +656,6 @@ export const ID: Record<string, string> = {
   'Case type, urgency, flags, confidence': 'Jenis kasus, urgensi, tanda, keyakinan',
   'Case type, urgency, safety flags': 'Jenis kasus, urgensi, tanda keselamatan',
   'Case types': 'Jenis kasus',
-  'Case types and their stages': 'Jenis kasus dan tahapannya',
   'Case types it applies to': 'Berlaku untuk jenis kasus',
   'Changes apply to new reports and the public guide at once.':
     'Perubahan langsung berlaku untuk laporan baru dan panduan publik.',
@@ -1164,7 +1161,6 @@ export const ID: Record<string, string> = {
   'Agency settings': 'Pengaturan instansi',
   'AI decides': 'AI menentukan',
   'Always alert the supervisor when the AI sees': 'Selalu beri tahu pengawas bila AI melihat',
-  'Case types and rules': 'Jenis kasus dan aturan',
   Done: 'Selesai',
   'Edit steps': 'Ubah tahapan',
   English: 'Inggris',
@@ -1201,10 +1197,7 @@ export const ID: Record<string, string> = {
   'What to bring, notes and other case types': 'Yang perlu dibawa, catatan, dan jenis kasus lain',
   'Who handles each case, when it escalates, its steps and legal basis':
     'Siapa menangani tiap kasus, kapan dieskalasi, tahapan, dan dasar hukumnya',
-  'Who handles each kind of case, when it escalates, and the steps it follows.':
-    'Siapa menangani tiap jenis kasus, kapan dieskalasi, dan tahapan yang diikuti.',
   'About the agency': 'Tentang instansi',
-  'Emergency line': 'Nomor darurat',
   'Add team': 'Tambah tim',
   'Reset demo data brings built-in documents back': 'Reset data demo mengembalikan dokumen bawaan',
   'Draft check': 'Pemeriksaan draf',
@@ -1219,4 +1212,23 @@ export const ID: Record<string, string> = {
     'Menemukan data pribadi, tautan, kutipan keliru, nomor tiket yang hilang, janji hasil, dan instruksi yang bocor. Di dalam ADK Workflow: draf yang ditandai ditulis ulang sekali dengan temuannya; sisanya ditampilkan ke petugas.',
   'findings: rewrite once': 'temuan: tulis ulang sekali',
   'Case type': 'Jenis kasus',
+  'Add a signal': 'Tambah sinyal',
+  'Choose documents': 'Pilih dokumen',
+  'e.g. Tidal flood water has entered homes and families cannot stay tonight.':
+    'mis. Air rob sudah masuk rumah dan keluarga tidak bisa tinggal malam ini.',
+  'emergency line': 'nomor darurat',
+  'Give in urgent replies (emergency line)': 'Diberikan di balasan mendesak (nomor darurat)',
+  'New signal': 'Sinyal baru',
+  'No legal basis chosen yet.': 'Belum ada dasar hukum yang dipilih.',
+  'Not in the knowledge base any more': 'Sudah tidak ada di basis pengetahuan',
+  'Per case type: who handles it, when it escalates, its legal basis and its steps; and the rules for every case.':
+    'Per jenis kasus: siapa yang menangani, kapan dieskalasi, dasar hukum, dan tahapannya; serta aturan untuk setiap kasus.',
+  'Policies: case types, rules and legal basis': 'Kebijakan: jenis kasus, aturan, dan dasar hukum',
+  Policies: 'Kebijakan',
+  'Remove this signal': 'Hapus sinyal ini',
+  'Summary (optional; Gemini writes one if left empty)': 'Ringkasan (opsional; Gemini menuliskannya bila dikosongkan)',
+  'Turn off the signals your agency does not handle, or add its own.':
+    'Matikan sinyal yang tidak ditangani instansi Anda, atau tambahkan sinyal sendiri.',
+  'What the document covers, in one or two sentences': 'Isi dokumen, dalam satu atau dua kalimat',
+  'When the AI should raise it': 'Kapan AI perlu menandainya',
 }
