@@ -28,9 +28,9 @@ const STAFF = [
 
 const MANAGE = [
   { as: 'supervisor', page: 'integrations', icon: 'chat', title: 'Channels', body: 'Telegram bot token, WhatsApp, email and more' },
-  { as: 'leader', page: 'case-types', icon: 'rules', title: 'Case types', body: 'Procedures, stages, who does what and the legal basis' },
-  { as: 'leader', page: 'settings', icon: 'form', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
-  { as: 'leader', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
+  { as: 'supervisor', page: 'case-types', icon: 'rules', title: 'Case types', body: 'Procedures, stages, who does what and the legal basis' },
+  { as: 'supervisor', page: 'settings', icon: 'form', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
+  { as: 'supervisor', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
 ]
 
 const FLOW = [

@@ -22,7 +22,7 @@ export default function CaseTypes() {
 function Editor() {
   const { t, lang } = useLang()
   const { agency, me, reload } = useStaff()
-  const canEdit = me.role === 'leader'
+  const canEdit = me.role === 'leader' || me.role === 'supervisor'
   const [procs, setProcs] = useState<ProcedureT[]>(agency.procedures ?? [])
   const [laws, setLaws] = useState<Record<string, string[]>>(() => Object.fromEntries(agency.categories.map((c) => [c.id, c.laws ?? []])))
   const [sel, setSel] = useState(0)
@@ -130,7 +130,7 @@ function Editor() {
                 </div>
                 <button type="button" className="ghost small danger" disabled={procs.length === 1} onClick={() => { setProcs(procs.filter((_, i) => i !== sel)); setSel(0); setDirty(true) }}>{t('Delete this procedure')}</button>
               </Card>
-            ) : <p className="muted small">{t('Only the head of office changes procedures.')}</p>}
+            ) : <p className="muted small">{t('Only the supervisor or the head of office changes procedures.')}</p>}
           </div>
         )}
       </div>

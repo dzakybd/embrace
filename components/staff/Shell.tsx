@@ -17,16 +17,17 @@ const ROLES = [
 
 type Role = 'leader' | 'supervisor' | 'officer'
 
-/** What each role sees: caseworkers work their cases, the supervisor runs the desk, the head of office watches trends. */
+/** What each role sees: caseworkers work their cases; the supervisor runs the desk and its setup (channels, AI,
+ * settings); the head of office watches trends and the procedures, with no technical pages. */
 const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
   { href: '/staff/insights', label: 'Insights', icon: 'chart', roles: ['leader'] },
   { href: '/staff/inbox', label: 'Inbox', icon: 'inbox', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/team', label: 'Team', icon: 'user', roles: ['leader', 'supervisor'] },
   { href: '/staff/knowledge', label: 'Knowledge', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/case-types', label: 'Case types', icon: 'rules', roles: ['leader', 'supervisor', 'officer'] },
-  { href: '/staff/integrations', label: 'Channels', icon: 'chat', roles: ['leader', 'supervisor'] },
-  { href: '/staff/ai', label: 'AI control', icon: 'shield', roles: ['leader', 'supervisor'] },
-  { href: '/staff/settings', label: 'Settings', icon: 'rules', roles: ['leader'] },
+  { href: '/staff/integrations', label: 'Channels', icon: 'chat', roles: ['supervisor'] },
+  { href: '/staff/ai', label: 'AI control', icon: 'shield', roles: ['supervisor'] },
+  { href: '/staff/settings', label: 'Settings', icon: 'form', roles: ['supervisor'] },
 ]
 
 export const HOME: Record<Role, string> = { leader: '/staff/insights', supervisor: '/staff/inbox', officer: '/staff/inbox' }

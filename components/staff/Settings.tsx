@@ -7,7 +7,7 @@ import { useT } from '../Lang'
 import { Icon } from '../ui'
 import { useStaff } from './StaffProvider'
 
-/** Head of office: the agency's rules, categories, teams, staff and documents. Applies to new reports at once. */
+/** Supervisor: the agency's rules, categories, teams, staff and documents. Applies to new reports at once. */
 export default function Settings() {
   const t = useT()
   const { agency, reload } = useStaff()

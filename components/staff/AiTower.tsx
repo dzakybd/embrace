@@ -66,7 +66,7 @@ export default function AiTower() {
   if (err) return <div className="page"><p className="error">{err}</p></div>
   if (!d || !guard) return <div className="page"><div className="shimmer tall" /></div>
   const r = d.report
-  const canEdit = me.role === 'leader'
+  const canEdit = me.role === 'supervisor'
   const changed = d.models.some((m) => models[m.key] !== (m.chosen ?? m.default)) || JSON.stringify(guard) !== JSON.stringify(d.guard)
   const save = async () => {
     setSaved('')
@@ -240,7 +240,7 @@ export default function AiTower() {
 
       {canEdit && (
         <div className="savebar">
-          <span className="muted small">{saved || (changed ? t('Unsaved changes to models or guardrails') : t('Only the head of office changes these settings; every change is logged.'))}</span>
+          <span className="muted small">{saved || (changed ? t('Unsaved changes to models or guardrails') : t('Only the supervisor changes these settings; every change is logged.'))}</span>
           <button className="primary" disabled={!changed} onClick={save}>{t('Apply')}</button>
         </div>
       )}

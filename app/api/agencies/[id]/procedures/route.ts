@@ -20,7 +20,7 @@ const Body = z.object({
   by: z.object({ name: z.string().max(80), role: z.string() }),
 })
 
-/** Head of office: the agency's case procedures (stages, owners, requirements) and each case type's legal basis.
+/** Supervisor or head of office: the agency's case procedures (stages, owners, requirements) and each case type's legal basis.
  * Built-in agencies keep the edit as an override, like Settings; Reset demo restores the shipped version. */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -31,7 +31,7 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
   const parsed = Body.safeParse(await req.json().catch(() => null))
   if (!parsed.success) return error(400, parsed.error.issues.map((i) => `${i.path.join('.')}: ${i.message}`).join('; '))
   const { procedures, laws, by } = parsed.data
-  if (by.role !== 'leader') return error(403, 'only the head of office changes procedures')
+  if (by.role !== 'leader' && by.role !== 'supervisor') return error(403, 'only the supervisor or the head of office changes procedures')
   const cats = new Set(agency.categories.map((c) => c.id))
   const docs = new Set(sourcesFor(id).map((s) => s.short))
   if (procedures.some((p) => p.categories.some((c) => !cats.has(c)))) return error(400, 'unknown case type')

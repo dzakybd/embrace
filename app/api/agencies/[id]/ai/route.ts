@@ -71,7 +71,7 @@ const Body = z.object({
   by: z.string().max(80),
 })
 
-/** Head of office: models per agent (allow-listed) and guardrail settings. Applies within a minute, logged for audit. */
+/** Supervisor: models per agent (allow-listed) and guardrail settings. Applies within a minute, logged for audit. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
   const limited = rateLimit(req, 'ai-config', 20)
   if (limited) return limited
@@ -83,7 +83,7 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
   const bad = Object.values(parsed.data.models).find((m) => m && !MODEL_CHOICES.includes(m))
   if (bad) return error(422, `model not allowed: ${bad}`)
   const by = agency.team.find((m) => m.name === parsed.data.by)
-  if (by?.role !== 'leader') return error(403, 'only the head of office changes AI settings')
+  if (by?.role !== 'supervisor') return error(403, 'only the supervisor changes AI settings')
   const models = Object.fromEntries(Object.entries(parsed.data.models).filter(([k, v]) => v && v !== MODELS[k as keyof typeof MODELS]))
   const guard = parsed.data.guard ?? (await agencyAi(id)).guard
   await STORE.setIntegration(id, { ai: { models: models as Record<string, string>, guard, updated_by: by.name, updated_at: now() } })
