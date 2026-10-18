@@ -144,6 +144,8 @@ export interface Ticket {
   draft?: Draft | null
   sop?: Citation[]
   sent_reply?: string
+  /** Every reply sent to the citizen, oldest first; sent_reply is the latest. */
+  replies?: { at: string; by: string; text: string }[]
   reply_edited?: boolean
   alerted_at?: string | null
   alert_delivered_at?: string | null
@@ -157,15 +159,15 @@ export interface Ticket {
   details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
   /** The agency procedure staff follow for this case, and the stages done (indexes); the citizen sees it on tracking. */
   progress?: { procedure: string; done: number[] }
-  /** Legal basis drafted by the legal research agent for the case file, with the passages it cited. */
-  legal_basis?: LegalAnswer
+  /** Legal basis drafted by the document agent for the case file, with the passages it cited. */
+  legal_basis?: DocAnswer
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean
 }
 
-/** What the legal research agent returns: a Markdown answer and the knowledge-base passages it searched. */
-export interface LegalAnswer {
+/** What the document agent returns: a Markdown answer and the knowledge-base passages it searched. */
+export interface DocAnswer {
   answer: string
   sources: { doc: string; title: string; loc: string; url: string; text: string }[]
   tools_used: string[]

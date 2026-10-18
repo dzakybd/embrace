@@ -7,7 +7,7 @@ import { useLang } from '../Lang'
 import { ACTORS, catLabel, procTitle, type ProcedureT } from '../Procedures'
 import { FlowDiagram } from '../ProcedureFlow'
 import { KIND } from './Knowledge'
-import { Card, Icon, URGENCY_LABEL } from '../ui'
+import { Card, Icon, URGENCY_LABEL, duration } from '../ui'
 import { useStaff } from './StaffProvider'
 
 type Rules = NonNullable<SetupBody['rules']>
@@ -705,6 +705,7 @@ function EscalationRules({
                 />
                 {t('h')}
               </span>
+              {rules.sla_hours[u] >= 24 && <span className="muted small">= {duration(rules.sla_hours[u], t)}</span>}
             </label>
           ))}
         </div>

@@ -1,8 +1,8 @@
 import { describe, expect, it } from 'vitest'
-import { unverifiedCitations } from '@/lib/agents/legal'
+import { unverifiedCitations } from '@/lib/agents/documents'
 import { htmlText, safeUrl } from '@/lib/knowledge'
 
-describe('legal research citations', () => {
+describe('document agent citations', () => {
   const refs = ['UU 23/2004, p. 1', 'UU 23/2004, p. 2', 'PP 78/2021, p. 33', 'KPAI SOP, section 4']
   it('accepts exact refs, page lists and several refs in one bracket', () => {
     expect(unverifiedCitations('A [UU 23/2004, p. 1, 2]. B [PP 78/2021, p. 33; KPAI SOP, section 4].', refs)).toEqual(

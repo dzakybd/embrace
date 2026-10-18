@@ -43,7 +43,7 @@ const MANAGE = [
     page: 'knowledge',
     icon: 'book',
     title: 'Knowledge base',
-    body: 'Laws, SOPs, court decisions and web pages; legal research',
+    body: 'Laws, SOPs, court decisions and web pages; ask the document agent',
   },
   {
     as: 'supervisor',

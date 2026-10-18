@@ -5,6 +5,7 @@
 import { InMemoryRunner, type Event } from '@google/adk'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { getAgency } from '../lib/agencies'
+import { governance } from '../lib/agents/governance'
 import { initialState, pipeline } from '../lib/agents/pipeline'
 import { checkDraft, screenInput } from '../lib/guardrails'
 import type { Policy } from '../lib/schemas'
@@ -19,7 +20,8 @@ interface Attack {
   text: string
   expect: { route?: string[]; min_urgency?: U; max_urgency?: U; excludes?: string[] }
 }
-const runner = new InMemoryRunner({ agent: pipeline, appName: 'embrace_redteam' })
+// The governance plugin sets each call's model and thinking, as in the app.
+const runner = new InMemoryRunner({ agent: pipeline, appName: 'embrace_redteam', plugins: [governance] })
 const attacks: Attack[] = JSON.parse(readFileSync('data/eval/attacks.json', 'utf8'))
 
 const rows = []

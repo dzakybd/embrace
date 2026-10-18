@@ -2,7 +2,7 @@
 
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
-import { api, type Citation, type LegalAnswer, type SopSource } from '../api'
+import { api, type Citation, type DocAnswer, type SopSource } from '../api'
 import { Md } from '../Md'
 import { Card, Citations, Icon } from '../ui'
 import { useLang } from '../Lang'
@@ -36,10 +36,12 @@ const QUESTIONS: Record<string, string[]> = {
   dinsos_demak: [
     'Which rules say who may receive PBI health insurance, and how is a family proposed?',
     'What does the law say about cutting or charging fees on social aid?',
+    'Which documents describe the complaint service flow, and what are its steps?',
   ],
   kpai: [
     'What is the legal basis to report a parent who beats their child to the police?',
     'Which articles protect a child victim’s identity during a trial?',
+    'Which documents say how a complaint is handled from intake to closing?',
   ],
 }
 
@@ -53,7 +55,7 @@ const errText = (e: unknown) => {
 }
 
 /** The knowledge base: laws, regulations, SOPs, court decisions, guidelines and web pages the agents and staff use.
- * Search is BM25 (no tokens); Ask runs the legal research agent, which cites the passages it found. */
+ * Search is BM25 (no tokens); Ask runs the document agent, which cites the passages it found. */
 export default function Knowledge() {
   const { t, lang } = useLang()
   const { agency, me } = useStaff()
@@ -87,7 +89,7 @@ export default function Knowledge() {
           <h1>{t('Knowledge base')}</h1>
           <p className="muted">
             {t(
-              'Laws, regulations, SOPs, court decisions, guidelines and web pages. Reply drafts cite them for citizens; staff search them or ask the legal research agent, for example for the legal basis of a case file.',
+              'Laws, regulations, SOPs, court decisions, guidelines and web pages. Reply drafts cite them for citizens; staff search them or ask the document agent, for example what a document says or the legal basis of a case file.',
             )}
           </p>
         </div>
@@ -122,7 +124,7 @@ export default function Knowledge() {
           className={tab === 'ask' ? 'on' : ''}
           onClick={() => setTab('ask')}
         >
-          <Icon name="spark" size={14} /> {t('Ask the legal research agent')}
+          <Icon name="spark" size={14} /> {t('Ask the document agent')}
         </button>
       </div>
       {tab === 'search' ? <Search /> : <Ask />}
@@ -240,7 +242,7 @@ function Ask() {
   const { t } = useLang()
   const { agency, me } = useStaff()
   const [q, setQ] = useState('')
-  const [res, setRes] = useState<LegalAnswer | null>(null)
+  const [res, setRes] = useState<DocAnswer | null>(null)
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const ask = async (question: string) => {
@@ -248,7 +250,7 @@ function Ask() {
     setBusy(true)
     setErr('')
     try {
-      setRes(await api.askLegal(agency.id, { question, by: me.name }))
+      setRes(await api.askDocuments(agency.id, { question, by: me.name }))
     } catch (e) {
       setErr(errText(e))
     } finally {
@@ -269,14 +271,14 @@ function Ask() {
           if (q.trim().length >= 3) ask(q)
         }}
       >
-        <label htmlFor="ask-legal" className="sr">
-          {t('Ask a question about the law or a procedure')}
+        <label htmlFor="ask-docs" className="sr">
+          {t('Ask about a document, a law or a procedure')}
         </label>
         <input
-          id="ask-legal"
+          id="ask-docs"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          placeholder={t('Ask a question about the law or a procedure')}
+          placeholder={t('Ask about a document, a law or a procedure')}
         />
         <button className="primary" disabled={busy || q.trim().length < 3}>
           {busy ? t('Searching…') : t('Ask')}
@@ -291,13 +293,13 @@ function Ask() {
       </div>
       {busy && <div className="shimmer" />}
       {err && <p className="error">{err}</p>}
-      {res && !busy && <LegalResult r={res} />}
+      {res && !busy && <DocResult r={res} />}
     </Card>
   )
 }
 
-/** An answer of the legal research agent with the passages it searched. */
-export function LegalResult({ r }: { r: LegalAnswer }) {
+/** An answer of the document agent with the passages it searched. */
+export function DocResult({ r }: { r: DocAnswer }) {
   const { t } = useLang()
   return (
     <div className="legal">
@@ -315,8 +317,7 @@ export function LegalResult({ r }: { r: LegalAnswer }) {
         </details>
       )}
       <p className="muted small">
-        <Icon name="rules" size={12} /> {t('Legal research agent used:')}{' '}
-        {t('{n} searches', { n: r.tools_used.length })}
+        <Icon name="rules" size={12} /> {t('Document agent used:')} {t('{n} searches', { n: r.tools_used.length })}
       </p>
     </div>
   )

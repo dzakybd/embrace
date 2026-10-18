@@ -6,7 +6,7 @@ import { BasePlugin, type Context, type LlmRequest, type LlmResponse } from '@go
 import { metrics, trace } from '@opentelemetry/api'
 import { GUARD_DEFAULTS, safetyAt } from '../guardrails'
 import { STORE, type GuardConfig } from '../store'
-import { AGENT_MODEL_KEY, MODEL_CHOICES, MODELS } from './models'
+import { AGENT_MODEL_KEY, MODEL_CHOICES, MODELS, thinkingFor } from './models'
 
 export interface ModelCall {
   agent: string
@@ -117,6 +117,7 @@ export class GovernancePlugin extends BasePlugin {
         safetySettings: safetyAt(ctx.agentName === 'drafter_agent' ? cfg.guard.write : cfg.guard.read),
       }
     }
+    if (llmRequest.model) llmRequest.config = { ...llmRequest.config, thinkingConfig: thinkingFor(llmRequest.model) }
     this.started.set(`${ctx.invocationId}:${ctx.agentName}`, { at: Date.now(), model: llmRequest.model ?? 'gemini' })
     return undefined
   }

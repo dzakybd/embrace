@@ -1,7 +1,7 @@
 // Gemini models per agent: 3.1 Flash-Lite everywhere. For triage it measured better than 2.5 Flash on the eval set
 // (data/eval/triage-models.json), at a lower price.
 import { Gemini } from '@google/adk'
-import type { GenerateContentConfig } from '@google/genai'
+import { ThinkingLevel, type GenerateContentConfig } from '@google/genai'
 
 const env = (k: string, d: string) => process.env[k] || d
 
@@ -11,7 +11,7 @@ export const MODELS = {
   triage: env('EMBRACE_TRIAGE_MODEL', 'gemini-3.1-flash-lite'),
   drafter: env('EMBRACE_DRAFTER_MODEL', 'gemini-3.1-flash-lite'),
   analyst: env('EMBRACE_ANALYST_MODEL', 'gemini-3.1-flash-lite'),
-  legal: env('EMBRACE_LEGAL_MODEL', 'gemini-3.1-flash-lite'),
+  documents: env('EMBRACE_DOCUMENT_MODEL', 'gemini-3.1-flash-lite'),
 }
 export type ModelKey = keyof typeof MODELS
 
@@ -33,7 +33,7 @@ export const AGENT_MODEL_KEY: Record<string, ModelKey> = {
   triage_agent: 'triage',
   drafter_agent: 'drafter',
   analyst_agent: 'analyst',
-  legal_agent: 'legal',
+  document_agent: 'documents',
 }
 
 /** Uses GOOGLE_GENAI_API_KEY explicitly, so stray GOOGLE_API_KEY / GEMINI_API_KEY in a shell never win. */
@@ -41,9 +41,15 @@ export function gemini(model: string) {
   return new Gemini({ model, apiKey: process.env.GOOGLE_GENAI_API_KEY })
 }
 
+/** Thinking off, or as low as the model goes: Gemini 2.5 and 3.1 take a budget of 0, newer models (3.5, and the
+ * `-latest` aliases that point to them) reject a budget and take a level instead. Set per call by the governance plugin,
+ * since an agency may pick another model. */
+export function thinkingFor(model: string): GenerateContentConfig['thinkingConfig'] {
+  return /^gemini-(2\.|3\.[01]\b)/.test(model) ? { thinkingBudget: 0 } : { thinkingLevel: ThinkingLevel.MINIMAL }
+}
+
 export const CFG: GenerateContentConfig = {
   temperature: 0.1,
-  thinkingConfig: { thinkingBudget: 0 },
   // Rate limits (429) and server errors back off and retry twice (1 s, then 2 s, with jitter) before the keyword
   // rules take over; a 4xx such as a bad request fails at once.
   httpOptions: {

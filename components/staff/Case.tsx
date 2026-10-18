@@ -13,13 +13,14 @@ import {
   StatusBadge,
   UrgencyBadge,
   ago,
+  duration,
   slaLeft,
 } from '../ui'
 import { LABEL, type Slot } from '@/lib/details'
 import { useLang, useT } from '../Lang'
 import { catLabel, LawLinks, procTitle, stageTitle } from '../Procedures'
 import { AGENT_IO } from './AgentMap'
-import { LegalResult } from './Knowledge'
+import { DocResult } from './Knowledge'
 import { Avatar } from '../Avatar'
 import { useStaff } from './StaffProvider'
 
@@ -579,6 +580,23 @@ function Trace({ t }: { t: Ticket }) {
   const first = t.trace.filter((s) => !s.rerun)
   const rerun = t.trace.filter((s) => s.rerun)
   const answers = Object.entries(t.details?.answers ?? {}).filter(([, v]) => v)
+  // Replies and the citizen's later messages in time order. Cases from before the reply log have only sent_reply.
+  const replies =
+    t.replies ??
+    (t.sent_reply
+      ? [
+          {
+            at: t.responded_at ?? t.created_at,
+            by: t.history.findLast((h) => h.action === 'send_reply')?.actor ?? tr('Caseworker'),
+            text: t.sent_reply,
+          },
+        ]
+      : [])
+  const turns = [...(t.followups ?? []).map((f) => ({ ...f, by: null })), ...replies].sort((a, b) =>
+    a.at.localeCompare(b.at),
+  )
+  const when = (at: string) =>
+    new Date(at).toLocaleString(undefined, { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' })
   return (
     <div className="case-grid">
       <div className="col">
@@ -642,18 +660,25 @@ function Trace({ t }: { t: Ticket }) {
                 </ul>
               </Say>
             )}
-            {t.sent_reply && (
-              <Say
-                who="human"
-                name={t.history.findLast((h) => h.action === 'send_reply')?.actor ?? tr('Caseworker')}
-                meta={
-                  t.draft && t.draft.reply !== t.sent_reply
-                    ? tr('edited and sent the reply')
-                    : tr('approved and sent the reply')
-                }
-              >
-                <pre className="draft">{t.sent_reply}</pre>
-              </Say>
+            {turns.map((x) =>
+              x.by === null ? (
+                <Say key={`f-${x.at}`} who="citizen" name={tr('Citizen')} meta={when(x.at)}>
+                  <p>{x.text}</p>
+                </Say>
+              ) : (
+                <Say
+                  key={`r-${x.at}`}
+                  who="human"
+                  name={x.by}
+                  meta={`${
+                    t.draft && t.draft.reply !== x.text && x.text === t.sent_reply
+                      ? tr('edited and sent the reply')
+                      : tr('approved and sent the reply')
+                  } · ${when(x.at)}`}
+                >
+                  <pre className="draft">{x.text}</pre>
+                </Say>
+              ),
             )}
           </div>
         </Card>
@@ -664,7 +689,7 @@ function Trace({ t }: { t: Ticket }) {
             <div className="tags">
               <span className={`tag route route-${t.policy.route}`}>{t.policy.route.replace('_', ' ')}</span>
               <UrgencyBadge u={t.policy.final_urgency} />
-              <span className="tag">SLA {t.policy.sla_hours} h</span>
+              <span className="tag">SLA {duration(t.policy.sla_hours, tr)}</span>
             </div>
             <ul className="reasons">
               {t.policy.reasons.map((r) => (
@@ -683,7 +708,7 @@ function Trace({ t }: { t: Ticket }) {
   )
 }
 
-/** The legal basis of the case for its file, a police referral or court, drafted by the legal research agent from
+/** The legal basis of the case for its file, a police referral or court, drafted by the document agent from
  * the knowledge base and kept on the case. */
 function LegalBasis({
   t,
@@ -705,7 +730,7 @@ function LegalBasis({
     setBusy(true)
     setErr('')
     try {
-      const legal_basis = await api.askLegal(t.agency_id, { ticket_id: t.id, by })
+      const legal_basis = await api.askDocuments(t.agency_id, { ticket_id: t.id, by })
       onChange({ ...t, legal_basis })
     } catch (e) {
       setErr(String(e).replace(/^Error: \d+ /, ''))
@@ -718,14 +743,14 @@ function LegalBasis({
       {!r && !busy && (
         <p className="muted small">
           {tr(
-            'For the case file, a police referral or court: the legal research agent searches the knowledge base and cites the articles that apply.',
+            'For the case file, a police referral or court: the document agent searches the knowledge base and cites the articles that apply.',
           )}
         </p>
       )}
       {busy && <div className="shimmer" />}
       {r && !busy && (
         <>
-          <LegalResult r={r} />
+          <DocResult r={r} />
           {r.at && (
             <p className="muted small">
               {tr('Drafted {when}', { when: ago(r.at, tr) })}
@@ -901,7 +926,7 @@ function TraceBody({ agent, out: raw, t }: { agent: string; out: TraceStep['outp
       <>
         <p>
           Route <b>{String(out.route).replace('_', ' ')}</b> → queue <b>{String(out.queue)}</b>, SLA{' '}
-          {String(out.sla_hours)} h
+          {duration(Number(out.sla_hours))}
         </p>
         {Array.isArray(out.reasons) && (
           <ul className="reasons">

@@ -148,6 +148,11 @@ export const ID: Record<string, string> = {
   Responded: 'Sudah dibalas',
   'SLA breached': 'Lewat SLA',
   'SLA breached {d}': 'Lewat SLA {d}',
+  '{n} min': '{n} mnt',
+  '{h} h {m} min': '{h} jam {m} mnt',
+  '{n} h': '{n} jam',
+  '{d} d {h} h': '{d} hari {h} jam',
+  '{n} d': '{n} hari',
   '{d} left': 'sisa {d}',
   h: 'jam',
   'No matching SOP passage: the caseworker confirms the procedure.':
@@ -807,13 +812,13 @@ export const ID: Record<string, string> = {
   'Aggregates, no personal data': 'Agregat, tanpa data pribadi',
   'Alert with the case summary': 'Peringatan dengan ringkasan kasus',
   'Answer with cited articles': 'Jawaban dengan pasal yang dikutip',
-  'Answers from the agency’s documents and drafts the legal basis of a case for its file, the police or a court':
-    'Menjawab dari dokumen instansi dan menyusun dasar hukum kasus untuk berkas, kepolisian, atau pengadilan',
+  'Finds and answers from the agency’s documents (laws, SOPs, guidelines, web pages), and drafts the legal basis of a case for its file, the police or a court':
+    'Mencari dan menjawab dari dokumen instansi (undang-undang, SOP, pedoman, halaman web), serta menyusun dasar hukum kasus untuk berkas, kepolisian, atau pengadilan',
   'Answers with figures and case numbers': 'Jawaban dengan angka dan nomor kasus',
-  'Ask a question about the law or a procedure': 'Tanyakan tentang hukum atau prosedur',
-  'Ask the legal research agent': 'Tanya agen riset hukum',
-  'Asks about the law or a procedure, or drafts a case’s legal basis':
-    'Bertanya tentang hukum atau prosedur, atau menyusun dasar hukum kasus',
+  'Ask about a document, a law or a procedure': 'Tanyakan tentang dokumen, hukum, atau prosedur',
+  'Ask the document agent': 'Tanya agen dokumen',
+  'Asks about any document, or drafts a case’s legal basis':
+    'Bertanya tentang dokumen apa pun, atau menyusun dasar hukum kasus',
   'Asks about trends; reads the weekly brief': 'Bertanya tentang tren; membaca ringkasan mingguan',
   'Asks for the details the agency needs and the report lacks (fixed, translated questions)':
     'Menanyakan detail yang dibutuhkan instansi dan belum ada di laporan (pertanyaan tetap yang sudah diterjemahkan)',
@@ -886,8 +891,8 @@ export const ID: Record<string, string> = {
     'Undang-undang, SOP, putusan pengadilan, pedoman, dan halaman web, dipecah menjadi kutipan',
   'Laws, SOPs, court decisions, guidelines and web pages; staff-only documents included':
     'Undang-undang, SOP, putusan pengadilan, pedoman, dan halaman web; termasuk dokumen khusus petugas',
-  'Legal research agent used:': 'Agen riset hukum memakai:',
-  'Legal research agent': 'Agen riset hukum',
+  'Document agent used:': 'Agen dokumen memakai:',
+  'Document agent': 'Agen dokumen',
   'Live data for the tools': 'Data langsung untuk tool',
   'Markdown answer citing [document, page]; citations it was not given are flagged':
     'Jawaban Markdown yang mengutip [dokumen, halaman]; kutipan yang tidak diberikan kepadanya ditandai',
@@ -990,10 +995,10 @@ export const ID: Record<string, string> = {
   'What it does': 'Fungsinya',
   'Window in days': 'Rentang hari',
   'Writes from the report pipeline and staff': 'Ditulis oleh pipeline laporan dan petugas',
-  'For the case file, a police referral or court: the legal research agent searches the knowledge base and cites the articles that apply.':
-    'Untuk berkas kasus, rujukan ke kepolisian, atau pengadilan: agen riset hukum mencari di basis pengetahuan dan mengutip pasal yang berlaku.',
-  'Laws, regulations, SOPs, court decisions, guidelines and web pages. Reply drafts cite them for citizens; staff search them or ask the legal research agent, for example for the legal basis of a case file.':
-    'Undang-undang, peraturan, SOP, putusan pengadilan, pedoman, dan halaman web. Draf balasan mengutipnya untuk warga; petugas mencarinya atau bertanya ke agen riset hukum, misalnya untuk dasar hukum berkas kasus.',
+  'For the case file, a police referral or court: the document agent searches the knowledge base and cites the articles that apply.':
+    'Untuk berkas kasus, rujukan ke kepolisian, atau pengadilan: agen dokumen mencari di basis pengetahuan dan mengutip pasal yang berlaku.',
+  'Laws, regulations, SOPs, court decisions, guidelines and web pages. Reply drafts cite them for citizens; staff search them or ask the document agent, for example what a document says or the legal basis of a case file.':
+    'Undang-undang, peraturan, SOP, putusan pengadilan, pedoman, dan halaman web. Draf balasan mengutipnya untuk warga; petugas mencarinya atau bertanya ke agen dokumen, misalnya isi sebuah dokumen atau dasar hukum berkas kasus.',
   'The agent searches the knowledge base several times and answers only from what it found, citing each passage. A draft for staff to check, not legal advice.':
     'Agen mencari di basis pengetahuan beberapa kali dan hanya menjawab dari yang ditemukannya, dengan mengutip setiap bagian. Draf untuk diperiksa petugas, bukan nasihat hukum.',
   'File (PDF, Markdown, text)': 'Berkas (PDF, Markdown, teks)',
@@ -1070,8 +1075,8 @@ export const ID: Record<string, string> = {
   'Public laws, portraits and brand files; private report photos, voice notes and added documents':
     'Undang-undang, foto profil, dan berkas merek publik; foto laporan, pesan suara, dan dokumen tambahan privat',
   'Push to the function': 'Dorong ke fungsi',
-  'Report pipeline (media, intake, triage, rules, search, drafter), analyst and legal research agents':
-    'Pipeline laporan (media, intake, triase, aturan, pencarian, penyusun), agen analis dan riset hukum',
+  'Report pipeline (media, intake, triage, rules, search, drafter), analyst and document agents':
+    'Pipeline laporan (media, intake, triase, aturan, pencarian, penyusun), agen analis dan agen dokumen',
   'Reports by web chat or Telegram': 'Melapor lewat chat web atau Telegram',
   'Reports, questions, cases': 'Laporan, pertanyaan, kasus',
   'Searchable logs': 'Log yang bisa dicari',
@@ -1173,8 +1178,8 @@ export const ID: Record<string, string> = {
   'Every report of this type alerts the supervisor at once.':
     'Setiap laporan jenis ini langsung memberi tahu pengawas.',
   'high+': 'tinggi+',
-  'Laws, SOPs, court decisions and web pages; legal research':
-    'Undang-undang, SOP, putusan pengadilan, dan halaman web; riset hukum',
+  'Laws, SOPs, court decisions and web pages; ask the document agent':
+    'Undang-undang, SOP, putusan pengadilan, dan halaman web; tanya agen dokumen',
   'New case type': 'Jenis kasus baru',
   'No procedure yet for this case type.': 'Belum ada prosedur untuk jenis kasus ini.',
   'Other setup': 'Pengaturan lain',

@@ -4,14 +4,14 @@ import type { Part } from '@google/genai'
 import { randomBytes } from 'node:crypto'
 import { agencyById, picFor, supervisor, type Agency } from './agencies'
 import { analystAgent } from './agents/analyst'
-import { legalAgent, unverifiedCitations } from './agents/legal'
+import { documentAgent, unverifiedCitations } from './agents/documents'
 import { agencyAi, governance, log, recordGuard } from './agents/governance'
 import { STEP_KEYS, fence, initialState, pipeline } from './agents/pipeline'
 import { publish } from './events'
 import { detailsText, missingDetails, type Slot } from './details'
 import { checkDraft, screenInput } from './guardrails'
 import { decide } from './policy'
-import type { Channel, HistoryItem, Intake, LegalAnswer, Policy, Ticket, TraceStep } from './schemas'
+import type { Channel, HistoryItem, Intake, DocAnswer, Policy, Ticket, TraceStep } from './schemas'
 import { prefix } from './seed'
 import { STORE, now } from './store'
 import { telegramBot } from './channels'
@@ -25,9 +25,9 @@ const analystRunner = new InMemoryRunner({
   plugins: [governance, new ReflectAndRetryModelPlugin({ maxRetries: 1, throwExceptionIfRetryExceeded: false })],
 })
 
-const legalRunner = new InMemoryRunner({
-  agent: legalAgent,
-  appName: 'embrace_legal',
+const documentRunner = new InMemoryRunner({
+  agent: documentAgent,
+  appName: 'embrace_documents',
   plugins: [governance, new ReflectAndRetryModelPlugin({ maxRetries: 1, throwExceptionIfRetryExceeded: false })],
 })
 
@@ -394,6 +394,7 @@ export async function act(
   let delivery = ''
   if (action === 'send_reply') {
     fields.sent_reply = reply || t.draft?.reply || ''
+    fields.replies = [...(t.replies ?? []), { at: ts, by: officer, text: fields.sent_reply }]
     if (t.telegram_chat_id) {
       try {
         const bot = await telegramBot(t.agency_id)
@@ -474,13 +475,13 @@ export async function askAnalyst(agencyId: string, question: string) {
 }
 
 /**
- * Legal research for staff: a question answered from the knowledge base, or, with a case, the legal basis of that
+ * Document agent for staff: any question answered from the knowledge base, or, with a case, the legal basis of that
  * case for its file. The agent sees the case's masked summary only, and the answer is kept on the case.
  */
-export async function askLegal(
+export async function askDocuments(
   agencyId: string,
   opts: { question?: string; ticketId?: string; by?: string },
-): Promise<LegalAnswer | null> {
+): Promise<DocAnswer | null> {
   const agency = (await agencyById(agencyId))!
   let prompt = opts.question ?? ''
   const t = opts.ticketId ? await STORE.get(opts.ticketId) : null
@@ -500,9 +501,9 @@ export async function askLegal(
       .join('\n')
   }
   const toolsUsed: string[] = []
-  const sources = new Map<string, LegalAnswer['sources'][number]>()
+  const sources = new Map<string, DocAnswer['sources'][number]>()
   let answer = ''
-  const events = legalRunner.runEphemeral({
+  const events = documentRunner.runEphemeral({
     userId: agencyId,
     newMessage: { role: 'user', parts: [{ text: prompt }] },
     stateDelta: { agency_id: agencyId, agency_name: agency.name },
@@ -510,17 +511,17 @@ export async function askLegal(
   for await (const ev of events as AsyncGenerator<Event>) {
     for (const p of ev.content?.parts ?? []) {
       if (p.functionCall?.name) toolsUsed.push(p.functionCall.name)
-      const found = (p.functionResponse?.response as { passages?: LegalAnswer['sources'] } | undefined)?.passages
+      const found = (p.functionResponse?.response as { passages?: DocAnswer['sources'] } | undefined)?.passages
       for (const x of found ?? []) sources.set(`${x.doc}|${x.loc}`, x)
     }
     const text = (ev.content?.parts ?? []).map((p) => p.text ?? '').join('')
-    if (ev.author === 'legal_agent' && text && !(ev.content?.parts ?? []).some((p) => p.functionCall)) answer = text
+    if (ev.author === 'document_agent' && text && !(ev.content?.parts ?? []).some((p) => p.functionCall)) answer = text
   }
   const unverified = unverifiedCitations(
     answer,
     [...sources.values()].map((x) => `${x.doc}, ${x.loc}`),
   )
-  const out: LegalAnswer = {
+  const out: DocAnswer = {
     answer,
     sources: [...sources.values()],
     tools_used: toolsUsed,

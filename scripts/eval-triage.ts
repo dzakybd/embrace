@@ -3,13 +3,15 @@
 import { InMemoryRunner, type Event } from '@google/adk'
 import { readFileSync, writeFileSync } from 'node:fs'
 import { getAgency } from '../lib/agencies'
+import { governance } from '../lib/agents/governance'
 import { initialState, triageOnly } from '../lib/agents/pipeline'
 import type { Policy, Triage } from '../lib/schemas'
 
 const RANK = { critical: 3, high: 2, normal: 1, low: 0 } as const
 type U = keyof typeof RANK
 const limit = Number(process.argv[process.argv.indexOf('--limit') + 1]) || Infinity
-const runner = new InMemoryRunner({ agent: triageOnly, appName: 'embrace_eval' })
+// The governance plugin sets each call's model and thinking, as in the app.
+const runner = new InMemoryRunner({ agent: triageOnly, appName: 'embrace_eval', plugins: [governance] })
 
 const rows: Record<string, unknown>[] = []
 for (const agencyId of ['kpai', 'dinsos_demak']) {

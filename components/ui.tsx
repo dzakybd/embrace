@@ -199,12 +199,21 @@ export function ago(iso: string, t: T = same): string {
   return t('{n} d ago', { n: Math.round(m / 1440) })
 }
 
+/** A length of time for staff: "45 min", "5 h 20 min", "1 d 2 h". */
+export function duration(hours: number, t: T = same): string {
+  const m = Math.round(hours * 60)
+  if (m < 60) return t('{n} min', { n: m })
+  const h = Math.floor(m / 60)
+  if (h < 24) return h < 10 && m % 60 ? t('{h} h {m} min', { h, m: m % 60 }) : t('{n} h', { n: h })
+  return h % 24 ? t('{d} d {h} h', { d: Math.floor(h / 24), h: h % 24 }) : t('{n} d', { n: h / 24 })
+}
+
 export function slaLeft(created: string, slaHours: number | null | undefined, responded?: string | null, t: T = same) {
   if (!slaHours) return null
   if (responded) return { text: t('Responded'), tone: 'ok' as const }
   const left = slaHours * 3600_000 - (Date.now() - new Date(created).getTime())
   const h = Math.abs(left) / 3600_000
-  const txt = h < 1 ? `${Math.round(h * 60)} min` : `${h.toFixed(h < 10 ? 1 : 0)} h`
+  const txt = duration(h, t)
   return left < 0
     ? { text: t('SLA breached {d}', { d: txt }), tone: 'bad' as const }
     : { text: t('{d} left', { d: txt }), tone: h < 1 ? ('warn' as const) : ('ok' as const) }

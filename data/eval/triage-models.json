@@ -24,5 +24,19 @@
   "escalations_high_or_critical_label": 92,
   "manual_review": 0,
   "at": "2026-10-17T17:06:26.443Z"
+ },
+ "gemini-flash-lite-latest": {
+  "n": 60,
+  "category_accuracy": 93,
+  "urgency_exact": 80,
+  "urgency_within_one": 100,
+  "critical_recall_model": 100,
+  "critical_recall_with_rules": 100,
+  "critical_cases": 9,
+  "escalations": 18,
+  "escalations_high_or_critical_label": 94,
+  "manual_review": 0,
+  "at": "2026-10-18T13:46:45.588Z",
+  "note": "gemini-flash-lite-latest, resolved to gemini-3.5-flash-lite (thinkingLevel minimal); intake on the same model"
  }
 }

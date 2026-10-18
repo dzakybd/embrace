@@ -9,7 +9,10 @@
   "aid_program": null,
   "text": "Dear Dinsos P2PA Demak, I urgently ask for help for my neighbour in Kalikondang Village. Her husband beats her almost every night, and their children are hurt too. It is very serious and they need protection. Please act quickly.",
   "summary": "Wife beaten by her husband every night, the child is beaten too; asks for help now.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. Violence against a mother and her children is an emergency: we have alerted our supervisor and the UPTD PPA Demak team will contact the police women and child unit and visit today. If anyone is in danger now, call 110 or SAPA 129. Can you tell us the RT/RW in Kalikondang?",
+  "followup": "RT 02 RW 05, near the primary school. He works in the day, the mornings are safer.",
+  "closing": "Update: the UPTD PPA team visited with the police, the mother and children are staying in a safe house and have had a medical check, and a legal aid lawyer is helping with the police report. We will keep supporting the family."
  },
  {
   "index": 1,
@@ -21,7 +24,10 @@
   "aid_program": null,
   "text": "Please help, a mother with 2 small children has been thrown out by her husband in Guntur district. Tonight they are sleeping in the prayer room, they have nowhere to live. Please help as soon as possible. My number: 0812-3456-7890.",
   "summary": "Mother and two children thrown out by the husband, sleeping in a prayer room tonight.",
-  "cluster": false
+  "cluster": false,
+  "reply": "We are sorry they are going through this. Our supervisor has been alerted and the UPTD PPA Demak team is going to the prayer room tonight with the village to take the mother and children to a safe place. Please stay near them if you can. If anyone is hurt, call 110.",
+  "followup": "They are at the Al-Ikhlas prayer room. The mother is willing to go with the team.",
+  "closing": "Update: the mother and children are now in the Demak safe house, have food and a place to sleep, and are receiving counselling. The team is helping her with the police report and with her family in Guntur."
  },
  {
   "index": 2,
@@ -33,7 +39,10 @@
   "aid_program": null,
   "text": "Dear Dinsos P2PA Demak, I want to report domestic violence against my sister in Sayung district. Her husband often threatens her and abuses her verbally. She is very scared and does not dare to go to the police because he threatens her. Please advise how she can get legal and psychological protection. Thank you.",
   "summary": "Older sister is often threatened by her husband and is afraid to report to the police.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. Threats and verbal abuse are domestic violence too. A UPTD PPA counsellor can meet your sister in a safe place without her husband knowing, and help her decide on the next steps. Is there a safe time and number to reach her?",
+  "followup": "She can talk on weekdays at 10 am on my number.",
+  "closing": "Update: the counsellor met your sister twice; she now has a safety plan and has chosen to report to the police with a legal aid lawyer. We will keep in touch with her."
  },
  {
   "index": 3,
@@ -45,7 +54,10 @@
   "aid_program": "BPNT",
   "text": "Hi admin, why hasn't my BPNT food aid for this round come in yet? I'm in Wonosalam Village. All my neighbours have already received theirs. We are really short now. Please check.",
   "summary": "BPNT food aid for this period not paid although neighbours already received it.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for your report. We have checked with the BPNT team: the payout for your village is delayed by a data update at the bank. Your name is still on the list. Please bring your KKS card and ID to the e-warong on the date we will send you.",
+  "followup": "Thank you. My family has no rice left, is there any help until then?",
+  "closing": "Update: the BPNT for this round has been paid into your KKS card and you can collect it at the e-warong. The village social worker has also brought a food package for this week."
  },
  {
   "index": 4,
@@ -57,7 +69,10 @@
   "aid_program": "BPNT",
   "text": "Dear Dinsos P2PA Demak, I would like to report that the balance on my KKS aid card for BPNT has been empty for two months. I live in Wonosalam Village and should be receiving it. Please check this further. Thank you for your attention.",
   "summary": "KKS benefit card balance empty for two months.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for writing. We will check your KKS card with the bank and the BPNT data. Please send us the last four digits of the card and your ID number (NIK) by private message only.",
+  "followup": "I have sent them by private message.",
+  "closing": "Update: your card had not been activated after a replacement. The bank has activated it and the two months of BPNT have been paid. Please check your balance."
  },
  {
   "index": 5,
@@ -69,7 +84,10 @@
   "aid_program": "BPNT",
   "text": "To Dinsos P2PA Demak, I am reporting on Grandma Sarinem, an elderly woman living alone in Wonosalam Village. Her BPNT food aid has not come in for some time and the rice at home has run out. She badly needs food aid. Please follow up quickly.",
   "summary": "Elderly person living alone, BPNT not received, rice has run out.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for caring for Grandma Sarinem. We have asked the village social worker (TKSK) to visit her today with a food package, and we are checking her BPNT data. Do you know her ID number or family card?",
+  "followup": "Her family card is with me, I can show it to the social worker.",
+  "closing": "Update: the social worker visited, Grandma Sarinem received a food package and her BPNT has been restored. She is also now in the elderly assistance programme. Thank you for helping her."
  },
  {
   "index": 6,
@@ -81,7 +99,10 @@
   "aid_program": "BPNT",
   "text": "Dear Dinsos P2PA Demak, my KKS aid card was suddenly blocked without any notice, so I cannot collect my BPNT. I live in Wonosalam Village. Please tell me how to get the card unblocked. Thank you.",
   "summary": "KKS card blocked without notice.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for writing. A KKS card can be blocked after a change in the DTKS data. We are checking with the bank. Please bring your card and ID to the village office or our desk so it can be unblocked.",
+  "followup": "I will come on Monday. Do I need a letter from the village?",
+  "closing": "Update: your card has been unblocked at the bank and you can collect your BPNT again. No village letter was needed."
  },
  {
   "index": 7,
@@ -93,7 +114,10 @@
   "aid_program": "BPNT",
   "text": "Dear Dinsos P2PA Demak, I want to ask about my BPNT food aid. When I went to collect it at the e-warong shop in Wonosalam Village, they said my name is not on the list for this round, although I always received it before. Please check my data again. Thank you.",
   "summary": "E-warong shop says the name is not on this period's list.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for writing. We are checking why your name was not on the list for this round. Please do not pay anyone to put it back; it is free.",
+  "followup": "Thank you. The e-warong said I should ask the village.",
+  "closing": "Update: your name had been removed by mistake in the data update. It has been restored and you will receive this round's BPNT with the next payout."
  },
  {
   "index": 8,
@@ -105,7 +129,10 @@
   "aid_program": "BPNT",
   "text": "Hello Dinsos, why has nobody in RT 03 RW 01, Wonosalam Village received BPNT yet? It is already past the usual date. Please tell us when it will be paid, many neighbours are asking.",
   "summary": "A whole neighbourhood unit has not received BPNT; asks for clarity.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for letting us know. The BPNT payout for Wonosalam was delayed by a data update at the bank. It is expected next week; we will share the date with the RT head.",
+  "followup": "Many neighbours are asking. Can you send the date here?",
+  "closing": "Update: BPNT for RT 03 RW 01 was paid on Tuesday. The RT head has the list; please collect it at the e-warong."
  },
  {
   "index": 9,
@@ -117,7 +144,10 @@
   "aid_program": "PKH",
   "text": "@DinsosDemak Hi admin, why has my family's PKH cash transfer stopped? My child just finished primary school and is now in junior high, but the money stopped even though he is still in school. We live in Mijen district. Please explain.",
   "summary": "PKH stopped after the child finished primary school, although the child is now in junior high.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. PKH often stops when a child's school data is not updated after moving up to junior high. Please ask your PKH companion to update the school data, or send us the school's name.",
+  "followup": "He is at SMP Negeri 2 Mijen.",
+  "closing": "Update: the PKH companion updated your child's school data and the next PKH payment will include the missing amount."
  },
  {
   "index": 10,
@@ -129,7 +159,10 @@
   "aid_program": "PKH",
   "text": "@DinsosDemak Please help, admin: a family in Bonang district with a baby has no food at all at home today. They say their PKH hasn't been paid. What can be done? Please help quickly, the baby needs it.",
   "summary": "Family with a baby has no food at all today; PKH not paid.",
-  "cluster": false
+  "cluster": false,
+  "reply": "This is urgent. Our supervisor has been alerted and the village social worker is bringing food and baby supplies to the family today. Can you share the village and RT so we can find them?",
+  "followup": "Bonang, Gebang village, RT 01. The father is a fisherman and has had no work.",
+  "closing": "Update: the family received food and baby supplies the same day. Their PKH has been reinstated and the baby is now checked by the village posyandu. Thank you for alerting us."
  },
  {
   "index": 11,
@@ -141,7 +174,10 @@
   "aid_program": "DTSEN",
   "text": "Dear Dinsos P2PA Demak, several very poor families in my neighbourhood in Karangtengah district are still not registered in the DTKS welfare database. They badly need social aid. Please explain how to register them. Thank you.",
   "summary": "Poor family not in the DTSEN registry; asks to be registered.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for caring for your neighbours. Families are added to the database through the village deliberation (musdes) or our SLRT desk. Please bring their family cards and ID cards to the village office; we will help with the field check.",
+  "followup": "Can they come to your desk directly? The village is slow.",
+  "closing": "Update: the three families registered at the SLRT desk, the field check was done and they are now in the database. The village has been informed."
  },
  {
   "index": 12,
@@ -153,7 +189,10 @@
   "aid_program": "DTSEN",
   "text": "@DinsosDemak Hi admin, my late parents are still listed in the DTKS database. How do I correct the data so the living family members get the aid? We are in Karangtengah.",
   "summary": "Deceased parent still listed in DTSEN; wants the record changed.",
-  "cluster": false
+  "cluster": false,
+  "reply": "We are sorry for your loss. Please bring the death certificates and your family card to the village office or our SLRT desk so the data can be corrected.",
+  "followup": "We have the death certificates. Is it free?",
+  "closing": "Yes, it is free. The data has been corrected and the living family members remain in the database."
  },
  {
   "index": 13,
@@ -165,7 +204,10 @@
   "aid_program": "DTSEN",
   "text": "@DinsosDemak I don't understand why in Karangtengah many people with cars and nice houses are in the DTKS database, while my neighbour who is really poor is not. Please review the data, this is upsetting people.",
   "summary": "Well-off residents are in DTSEN while poor ones are not.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for raising this. We will ask the village to review the data in the next deliberation (musdes), and families who are not eligible can be removed. You can also propose your neighbour at the same time.",
+  "followup": "When is the next musdes?",
+  "closing": "Update: the village musdes reviewed the list, 12 ineligible households were removed and your neighbour was proposed. We will follow up her field check."
  },
  {
   "index": 14,
@@ -177,7 +219,10 @@
   "aid_program": "DTSEN",
   "text": "Dear Dinsos P2PA Demak, how can I check my DTKS registration status online? I live in Dempet district and want to make sure my name is registered. Thank you.",
   "summary": "How to check DTSEN status online.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. You can check your status at cekbansos.kemensos.go.id with your name and district, or at the village office.",
+  "followup": "It worked, my name is there. Thank you.",
+  "closing": "Glad it worked. Contact us if anything changes."
  },
  {
   "index": 15,
@@ -189,7 +234,10 @@
   "aid_program": "BLT",
   "text": "Dear Dinsos P2PA Demak, when is the next BLT cash aid distribution for Gajah district? And will it be paid at the same post office as before? Thank you.",
   "summary": "When is the next BLT cash payment and at which post office.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. The next BLT distribution for Gajah district is planned for the third week of this month at the same post office. We will confirm the date with the village.",
+  "followup": "Thank you. Can my son collect it for me?",
+  "closing": "Yes, with your KKS card, ID card, family card and a signed letter from you. The date has been confirmed with the village."
  },
  {
   "index": 16,
@@ -201,7 +249,10 @@
   "aid_program": "PKH",
   "text": "Hello Dinsos, I'm in Wedung district and my PKH companion never visits, so I don't know when PKH is paid. Please ask the companion to be more active or tell me the schedule. Thank you.",
   "summary": "PKH facilitator never visits; payment schedule unknown.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. We have asked the PKH coordinator to make sure your companion visits and shares the schedule. The next PKH payment is in the coming month.",
+  "followup": "Thank you. Please ask the companion to add me to the group chat.",
+  "closing": "Update: the companion visited and added you to the PKH group chat, where the schedule is shared."
  },
  {
   "index": 17,
@@ -213,7 +264,10 @@
   "aid_program": "BPNT",
   "text": "Hello admin, can someone collect BPNT on behalf of my mother? She is ill and cannot go herself. We live in Kebonagung. Thanks.",
   "summary": "Can someone else collect BPNT on my behalf.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. Yes, a family member can collect BPNT for someone who is ill with her KKS card, ID card, family card and a letter from her or the village.",
+  "followup": "Thank you, we will bring the letter.",
+  "closing": "Glad we could help. Wishing your mother a quick recovery."
  },
  {
   "index": 18,
@@ -225,7 +279,10 @@
   "aid_program": null,
   "text": "Please help, there is a paralysed elderly man living alone in Mranggen district. Nobody looks after him at all and he struggles to eat. His condition is very worrying. Please pay attention to this.",
   "summary": "Paralysed elderly person living alone with no one to care for them.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. We have asked the village social worker and the health centre to visit him today and check his food and care. Do you know if he has any family nearby?",
+  "followup": "His son lives in Semarang. The neighbours give him food sometimes.",
+  "closing": "Update: he was checked by the health centre, now gets daily meals through the elderly programme and his son visits weekly. The village social worker will keep checking on him."
  },
  {
   "index": 19,
@@ -237,7 +294,10 @@
   "aid_program": null,
   "text": "Dear Dinsos P2PA Demak, I want to ask about my request for a wheelchair for my disabled child in Demak district. I applied a year ago and have heard nothing. My child really needs the wheelchair to get around. Please help.",
   "summary": "Child with a disability needs a wheelchair; applied a year ago.",
-  "cluster": false
+  "cluster": false,
+  "reply": "We are sorry for the long wait. We are checking your wheelchair request with the disability team. Please send us the date you applied and your child's name.",
+  "followup": "We applied in October last year, at the social affairs desk.",
+  "closing": "Update: the wheelchair has been delivered to your home and fitted for your child. We apologise for the delay."
  },
  {
   "index": 20,
@@ -249,7 +309,10 @@
   "aid_program": null,
   "text": "Dear Dinsos P2PA Demak, is there any job or skills training programme for deaf people in Sayung district? A relative of mine needs this information. Thank you.",
   "summary": "Information on job training for deaf people.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. The Balai Besar disability centre and the district manpower office run skills training for deaf people. We have sent you the next intake dates.",
+  "followup": "Thank you. Is it free?",
+  "closing": "Yes, it is free and includes lodging. Please contact us if you need help with the registration."
  },
  {
   "index": 21,
@@ -261,7 +324,10 @@
   "aid_program": null,
   "text": "@DinsosDemak Please act: a person with a mental illness in Karangawen district has been chained (pasung) by his family behind their house for a long time. It is a human rights violation. Please follow up quickly.",
   "summary": "Person with mental illness shackled by the family behind the house.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. Chaining (pasung) is not allowed and we are acting on it: the social rehabilitation team and the health centre will visit the family to arrange treatment. Can you share the village?",
+  "followup": "Karangawen, Margohayu village, behind the market.",
+  "closing": "Update: the man has been freed from the pasung, is being treated at the mental hospital and the family receives support. The health centre will follow up at home."
  },
  {
   "index": 22,
@@ -273,7 +339,11 @@
   "aid_program": null,
   "text": "Dear Dinsos P2PA Demak, I often see many young street children busking late at night around the Demak town square. They are very young and should not be on the street at that hour. Please take care of them so they get protection and support. Thank you.",
   "summary": "Many street children busking until late at night.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for caring for these children. The social rehabilitation team will do outreach at the square with Satpol PP and the village. When do you usually see them?",
+  "followup": "Fridays and Saturdays after 10 pm.",
+  "closing": "Update: the team met six children and their families; they now get school support and the families are in the PKH programme. Outreach continues every month.",
+  "procedure": "homeless_referral"
  },
  {
   "index": 23,
@@ -285,7 +355,11 @@
   "aid_program": null,
   "text": "@DinsosDemak Hi admin, an elderly homeless man has been sleeping at a bus shelter in Sayung district for several days. He looks sick and pale. Please check on him.",
   "summary": "Homeless elderly person sleeping at a bus stop, seems ill.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. The social rehabilitation team and the health centre will check on him at the bus shelter today.",
+  "followup": "He is still there this morning.",
+  "closing": "Update: he was taken to the health centre and then to the shelter, where he receives care. The team is trying to reach his family.",
+  "procedure": "homeless_referral"
  },
  {
   "index": 24,
@@ -297,7 +371,10 @@
   "aid_program": "BPNT",
   "text": "Dear Dinsos P2PA Demak, I am reporting illegal levies by the e-warong agent in Wonosalam Village. Every BPNT payout, the agent deducts Rp50,000 from each recipient without any reason. This is hurting people. Please act quickly.",
   "summary": "E-warong agent deducts Rp50,000 from every BPNT payment.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for reporting this. Deductions from BPNT are not allowed. We have passed your report to the BPNT coordinator and the e-warong supervisor. Your name will not be shared with the agent.",
+  "followup": "Thank you. Other recipients are willing to give statements.",
+  "closing": "Update: the coordinator confirmed the deductions; the e-warong agent has been removed and will return the money. Recipients now collect at another e-warong."
  },
  {
   "index": 25,
@@ -309,7 +386,10 @@
   "aid_program": "PKH",
   "text": "To Dinsos P2PA Demak, the head of the PKH group in my neighbourhood in Mijen district asks every member for a compulsory fee. As far as we know PKH recipients do not have to pay anything. Please clarify. Thank you.",
   "summary": "PKH group leader demands a compulsory fee.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. PKH recipients do not have to pay any fee. We have asked the PKH coordinator to clarify this with the group.",
+  "followup": "The group head says it is for the meeting snacks.",
+  "closing": "Update: the PKH coordinator met the group and the fee has been stopped. Any contribution is voluntary."
  },
  {
   "index": 26,
@@ -321,7 +401,10 @@
   "aid_program": "BLT",
   "text": "Dear Dinsos P2PA Demak, a village official in Bonang district is asking residents for money to put their names on the BLT cash aid list. This is unfair and harmful. Please investigate quickly.",
   "summary": "Village official asks for money to put names on the BLT list.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. Asking for money to join the BLT list is not allowed. We have passed it to the inspectorate and will keep your identity confidential.",
+  "followup": "Several residents paid Rp100,000 each.",
+  "closing": "Update: the inspectorate investigated, the official has been sanctioned and the money returned. The BLT list will be reviewed in the next village deliberation."
  },
  {
   "index": 27,
@@ -333,7 +416,10 @@
   "aid_program": null,
   "text": "@DinsosDemak Hi admin, what are the requirements to apply for social aid? A friend of mine needs it but doesn't understand the process.",
   "summary": "Asks for the requirements to apply for social aid.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. Your friend can register at the village office or our SLRT desk with their family card and ID card. A field check follows, and eligible families are added to the database.",
+  "followup": "Thank you, I will tell them.",
+  "closing": "Glad we could help."
  },
  {
   "index": 28,
@@ -345,7 +431,10 @@
   "aid_program": null,
   "text": "Hello admin, what are the office hours of Dinsos P2PA Demak? And if there is an official WhatsApp number for questions, please share it. Thanks.",
   "summary": "Asks for office hours and the official WhatsApp number.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Our office is open Monday to Friday, 08:00 to 15:00. You can also write here at any time and a caseworker will reply.",
+  "followup": "Thank you.",
+  "closing": "You are welcome."
  },
  {
   "index": 29,
@@ -357,7 +446,10 @@
   "aid_program": null,
   "text": "Dear Dinsos P2PA Demak, excuse me, I would like to ask how to register my grandmother for social aid. She is very old and cannot walk far. Is there a simple guide? Thank you very much.",
   "summary": "In Javanese: asks how to register a grandparent for aid.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. If your grandmother cannot walk far, the village social worker can come to her home for the registration. Please share her village.",
+  "followup": "She lives in Wonosalam, Kuncir village.",
+  "closing": "Update: the village social worker visited your grandmother and the registration is done."
  },
  {
   "channel": "whatsapp",
@@ -368,7 +460,10 @@
   "aid_program": null,
   "summary": "Tidal flood (rob) entered homes in Timbulsloko overnight; elderly couple and toddler still inside, no food.",
   "text": "Please help, the tidal flood (rob) has entered our house in Timbulsloko Village, Sayung since last night, the water is waist-high. My grandparents and a toddler are still inside, they haven't evacuated and haven't eaten since this morning.",
-  "cluster": true
+  "cluster": true,
+  "reply": "This is an emergency. Our supervisor has been alerted and the disaster response team and the village are going to Timbulsloko now to evacuate your grandparents and the toddler. If you can, stay in touch at this number. In danger now? Call 112.",
+  "followup": "They are at the end of the main road, the house with the blue door.",
+  "closing": "Update: your grandparents and the toddler were evacuated to the village hall, have food and are checked by the health centre. The team is distributing aid to the area."
  },
  {
   "channel": "social",
@@ -379,7 +474,10 @@
   "aid_program": null,
   "summary": "Rob flooding in Timbulsloko for three days; 20 families need food aid and clean water.",
   "text": "@DinsosDemak Admin, the tidal flood in Timbulsloko hasn't receded for 3 days. About 20 households have flooded kitchens and need basic food and clean water. Please help.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for reporting this. The disaster aid team will bring basic food and clean water to Timbulsloko tomorrow morning. Can the RT head share the list of households?",
+  "followup": "The RT head will send the list tonight.",
+  "closing": "Update: food packages and clean water were distributed to 21 households. The team will return if the flood stays."
  },
  {
   "channel": "whatsapp",
@@ -390,7 +488,10 @@
   "aid_program": null,
   "summary": "Families in Bedono displaced by tidal flood ask how to apply for disaster aid.",
   "text": "Hello, we live in Bedono, Sayung and the tidal flood hit again, our house can't be lived in. How do we apply for disaster aid from Dinsos? Do we have to go through the village first?",
-  "cluster": true
+  "cluster": true,
+  "reply": "We are sorry about your home. You can apply through the village, which sends the list to us, or directly at our desk with your family card. A site visit follows.",
+  "followup": "We have applied through the village. How long does it take?",
+  "closing": "Update: the site visit was done, your household received relief goods and is on the list for home repair aid."
  },
  {
   "channel": "web",
@@ -401,7 +502,10 @@
   "aid_program": null,
   "summary": "Resident asks when the disaster aid already approved for Sriwulan will be distributed.",
   "text": "Dear Dinsos P2PA Demak, the aid for tidal flood victims in Sriwulan Village was reportedly approved last week. When will it be distributed? Thank you.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for asking. The aid for Sriwulan has been approved and is being prepared. We will share the date with the village.",
+  "followup": "Thank you.",
+  "closing": "Update: the aid was distributed on Thursday at the village hall."
  },
  {
   "channel": "whatsapp",
@@ -412,7 +516,10 @@
   "aid_program": "PBI-JK",
   "summary": "Father needs surgery but family BPJS PBI is inactive; asks for a UHC recommendation.",
   "text": "My father must have surgery this week at the district hospital, but our BPJS PBI health insurance turns out to be inactive. We live in Mranggen and are a poor family. How do we ask Dinsos for a PBI / UHC recommendation?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. We can issue a PBI / UHC recommendation for urgent treatment. Please bring your family card, ID card and the hospital letter to our SLRT desk tomorrow morning.",
+  "followup": "We will come at 8. The surgery is on Friday.",
+  "closing": "Update: the recommendation was issued the same day and your father's insurance is active. We hope the surgery goes well."
  },
  {
   "channel": "web",
@@ -423,7 +530,11 @@
   "aid_program": "BPJS Ketenagakerjaan",
   "summary": "Informal worker asks how to claim BPJS employment insurance after a work accident.",
   "text": "I'm a farm labourer in Wonosalam in the BPJS employment insurance programme for vulnerable workers. Last month I had a work accident. How do I claim, and where should I go?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. For a work accident claim, bring your BPJS employment card, ID card and the medical report to the BPJS office in Demak. We can help you prepare the documents.",
+  "followup": "I have the medical report. Can you help me fill in the form?",
+  "closing": "Update: your claim was submitted with our help and BPJS has approved the medical costs.",
+  "procedure": "slrt_bpjs_workers"
  },
  {
   "channel": "whatsapp",
@@ -434,7 +545,11 @@
   "aid_program": null,
   "summary": "Girl aged 15 to be married next month; aunt asks how to prevent it.",
   "text": "Please help, my 15-year-old niece in Wedung district is to be married off by her parents next month. She still wants to go to school. What can be done?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reaching out. A child under 19 may not be married, and we are acting to protect your niece. The UPTD PPA and the child marriage prevention team will visit the family and talk with the parents.",
+  "followup": "Please come soon, the date is set for next month.",
+  "closing": "Update: the team met the family, the marriage has been cancelled and your niece is back at school with a scholarship. We will keep in touch.",
+  "procedure": "child_marriage"
  },
  {
   "channel": "web",
@@ -445,6 +560,10 @@
   "aid_program": null,
   "summary": "Couple asks about the requirements and steps to adopt a child.",
   "text": "Dear Dinsos P2PA, my husband and I would like to adopt a child. What are the requirements and the steps?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. Adoption starts at our office with the documents on the checklist we have sent, followed by two home visits and a recommendation to the court.",
+  "followup": "Thank you. How long does it take?",
+  "closing": "Usually three to six months. We have sent you the checklist; please contact us when you are ready to hand in the documents.",
+  "procedure": "adoption"
  }
 ]

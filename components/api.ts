@@ -189,7 +189,7 @@ export interface SopSource {
   for_replies?: boolean
   origin?: 'file' | 'website' | 'text'
 }
-export interface LegalAnswer {
+export interface DocAnswer {
   answer: string
   sources: { doc: string; title: string; loc: string; url: string; text: string }[]
   tools_used: string[]
@@ -261,10 +261,11 @@ export interface Ticket {
   draft?: Draft | null
   sop?: Citation[]
   sent_reply?: string
+  replies?: { at: string; by: string; text: string }[]
   guard?: { injection: string[]; draft: string[] }
   details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
   progress?: { procedure: string; done: number[] }
-  legal_basis?: LegalAnswer
+  legal_basis?: DocAnswer
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean
@@ -373,12 +374,12 @@ export const api = {
     }).then(json<{ source: SopSource; passages: number }>),
   removeKnowledge: (t: string, doc: string) =>
     adminFetch(`/api/agencies/${t}/knowledge/${doc}`, { method: 'DELETE' }).then(json),
-  askLegal: (t: string, body: { question?: string; ticket_id?: string; by?: string }) =>
-    fetch(`/api/agencies/${t}/legal`, {
+  askDocuments: (t: string, body: { question?: string; ticket_id?: string; by?: string }) =>
+    fetch(`/api/agencies/${t}/documents`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
-    }).then(json<LegalAnswer>),
+    }).then(json<DocAnswer>),
   sop: (t: string, q: string) =>
     fetch(`/api/agencies/${t}/sop?q=${encodeURIComponent(q)}`).then(
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,

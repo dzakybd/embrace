@@ -1,6 +1,6 @@
 # Embrace
 
-**The AI front door for any social services complaint.** Embrace reads every report a social services office receives (social aid, disability and elderly care, homelessness, disaster relief, violence and child protection) from its web chat or Telegram bot, as text, voice notes or photos, in any language. It masks personal data, judges urgency, applies the agency's own escalation rules in code, assigns a person in charge, finds the right passages in the agency's SOPs and Indonesian law, and drafts a cited reply in the citizen's language that says what happens next. A caseworker approves every reply. Staff also get a knowledge base with a legal research agent (for example the legal basis of a case for the police or a court), and leaders get interactive dashboards, a map of cases, an AI weekly brief and early warnings when reports cluster.
+**The AI front door for any social services complaint.** Embrace reads every report a social services office receives (social aid, disability and elderly care, homelessness, disaster relief, violence and child protection) from its web chat or Telegram bot, as text, voice notes or photos, in any language. It masks personal data, judges urgency, applies the agency's own escalation rules in code, assigns a person in charge, finds the right passages in the agency's SOPs and Indonesian law, and drafts a cited reply in the citizen's language that says what happens next. A caseworker approves every reply. Staff also get a knowledge base with a document agent that finds documents and answers from them (for example what a regulation requires, or the legal basis of a case for the police or a court), and leaders get interactive dashboards, a map of cases, an AI weekly brief and early warnings when reports cluster.
 
 Built for the **AI Builder Cup 2026, Social Good track** ("Build in JAPAC. Build for the world.") by team **Nalaria**.
 
@@ -32,7 +32,7 @@ Every report runs one Google ADK `Workflow` (`lib/agents/pipeline.ts`): each ste
 | 7 | Draft check (code) | The output guardrail checks for personal data, links, wrong citations, promises and leaked instructions; a flagged draft goes back to the drafter once with the findings. |
 | – | Follow-up questions (code) | When place, age or time is missing, the chat asks at most two fixed, translated questions; the answers join the report and the agents run again (urgency can only go up). |
 | – | Analyst agent (Gemini + tools) | Answers the head of office and writes the weekly brief with `get_overview`, `find_clusters`, `search_tickets` over live Firestore data. |
-| – | Legal research agent (Gemini + tool) | Answers staff from the knowledge base and drafts a case's legal basis, calling `search_documents` several times; citations it was not given are flagged. |
+| – | Document agent (Gemini + tool) | Finds documents and answers any staff question from the knowledge base, and drafts a case's legal basis, calling `search_documents` several times; citations it was not given are flagged. |
 
 ![Case page in the staff workspace](.github/assets/case.png)
 
@@ -42,7 +42,7 @@ Every report runs one Google ADK `Workflow` (`lib/agents/pipeline.ts`): each ste
 
 - **Inbox** and **case pages**: the report, the draft to approve, the procedure checklist, the legal basis, delegation with a note, the agent trace as a conversation (model, time, tokens, Cloud Trace link) and the audit trail.
 - **Insights** (head of office): KPIs, interactive Apache ECharts charts, a map of cases by province (KPAI) or by kecamatan in Demak regency (Dinsos), the AI weekly brief, early-warning clusters and Ask-the-analyst. Clicking a region, case type or urgency opens those cases.
-- **Knowledge base**: laws, regulations, SOPs, court decisions, guidelines and web pages by category, each with a short summary. Staff add PDFs, Markdown, text or web pages (Gemini writes the summary if left empty) and choose whether replies may cite each one; search needs no tokens, and the legal research agent answers questions with citations.
+- **Knowledge base**: laws, regulations, SOPs, court decisions, guidelines and web pages by category, each with a short summary. Staff add PDFs, Markdown, text or web pages (Gemini writes the summary if left empty) and choose whether replies may cite each one; search needs no tokens, and the document agent answers questions with citations.
 - **Policies**: per case type its team, escalation level, legal basis (picked from the knowledge base) and procedure as a React Flow swimlane diagram; and the escalation rules for every case (response times, safety signals including the agency's own, escalation words, manual-review threshold).
 - **Resources**: official channels, social media, hotlines and partner agencies; hotlines marked urgent are the emergency line given in urgent replies, in the bot and on tracking.
 - **Channels**: the web chat link and the Telegram bot (status checks, set-up, show or change the token).
@@ -53,7 +53,7 @@ Every change to an agency's setup needs a settings password (checked on the serv
 
 ## Built for the world: agency packs
 
-Each built-in agency is a folder under [`agencies/`](agencies/): `agency.json` (case types, teams, staff, escalation rules, response times, procedures, resources, map), `sop/` (its documents with `sources.json`, including summaries) and `seed.json` (synthetic demo history). Any other agency is created in the app at `/agencies/new` from a copy of a built-in one, and is live on the web chat, Telegram and the staff workspace at once. No code changes per agency.
+Each built-in agency is a folder under [`agencies/`](agencies/): `agency.json` (case types, teams, staff, escalation rules, response times, procedures, resources, map), `sop/` (its documents with `sources.json`, including summaries) and `seed.json` (synthetic demo history, with each case's replies, the citizen's answers and procedure progress). Any other agency is created in the app at `/agencies/new` from a copy of a built-in one, and is live on the web chat, Telegram and the staff workspace at once. No code changes per agency.
 
 | Pack | What it shows |
 |---|---|
@@ -65,7 +65,7 @@ Why these two: the team is in contact with people at both agencies, and they cov
 ## How it uses Google Cloud
 
 - **Gemini API** (`gemini-3.1-flash-lite` for every agent, chosen on the eval below and switchable per agent): multilingual understanding, audio transcription, image reading, structured output, tool calling, safety filters; about US$0.0013 per report.
-- **Agent Development Kit (ADK) for TypeScript 2.3**: the pipeline is a `Workflow` of Gemini `LlmAgent`s with Zod schemas and custom `BaseAgent`s for rules, search and the draft check; the analyst and legal research agents are `LlmAgent`s with `FunctionTool`s; a governance plugin applies each agency's models and records latency and tokens; ADK OpenTelemetry goes to Cloud Trace.
+- **Agent Development Kit (ADK) for TypeScript 2.3**: the pipeline is a `Workflow` of Gemini `LlmAgent`s with Zod schemas and custom `BaseAgent`s for rules, search and the draft check; the analyst and document agents are `LlmAgent`s with `FunctionTool`s; a governance plugin applies each agency's models and records latency and tokens; ADK OpenTelemetry goes to Cloud Trace.
 - **Firebase App Hosting on Cloud Run** (`asia-southeast1`): builds and serves the Next.js app and its API; agent progress streams over Server-Sent Events. No Firebase SDK or key in the browser.
 - **Cloud Firestore**: cases with the agent trace and audit trail, agencies, the knowledge base, integrations and notifications; rules deny all client access.
 - **Cloud Storage for Firebase**: the laws the agents cite (opened at the cited page), map boundaries, portraits and emblems (public); report photos, voice notes and uploaded documents (private).
@@ -91,7 +91,7 @@ The three misses are borderline: a school beating read as violence rather than e
 
 **Load test on production**: ~290 page views/s with 50 concurrent users (p99 287 ms, 0 errors) on one warm instance; 10 AI reports at once completed in about 4.7 s each (`scripts/load-burst.mjs`).
 
-**Tests**: 78 vitest tests without model calls (rules, setup sections, guardrails, the drafting loop, citations, maps, the settings password, procedures, the bot gate, translations).
+**Tests**: 79 vitest tests without model calls (rules, durations, setup sections, guardrails, the drafting loop, citations, maps, the settings password, procedures, the bot gate, translations).
 
 ## Run it
 
@@ -101,7 +101,7 @@ Requirements: Node 22+, a Gemini API key.
 npm install
 cp .env.example .env.local     # set GOOGLE_GENAI_API_KEY (and EMBRACE_ADMIN_PASSWORD to protect setup changes)
 npm run dev                    # http://localhost:3000, in-memory store
-npm test                       # 78 tests, no model calls
+npm test                       # 79 tests, no model calls
 npm run lint && npm run format # ESLint and Biome
 npm run eval                   # triage eval (60 cases), uses the Gemini key
 npm run eval:attacks           # attack tests through the full pipeline, uses the Gemini key
@@ -124,7 +124,7 @@ firebase deploy --only apphosting,firestore,functions,storage
 ```
 app/              Next.js App Router: pages and API route handlers (app/api/*)
 components/       React UI: citizen chat and tracking, staff workspace, charts (ECharts), diagrams (React Flow)
-lib/agents/       ADK agents: pipeline.ts (Workflow), analyst.ts, legal.ts, governance.ts, models.ts
+lib/agents/       ADK agents: pipeline.ts (Workflow), analyst.ts, documents.ts, governance.ts, models.ts
 lib/              policy rules, guardrails, search and knowledge base, agency setup, maps, Firestore store, analytics
 functions/        Cloud Function for Firebase: Pub/Sub case events -> notifications
 agencies/<id>/    agency packs: agency.json, sop/, sop-index.json, seed.json

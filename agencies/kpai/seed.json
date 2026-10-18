@@ -8,7 +8,10 @@
   "aid_program": null,
   "summary": "Boy aged 7 beaten by stepfather with a hose, bruised; mother afraid to report.",
   "text": "KPAI please help. My neighbour's 7-year-old is often beaten with a hose by his stepfather, his body is covered in bruises. Last night he was screaming again. His mother is afraid to report it. We are in Bekasi.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. A child being beaten regularly is an emergency: we have alerted our supervisor and are contacting the women and child protection unit (UPTD PPA) and the police in Bekasi today so the boy can be checked and kept safe. If he is in danger right now, call SAPA 129 or 110. Could you tell us the neighbourhood (RT/RW) so the team can find the house?",
+  "followup": "It is RT 04 RW 07 in Bekasi Timur. The mother said she would talk to the team if her husband is not at home, mornings are best.",
+  "closing": "Update on your report: the UPTD PPA team visited with the local police, the boy was examined and is now staying with his grandmother, and his mother is receiving counselling. The case is with the police child unit and we will keep monitoring it. Thank you for speaking up for him."
  },
  {
   "channel": "web",
@@ -19,7 +22,10 @@
   "aid_program": null,
   "summary": "Several students say a teacher at a boarding school molested them; parents want protection.",
   "text": "Dear KPAI, I am the parent of a student at a boarding school in Garut. My child and several friends say one of the teachers molested them. We are afraid other children are still there. Please protect them.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for trusting us with this. We take abuse at a boarding school very seriously: our supervisor has been alerted and we are contacting the Garut UPTD PPA and the police child unit today so the children can be heard safely. Please do not confront the teacher yourself. Can your child and the other families give a statement if a counsellor is present?",
+  "followup": "Yes, three families are willing. We would like a female counsellor, the children are scared.",
+  "closing": "Update: the children gave statements with a female counsellor present, the teacher has been suspended and the police have opened an investigation. The school is under supervision by the provincial office. The families are receiving psychological support. We will monitor the case until it is in court."
  },
  {
   "channel": "whatsapp",
@@ -30,7 +36,10 @@
   "aid_program": null,
   "summary": "Girl aged 16 recruited for a job in Batam, now held and not allowed to contact family.",
   "text": "Please help KPAI, my 16-year-old sister was taken to Batam for a job as a café waitress. Now her phone has been taken; she only managed to message that she is locked in and forced to serve guests.",
-  "cluster": false
+  "cluster": false,
+  "reply": "We are treating this as an emergency. Our supervisor has been alerted and we have passed your sister's situation to the anti-trafficking task force and the Batam police. Please send us any address, café name or phone number you have, and keep her last messages; they are evidence. If you hear from her, call 110.",
+  "followup": "The café is called something like 'Bintang' near Nagoya. Her last message came from a number we do not know; we saved it.",
+  "closing": "Update: the police found your sister and two other girls and brought them to a safe shelter in Batam. She is unhurt and will be accompanied home by a social worker. The case is now with the police; we will stay in touch with your family."
  },
  {
   "channel": "social",
@@ -41,7 +50,10 @@
   "aid_program": null,
   "summary": "Girl aged 14 threatened by an online contact to spread her photos unless she sends more.",
   "text": "@KPAI_official please help, my 14-year-old is being threatened by someone she met in an online game, who says he will spread her photos unless she sends more. What should we do?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for telling us, and well done for not sending anything more. Please do not reply to the person, keep screenshots of the chats and the account name, and report the account in the game. We have passed this to our online-protection team, who can help you report it to the police cyber unit. Is your daughter safe and with an adult now?",
+  "followup": "She is at home with us. We have the screenshots. Does she need to go to the police herself?",
+  "closing": "Update: the account was reported to the platform and blocked, and the police cyber unit has taken your report. Your daughter does not need to face the person. A counsellor from the UPTD PPA can see her if she wants to talk; we have sent you their contact."
  },
  {
   "channel": "web",
@@ -52,7 +64,10 @@
   "aid_program": null,
   "summary": "Video of a student being bullied is spreading on social media; parents ask for it to be taken down.",
   "text": "Dear KPAI, a video of my child being bullied by classmates at school was posted on TikTok and has thousands of views. My child refuses to go to school. Please help get the video taken down.",
-  "cluster": false
+  "cluster": false,
+  "reply": "We are sorry your child is going through this. We have asked the platform to take the video down as it shows a child, and we are writing to the school to handle the bullying. Can you send us the link to the video and the name of the school?",
+  "followup": "Here is the link. It is SMP Negeri 5, the classmates are in grade 8.",
+  "closing": "Update: the video has been removed by the platform. The school met the families of the students involved and agreed a support plan with the school counsellor. Your child can return with a teacher as a contact person. Please let us know if anything happens again."
  },
  {
   "channel": "email",
@@ -63,7 +78,10 @@
   "aid_program": null,
   "summary": "Mother says ex-husband has stopped child support ordered by the court after divorce.",
   "text": "Dear KPAI, my ex-husband has not paid the child support ordered by the religious court for 8 months. I have two children aged 5 and 9.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing to us. Unpaid child support ordered by a court can be enforced: you can ask the religious court for execution of the decision. We can help you prepare the request and contact a legal aid post near you. Do you have a copy of the court decision?",
+  "followup": "Yes, I have the decision from 2024. Where do I take it?",
+  "closing": "Update: with the legal aid post you filed the execution request at the religious court, which has summoned your ex-husband. We have recorded the case and will check on it in a month. Please tell us if the payments still do not come."
  },
  {
   "channel": "web",
@@ -74,7 +92,10 @@
   "aid_program": null,
   "summary": "Father denied access to his children by ex-wife after divorce; asks for mediation.",
   "text": "I am the father of two children. Since the divorce a year ago I have not been allowed to see them. I ask KPAI to mediate so the children's right to see their father is respected.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. Children have the right to keep in touch with both parents when it is safe. We can invite you and the children's mother to a mediation at our office. Is there a court decision about custody or visits?",
+  "followup": "There is a custody decision but it says nothing about visits. I am willing to come any weekday.",
+  "closing": "Update: both parents attended mediation and agreed on visits every second weekend, written in a signed agreement. We will check in with both of you in three months on how the visits are going."
  },
  {
   "channel": "whatsapp",
@@ -85,7 +106,10 @@
   "aid_program": null,
   "summary": "Toddler left alone for days by parents working abroad; grandmother too ill to care.",
   "text": "In my village a 3-year-old has been left with a sick grandmother while the parents work abroad. The child often goes without food and plays alone in the street.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for caring about this child. We have asked the village child protection group (PATBM) and the local social worker to visit the family today and check the child's food and care. Do you know where the parents work so we can contact them?",
+  "followup": "The parents are in Malaysia. The grandmother's house is next to the village mosque.",
+  "closing": "Update: the social worker visited, the child now gets meals from the village posyandu every day and the grandmother receives a health check. We reached the parents, who are sending money monthly. The village group will keep an eye on the child."
  },
  {
   "channel": "email",
@@ -96,7 +120,10 @@
   "aid_program": null,
   "summary": "Couple asks about the legal process to adopt a relative's child.",
   "text": "Dear KPAI, we would like to adopt a relative's child. What is the correct legal procedure so the child's rights are protected?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for your question. Adoption in Indonesia goes through the social affairs office and a court decision, so the child's rights are protected. You can start at the Dinsos office in your area with the documents on the checklist we have sent. Is the child a relative by blood?",
+  "followup": "Yes, my late sister's son. Is the process different for relatives?",
+  "closing": "The process is the same, but a relative adoption usually goes faster. We have sent you the steps and the list of documents. Contact us again if anything is unclear during the process."
  },
  {
   "channel": "web",
@@ -107,7 +134,10 @@
   "aid_program": null,
   "summary": "School withholds a child's report card over unpaid fees.",
   "text": "Dear KPAI, my child's school is withholding the report card because we are 3 months behind on fees. My child is ashamed and doesn't want to go to school. Is a school allowed to do this?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. A school may not withhold a child's report card because of unpaid fees; the child's right to education comes first. We will write to the school and the education office. Which school is it?",
+  "followup": "It is a private primary school in Depok. Thank you, my child really wants it back.",
+  "closing": "Update: after our letter the school handed over the report card and agreed an instalment plan for the fees with you. Please tell us if your child faces any further pressure at school."
  },
  {
   "channel": "social",
@@ -118,7 +148,10 @@
   "aid_program": null,
   "summary": "Student badly injured in a senior-junior hazing ritual during school orientation.",
   "text": "@KPAI_official my son in grade 10 was beaten by senior students during school orientation and needed stitches in his head. The school says it is a tradition. Please act.",
-  "cluster": false
+  "cluster": false,
+  "reply": "This is not tradition, it is violence, and we are acting on it. We have alerted our supervisor and asked the education office and the school to stop the activity and report what happened. Was the injury reported to the police, and do you have the hospital notes?",
+  "followup": "We have the hospital notes. We have not gone to the police yet, the school asked us not to.",
+  "closing": "Update: the education office stopped the orientation activity, the students involved have been sanctioned, and with our help you made a police report. Your son is receiving counselling at school. We will monitor until the case is settled."
  },
  {
   "channel": "web",
@@ -129,7 +162,10 @@
   "aid_program": null,
   "summary": "Child with disability refused enrolment at the local primary school.",
   "text": "My child is deaf and was refused at the state primary school near our home because there is no special-needs teacher. What about my child's right to education?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. Every child, including a deaf child, has the right to study at a school near home, and schools must make reasonable adjustments. We will ask the education office about an inclusive school place. What grade is your child entering?",
+  "followup": "Grade 1. He can read lips a little and uses some sign language.",
+  "closing": "Update: the education office has placed your child in the inclusive state primary school two kilometres away, with a support teacher three days a week. Please let us know how the first weeks go."
  },
  {
   "channel": "whatsapp",
@@ -140,7 +176,10 @@
   "aid_program": "Free school meals (MBG)",
   "summary": "Dozens of pupils vomiting and dizzy after the free school meal at SDN Cempaka 2; some taken to the health centre.",
   "text": "KPAI please help, at SDN Cempaka 2 dozens of children are vomiting and dizzy after today's free school lunch (MBG). Some were taken to the health centre on teachers' motorbikes. My child is one of them.",
-  "cluster": true
+  "cluster": true,
+  "reply": "This is an emergency. We have alerted our supervisor, the district health office and the free-meal (MBG) task force so the children are treated and the food is tested. Take your child to the health centre if they are still unwell. How many children are sick, as far as you know?",
+  "followup": "More than 30. Mine is better now but some are still at the health centre.",
+  "closing": "Update: all the children have recovered. The health office found bacteria in the food samples, the kitchen has been closed and a new supplier is serving the school under daily checks. Thank you for alerting us so quickly."
  },
  {
   "channel": "web",
@@ -151,7 +190,10 @@
   "aid_program": "Free school meals (MBG)",
   "summary": "Parent says the free meal at SDN Cempaka 2 smelled spoiled for the third time this month.",
   "text": "Dear KPAI, the free school meals (MBG) at SDN Cempaka 2 have been spoiled and smelly three times this month. My child has stomach aches. Please supervise the food supplier.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for reporting this. We have recorded it together with other reports from the same school and passed it to the MBG task force and the health office so the supplier is inspected. Has your child seen a doctor?",
+  "followup": "Yes, the doctor said it was mild food poisoning.",
+  "closing": "Update: the supplier was inspected and closed; meals now come from another kitchen with daily checks. Please tell us if the problem comes back."
  },
  {
   "channel": "social",
@@ -162,7 +204,10 @@
   "aid_program": "Free school meals (MBG)",
   "summary": "More pupils at SDN Cempaka 2 ill after school meals; parents ask who checks the kitchen.",
   "text": "@KPAI_official another poisoning at SDN Cempaka 2, the second time. Who checks the free-meal kitchen? The children are now afraid to eat.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you, we know: several reports have come in about SDN Cempaka 2 and they are being handled together. The health office and the MBG task force are inspecting the kitchen. We will share the result.",
+  "followup": "Please share it publicly, the parents want to know.",
+  "closing": "Update: the kitchen serving SDN Cempaka 2 has been closed after the inspection, and a new supplier is under daily checks. The school will share the result with all parents."
  },
  {
   "channel": "email",
@@ -173,7 +218,10 @@
   "aid_program": "Free school meals (MBG)",
   "summary": "School committee requests an inspection of the free-meal supplier serving SDN Cempaka 2.",
   "text": "Dear KPAI, the school committee of SDN Cempaka 2 asks KPAI to oversee the free-meal (MBG) supplier after several cases of children falling ill at our school.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you, committee members. We have joined your request to the other reports from SDN Cempaka 2 and asked the MBG task force to brief the school. Can the committee nominate a contact person?",
+  "followup": "Our chair will be the contact. She can meet any morning.",
+  "closing": "Update: the MBG task force met the committee chair; the kitchen has been replaced and parents can now join the weekly food checks."
  },
  {
   "channel": "whatsapp",
@@ -184,7 +232,10 @@
   "aid_program": "Free school meals (MBG)",
   "summary": "Pupils at a neighbouring school served by the same kitchen also had stomach aches.",
   "text": "At SDN Cempaka 1, served by the same kitchen, children also had stomach aches after the free meal. Please check it as well.",
-  "cluster": true
+  "cluster": true,
+  "reply": "Thank you for letting us know. We have added SDN Cempaka 1 to the inspection, since the same kitchen serves both schools.",
+  "followup": "Thank you. Will our school also get the new supplier?",
+  "closing": "Update: yes, both schools now get meals from the new supplier with daily checks. Please report any new symptoms to us."
  },
  {
   "channel": "web",
@@ -195,7 +246,10 @@
   "aid_program": null,
   "summary": "Boy aged 15 detained by police for a street fight without a lawyer or parents present.",
   "text": "Dear KPAI, my 15-year-old son was detained at the police station for a street fight. He was questioned without a lawyer or a parent. Is this in line with the juvenile justice rules?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for writing. Under the juvenile justice law a child must be accompanied by a parent or guardian and a lawyer or social worker when questioned. We have contacted the police station and the community counsellor (Bapas) about your son. Which police station is he at?",
+  "followup": "Polsek Tambora. He has been there since last night.",
+  "closing": "Update: the community counsellor (Bapas) and a legal aid lawyer now accompany your son, and the police agreed to try diversion. He has gone home with you while the process continues. We will monitor the case."
  },
  {
   "channel": "whatsapp",
@@ -206,7 +260,10 @@
   "aid_program": null,
   "summary": "Mother asks about diversion for her son accused of theft.",
   "text": "My 14-year-old son is accused of stealing a friend's phone. The police said diversion is possible. What is it and how does it work?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. Diversion means the case is settled outside court, with both families, the police and a community counsellor agreeing on what the child does to make it right. It is possible for children aged 12 to 18 when the offence carries less than 7 years. We can explain it at a meeting if you like.",
+  "followup": "Yes please. Does my son need a lawyer?",
+  "closing": "He has the right to legal aid; we have sent you the contact of a free legal aid post. The diversion meeting at the police station reached an agreement and the case is closed. Let us know if you need anything else."
  },
  {
   "channel": "social",
@@ -217,7 +274,10 @@
   "aid_program": null,
   "summary": "Young children forced to beg at traffic lights late at night by an adult.",
   "text": "@KPAI_official every night at the Grogol traffic lights small children are made to beg until 1 am, with an adult watching them and taking the money.",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. Children made to beg at night is exploitation. We have passed it to the DKI social affairs office and the police, who will check the location. What times did you see them?",
+  "followup": "Every night from about 9 pm to 1 am, near the Grogol bus stop.",
+  "closing": "Update: the social affairs office and the police found four children and the adult. The children are now in a shelter and back with relatives under supervision, and the adult is being investigated. Thank you for speaking up."
  },
  {
   "channel": "web",
@@ -228,7 +288,10 @@
   "aid_program": null,
   "summary": "Mother says the police case of her daughter's sexual abuse has stalled for 6 months; asks KPAI oversight.",
   "text": "Dear KPAI, I reported the sexual abuse of my daughter to the city police 6 months ago but nothing has happened and the abuser is still free. Please oversee this case.",
-  "cluster": false
+  "cluster": false,
+  "reply": "We are sorry for your daughter and your family. We can ask the police for the progress of the case (SP2HP) and oversee how it is handled. Please send us the police report number and the date.",
+  "followup": "The report number is LP/B/1234/IV/2026, made on 12 April.",
+  "closing": "Update: after our letter the police gave you a written progress report, the suspect has been named and the case file has gone to the prosecutor. Your daughter is receiving support from the UPTD PPA. We will keep overseeing it."
  },
  {
   "channel": "email",
@@ -239,7 +302,10 @@
   "aid_program": null,
   "summary": "Child cannot get a birth certificate because the parents' marriage is unregistered.",
   "text": "Dear KPAI, my child cannot get a birth certificate because our marriage is not registered, so registering for school is difficult. What can we do?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for asking. A child can get a birth certificate even when the parents' marriage is not registered, through a statement of responsibility (SPTJM) at the civil registry. We have sent you the steps. Which city do you live in?",
+  "followup": "Bogor. Do we need a lawyer?",
+  "closing": "No lawyer is needed. The civil registry in Bogor can issue it with the SPTJM form. Please contact us if they refuse."
  },
  {
   "channel": "web",
@@ -250,7 +316,10 @@
   "aid_program": null,
   "summary": "Asks about KPAI office hours and how to file a complaint in person.",
   "text": "Good afternoon, on which days can complaints be made in person at the KPAI office? Which documents should I bring?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Good afternoon. Our office takes complaints in person Monday to Friday, 08:00 to 15:00. Please bring your ID card, the child's birth certificate or family card, and any evidence you have. You can also report online at any time.",
+  "followup": "Thank you. Do I need to book first?",
+  "closing": "No booking is needed. We look forward to seeing you."
  },
  {
   "channel": "whatsapp",
@@ -261,6 +330,9 @@
   "aid_program": null,
   "summary": "CCTV shows a daycare worker hitting toddlers; parents ask for action.",
   "text": "KPAI, CCTV footage from my child's daycare shows the carer hitting and pinching several toddlers. The daycare owner is covering it up. Where should we report?",
-  "cluster": false
+  "cluster": false,
+  "reply": "Thank you for reporting this. Hitting toddlers is violence and we are acting on it. We have asked the UPTD PPA and the police to take the CCTV footage as evidence and check the daycare's permit. Please keep a copy of the footage safe. Are other parents willing to report too?",
+  "followup": "Yes, five parents. The owner wants to delete the footage.",
+  "closing": "Update: the police secured the footage, the carer has been named a suspect and the daycare has been closed by the city. The children are receiving a check-up and counselling. Thank you for acting quickly."
  }
 ]
