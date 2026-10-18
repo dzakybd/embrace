@@ -79,7 +79,7 @@ const slug = (s: string) =>
     .replace(/^_|_$/g, '')
     .slice(0, 30) || 'x'
 
-async function pdfUnits(b64: string): Promise<{ loc: string; text: string }[]> {
+export async function pdfUnits(b64: string): Promise<{ loc: string; text: string }[]> {
   const { extractText, getDocumentProxy } = await import('unpdf')
   const pdf = await getDocumentProxy(new Uint8Array(Buffer.from(b64, 'base64')))
   const { text } = await extractText(pdf, { mergePages: false })

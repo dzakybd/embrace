@@ -19,6 +19,7 @@ import { LABEL, type Slot } from '@/lib/details'
 import { useLang, useT } from '../Lang'
 import { catLabel, LawLinks, procTitle, stageTitle } from '../Procedures'
 import { AGENT_IO } from './AgentMap'
+import { LegalResult } from './Knowledge'
 import { Avatar } from '../Avatar'
 import { useStaff } from './StaffProvider'
 
@@ -173,6 +174,7 @@ export default function Case({ id }: { id: string }) {
           <div className="col">
             <Pic t={t} agency={agency} me={me} busy={busy} act={act} readOnly={readOnly} />
             <Checklist t={t} agency={agency} officer={me.name} readOnly={readOnly} onChange={setT} />
+            <LegalBasis t={t} by={me.name} readOnly={readOnly} onChange={setT} />
             {!readOnly && (
               <Card title={tr('Actions')} icon="rules">
                 <div className="actions">
@@ -677,6 +679,79 @@ function Trace({ t }: { t: Ticket }) {
         )}
       </div>
     </div>
+  )
+}
+
+/** The legal basis of the case for its file, a police referral or court, drafted by the legal research agent from
+ * the knowledge base and kept on the case. */
+function LegalBasis({
+  t,
+  by,
+  readOnly,
+  onChange,
+}: {
+  t: Ticket
+  by: string
+  readOnly: boolean
+  onChange: (t: Ticket) => void
+}) {
+  const tr = useT()
+  const [busy, setBusy] = useState(false)
+  const [err, setErr] = useState('')
+  const r = t.legal_basis
+  if (readOnly && !r) return null
+  const draft = async () => {
+    setBusy(true)
+    setErr('')
+    try {
+      const legal_basis = await api.askLegal(t.agency_id, { ticket_id: t.id, by })
+      onChange({ ...t, legal_basis })
+    } catch (e) {
+      setErr(String(e).replace(/^Error: \d+ /, ''))
+    } finally {
+      setBusy(false)
+    }
+  }
+  return (
+    <Card title={tr('Legal basis')} icon="book" className="legal-card">
+      {!r && !busy && (
+        <p className="muted small">
+          {tr(
+            'For the case file, a police referral or court: the legal research agent searches the knowledge base and cites the articles that apply.',
+          )}
+        </p>
+      )}
+      {busy && <div className="shimmer" />}
+      {r && !busy && (
+        <>
+          <LegalResult r={r} />
+          {r.at && (
+            <p className="muted small">
+              {tr('Drafted {when}', { when: ago(r.at, tr) })}
+              {r.by ? ` · ${r.by}` : ''}
+            </p>
+          )}
+        </>
+      )}
+      {err && <p className="error small">{err}</p>}
+      {!readOnly && (
+        <div className="copy-row">
+          <button className={r ? 'ghost small' : 'tonal small'} disabled={busy} onClick={draft}>
+            <Icon name="spark" size={14} />{' '}
+            {busy ? tr('Searching…') : r ? tr('Draft again') : tr('Draft the legal basis')}
+          </button>
+          {r?.answer && (
+            <button
+              type="button"
+              className="ghost small"
+              onClick={() => navigator.clipboard?.writeText(r.answer).catch(() => {})}
+            >
+              {tr('Copy')}
+            </button>
+          )}
+        </div>
+      )}
+    </Card>
   )
 }
 

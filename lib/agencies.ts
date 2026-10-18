@@ -36,6 +36,8 @@ export interface Agency {
   edited?: boolean
   /** Username of the agency's Telegram bot, without @. */
   telegram_bot?: string | null
+  /** What the agency calls its head (English, translated in the UI), e.g. "Chairperson"; default "Head of office". */
+  leader_label?: string
   /** Indonesian name, short name and description, shown when the UI language is Indonesian. */
   name_id?: string
   short_name_id?: string
@@ -211,6 +213,7 @@ export function publicAgency(a: Agency) {
     emergency_line,
     team,
     telegram_bot: a.telegram_bot ?? null,
+    leader_label: a.leader_label ?? 'Head of office',
     logo: a.logo ?? null,
     name_id: a.name_id ?? '',
     short_name_id: a.short_name_id ?? '',

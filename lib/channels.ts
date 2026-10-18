@@ -1,6 +1,6 @@
 // Channels per agency. Telegram is live: each agency has its own bot. Built-in agencies' bots are managed by the
-// deployment (token in Secret Manager); agencies created in the app connect a bot from their Integrations page.
-import { getAgency } from './agencies'
+// deployment (token in Secret Manager); a token set on the Channels page (Firestore, server only) takes its place.
+import { getAgency, shipped } from './agencies'
 import { fileUrl } from './files-url'
 import { localize } from './i18n'
 import { STORE } from './store'
@@ -21,7 +21,14 @@ export const webhookUrl = (agencyId: string) => `${publicUrl()}/api/telegram/web
 const managedToken = (agencyId: string) => process.env[`TELEGRAM_BOT_TOKEN_${agencyId.toUpperCase()}`]?.trim()
 
 export async function telegramBot(agencyId: string): Promise<TelegramBot | null> {
-  const agency = getAgency(agencyId)
+  const t = (await STORE.getIntegration(agencyId))?.telegram
+  if (t) return { agency_id: agencyId, token: t.token, username: t.username, secret: t.secret, managed: false }
+  return managedBot(agencyId)
+}
+
+/** The bot the deployment ships for a built-in agency, if any. */
+export function managedBot(agencyId: string): TelegramBot | null {
+  const agency = shipped(agencyId)
   const token = managedToken(agencyId)
   if (token && agency?.telegram_bot) {
     return {
@@ -32,8 +39,7 @@ export async function telegramBot(agencyId: string): Promise<TelegramBot | null>
       managed: true,
     }
   }
-  const t = (await STORE.getIntegration(agencyId))?.telegram
-  return t ? { agency_id: agencyId, token: t.token, username: t.username, secret: t.secret, managed: false } : null
+  return null
 }
 
 const COMMANDS = [
@@ -175,7 +181,7 @@ export async function configureBot(agencyId: string, token: string, secret: stri
   await call(token, 'setMyDescription', {
     language_code: 'id',
     description:
-      `${local.name}\n\nCeritakan apa yang terjadi dengan kata-kata Anda sendiri, lewat teks, pesan suara, atau foto. Laporan mendesak memberi tahu manajer dalam hitungan detik; petugas memeriksa setiap balasan.\n\nDalam bahaya sekarang? Hubungi ${agency.emergency_line}.\n\nPrototipe Embrace: gunakan data rekaan saja.`.slice(
+      `${local.name}\n\nCeritakan apa yang terjadi dengan kata-kata Anda sendiri, lewat teks, pesan suara, atau foto. Laporan mendesak memberi tahu pengawas dalam hitungan detik; petugas memeriksa setiap balasan.\n\nDalam bahaya sekarang? Hubungi ${agency.emergency_line}.\n\nPrototipe Embrace: gunakan data rekaan saja.`.slice(
         0,
         512,
       ),

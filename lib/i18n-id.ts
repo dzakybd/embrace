@@ -45,8 +45,9 @@ export const ID: Record<string, string> = {
   'Staff workspace': 'Ruang kerja petugas',
   Caseworker: 'Petugas',
   Caseworkers: 'Petugas',
-  Supervisor: 'Manajer',
-  'Head of office': 'Pimpinan',
+  Supervisor: 'Pengawas',
+  'Head of office': 'Kepala',
+  Chairperson: 'Ketua',
   'My cases and AI-drafted replies': 'Kasus saya dan draf balasan dari AI',
   'Escalations first, delegate cases': 'Eskalasi lebih dulu, delegasikan kasus',
   'KPIs, weekly AI brief, early warnings': 'KPI, ringkasan mingguan AI, peringatan dini',
@@ -56,7 +57,7 @@ export const ID: Record<string, string> = {
   'Names, rules, categories, teams, staff and documents': 'Nama, aturan, kategori, tim, petugas, dan dokumen',
   'Step {n}': 'Langkah {n}',
   'Report number in seconds, personal data masked': 'Nomor laporan dalam hitungan detik, data pribadi disamarkan',
-  'Urgent cases alert the supervisor': 'Kasus mendesak memberi tahu manajer',
+  'Urgent cases alert the supervisor': 'Kasus mendesak memberi tahu pengawas',
   'A caseworker gets a cited draft reply': 'Petugas menerima draf balasan beserta rujukannya',
   'A person approves every reply': 'Setiap balasan disetujui oleh manusia',
   'What this agency handles': 'Layanan yang ditangani instansi ini',
@@ -97,7 +98,7 @@ export const ID: Record<string, string> = {
   'Checking how urgent it is': 'Memeriksa tingkat kedaruratan',
   'Finding the right team and person': 'Mencari tim dan petugas yang tepat',
   'Preparing a first reply for a caseworker to check': 'Menyiapkan balasan awal untuk diperiksa petugas',
-  'A supervisor has been alerted now.': 'Manajer sudah diberi tahu sekarang.',
+  'A supervisor has been alerted now.': 'Pengawas sudah diberi tahu sekarang.',
   'Your report is with:': 'Laporan Anda ditangani oleh:',
   'You will hear back within {h} hours.': 'Anda akan menerima balasan dalam {h} jam.',
   'A caseworker reviews every reply before it is sent.': 'Petugas memeriksa setiap balasan sebelum dikirim.',
@@ -122,7 +123,7 @@ export const ID: Record<string, string> = {
   'Being reviewed': 'Sedang ditinjau',
   'With: {team}': 'Ditangani: {team}',
   'Reply sent': 'Balasan terkirim',
-  'Marked urgent: a supervisor has been alerted.': 'Ditandai mendesak: manajer sudah diberi tahu.',
+  'Marked urgent: a supervisor has been alerted.': 'Ditandai mendesak: pengawas sudah diberi tahu.',
   'First response expected by': 'Tanggapan pertama diharapkan paling lambat',
   'Reply from {agency}': 'Balasan dari {agency}',
   'Tidal flood, no food': 'Banjir rob, tidak ada makanan',
@@ -244,7 +245,7 @@ export const ID: Record<string, string> = {
   'Reply draft': 'Draf balasan',
   'Sources cited in this draft ({n})': 'Sumber yang dirujuk draf ini ({n})',
   'Read only: the caseworker in charge or the supervisor approves replies.':
-    'Hanya baca: petugas penanggung jawab atau manajer yang menyetujui balasan.',
+    'Hanya baca: petugas penanggung jawab atau pengawas yang menyetujui balasan.',
   'Approve & send': 'Setujui & kirim',
   'No draft for this case (historical record).': 'Tidak ada draf untuk kasus ini (catatan lama).',
   'Person in charge': 'Penanggung jawab',
@@ -312,7 +313,7 @@ export const ID: Record<string, string> = {
 
   // Team, knowledge, settings
   'Who handles what. New cases go to the person in charge of their team; escalations also alert the supervisor.':
-    'Siapa menangani apa. Kasus baru masuk ke penanggung jawab timnya; eskalasi juga memberi tahu manajer.',
+    'Siapa menangani apa. Kasus baru masuk ke penanggung jawab timnya; eskalasi juga memberi tahu pengawas.',
   'receives escalations': 'menerima eskalasi',
   'sees Insights': 'melihat Wawasan',
   'Open cases': 'Kasus terbuka',
@@ -394,7 +395,7 @@ export const ID: Record<string, string> = {
     'Aturan deterministik yang memutuskan eskalasi, bukan AI semata. Petugas selalu menyetujui setiap balasan sebelum dikirim.',
   'Respond within (hours), {u}': 'Tanggapi dalam (jam), {u}',
   'Safety signals from the AI that always alert the supervisor':
-    'Sinyal keselamatan dari AI yang selalu memberi tahu manajer',
+    'Sinyal keselamatan dari AI yang selalu memberi tahu pengawas',
   'A child is unsafe': 'Anak dalam bahaya',
   'Someone is in danger now': 'Ada orang dalam bahaya sekarang',
   'Self-harm or suicide risk': 'Risiko melukai diri atau bunuh diri',
@@ -403,7 +404,7 @@ export const ID: Record<string, string> = {
   'Possible fraud': 'Dugaan penipuan',
   'Not enough information': 'Informasi kurang',
   'Escalation words (comma separated): a match always alerts the supervisor':
-    'Kata eskalasi (pisahkan dengan koma): kecocokan selalu memberi tahu manajer',
+    'Kata eskalasi (pisahkan dengan koma): kecocokan selalu memberi tahu pengawas',
   'Send to manual review when the AI is less sure than {n}%':
     'Kirim ke tinjauan manual jika keyakinan AI di bawah {n}%',
   'Categories and the team that handles each': 'Kategori dan tim yang menanganinya',
@@ -421,7 +422,7 @@ export const ID: Record<string, string> = {
   Staff: 'Petugas',
   '5. Staff': '5. Petugas',
   'Needs a head of office, a supervisor (receives escalations) and caseworkers (each in charge of one or more teams). Use made-up names; clear a name to drop that row.':
-    'Butuh pimpinan, manajer (menerima eskalasi), dan petugas (masing-masing memegang satu tim atau lebih). Gunakan nama rekaan; kosongkan nama untuk menghapus baris.',
+    'Butuh kepala, pengawas (menerima eskalasi), dan petugas (masing-masing memegang satu tim atau lebih). Gunakan nama rekaan; kosongkan nama untuk menghapus baris.',
   Name: 'Nama',
   Role: 'Peran',
   'Job title': 'Jabatan',
@@ -453,14 +454,14 @@ export const ID: Record<string, string> = {
   'Track my report': 'Lacak laporan saya',
   'Emergency numbers': 'Nomor darurat',
   'Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the supervisor at once, and a real caseworker reviews every reply.':
-    'Ceritakan apa yang terjadi, di mana, dan kapan, dengan kata-kata Anda sendiri. Anda juga bisa mengirim pesan suara atau foto. Laporan mendesak langsung sampai ke manajer, dan petugas sungguhan memeriksa setiap balasan.',
+    'Ceritakan apa yang terjadi, di mana, dan kapan, dengan kata-kata Anda sendiri. Anda juga bisa mengirim pesan suara atau foto. Laporan mendesak langsung sampai ke pengawas, dan petugas sungguhan memeriksa setiap balasan.',
   'If anyone is in danger right now, call {line}. Then tell us what happened here; urgent reports alert a supervisor at once.':
-    'Jika ada yang dalam bahaya sekarang, hubungi {line}. Lalu ceritakan di sini apa yang terjadi; laporan mendesak langsung memberi tahu manajer.',
+    'Jika ada yang dalam bahaya sekarang, hubungi {line}. Lalu ceritakan di sini apa yang terjadi; laporan mendesak langsung memberi tahu pengawas.',
   'No open report found for this chat. Send /new to make one.':
     'Tidak ada laporan terbuka di chat ini. Kirim /new untuk membuat laporan.',
   resolved: 'selesai',
   'replied, still open': 'sudah dibalas, masih terbuka',
-  'urgent, a supervisor has been alerted': 'mendesak, manajer sudah diberi tahu',
+  'urgent, a supervisor has been alerted': 'mendesak, pengawas sudah diberi tahu',
   'with the team': 'sedang ditangani tim',
   'Open status page': 'Buka halaman status',
   'Tell us what happened, where and when. A voice note or photo is fine too.':
@@ -480,7 +481,7 @@ export const ID: Record<string, string> = {
   'Thank you. We received your report and are reading it now…':
     'Terima kasih. Laporan Anda sudah kami terima dan sedang dibaca…',
   'Your report number is <b>{id}</b>.': 'Nomor laporan Anda <b>{id}</b>.',
-  'Marked urgent: a supervisor has been alerted now.': 'Ditandai mendesak: manajer sudah diberi tahu sekarang.',
+  'Marked urgent: a supervisor has been alerted now.': 'Ditandai mendesak: pengawas sudah diberi tahu sekarang.',
   'It is with the <b>{team}</b>. You will hear back within {h} hours; a caseworker reviews every reply before it is sent.':
     'Laporan ditangani <b>{team}</b>. Anda akan menerima balasan dalam {h} jam; petugas memeriksa setiap balasan sebelum dikirim.',
   'Anything you send here in the next 24 hours is added to this report.':
@@ -538,7 +539,7 @@ export const ID: Record<string, string> = {
   default: 'bawaan',
   'Apply models': 'Terapkan model',
   'Only the head of office changes models; every change is logged.':
-    'Hanya pimpinan yang mengubah model; setiap perubahan dicatat.',
+    'Hanya kepala yang mengubah model; setiap perubahan dicatat.',
   'API key and data': 'Kunci API dan data',
   configured: 'terpasang',
   missing: 'tidak ada',
@@ -638,7 +639,7 @@ export const ID: Record<string, string> = {
   Off: 'Mati',
   'Only flag it': 'Tandai saja',
   'Only the supervisor changes these settings; every change is logged.':
-    'Hanya manajer yang mengubah pengaturan ini; setiap perubahan dicatat.',
+    'Hanya pengawas yang mengubah pengaturan ini; setiap perubahan dicatat.',
   'Output checks on drafts, last 30 days': 'Pemeriksaan output pada draf, 30 hari terakhir',
   'Price in / out': 'Harga masuk / keluar',
   'Prices are USD per million tokens (Gemini API list prices, October 2026). Quality is measured with npm run eval on synthetic reports.':
@@ -735,7 +736,7 @@ export const ID: Record<string, string> = {
   'Add stage': 'Tambah tahap',
   'all case types': 'semua jenis kasus',
   'Answer with figures and case numbers': 'Jawaban dengan angka dan nomor kasus',
-  'Answers the head of office and writes the weekly brief': 'Menjawab pimpinan dan menulis ringkasan mingguan',
+  'Answers the head of office and writes the weekly brief': 'Menjawab kepala dan menulis ringkasan mingguan',
   'BM25 search over the agency documents, no tokens': 'Pencarian BM25 di dokumen instansi, tanpa token',
   'Bot name': 'Nama bot',
   'Case type, summary, entities': 'Jenis kasus, ringkasan, entitas',
@@ -760,7 +761,7 @@ export const ID: Record<string, string> = {
   'Draft, warnings, agent trace': 'Draf, peringatan, jejak agen',
   'Drafts the reply in the citizen’s language': 'Menyusun balasan dalam bahasa warga',
   'Edit procedure': 'Ubah prosedur',
-  'Escalation alerts to the supervisor': 'Peringatan eskalasi ke manajer',
+  'Escalation alerts to the supervisor': 'Peringatan eskalasi ke pengawas',
   'Escalation and routing in code, never by the model': 'Eskalasi dan penugasan oleh kode, tidak pernah oleh model',
   'Every agent call traced (OpenTelemetry)': 'Setiap panggilan agen dilacak (OpenTelemetry)',
   Firestore: 'Firestore',
@@ -785,8 +786,7 @@ export const ID: Record<string, string> = {
   'Note for citizens (Indonesian)': 'Catatan untuk warga (Indonesia)',
   'One ADK SequentialAgent per report: each agent reads the state the previous ones wrote. Pick a box to see what goes in and out.':
     'Satu ADK SequentialAgent per laporan: setiap agen membaca state yang ditulis agen sebelumnya. Pilih kotak untuk melihat masukan dan keluarannya.',
-  'Only the supervisor or the head of office changes procedures.':
-    'Hanya manajer atau pimpinan yang mengubah prosedur.',
+  'Only the supervisor or the head of office changes procedures.': 'Hanya pengawas atau kepala yang mengubah prosedur.',
   'Only when the report has attachments': 'Hanya jika laporan memiliki lampiran',
   'Partner agency': 'Instansi mitra',
   'Paste the token it gives you. Embrace sets the webhook, name, photo, descriptions, commands and menu.':
@@ -818,8 +818,14 @@ export const ID: Record<string, string> = {
   Stages: 'Tahapan',
   'Stored in': 'Disimpan di',
   'Text, voice note, photo': 'Teks, pesan suara, foto',
-  'The full token never leaves the server. Name, photo, descriptions in English and Indonesian, commands and the menu button are set from the agency settings.':
-    'Token lengkap tidak pernah keluar dari server. Nama, foto, deskripsi dalam bahasa Inggris dan Indonesia, perintah, dan tombol menu diatur dari pengaturan instansi.',
+  'Showing or changing the token asks for the settings password. Name, photo, descriptions in English and Indonesian, commands and the menu button are set from the agency settings.':
+    'Melihat atau mengganti token meminta kata sandi pengaturan. Nama, foto, deskripsi dalam bahasa Inggris dan Indonesia, perintah, dan tombol menu diatur dari pengaturan instansi.',
+  Show: 'Tampilkan',
+  Hide: 'Sembunyikan',
+  'Change token': 'Ganti token',
+  'New bot token': 'Token bot baru',
+  'Save token': 'Simpan token',
+  'Use the deployment’s bot': 'Pakai bot bawaan',
   'The procedure each kind of case follows, who does each stage, and the law behind it. Staff tick the stages on each case, citizens see them when tracking, and the reply drafter tells citizens what comes next.':
     'Prosedur yang diikuti setiap jenis kasus, siapa mengerjakan tiap tahap, dan dasar hukumnya. Petugas mencentang tahap di setiap kasus, warga melihatnya saat melacak, dan penyusun balasan memberi tahu warga langkah berikutnya.',
   Token: 'Token',
@@ -892,4 +898,354 @@ export const ID: Record<string, string> = {
   Copy: 'Salin',
   'Report chat (text, voice, photo): share the link with the public.':
     'Chat laporan (teks, suara, foto): bagikan tautannya ke masyarakat.',
+  '{n} searches': '{n} pencarian',
+  'A keyword': 'Kata kunci',
+  'A question, or a case (masked summary only)': 'Pertanyaan, atau kasus (hanya ringkasan tersamar)',
+  'A question, or the case summary, case type and the laws listed for it':
+    'Pertanyaan, atau ringkasan kasus, jenis kasus, dan undang-undang yang tercantum untuknya',
+  'A question': 'Pertanyaan',
+  'Add document': 'Tambah dokumen',
+  'Add to the knowledge base': 'Tambah ke basis pengetahuan',
+  Add: 'Tambah',
+  'added by {name}': 'ditambahkan oleh {name}',
+  'ADK function tool': 'Function tool ADK',
+  'After the drafter': 'Setelah penyusun balasan',
+  'After the first run, when place, age or time is missing':
+    'Setelah putaran pertama, bila tempat, usia, atau waktu belum ada',
+  'After the first run': 'Setelah putaran pertama',
+  'After triage': 'Setelah triase',
+  'Aggregates, no personal data': 'Agregat, tanpa data pribadi',
+  'Alert with the case summary': 'Peringatan dengan ringkasan kasus',
+  'Answer with cited articles': 'Jawaban dengan pasal yang dikutip',
+  'Answers from the agency’s documents and drafts the legal basis of a case for its file, the police or a court':
+    'Menjawab dari dokumen instansi dan menyusun dasar hukum kasus untuk berkas, kepolisian, atau pengadilan',
+  'Answers with figures and case numbers': 'Jawaban dengan angka dan nomor kasus',
+  'Ask a question about the law or a procedure': 'Tanyakan tentang hukum atau prosedur',
+  'Ask the legal research agent': 'Tanya agen riset hukum',
+  'Asks about the law or a procedure, or drafts a case’s legal basis':
+    'Bertanya tentang hukum atau prosedur, atau menyusun dasar hukum kasus',
+  'Asks about trends; reads the weekly brief': 'Bertanya tentang tren; membaca ringkasan mingguan',
+  'Asks for the details the agency needs and the report lacks (fixed, translated questions)':
+    'Menanyakan detail yang dibutuhkan instansi dan belum ada di laporan (pertanyaan tetap yang sudah diterjemahkan)',
+  'Asks for the place, age or time the agency needs, at most 2 questions, then runs the agents again.':
+    'Menanyakan tempat, usia, atau waktu yang dibutuhkan instansi, paling banyak 2 pertanyaan, lalu menjalankan agen lagi.',
+  'At most 2 questions; the answers join the report and the agents run again':
+    'Paling banyak 2 pertanyaan; jawabannya digabung ke laporan dan agen berjalan lagi',
+  'Before any model call': 'Sebelum panggilan model apa pun',
+  'BM25 over the documents replies may cite; its 3 passages are the only procedures the drafter may state.':
+    'BM25 atas dokumen yang boleh dikutip balasan; 3 kutipannya satu-satunya prosedur yang boleh disebut penyusun.',
+  'BM25 search over all documents of the knowledge base, called several times per answer':
+    'Pencarian BM25 atas semua dokumen basis pengetahuan, dipanggil beberapa kali per jawaban',
+  'BM25 search over all knowledge-base documents; returns up to 5 passages with an exact reference to cite.':
+    'Pencarian BM25 atas semua dokumen basis pengetahuan; mengembalikan hingga 5 kutipan dengan rujukan persis untuk dikutip.',
+  'BM25 search over the knowledge base, no tokens': 'Pencarian BM25 atas basis pengetahuan, tanpa token',
+  BM25: 'BM25',
+  'Bot and caseworker': 'Bot dan petugas',
+  'Case events (Pub/Sub, Cloud Function)': 'Peristiwa kasus (Pub/Sub, Cloud Function)',
+  'Case events': 'Peristiwa kasus',
+  'Cases whose masked summary or entities mention a keyword':
+    'Kasus yang ringkasan tersamar atau entitasnya menyebut kata kunci',
+  'Check these citations: they match no passage the agent found':
+    'Periksa kutipan ini: tidak cocok dengan kutipan yang ditemukan agen',
+  'cited in replies': 'dikutip di balasan',
+  'Citizen reports': 'Laporan warga',
+  Close: 'Tutup',
+  'Clusters: early warnings of a systemic problem': 'Klaster: peringatan dini masalah sistemik',
+  'Code and rules (no AI)': 'Kode dan aturan (tanpa AI)',
+  'Counts by case type, urgency, status and channel, SLA breaches, median response and resolution hours, this week against last.':
+    'Jumlah per jenis kasus, urgensi, status, dan kanal, pelanggaran SLA, median jam respons dan penyelesaian, minggu ini dibanding minggu lalu.',
+  'Counts by case type, urgency, status and channel; SLA breaches; this week against last':
+    'Jumlah per jenis kasus, urgensi, status, dan kanal; pelanggaran SLA; minggu ini dibanding minggu lalu',
+  'Court decision': 'Putusan pengadilan',
+  Data: 'Data',
+  'Delegated to the caseworker with a note': 'Didelegasikan ke petugas dengan catatan',
+  'Document search (BM25, no tokens) finds 3 passages in the knowledge base: UU 35/2014, PP 78/2021 and the SOP.':
+    'Pencarian dokumen (BM25, tanpa token) menemukan 3 kutipan di basis pengetahuan: UU 35/2014, PP 78/2021, dan SOP.',
+  'Document search (sop_agent)': 'Pencarian dokumen (sop_agent)',
+  'Documents added on the Knowledge page': 'Dokumen yang ditambahkan di halaman Basis pengetahuan',
+  'Draft again': 'Susun ulang',
+  'Draft the legal basis': 'Susun dasar hukum',
+  'Drafted {when}': 'Disusun {when}',
+  'e.g. Supreme Court, Ministry, the agency': 'mis. Mahkamah Agung, Kementerian, instansi',
+  'e.g. UU 35/2014 Child Protection': 'mis. UU 35/2014 Perlindungan Anak',
+  'Entities the intake agent found; the agency’s required details':
+    'Entitas yang ditemukan agen intake; detail wajib instansi',
+  'Escalates on a critical rating, a safety flag, an always-escalate case type, an escalation word or a photo safety concern; applies minimum urgency per case type; low confidence goes to manual review.':
+    'Mengeskalasi bila dinilai kritis, ada penanda keselamatan, jenis kasus yang selalu dieskalasi, kata eskalasi, atau foto yang mengkhawatirkan; menerapkan urgensi minimum per jenis kasus; keyakinan rendah masuk tinjauan manual.',
+  'Escalation publishes a case event: Pub/Sub and a Cloud Function alert the supervisor in seconds.':
+    'Eskalasi menerbitkan peristiwa kasus: Pub/Sub dan Cloud Function memberi tahu pengawas dalam hitungan detik.',
+  'Escalation, delegation or a citizen’s new message': 'Eskalasi, delegasi, atau pesan baru warga',
+  'Escalation, delegation, new messages': 'Eskalasi, delegasi, pesan baru',
+  File: 'Berkas',
+  'Firestore: every case with its triage, routing, trace and audit trail':
+    'Firestore: setiap kasus dengan triase, perutean, jejak, dan jejak audit',
+  'Follow-up questions (code, no tokens): the agency needs the place and the child’s age, so the bot asks at most 2 questions.':
+    'Pertanyaan lanjutan (kode, tanpa token): instansi butuh tempat dan usia anak, jadi bot bertanya paling banyak 2 pertanyaan.',
+  'Follow-up questions (missingDetails)': 'Pertanyaan lanjutan (missingDetails)',
+  'Follow-up questions': 'Pertanyaan lanjutan',
+  'Gemini agents': 'Agen Gemini',
+  'Google Cloud': 'Google Cloud',
+  'Groups of 3 or more cases sharing a place, institution or aid programme':
+    'Kelompok 3 kasus atau lebih dengan tempat, lembaga, atau program bantuan yang sama',
+  Guideline: 'Pedoman',
+  'In-app notification to the supervisor or the person in charge':
+    'Notifikasi di aplikasi untuk pengawas atau penanggung jawab',
+  'Input guardrail (screenInput)': 'Pengaman masukan (screenInput)',
+  'Issued by': 'Diterbitkan oleh',
+  'Laws, SOPs, court decisions, guidelines and web pages, split into passages':
+    'Undang-undang, SOP, putusan pengadilan, pedoman, dan halaman web, dipecah menjadi kutipan',
+  'Laws, SOPs, court decisions, guidelines and web pages; staff-only documents included':
+    'Undang-undang, SOP, putusan pengadilan, pedoman, dan halaman web; termasuk dokumen khusus petugas',
+  'Legal research agent used:': 'Agen riset hukum memakai:',
+  'Legal research agent': 'Agen riset hukum',
+  'Live data for the tools': 'Data langsung untuk tool',
+  'Markdown answer citing [document, page]; citations it was not given are flagged':
+    'Jawaban Markdown yang mengutip [dokumen, halaman]; kutipan yang tidak diberikan kepadanya ditandai',
+  'Next step': 'Langkah berikutnya',
+  'No voice note or photo, so the media agent is skipped. The intake agent detects English, masks names and restates the report. The place is missing.':
+    'Tidak ada pesan suara atau foto, jadi agen media dilewati. Agen intake mendeteksi bahasa Inggris, menyamarkan nama, dan merumuskan ulang laporan. Tempatnya belum ada.',
+  Other: 'Lainnya',
+  'Output guardrail (checkDraft)': 'Pengaman keluaran (checkDraft)',
+  'Passages the agent found ({n})': 'Kutipan yang ditemukan agen ({n})',
+  'Passages with document and page': 'Kutipan dengan dokumen dan halaman',
+  Passages: 'Kutipan',
+  Pause: 'Jeda',
+  People: 'Orang',
+  'Pipeline step, no tokens': 'Langkah pipeline, tanpa token',
+  Play: 'Putar',
+  'Please help, the boy next door is beaten by his stepfather every night. Today he had bruises.':
+    'Tolong, anak laki-laki tetangga saya dipukuli ayah tirinya setiap malam. Hari ini dia memar.',
+  'Policy rules (code): the child_safety flag escalates the case. Route escalated, SLA 2 hours, child protection team. The model cannot lower this.':
+    'Aturan kebijakan (kode): penanda child_safety mengeskalasi kasus. Rute eskalasi, SLA 2 jam, tim perlindungan anak. Model tidak bisa menurunkannya.',
+  'Policy rules (decide)': 'Aturan kebijakan (decide)',
+  'Press Play to follow one report through the agents, over two turns of conversation.':
+    'Tekan Putar untuk mengikuti satu laporan melewati para agen, dalam dua giliran percakapan.',
+  'Previous step': 'Langkah sebelumnya',
+  'Pub/Sub topic case-events and the Cloud Function onCaseEvent':
+    'Topik Pub/Sub case-events dan Cloud Function onCaseEvent',
+  'Publishes to the case-events topic; the onCaseEvent function writes the notification the person sees in seconds.':
+    'Menerbitkan ke topik case-events; fungsi onCaseEvent menulis notifikasi yang dilihat orangnya dalam hitungan detik.',
+  'Questions and the approved reply': 'Pertanyaan dan balasan yang disetujui',
+  'Rate limit, spam filter and prompt-injection screen. A flagged report is kept, sent to a person, and the drafter sees only a neutral restatement.':
+    'Batas laju, filter spam, dan penyaring prompt injection. Laporan yang ditandai tetap disimpan, dikirim ke manusia, dan penyusun hanya melihat rumusan ulang yang netral.',
+  'Rate limit, spam filter, prompt-injection screen, before any model call':
+    'Batas laju, filter spam, penyaring prompt injection, sebelum panggilan model apa pun',
+  'Reading…': 'Membaca…',
+  'Receives escalations and delegates them': 'Menerima eskalasi dan mendelegasikannya',
+  'Receives reports by webhook; sends questions, and replies only after a caseworker approves them.':
+    'Menerima laporan lewat webhook; mengirim pertanyaan, dan balasan hanya setelah disetujui petugas.',
+  Replay: 'Putar ulang',
+  'Reply drafts may cite it to citizens (leave off for internal or court material)':
+    'Draf balasan boleh mengutipnya untuk warga (matikan untuk bahan internal atau pengadilan)',
+  'Reply sent to the citizen on the same channel': 'Balasan dikirim ke warga di kanal yang sama',
+  'Report (or its restatement if flagged), triage, routing, passages, procedure, contacts':
+    'Laporan (atau rumusan ulangnya bila ditandai), triase, perutean, kutipan, prosedur, kontak',
+  'Report pipeline': 'Pipeline laporan',
+  'Reports by web chat or Telegram, and answers follow-up questions':
+    'Melapor lewat chat web atau Telegram, dan menjawab pertanyaan lanjutan',
+  'Reviews, edits and approves; ticks the procedure stages':
+    'Memeriksa, menyunting, dan menyetujui; mencentang tahap prosedur',
+  'Route, final urgency, team, SLA, the case procedure; reasons for each':
+    'Rute, urgensi akhir, tim, SLA, prosedur kasus; alasan untuk masing-masing',
+  'Saving asks for the settings password. Text is split into passages for search; no AI tokens are used.':
+    'Menyimpan meminta kata sandi pengaturan. Teks dipecah menjadi kutipan untuk pencarian; tidak memakai token AI.',
+  'Search (no AI)': 'Cari (tanpa AI)',
+  'Search the documents': 'Cari di dokumen',
+  'Search words': 'Kata pencarian',
+  'Searching…': 'Mencari…',
+  'Shipped documents and those staff add': 'Dokumen bawaan dan yang ditambahkan petugas',
+  Simulation: 'Simulasi',
+  'Staff assistants': 'Asisten petugas',
+  'Step {n} of {m}': 'Langkah {n} dari {m}',
+  'Supervisor alerted: critical case, child safety': 'Pengawas diberi tahu: kasus kritis, keselamatan anak',
+  'Tambun, Bekasi. He is about 7.': 'Tambun, Bekasi. Umurnya sekitar 7 tahun.',
+  'Telegram Bot API': 'Telegram Bot API',
+  Template: 'Templat',
+  Text: 'Teks',
+  'Thank you for telling us. Your report is with our child protection team and a supervisor has been alerted. If the boy is in danger right now, call 129.':
+    'Terima kasih sudah memberi tahu kami. Laporan Anda ditangani tim perlindungan anak dan pengawas sudah diberi tahu. Jika anak itu dalam bahaya sekarang, hubungi 129.',
+  'Thank you. To help quickly: which village or district is this in? How old is the boy?':
+    'Terima kasih. Agar cepat dibantu: di desa atau kecamatan mana? Berapa umur anak itu?',
+  'The agent gave no answer. Try again.': 'Agen tidak memberi jawaban. Coba lagi.',
+  'The agents run again on the fuller picture. Re-runs can only raise urgency; an escalated case stays escalated.':
+    'Agen berjalan lagi dengan gambaran yang lebih lengkap. Putaran ulang hanya bisa menaikkan urgensi; kasus yang dieskalasi tetap dieskalasi.',
+  'The caseworker edits and approves. The reply goes back on the same channel, web chat or Telegram.':
+    'Petugas menyunting dan menyetujui. Balasan kembali lewat kanal yang sama, chat web atau Telegram.',
+  'The conversation appears here.': 'Percakapan muncul di sini.',
+  'The file is larger than 6 MB': 'Berkas lebih besar dari 6 MB',
+  'The person in charge and a note': 'Penanggung jawab dan catatan',
+  'The reply drafter writes in the citizen’s language with citations. The output guardrail checks for personal data, links, promises and leaked instructions.':
+    'Penyusun balasan menulis dalam bahasa warga dengan kutipan. Pengaman keluaran memeriksa data pribadi, tautan, janji, dan instruksi yang bocor.',
+  'The supervisor delegates the case. The new draft waits for the caseworker: nothing reaches the citizen before a person approves.':
+    'Pengawas mendelegasikan kasus. Draf baru menunggu petugas: tidak ada yang sampai ke warga sebelum disetujui manusia.',
+  'The triage agent: physical abuse, critical, safety flag child_safety, confidence 0.92.':
+    'Agen triase: kekerasan fisik, kritis, penanda keselamatan child_safety, keyakinan 0,92.',
+  Title: 'Judul',
+  'Tools and checks': 'Tool dan pemeriksaan',
+  'Tools and data': 'Tool dan data',
+  'Top 3 passages the reply may cite': '3 kutipan teratas yang boleh dikutip balasan',
+  'Triage result, the report text (escalation words), media safety concern, injection flag, the agency’s case types and minimum urgency':
+    'Hasil triase, teks laporan (kata eskalasi), kekhawatiran keselamatan dari media, penanda injection, jenis kasus instansi dan urgensi minimum',
+  'Turn 1. The input guardrail (code) checks the rate limit, spam and prompt injection. The report is clean and goes on fenced as data.':
+    'Giliran 1. Pengaman masukan (kode) memeriksa batas laju, spam, dan prompt injection. Laporan bersih dan diteruskan sebagai data berpagar.',
+  'Turn 2. The answers join the report and pass the input guardrail again.':
+    'Giliran 2. Jawaban digabung ke laporan dan melewati pengaman masukan lagi.',
+  'Up to 15 cases whose masked summary or entities mention a keyword. No personal data.':
+    'Hingga 15 kasus yang ringkasan tersamar atau entitasnya menyebut kata kunci. Tanpa data pribadi.',
+  'Up to 15 cases, no personal data': 'Hingga 15 kasus, tanpa data pribadi',
+  'Up to 5 passages with an exact reference': 'Hingga 5 kutipan dengan rujukan persis',
+  'Used by': 'Dipakai oleh',
+  'Warns about personal data, links, missing citations or ticket number, promised outcomes and leaked instructions.':
+    'Memperingatkan data pribadi, tautan, kutipan atau nomor tiket yang hilang, janji hasil, dan instruksi yang bocor.',
+  'Web address (https://…)': 'Alamat web (https://…)',
+  'Web page': 'Halaman web',
+  'What it does': 'Fungsinya',
+  'Window in days': 'Rentang hari',
+  'Writes from the report pipeline and staff': 'Ditulis oleh pipeline laporan dan petugas',
+  'For the case file, a police referral or court: the legal research agent searches the knowledge base and cites the articles that apply.':
+    'Untuk berkas kasus, rujukan ke kepolisian, atau pengadilan: agen riset hukum mencari di basis pengetahuan dan mengutip pasal yang berlaku.',
+  'Laws, regulations, SOPs, court decisions, guidelines and web pages. Reply drafts cite them for citizens; staff search them or ask the legal research agent, for example for the legal basis of a case file.':
+    'Undang-undang, peraturan, SOP, putusan pengadilan, pedoman, dan halaman web. Draf balasan mengutipnya untuk warga; petugas mencarinya atau bertanya ke agen riset hukum, misalnya untuk dasar hukum berkas kasus.',
+  'The agent searches the knowledge base several times and answers only from what it found, citing each passage. A draft for staff to check, not legal advice.':
+    'Agen mencari di basis pengetahuan beberapa kali dan hanya menjawab dari yang ditemukannya, dengan mengutip setiap bagian. Draf untuk diperiksa petugas, bukan nasihat hukum.',
+  'File (PDF, Markdown, text)': 'Berkas (PDF, Markdown, teks)',
+  'Paste text': 'Tempel teks',
+  'Pick a box to see what goes in and out, its model and its figures.':
+    'Pilih kotak untuk melihat masukan dan keluarannya, modelnya, dan angkanya.',
+  'Every report runs one ADK SequentialAgent: each Gemini agent reads the state the previous ones wrote, with code guardrails and rules around them and a person at the end. Pick a box to see what goes in and out.':
+    'Setiap laporan menjalankan satu ADK SequentialAgent: tiap agen Gemini membaca state yang ditulis agen sebelumnya, dengan pengaman dan aturan berbasis kode di sekitarnya dan manusia di akhir. Pilih kotak untuk melihat masukan dan keluarannya.',
+  'Assistants for staff, outside the report pipeline: each is an ADK agent that calls function tools over live data and cites what it found.':
+    'Asisten untuk petugas, di luar pipeline laporan: masing-masing agen ADK yang memanggil function tool atas data langsung dan mengutip yang ditemukannya.',
+  'Where everything runs on Google Cloud and Firebase, and what talks to what. Pick a box to see what it does.':
+    'Di mana semuanya berjalan di Google Cloud dan Firebase, dan apa terhubung ke apa. Pilih kotak untuk melihat fungsinya.',
+  Architecture: 'Arsitektur',
+  'Legal basis and document answers for staff': 'Dasar hukum dan jawaban dari dokumen untuk petugas',
+  'ADK agents': 'Agen ADK',
+  'ADK plugin on every runner: the model each agency chose, latency and tokens per call':
+    'Plugin ADK di setiap runner: model pilihan tiap instansi, latensi, dan token per panggilan',
+  'ADK spans (invoke_agent, generate_content, execute_tool) and GenAI metrics':
+    'Span ADK (invoke_agent, generate_content, execute_tool) dan metrik GenAI',
+  'Approvals, delegations, settings': 'Persetujuan, delegasi, pengaturan',
+  'Approved replies, questions': 'Balasan yang disetujui, pertanyaan',
+  'Approved replies': 'Balasan yang disetujui',
+  'Billing budget': 'Anggaran penagihan',
+  'BM25 over the knowledge base, in process, no tokens': 'BM25 atas basis pengetahuan, di dalam proses, tanpa token',
+  'Browser requests': 'Permintaan browser',
+  'Cases, agencies, knowledge base, integrations, notifications; clients denied':
+    'Kasus, instansi, basis pengetahuan, integrasi, notifikasi; klien ditolak',
+  'Cases, drafts, alerts, insights': 'Kasus, draf, peringatan, wawasan',
+  'Cases, replies, events': 'Kasus, balasan, peristiwa',
+  'Caseworkers, supervisor and head of office in the browser': 'Petugas, pengawas, dan kepala di browser',
+  'Cloud Functions': 'Cloud Functions',
+  'Cloud Logging': 'Cloud Logging',
+  'Cloud Monitoring': 'Cloud Monitoring',
+  'Cloud Storage': 'Cloud Storage',
+  'Custom domain with managed HTTPS on Firebase App Hosting':
+    'Domain sendiri dengan HTTPS terkelola di Firebase App Hosting',
+  'Dashboards and alerts': 'Dasbor dan peringatan',
+  'Email alerts': 'Peringatan email',
+  'Environment of the app': 'Lingkungan aplikasi',
+  Events: 'Peristiwa',
+  'Every model call': 'Setiap panggilan model',
+  'Every report and every setup change': 'Setiap laporan dan setiap perubahan pengaturan',
+  'Exports to Google Cloud': 'Ekspor ke Google Cloud',
+  Files: 'Berkas',
+  'Firebase App Hosting · Cloud Run': 'Firebase App Hosting · Cloud Run',
+  'Firebase data': 'Data Firebase',
+  'Flags, route, warnings': 'Penanda, rute, peringatan',
+  'Gemini 3.1 Flash-Lite; retries with backoff, safety settings per agent':
+    'Gemini 3.1 Flash-Lite; coba ulang dengan backoff, pengaturan keamanan per agen',
+  'Gemini and Cloud spend': 'Biaya Gemini dan Cloud',
+  'Gemini API': 'Gemini API',
+  'Gemini key, bot tokens, webhook secret, settings password':
+    'Kunci Gemini, token bot, rahasia webhook, kata sandi pengaturan',
+  'Governance plugin': 'Plugin tata kelola',
+  'Guardrails and rules': 'Pengaman dan aturan',
+  HTTPS: 'HTTPS',
+  'Input screen, policy rules, output check, settings password, rate limits':
+    'Penyaring masukan, aturan kebijakan, pemeriksaan keluaran, kata sandi pengaturan, batas laju',
+  'JSON lines from Cloud Run': 'Baris JSON dari Cloud Run',
+  'Live data': 'Data langsung',
+  'Messages, voice notes, photos': 'Pesan, pesan suara, foto',
+  'Metrics, health checks': 'Metrik, pemeriksaan kesehatan',
+  'Next.js app': 'Aplikasi Next.js',
+  'Notifications in Firestore': 'Notifikasi di Firestore',
+  'One bot per agency; updates arrive by webhook with a secret header':
+    'Satu bot per instansi; pembaruan datang lewat webhook dengan header rahasia',
+  OpenTelemetry: 'OpenTelemetry',
+  'Pages and API calls': 'Halaman dan panggilan API',
+  'Pages and API routes on Firebase App Hosting (Cloud Run, asia-southeast1); no Firebase SDK or key in the browser':
+    'Halaman dan rute API di Firebase App Hosting (Cloud Run, asia-southeast1); tanpa SDK Firebase atau kunci di browser',
+  'Passages to cite': 'Kutipan untuk dikutip',
+  'Prompts with public text fenced as data': 'Prompt dengan teks publik dipagari sebagai data',
+  'Pub/Sub': 'Pub/Sub',
+  'Public laws, portraits and brand files; private report photos, voice notes and added documents':
+    'Undang-undang, foto profil, dan berkas merek publik; foto laporan, pesan suara, dan dokumen tambahan privat',
+  'Push to the function': 'Dorong ke fungsi',
+  'Report pipeline (media, intake, triage, rules, search, drafter), analyst and legal research agents':
+    'Pipeline laporan (media, intake, triase, aturan, pencarian, penyusun), agen analis dan riset hukum',
+  'Reports by web chat or Telegram': 'Melapor lewat chat web atau Telegram',
+  'Reports, questions, cases': 'Laporan, pertanyaan, kasus',
+  'Searchable logs': 'Log yang bisa dicari',
+  'Secret Manager': 'Secret Manager',
+  'Server writes only': 'Hanya server yang menulis',
+  'Set by the deployment': 'Diatur oleh deployment',
+  'Spans and metrics': 'Span dan metrik',
+  Spans: 'Span',
+  'Spend alerts on the project': 'Peringatan biaya pada proyek',
+  'Structured JSON and drafts': 'JSON terstruktur dan draf',
+  'Structured logs with metadata only; settings changes as an audit log':
+    'Log terstruktur hanya berisi metadata; perubahan pengaturan sebagai log audit',
+  'Text, voice notes, photos': 'Teks, pesan suara, foto',
+  'Token use, latency and guardrail metrics; uptime check with an alert policy':
+    'Metrik pemakaian token, latensi, dan pengaman; pemeriksaan uptime dengan kebijakan peringatan',
+  'Topic case-events: escalations, delegations, new messages': 'Topik case-events: eskalasi, delegasi, pesan baru',
+  'Trace steps, metrics, metadata-only logs': 'Langkah jejak, metrik, log hanya metadata',
+  'Triage, routing, drafts, answers': 'Triase, perutean, draf, jawaban',
+  'Uploads from the server': 'Unggahan dari server',
+  'Waterfall of every agent run, linked from the case and the control tower':
+    'Waterfall setiap putaran agen, ditautkan dari kasus dan menara kendali',
+  'Web chat, staff app, Telegram webhook': 'Chat web, aplikasi petugas, webhook Telegram',
+  'text, voice, photo': 'teks, suara, foto',
+  attachments: 'lampiran',
+  'report, fenced as data': 'laporan, dipagari sebagai data',
+  'transcript, photo': 'transkrip, foto',
+  'masked text, entities': 'teks tersamar, entitas',
+  'missing details': 'detail yang kurang',
+  'up to 2 questions': 'hingga 2 pertanyaan',
+  'case type, urgency, flags': 'jenis kasus, urgensi, penanda',
+  escalated: 'dieskalasi',
+  'alert in seconds': 'peringatan dalam detik',
+  'case type, summary': 'jenis kasus, ringkasan',
+  '3 passages': '3 kutipan',
+  'route, team, SLA, procedure': 'rute, tim, SLA, prosedur',
+  'draft with citations': 'draf dengan kutipan',
+  'draft and warnings': 'draf dan peringatan',
+  delegates: 'mendelegasikan',
+  'approved reply': 'balasan disetujui',
+  question: 'pertanyaan',
+  calls: 'memanggil',
+  'question or case': 'pertanyaan atau kasus',
+  'calls, several times': 'memanggil, beberapa kali',
+  messages: 'pesan',
+  'web chat': 'chat web',
+  'staff app': 'aplikasi petugas',
+  webhook: 'webhook',
+  'runs agents': 'menjalankan agen',
+  'every report': 'setiap laporan',
+  search: 'pencarian',
+  'added documents': 'dokumen tambahan',
+  'cases, agencies': 'kasus, instansi',
+  files: 'berkas',
+  'keys, tokens, password': 'kunci, token, kata sandi',
+  'case events': 'peristiwa kasus',
+  push: 'dorong',
+  notifications: 'notifikasi',
+  'every model call': 'setiap panggilan model',
+  'spans, metrics': 'span, metrik',
+  traces: 'jejak',
+  metrics: 'metrik',
+  'logs, no content': 'log, tanpa isi',
+  spend: 'biaya',
+  'uptime check': 'cek uptime',
 }

@@ -11,6 +11,7 @@ export const MODELS = {
   triage: env('EMBRACE_TRIAGE_MODEL', 'gemini-3.1-flash-lite'),
   drafter: env('EMBRACE_DRAFTER_MODEL', 'gemini-3.1-flash-lite'),
   analyst: env('EMBRACE_ANALYST_MODEL', 'gemini-3.1-flash-lite'),
+  legal: env('EMBRACE_LEGAL_MODEL', 'gemini-3.1-flash-lite'),
 }
 export type ModelKey = keyof typeof MODELS
 
@@ -32,6 +33,7 @@ export const AGENT_MODEL_KEY: Record<string, ModelKey> = {
   triage_agent: 'triage',
   drafter_agent: 'drafter',
   analyst_agent: 'analyst',
+  legal_agent: 'legal',
 }
 
 /** Uses GOOGLE_GENAI_API_KEY explicitly, so stray GOOGLE_API_KEY / GEMINI_API_KEY in a shell never win. */

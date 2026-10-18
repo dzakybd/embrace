@@ -109,7 +109,7 @@ function Pickers() {
         <Avatar agency={agency.id} id={me.id} name={me.name} />
         <select value={me.id} onChange={(e) => pickMe(e.target.value)} aria-label={t('Signed in as')}>
           {ROLES.map((r) => (
-            <optgroup key={r.id} label={t(r.label)}>
+            <optgroup key={r.id} label={t(r.id === 'leader' ? agency.leader_label : r.label)}>
               {agency.team
                 .filter((m) => m.role === r.id)
                 .map((m) => (

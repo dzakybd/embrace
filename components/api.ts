@@ -41,6 +41,7 @@ export interface Agency {
   custom: boolean
   edited: boolean
   telegram_bot: string | null
+  leader_label: string
   logo: string | null
   name_id: string
   short_name_id: string
@@ -74,6 +75,7 @@ export interface Integrations {
     token_hint?: string
     stored_in?: string
     status?: BotStatus
+    replaces_managed?: boolean
   }
 }
 
@@ -179,6 +181,31 @@ export interface SopSource {
   url: string
   issuer: string
   kind: string
+  /** Set on documents added in the app. */
+  id?: string
+  added_by?: string
+  added_at?: string
+  for_replies?: boolean
+  origin?: 'file' | 'website' | 'text'
+}
+export interface LegalAnswer {
+  answer: string
+  sources: { doc: string; title: string; loc: string; url: string; text: string }[]
+  tools_used: string[]
+  unverified?: string[]
+  at?: string
+  by?: string
+}
+export interface AddKnowledge {
+  title: string
+  kind: string
+  issuer?: string
+  for_replies: boolean
+  url?: string
+  text?: string
+  pdf_base64?: string
+  file_name?: string
+  by?: string
 }
 export interface HistoryItem {
   at: string
@@ -206,6 +233,7 @@ export interface Ticket {
   guard?: { injection: string[]; draft: string[] }
   details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
   progress?: { procedure: string; done: number[] }
+  legal_basis?: LegalAnswer
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean
@@ -301,6 +329,21 @@ export const api = {
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ question }),
     }).then(json<AnalystAnswer>),
+  knowledge: (t: string) => fetch(`/api/agencies/${t}/knowledge`).then(json<{ sources: SopSource[] }>),
+  addKnowledge: (t: string, body: AddKnowledge) =>
+    adminFetch(`/api/agencies/${t}/knowledge`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<{ source: SopSource; passages: number }>),
+  removeKnowledge: (t: string, doc: string) =>
+    adminFetch(`/api/agencies/${t}/knowledge/${doc}`, { method: 'DELETE' }).then(json),
+  askLegal: (t: string, body: { question?: string; ticket_id?: string; by?: string }) =>
+    fetch(`/api/agencies/${t}/legal`, {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify(body),
+    }).then(json<LegalAnswer>),
   sop: (t: string, q: string) =>
     fetch(`/api/agencies/${t}/sop?q=${encodeURIComponent(q)}`).then(
       json<{ sources: SopSource[]; results: Omit<Citation, 'n'>[] }>,
@@ -338,7 +381,12 @@ export const api = {
     adminFetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(
       json<{ steps: SetupStep[]; status: BotStatus }>,
     ),
-  disconnectTelegram: (t: string) => adminFetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
+  disconnectTelegram: (t: string) =>
+    adminFetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(
+      json<{ connected: boolean; steps?: SetupStep[] }>,
+    ),
+  telegramToken: (t: string) =>
+    adminFetch(`/api/agencies/${t}/integrations/token`, { cache: 'no-store' }).then(json<{ token: string }>),
   saveResources: (t: string, body: { resources: Resource[]; by: { name: string; role: string } }) =>
     adminFetch(`/api/agencies/${t}/resources`, {
       method: 'PUT',

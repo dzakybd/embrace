@@ -1,5 +1,5 @@
 import { requireAdmin } from '@/lib/admin'
-import { agencyById, loadAgencies } from '@/lib/agencies'
+import { agencyById, loadAgencies, saveAgencyFields } from '@/lib/agencies'
 import { error, rateLimit } from '@/lib/http'
 import { reseed } from '@/lib/seed'
 import { STORE } from '@/lib/store'
@@ -16,6 +16,9 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
   if (agency.edited) {
     await STORE.deleteAgency(id)
     await loadAgencies(true)
+    // A bot token set on the Channels page is a channel, not demo data: it stays, and so does its username.
+    const tg = (await STORE.getIntegration(id))?.telegram
+    if (tg) await saveAgencyFields((await agencyById(id))!, { telegram_bot: tg.username })
   }
   await reseed(STORE, id)
   return Response.json({ ok: true })

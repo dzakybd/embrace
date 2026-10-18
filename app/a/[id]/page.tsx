@@ -209,7 +209,7 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
                 <Icon name={s.icon} size={22} />
               </span>
               <span>
-                <b>{t(s.title)}</b>
+                <b>{t(s.as === 'leader' ? (agency.leader_label ?? s.title) : s.title)}</b>
                 <span className="muted">{t(s.body)}</span>
               </span>
               <Icon name="send" size={16} />

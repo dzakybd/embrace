@@ -80,6 +80,8 @@ export default function Integrations() {
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
   const [steps, setSteps] = useState<SetupStep[] | null>(null)
+  const [shown, setShown] = useState('')
+  const [changing, setChanging] = useState(false)
   const load = useCallback(
     () =>
       api
@@ -98,6 +100,8 @@ export default function Integrations() {
     try {
       await fn()
       setToken('')
+      setShown('')
+      setChanging(false)
       await load()
       reload()
     } catch (e) {
@@ -160,8 +164,37 @@ export default function Integrations() {
               </p>
               <dl className="bot-facts">
                 <dt>{t('Token')}</dt>
-                <dd>
-                  <code>{tg.token_hint}</code>
+                <dd className="token-row">
+                  <code>{shown || tg.token_hint}</code>
+                  {canEdit &&
+                    (shown ? (
+                      <>
+                        <button
+                          type="button"
+                          className="ghost small"
+                          onClick={() => navigator.clipboard?.writeText(shown).catch(() => {})}
+                        >
+                          {t('Copy')}
+                        </button>
+                        <button type="button" className="ghost small" onClick={() => setShown('')}>
+                          {t('Hide')}
+                        </button>
+                      </>
+                    ) : (
+                      <button
+                        type="button"
+                        className="ghost small"
+                        disabled={busy}
+                        onClick={() =>
+                          api.telegramToken(agency.id).then(
+                            (r) => setShown(r.token),
+                            () => {},
+                          )
+                        }
+                      >
+                        <Icon name="eye" size={13} /> {t('Show')}
+                      </button>
+                    ))}
                 </dd>
                 <dt>{t('Stored in')}</dt>
                 <dd>{tg.stored_in}</dd>
@@ -183,7 +216,34 @@ export default function Integrations() {
                   ))}
                 </ul>
               )}
-              {canEdit && (
+              {canEdit && changing && (
+                <form
+                  className="token-change"
+                  onSubmit={(e) => {
+                    e.preventDefault()
+                    act(async () => setSteps((await api.connectTelegram(agency.id, token)).steps))
+                  }}
+                >
+                  <label className="field">
+                    <span>{t('New bot token')}</span>
+                    <input
+                      value={token}
+                      onChange={(e) => setToken(e.target.value)}
+                      placeholder="123456789:AA…"
+                      autoComplete="off"
+                    />
+                  </label>
+                  <div className="copy-row">
+                    <button className="primary small" disabled={busy || !token.trim()}>
+                      {busy ? t('Connecting…') : t('Save token')}
+                    </button>
+                    <button type="button" className="ghost small" onClick={() => setChanging(false)}>
+                      {t('Cancel')}
+                    </button>
+                  </div>
+                </form>
+              )}
+              {canEdit && !changing && (
                 <div className="copy-row">
                   <button
                     className="tonal small"
@@ -193,20 +253,23 @@ export default function Integrations() {
                     <Icon name="refresh" size={14} />{' '}
                     {busy ? t('Setting up…') : t('Set up profile, commands and webhook')}
                   </button>
+                  <button className="ghost small" disabled={busy} onClick={() => setChanging(true)}>
+                    <Icon name="form" size={14} /> {t('Change token')}
+                  </button>
                   {!tg.managed && (
                     <button
                       className="ghost small"
                       disabled={busy}
-                      onClick={() => act(() => api.disconnectTelegram(agency.id))}
+                      onClick={() => act(async () => setSteps((await api.disconnectTelegram(agency.id)).steps ?? null))}
                     >
-                      {t('Disconnect')}
+                      {tg.replaces_managed ? t('Use the deployment’s bot') : t('Disconnect')}
                     </button>
                   )}
                 </div>
               )}
               <p className="muted small">
                 {t(
-                  'The full token never leaves the server. Name, photo, descriptions in English and Indonesian, commands and the menu button are set from the agency settings.',
+                  'Showing or changing the token asks for the settings password. Name, photo, descriptions in English and Indonesian, commands and the menu button are set from the agency settings.',
                 )}
               </p>
             </>

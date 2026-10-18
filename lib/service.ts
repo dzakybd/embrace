@@ -4,13 +4,14 @@ import type { Part } from '@google/genai'
 import { randomBytes } from 'node:crypto'
 import { agencyById, picFor, supervisor, type Agency } from './agencies'
 import { analystAgent } from './agents/analyst'
+import { legalAgent, unverifiedCitations } from './agents/legal'
 import { agencyAi, governance, log, recordGuard } from './agents/governance'
-import { STEP_KEYS, initialState, pipeline } from './agents/pipeline'
+import { STEP_KEYS, fence, initialState, pipeline } from './agents/pipeline'
 import { publish } from './events'
 import { detailsText, missingDetails, type Slot } from './details'
 import { checkDraft, screenInput } from './guardrails'
 import { decide } from './policy'
-import type { Channel, HistoryItem, Intake, Policy, Ticket, TraceStep } from './schemas'
+import type { Channel, HistoryItem, Intake, LegalAnswer, Policy, Ticket, TraceStep } from './schemas'
 import { prefix } from './seed'
 import { STORE, now } from './store'
 import { telegramBot } from './channels'
@@ -21,6 +22,12 @@ const pipelineRunner = new InMemoryRunner({ agent: pipeline, appName: 'embrace',
 const analystRunner = new InMemoryRunner({
   agent: analystAgent,
   appName: 'embrace_analyst',
+  plugins: [governance, new ReflectAndRetryModelPlugin({ maxRetries: 1, throwExceptionIfRetryExceeded: false })],
+})
+
+const legalRunner = new InMemoryRunner({
+  agent: legalAgent,
+  appName: 'embrace_legal',
   plugins: [governance, new ReflectAndRetryModelPlugin({ maxRetries: 1, throwExceptionIfRetryExceeded: false })],
 })
 
@@ -464,6 +471,73 @@ export async function askAnalyst(agencyId: string, question: string) {
     if (ev.author === 'analyst_agent' && text && !(ev.content?.parts ?? []).some((p) => p.functionCall)) answer = text
   }
   return { answer, tools_used: toolsUsed }
+}
+
+/**
+ * Legal research for staff: a question answered from the knowledge base, or, with a case, the legal basis of that
+ * case for its file. The agent sees the case's masked summary only, and the answer is kept on the case.
+ */
+export async function askLegal(
+  agencyId: string,
+  opts: { question?: string; ticketId?: string; by?: string },
+): Promise<LegalAnswer | null> {
+  const agency = (await agencyById(agencyId))!
+  let prompt = opts.question ?? ''
+  const t = opts.ticketId ? await STORE.get(opts.ticketId) : null
+  if (opts.ticketId) {
+    if (!t || t.agency_id !== agencyId) return null
+    const cat = agency.categories.find((c) => c.id === t.triage?.category)
+    prompt = [
+      `Draft the legal basis of case ${t.id} for its case file.`,
+      `Case type: ${cat?.label ?? t.triage?.category ?? 'unknown'}.`,
+      cat?.laws?.length ? `Laws the agency lists for this case type: ${cat.laws.join('; ')}.` : '',
+      `Urgency: ${t.policy?.final_urgency ?? 'unknown'}. Flags: ${(t.triage?.flags ?? []).join(', ') || 'none'}.`,
+      `Summary: <<<${fence(t.triage?.summary ?? '')}>>>`,
+      `Neutral restatement: <<<${fence(t.intake?.restated ?? '')}>>>`,
+      opts.question ? `The caseworker also asks: <<<${fence(opts.question)}>>>` : '',
+    ]
+      .filter(Boolean)
+      .join('\n')
+  }
+  const toolsUsed: string[] = []
+  const sources = new Map<string, LegalAnswer['sources'][number]>()
+  let answer = ''
+  const events = legalRunner.runEphemeral({
+    userId: agencyId,
+    newMessage: { role: 'user', parts: [{ text: prompt }] },
+    stateDelta: { agency_id: agencyId, agency_name: agency.name },
+  })
+  for await (const ev of events as AsyncGenerator<Event>) {
+    for (const p of ev.content?.parts ?? []) {
+      if (p.functionCall?.name) toolsUsed.push(p.functionCall.name)
+      const found = (p.functionResponse?.response as { passages?: LegalAnswer['sources'] } | undefined)?.passages
+      for (const x of found ?? []) sources.set(`${x.doc}|${x.loc}`, x)
+    }
+    const text = (ev.content?.parts ?? []).map((p) => p.text ?? '').join('')
+    if (ev.author === 'legal_agent' && text && !(ev.content?.parts ?? []).some((p) => p.functionCall)) answer = text
+  }
+  const unverified = unverifiedCitations(
+    answer,
+    [...sources.values()].map((x) => `${x.doc}, ${x.loc}`),
+  )
+  const out: LegalAnswer = {
+    answer,
+    sources: [...sources.values()],
+    tools_used: toolsUsed,
+    unverified,
+    at: now(),
+    by: opts.by,
+  }
+  if (t && answer)
+    await STORE.update(t.id, {
+      legal_basis: out,
+      history: [
+        ...t.history,
+        entry(opts.by || 'staff', 'legal_basis', `Legal basis drafted (${out.sources.length} passages)`),
+      ],
+      updated_at: now(),
+    })
+  return out
 }
 
 /** A later message from the same citizen joins their open case (no AI call) and notifies the person in charge. */

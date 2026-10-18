@@ -1,6 +1,8 @@
-// SOP lookup without model tokens: BM25 over the agency's SOP passages (built by scripts/build-sop-index.mjs).
+// SOP lookup without model tokens: BM25 over the agency's SOP passages (built by scripts/build-sop-index.mjs), plus
+// the documents and web pages staff add to the knowledge base (Firestore `knowledge`, see lib/knowledge.ts).
 import dinsosDemak from '@/agencies/dinsos_demak/sop-index.json'
 import kpai from '@/agencies/kpai/sop-index.json'
+import { STORE } from './store'
 
 export interface Passage {
   doc: string
@@ -16,6 +18,22 @@ export interface Source {
   url: string
   issuer: string
   kind: string
+  /** Set on documents added in the app: their id, who added them, and whether reply drafts may cite them. */
+  id?: string
+  added_by?: string
+  added_at?: string
+  for_replies?: boolean
+  origin?: 'file' | 'website' | 'text'
+}
+/** A document or web page added to an agency's knowledge base in the app. */
+export interface KnowledgeDoc {
+  id: string
+  agency_id: string
+  source: Source
+  passages: Passage[]
+  /** Private Cloud Storage copy of an uploaded file. */
+  file_path?: string
+  file_mime?: string
 }
 export interface IndexFile {
   sources: Source[]
@@ -138,6 +156,9 @@ class SopIndex {
 }
 
 const cache = new Map<string, SopIndex>()
+const forget = (agencyId: string) => {
+  for (const k of cache.keys()) if (k === agencyId || k.startsWith(`${agencyId}:`)) cache.delete(k)
+}
 
 export function indexFor(agencyId: string): SopIndex {
   let idx = cache.get(agencyId)
@@ -154,7 +175,7 @@ const SHIPPED = { ...FILES }
 export function resetDocs(agencyId: string): void {
   if (SHIPPED[agencyId]) FILES[agencyId] = SHIPPED[agencyId]
   else delete FILES[agencyId]
-  cache.delete(agencyId)
+  forget(agencyId)
 }
 
 export const isShippedDocs = (agencyId: string) => !!SHIPPED[agencyId]
@@ -169,7 +190,7 @@ export function registerDocs(agencyId: string, docs: IndexFile): void {
         passages: [...base.passages.filter((p) => kept(p.doc)), ...docs.passages],
       }
     : docs
-  cache.delete(agencyId)
+  forget(agencyId)
 }
 
 const CHUNK = 900
@@ -209,6 +230,39 @@ export function markdownUnits(text: string): { loc: string; text: string }[] {
 
 export function sourcesFor(agencyId: string): Source[] {
   return FILES[agencyId]?.sources ?? []
+}
+
+const added = new Map<string, { at: number; docs: KnowledgeDoc[] }>()
+
+/** Refreshes the documents staff added to an agency's knowledge base (shared by all instances, cached for 30 s). */
+export async function loadKnowledge(agencyId: string, force = false): Promise<KnowledgeDoc[]> {
+  const hit = added.get(agencyId)
+  if (!force && hit && Date.now() - hit.at < 30_000) return hit.docs
+  const docs = (await STORE.listKnowledge(agencyId).catch(() => hit?.docs ?? [])).sort((a, b) =>
+    (a.source.added_at ?? '').localeCompare(b.source.added_at ?? ''),
+  )
+  const key = (d: KnowledgeDoc[]) => d.map((x) => `${x.id}:${x.source.for_replies}`).join(',')
+  if (!hit || key(hit.docs) !== key(docs)) forget(agencyId)
+  added.set(agencyId, { at: Date.now(), docs })
+  return docs
+}
+
+/** Shipped or registered documents plus the added ones; "replies" leaves out those marked for staff only. Call
+ * loadKnowledge first. */
+export function knowledgeIndex(agencyId: string, scope: 'replies' | 'all'): SopIndex {
+  const k = `${agencyId}:${scope}`
+  let idx = cache.get(k)
+  if (!idx) {
+    const extra = (added.get(agencyId)?.docs ?? []).filter((d) => scope === 'all' || d.source.for_replies)
+    idx = new SopIndex([...indexFor(agencyId).passages, ...extra.flatMap((d) => d.passages)])
+    cache.set(k, idx)
+  }
+  return idx
+}
+
+/** Every document of the knowledge base, shipped first. Call loadKnowledge first. */
+export function knowledgeSources(agencyId: string): Source[] {
+  return [...sourcesFor(agencyId), ...(added.get(agencyId)?.docs ?? []).map((d) => d.source)]
 }
 
 export function asPrompt(results: Passage[]): string {

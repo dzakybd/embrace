@@ -5,7 +5,7 @@ import { getAgency, taxonomyText, type Agency } from '../agencies'
 import { decide } from '../policy'
 import { DraftReply, IntakeResult, MediaResult, TriageResult, type Intake, type Media, type Triage } from '../schemas'
 import { SAFETY } from '../guardrails'
-import { asPrompt, indexFor } from '../sop'
+import { asPrompt, knowledgeIndex, loadKnowledge } from '../sop'
 import { CFG, MODELS, gemini } from './models'
 
 // Agents that read reports filter only high-probability harm; the drafter, which writes to the public, filters more.
@@ -195,7 +195,7 @@ class PolicyAgent extends BaseAgent {
   }
 }
 
-/** Finds the agency's SOP passages for this case with BM25. No model call. */
+/** Finds the agency's SOP passages for this case with BM25, over the documents replies may cite. No model call. */
 class SopLookupAgent extends BaseAgent {
   protected async *runAsyncImpl(ctx: InvocationContext) {
     const s = ctx.session.state
@@ -206,7 +206,8 @@ class SopLookupAgent extends BaseAgent {
     const query =
       [labels[triage.category ?? ''] ?? '', triage.summary ?? '', ...entities.filter(Boolean)].join(' ').trim() ||
       (s['complaint_text'] as string)
-    const results = indexFor(agency.id).search(query, 3)
+    await loadKnowledge(agency.id)
+    const results = knowledgeIndex(agency.id, 'replies').search(query, 3)
     const sop = results.map((r, i) => ({ n: i + 1, ...r }))
     yield createEvent({
       author: this.name,

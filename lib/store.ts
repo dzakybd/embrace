@@ -1,6 +1,7 @@
 // Ticket storage: Firestore in the cloud (EMBRACE_STORE=firestore), an in-memory map for local dev and tests.
 import { BUCKET } from './files-url'
 import type { Notification, Ticket } from './schemas'
+import type { KnowledgeDoc } from './sop'
 
 export const now = () => new Date().toISOString()
 
@@ -31,6 +32,11 @@ export interface Store {
   /** Private files (report photos and voice notes): Cloud Storage `reports/...`, never readable by clients. */
   putFile(path: string, mime: string, data: Buffer): Promise<void>
   getFile(path: string): Promise<{ mime: string; data: Buffer } | null>
+  deleteFile(path: string): Promise<void>
+  /** Documents and web pages staff added to an agency's knowledge base, with their passages. */
+  listKnowledge(agencyId: string): Promise<KnowledgeDoc[]>
+  putKnowledge(doc: KnowledgeDoc): Promise<void>
+  deleteKnowledge(agencyId: string, id: string): Promise<void>
 }
 
 /** Guardrail settings an agency can adjust in the AI control tower (defaults in lib/guardrails.ts). */
@@ -97,6 +103,9 @@ class MemoryStore implements Store {
   async getFile(path: string) {
     return this.files.get(path) ?? null
   }
+  async deleteFile(path: string) {
+    this.files.delete(path)
+  }
   private claims = new Set<string>()
   private hits = new Map<string, number[]>()
   private chats = new Map<string, ChatState>()
@@ -146,6 +155,16 @@ class MemoryStore implements Store {
   }
   async clearNotifications(agencyId: string) {
     this.notes = this.notes.filter((n) => n.agency_id !== agencyId)
+  }
+  private knowledge = new Map<string, KnowledgeDoc>()
+  async listKnowledge(agencyId: string) {
+    return [...this.knowledge.values()].filter((d) => d.agency_id === agencyId)
+  }
+  async putKnowledge(doc: KnowledgeDoc) {
+    this.knowledge.set(`${doc.agency_id}__${doc.id}`, doc)
+  }
+  async deleteKnowledge(agencyId: string, id: string) {
+    this.knowledge.delete(`${agencyId}__${id}`)
   }
   async listNotifications(agencyId: string, to: string) {
     return this.notes.filter((n) => n.agency_id === agencyId && n.to === to).sort((a, b) => b.at.localeCompare(a.at))
@@ -206,6 +225,9 @@ class FirestoreStore implements Store {
     const [[data], [meta]] = await Promise.all([file.download(), file.getMetadata()])
     return { mime: String(meta.contentType ?? 'application/octet-stream'), data }
   }
+  async deleteFile(path: string) {
+    await (await this.bucket).file(path).delete({ ignoreNotFound: true })
+  }
   async addNotification(n: Notification) {
     await (await this.db).collection('notifications').add(n)
   }
@@ -262,6 +284,16 @@ class FirestoreStore implements Store {
   }
   async setIntegration(agencyId: string, fields: Partial<Integrations>) {
     await (await this.db).collection('integrations').doc(agencyId).set(fields, { merge: true })
+  }
+  async listKnowledge(agencyId: string) {
+    const snap = await (await this.db).collection('knowledge').where('agency_id', '==', agencyId).get()
+    return snap.docs.map((d) => d.data() as KnowledgeDoc)
+  }
+  async putKnowledge(doc: KnowledgeDoc) {
+    await (await this.db).collection('knowledge').doc(`${doc.agency_id}__${doc.id}`).set(doc)
+  }
+  async deleteKnowledge(agencyId: string, id: string) {
+    await (await this.db).collection('knowledge').doc(`${agencyId}__${id}`).delete()
   }
   async listNotifications(agencyId: string, to: string) {
     const snap = await (await this.db)

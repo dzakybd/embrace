@@ -24,6 +24,7 @@ const ROLE: Record<string, string> = {
   triage_agent: 'Category, urgency, safety flags',
   drafter_agent: 'Reply draft for officer approval',
   analyst_agent: 'Insights, weekly brief, questions',
+  legal_agent: 'Legal basis and document answers for staff',
 }
 
 /** The AI control tower: models, key, guardrails, telemetry and what the agents did in the last 30 days. */
