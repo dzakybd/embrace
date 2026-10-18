@@ -71,7 +71,7 @@ export default function Inbox() {
         </div>
         <button
           className="ghost small"
-          onClick={() => api.resetDemo(agency.id).then(load)}
+          onClick={() => api.resetDemo(agency.id).then(load, () => {})}
           title={t('Restore the synthetic demo data')}
         >
           <Icon name="refresh" size={14} /> {t('Reset demo data')}

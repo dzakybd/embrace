@@ -832,3 +832,8 @@ pre.json { font: 11px/1.45 'Google Sans Code', monospace; background: var(--surf
 .res-card p { margin: 0; }
 .res-foot { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; justify-content: space-between; }
 .res-add { border: 1.5px dashed var(--line); border-radius: var(--r); background: transparent; padding: 16px; display: flex; gap: 6px; align-items: center; justify-content: center; color: var(--brand); font: inherit; cursor: pointer; min-height: 72px; }
+.modal-back { position: fixed; inset: 0; background: rgb(0 0 0 / 0.32); display: grid; place-items: center; z-index: 50; padding: 16px; }
+.modal { width: min(100%, 400px); display: flex; flex-direction: column; gap: 10px; }
+.modal h2 { margin: 0; font-size: 20px; font-weight: 400; }
+.modal-actions { display: flex; justify-content: flex-end; gap: 8px; }
+.page-h > button, .page-h > .btn { white-space: nowrap; flex: none; }

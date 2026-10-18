@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin'
 import { z } from 'zod'
 import { agencyById } from '@/lib/agencies'
 import { aiReport } from '@/lib/ai-report'
@@ -102,6 +103,8 @@ const Body = z.object({
 
 /** Supervisor: models per agent (allow-listed) and guardrail settings. Applies within a minute, logged for audit. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const limited = rateLimit(req, 'ai-config', 20)
   if (limited) return limited
   const { id } = await params

@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin'
 import { randomBytes } from 'node:crypto'
 import { z } from 'zod'
 import { AGENCIES, agencyById } from '@/lib/agencies'
@@ -39,6 +40,8 @@ const Connect = z.object({
 
 /** Connects a Telegram bot to an agency created in the app: validates the token and sets the webhook. */
 export async function POST(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')
@@ -67,6 +70,8 @@ export async function POST(req: Request, { params }: { params: Promise<{ id: str
 
 /** Sets the connected bot up again (webhook, commands, descriptions, name, photo, menu), for managed bots too. */
 export async function PATCH(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   if (!(await agencyById(id))) return error(404, 'unknown agency')
   const limited = rateLimit(req, 'tg-setup', 10)
@@ -79,6 +84,8 @@ export async function PATCH(req: Request, { params }: { params: Promise<{ id: st
 
 /** Disconnects the bot: removes its webhook and forgets the token. */
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')

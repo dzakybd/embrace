@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from 'next'
+import { AdminPrompt } from '@/components/AdminPrompt'
 import { LangProvider } from '@/components/Lang'
 import { getLang } from '@/lib/i18n-server'
 import './globals.css'
@@ -21,7 +22,10 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang={lang}>
       <body>
-        <LangProvider lang={lang}>{children}</LangProvider>
+        <LangProvider lang={lang}>
+          {children}
+          <AdminPrompt />
+        </LangProvider>
       </body>
     </html>
   )

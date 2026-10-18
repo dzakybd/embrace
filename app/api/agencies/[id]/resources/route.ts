@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin'
 import { z } from 'zod'
 import { AGENCIES, agencyById, publicAgency, RESOURCE_KINDS, saveAgencyFields } from '@/lib/agencies'
 import { log } from '@/lib/agents/governance'
@@ -26,6 +27,8 @@ const Body = z.object({
 
 /** Supervisor or head of office: the agency's links and contacts (official channels, social media, hotlines, partners). */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')

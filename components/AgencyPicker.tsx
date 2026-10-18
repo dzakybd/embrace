@@ -46,9 +46,12 @@ export function AgencyPicker() {
       </div>
     )
   const remove = async (id: string) => {
-    await api.deleteAgency(id)
+    const ok = await api.deleteAgency(id).then(
+      () => true,
+      () => false,
+    )
     setConfirm('')
-    reload()
+    if (ok) reload()
   }
   return (
     <section className="agency-grid" aria-label={t('Agencies')}>

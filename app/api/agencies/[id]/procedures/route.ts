@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin'
 import { z } from 'zod'
 import { AGENCIES, agencyById, publicAgency, saveAgencyFields } from '@/lib/agencies'
 import { log } from '@/lib/agents/governance'
@@ -39,6 +40,8 @@ const Body = z.object({
 /** Supervisor or head of office: the agency's case procedures (stages, owners, requirements) and each case type's legal basis.
  * Built-in agencies keep the edit as an override, like Settings; Reset demo restores the shipped version. */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')

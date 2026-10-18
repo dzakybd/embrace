@@ -1,3 +1,4 @@
+import { requireAdmin } from '@/lib/admin'
 import { AGENCIES, agencyById, loadAgencies, publicAgency } from '@/lib/agencies'
 import { buildAgency, NewAgency } from '@/lib/agency-builder'
 import { error, rateLimit } from '@/lib/http'
@@ -6,6 +7,8 @@ import { STORE } from '@/lib/store'
 
 /** Saves edited settings (rules, categories, teams, staff, documents). Built-in agencies keep an override. */
 export async function PUT(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')
@@ -24,6 +27,8 @@ export async function PUT(req: Request, { params }: { params: Promise<{ id: stri
 
 /** Deletes an agency created in the app with its cases, or restores a built-in agency's shipped settings. */
 export async function DELETE(req: Request, { params }: { params: Promise<{ id: string }> }) {
+  const denied = requireAdmin(req)
+  if (denied) return denied
   const { id } = await params
   const agency = await agencyById(id)
   if (!agency) return error(404, 'unknown agency')

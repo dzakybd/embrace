@@ -17,6 +17,7 @@ confirmed issues in the demo within 14 days, and we credit reporters who want it
 | Gemini API key | Google Secret Manager `gemini-api-key`, injected into Cloud Run at deploy | Never in the repository, the browser or logs; the AI control tower shows its last 4 characters only (as the Google Cloud console does) |
 | Telegram bot tokens (built-in agencies) | Secret Manager `telegram-bot-dinsos-demak`, `telegram-bot-kpai` | The Channels page shows where a token is stored and a masked hint, never the token |
 | Telegram bot tokens (agencies created in the app) | Firestore `integrations`, server only | Firestore rules deny every client read and write |
+| Settings password | Secret Manager `embrace-admin-password` | Required for every change to an agency's setup; compared in constant time, wrong guesses rate-limited |
 | Telegram webhook secret | Secret Manager `telegram-webhook-secret` | Every webhook call must carry it in `X-Telegram-Bot-Api-Secret-Token` |
 
 `.env*` files are gitignored. `.env.example` lists the variable names only.
@@ -52,8 +53,9 @@ the Gemini API (not enabled on the Firebase project), and the app no longer uses
 
 ## Known limitations of the prototype
 
-- **No staff sign-in.** The staff workspace lets anyone switch between demo accounts so judges can try every role.
-  Role checks on the server trust the account the browser names. A real deployment needs Firebase Authentication
+- **No staff sign-in.** The staff workspace lets anyone switch between demo accounts so judges can try every role,
+  and case work (delegating, approving replies) is open. Every change to an agency's setup (settings, AI models and
+  guardrails, procedures, resources, channels, demo reset) needs the settings password, checked on the server. A real deployment needs Firebase Authentication
   with roles on the user, checked on the server, before it holds real data.
 - **Rate limits** on most endpoints are per instance; the Telegram limits are shared through Firestore.
 - **Attachments** are served to the staff case page by the server without sign-in, like the rest of the demo staff

@@ -1,3 +1,4 @@
+import { adminFetch } from './adminFetch'
 import type { ProcedureT } from './Procedures'
 
 export interface Resource {
@@ -313,7 +314,7 @@ export const api = {
       by: string
     },
   ) =>
-    fetch(`/api/agencies/${t}/ai`, {
+    adminFetch(`/api/agencies/${t}/ai`, {
       method: 'PATCH',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
@@ -328,16 +329,18 @@ export const api = {
     }).then(json<Agency>),
   integrations: (t: string) => fetch(`/api/agencies/${t}/integrations`).then(json<Integrations>),
   connectTelegram: (t: string, token: string) =>
-    fetch(`/api/agencies/${t}/integrations`, {
+    adminFetch(`/api/agencies/${t}/integrations`, {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify({ token }),
     }).then(json<{ connected: boolean; username: string; steps: SetupStep[] }>),
   setupTelegram: (t: string) =>
-    fetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(json<{ steps: SetupStep[]; status: BotStatus }>),
-  disconnectTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
+    adminFetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(
+      json<{ steps: SetupStep[]; status: BotStatus }>,
+    ),
+  disconnectTelegram: (t: string) => adminFetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
   saveResources: (t: string, body: { resources: Resource[]; by: { name: string; role: string } }) =>
-    fetch(`/api/agencies/${t}/resources`, {
+    adminFetch(`/api/agencies/${t}/resources`, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
@@ -346,19 +349,19 @@ export const api = {
     t: string,
     body: { procedures: ProcedureT[]; laws: Record<string, string[]>; by: { name: string; role: string } },
   ) =>
-    fetch(`/api/agencies/${t}/procedures`, {
+    adminFetch(`/api/agencies/${t}/procedures`, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     }).then(json<Agency>),
   updateAgency: (t: string, body: NewAgency) =>
-    fetch(`/api/agencies/${t}`, {
+    adminFetch(`/api/agencies/${t}`, {
       method: 'PUT',
       headers: { 'content-type': 'application/json' },
       body: JSON.stringify(body),
     }).then(json<Agency>),
-  deleteAgency: (t: string) => fetch(`/api/agencies/${t}`, { method: 'DELETE' }).then(json),
-  resetDemo: (t: string) => fetch(`/api/agencies/${t}/reset-demo`, { method: 'POST' }).then(json),
+  deleteAgency: (t: string) => adminFetch(`/api/agencies/${t}`, { method: 'DELETE' }).then(json),
+  resetDemo: (t: string) => adminFetch(`/api/agencies/${t}/reset-demo`, { method: 'POST' }).then(json),
 }
 
 export type SubmitEvent =

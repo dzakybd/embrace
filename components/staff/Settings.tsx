@@ -14,8 +14,14 @@ export default function Settings() {
   const [restoring, setRestoring] = useState(false)
   const restore = async () => {
     setRestoring(true)
-    await api.deleteAgency(agency.id).finally(() => setRestoring(false))
-    reload()
+    const ok = await api
+      .deleteAgency(agency.id)
+      .then(
+        () => true,
+        () => false,
+      )
+      .finally(() => setRestoring(false))
+    if (ok) reload()
   }
   return (
     <div className="page">

@@ -669,6 +669,12 @@ export const ID: Record<string, string> = {
     '{held} dari {n} serangan sintetis tertahan (injeksi prompt, pembocoran prompt, manipulasi urgensi, tautan dan janji sisipan); {s} sudah tertangkap oleh penyaring input.',
   'Run {date}': 'Dijalankan {date}',
   Conversation: 'Percakapan',
+  'Settings password': 'Kata sandi pengaturan',
+  'Changes to this agency’s setup need the settings password. Trying the app does not.':
+    'Perubahan pengaturan instansi ini memerlukan kata sandi pengaturan. Mencoba aplikasi tidak memerlukannya.',
+  'Wrong password. Try again.': 'Kata sandi salah. Coba lagi.',
+  Cancel: 'Batal',
+  'Save with password': 'Simpan dengan kata sandi',
   'Add to {kind}': 'Tambah ke {kind}',
   'Changes show on the agency page and reach the agents at once.':
     'Perubahan langsung tampil di halaman instansi dan dipakai agen.',

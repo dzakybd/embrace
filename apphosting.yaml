@@ -23,5 +23,8 @@ env:
     secret: telegram-bot-kpai
   - variable: TELEGRAM_WEBHOOK_SECRET
     secret: telegram-webhook-secret
+  # Settings password: every change to an agency's setup needs it (lib/admin.ts).
+  - variable: EMBRACE_ADMIN_PASSWORD
+    secret: embrace-admin-password
   - variable: EMBRACE_PUBLIC_URL
     value: https://embrace.nalaria.ai.id
