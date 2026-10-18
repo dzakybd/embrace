@@ -59,6 +59,7 @@ Sans are trademarks of Google LLC.
 | Google Sans, Google Sans Code | Loaded from the [Google Fonts](https://fonts.google.com) API | Open font licenses as listed on each family's Google Fonts page |
 | Brand marks (WhatsApp, Telegram, Instagram, Threads, Gmail, Gemini, Firebase, Google Cloud) | [Simple Icons](https://simpleicons.org) through [react-icons](https://github.com/react-icons/react-icons) | Icons CC0-1.0, package MIT. The marks are trademarks of their owners and show which channel or service is meant; no affiliation is implied |
 | Interface icons and the Embrace logo | Drawn for this project | Part of Embrace, all rights reserved |
+| `public/team/*/*.jpg`, staff portraits | Generated with Gemini (Google) for this demo from text prompts; the people are fictional and resemble no real person | Part of Embrace, all rights reserved; Gemini terms of use |
 
 ## Software dependencies
 
