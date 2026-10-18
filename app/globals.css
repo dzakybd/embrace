@@ -807,3 +807,12 @@ pre.json { font: 11px/1.45 'Google Sans Code', monospace; background: var(--surf
 .am-flow { align-items: start; }
 .am-chain { align-content: start; }
 .say.search .say-b, .say.rules .say-b { width: 100%; }
+.kb-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 230px), 1fr)); gap: 12px; }
+.kb-card { display: flex; flex-direction: column; gap: 4px; padding: 16px; text-decoration: none; color: var(--ink); min-width: 0; }
+.kb-card b { font-size: 16px; font-weight: 500; }
+.kb-card .clamp { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; }
+.kb-kind { align-self: flex-start; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 6px; background: var(--surface-2); color: var(--ink-2); }
+.kb-kind.law { background: var(--brand-soft); color: var(--brand-soft-ink); }
+.kb-kind.regulation { background: var(--good-soft); color: var(--good); }
+.pick-h .h-link { font-size: 14px; font-weight: 500; margin-left: 12px; text-decoration: none; color: var(--brand); }
+.pick-h .muted.small { font-size: 13px; margin-left: 8px; }

@@ -6,7 +6,6 @@ import { Monogram } from '@/components/AgencyPicker'
 import { Brand, Footer } from '@/components/Brand'
 import { TrackBox } from '@/components/citizen/TrackBox'
 import { LangSwitch } from '@/components/Lang'
-import { catLabel } from '@/components/Procedures'
 import { ChannelIcon, Icon, telegramUrl } from '@/components/ui'
 import { agencyById } from '@/lib/agencies'
 import { localize, translator } from '@/lib/i18n'
@@ -33,6 +32,8 @@ const MANAGE = [
   { as: 'supervisor', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
 ]
 
+const KIND: Record<string, string> = { law: 'Law', regulation: 'Regulation', sop: 'SOP', 'service-flow': 'Service flow', 'sample-sop': 'Sample SOP' }
+
 const FLOW = [
   { icon: 'check', text: 'Report number in seconds, personal data masked' },
   { icon: 'alert', text: 'Urgent cases alert the supervisor' },
@@ -48,7 +49,6 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
   const t = translator(lang)
   const agency = localize(found, lang)
   const tg = telegramUrl(agency.telegram_bot)
-  const byTeam = Object.entries(agency.queues).map(([q, team]) => ({ team, cats: agency.categories.filter((c) => c.queue === q) })).filter((t) => t.cats.length)
   const docs = sourcesFor(agency.id).filter((s) => !s.title.includes('(Indonesian original)'))
   return (
     <div className="public">
@@ -123,41 +123,21 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
           ))}
         </section>
 
-        <h2 className="pick-h">{t('How a report is handled')}</h2>
+        <h2 className="pick-h">{t('How a report is handled')} {(agency.procedures?.length ?? 0) > 0 && <Link className="h-link" href={`/a/${agency.id}/guide`}>{t('Every case type, step by step')} →</Link>}</h2>
         <ol className="steps-row flow">
           {FLOW.map((f, i) => <li key={f.text}><span className="entry-ic small"><Icon name={f.icon} size={18} /></span><span><small className="muted">{t('Step {n}', { n: i + 1 })}</small>{t(f.text)}</span></li>)}
         </ol>
-        {(agency.procedures?.length ?? 0) > 0 && (
-          <Link href={`/a/${agency.id}/guide`} className="role-card staff-tile guide-tile">
-            <span className="entry-ic small"><Icon name="rules" size={22} /></span>
-            <span>
-              <b>{t('Case types and procedures')}</b>
-              <span className="muted">{t('{n} procedures, the stages of each and the laws behind them', { n: agency.procedures!.length })}</span>
-            </span>
-            <Icon name="send" size={16} />
-          </Link>
-        )}
-
-        <details className="card more">
-          <summary><Icon name="rules" /> {t('What this agency handles')} <span className="muted small">{t('{n} teams', { n: byTeam.length })}</span></summary>
-          <section className="teams-grid">
-            {byTeam.map((t) => (
-              <div key={t.team}>
-                <h3>{t.team}</h3>
-                <ul>{t.cats.map((c) => <li key={c.id}>{catLabel(c, lang)}</li>)}</ul>
-              </div>
-            ))}
-          </section>
-        </details>
-
-        {docs.length > 0 && (
-          <details className="card more">
-            <summary><Icon name="book" /> {t('Procedures and regulations the replies follow')} <span className="muted small">{t('{n} documents', { n: docs.length })}</span></summary>
-            <ul className="docs-list">
-              {docs.map((d) => <li key={d.file}>{d.url ? <a href={d.url} target="_blank" rel="noreferrer">{d.title}</a> : d.title} <span className="muted small">· {d.issuer}</span></li>)}
-            </ul>
-          </details>
-        )}
+        <h2 className="pick-h">{t('Knowledge base')} <span className="muted small">{t('{n} documents the replies cite', { n: docs.length })}</span></h2>
+        <section className="kb-grid">
+          {docs.map((d) => (
+            <a key={d.file} className="role-card kb-card" href={d.url || undefined} target="_blank" rel="noreferrer">
+              <span className={`kb-kind ${d.kind}`}>{t(KIND[d.kind] ?? 'Document')}</span>
+              <b>{d.short}</b>
+              <span className="muted small clamp">{d.title}</span>
+              <span className="muted small">{d.issuer}</span>
+            </a>
+          ))}
+        </section>
       </main>
       <Footer />
     </div>
