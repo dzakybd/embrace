@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Row } from '../api'
-import { CHANNEL_ICON, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
+import { ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
 import { useStaff } from './StaffProvider'
 
 const FILTERS = [
@@ -84,7 +84,7 @@ export default function Inbox() {
               <UrgencyBadge u={r.urgency} />
               <div className="case-main">
                 <p>{r.summary}</p>
-                <span className="muted small"><code>{r.id}</code> · <Icon name={CHANNEL_ICON[r.channel]} size={12} /> {ago(r.created_at)} · {agency.queues[r.queue ?? ''] ?? '—'}</span>
+                <span className="muted small"><code>{r.id}</code> · <ChannelIcon c={r.channel} size={12} /> {ago(r.created_at)} · {agency.queues[r.queue ?? ''] ?? '—'}</span>
               </div>
               <span className="case-pic"><span className="avatar" aria-hidden="true">{r.assignee ? names[r.assignee]?.[0] : '?'}</span>{r.assignee ? names[r.assignee] : 'Unassigned'}</span>
               {sla ? <span className={`sla ${sla.tone}`}>{r.sla_breached ? 'SLA breached' : sla.text}</span> : <span className="sla ok">Resolved</span>}

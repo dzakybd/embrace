@@ -44,7 +44,7 @@ export function StaffShell({ children }: { children: ReactNode }) {
 function Frame({ children }: { children: ReactNode }) {
   const path = usePathname()
   const router = useRouter()
-  const { me } = useStaff()
+  const { me, agency } = useStaff()
   const ok = allowed(path, me.role)
   // Switching to an account without access to this page sends it to its own start page.
   useEffect(() => {
@@ -66,7 +66,7 @@ function Frame({ children }: { children: ReactNode }) {
             </Link>
           )
         })}
-        <Link href="/report" className="rail-out" title="Open the citizen report form">
+        <Link href={`/report?agency=${agency.id}`} className="rail-out" title="Open the citizen report form">
           <span className="rail-ic"><Icon name="send" size={20} /></span>
           <span>Citizen form</span>
         </Link>
@@ -81,7 +81,7 @@ function Pickers() {
   const { agency, me, pickMe } = useStaff()
   return (
     <div className="pickers">
-      <Link href="/" className="agency-chip" title={`${agency.name} · change agency on the main menu`}>
+      <Link href={`/a/${agency.id}`} className="agency-chip" title={`${agency.name} · agency home`}>
         <Icon name="building" size={16} /> <span>{agency.short_name}</span>
       </Link>
       <Bell />

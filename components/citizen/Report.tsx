@@ -4,7 +4,7 @@ import Link from 'next/link'
 import { Fragment, useRef, useState } from 'react'
 import { submitComplaint, type Attachment, type Channel, type Citation, type Draft, type Intake as IntakeT, type Media, type Policy, type Ticket, type TraceStep, type Triage } from '../api'
 import { useAgencies } from '../useAgencies'
-import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
+import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Citations, Icon, UrgencyBadge, telegramUrl } from '../ui'
 
 const SAMPLES: Record<string, { label: string; channel: Channel; text: string }[]> = {
   dinsos_demak: [
@@ -249,7 +249,7 @@ export default function Report() {
           <div className="samples" role="group" aria-label="Sample reports">
             {SAMPLES[agency.id]?.map((s) => (
               <button key={s.label} className="chip" onClick={() => { setText(s.text); setChannel(s.channel) }}>
-                <Icon name={CHANNEL_ICON[s.channel]} size={14} /> {s.label}
+                <ChannelIcon c={s.channel} size={14} /> {s.label}
               </button>
             ))}
           </div>
@@ -258,7 +258,7 @@ export default function Report() {
             {(['web', 'whatsapp', 'email', 'social'] as Channel[]).map((c) => (
               <label key={c} className={channel === c ? 'on' : ''}>
                 <input type="radio" name="channel" value={c} checked={channel === c} onChange={() => setChannel(c)} />
-                <Icon name={CHANNEL_ICON[c]} size={14} /> {CHANNEL_LABEL[c]}
+                <ChannelIcon c={c} size={14} /> {CHANNEL_LABEL[c]}
               </label>
             ))}
           </fieldset>

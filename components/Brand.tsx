@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { SiFirebase, SiGooglecloud, SiGooglegemini } from 'react-icons/si'
 
 export function Brand({ sub, href = '/' }: { sub?: string; href?: string }) {
   return (
@@ -21,7 +22,11 @@ export function Brand({ sub, href = '/' }: { sub?: string; href?: string }) {
 export function Footer() {
   return (
     <footer className="foot">
-      Embrace prototype for AI Builder Cup · synthetic data only · Google ADK + Gemini on Firebase App Hosting (Cloud Run), Firestore, Pub/Sub and Cloud Functions
+      <span>Built with</span>
+      <span><SiGooglegemini color="#1a73e8" aria-hidden="true" /> Gemini</span>
+      <span><SiGooglecloud color="#4285f4" aria-hidden="true" /> Google ADK</span>
+      <span><SiFirebase color="#ffa000" aria-hidden="true" /> Firebase</span>
+      <span className="muted">· AI Builder Cup prototype, synthetic data</span>
     </footer>
   )
 }

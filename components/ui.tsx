@@ -1,4 +1,6 @@
 import type { ReactNode } from 'react'
+import type { IconType } from 'react-icons'
+import { SiGmail, SiInstagram, SiTelegram, SiThreads, SiWhatsapp } from 'react-icons/si'
 import type { Status, Urgency } from './api'
 
 const PATHS: Record<string, string> = {
@@ -65,8 +67,23 @@ export function StatusBadge({ s }: { s: Status }) {
   return <span className={`status st-${s}`}>{STATUS_LABEL[s]}</span>
 }
 
-export const CHANNEL_ICON: Record<string, string> = { web: 'form', whatsapp: 'chat', email: 'mail', social: 'globe', telegram: 'send' }
 export const CHANNEL_LABEL: Record<string, string> = { web: 'Web form', whatsapp: 'WhatsApp', email: 'Email', social: 'Social media', telegram: 'Telegram' }
+
+/** Brand marks in brand colours for messaging channels; the web form and generic social media use the app's own icons. */
+const BRANDS: Record<string, [IconType, string]> = {
+  whatsapp: [SiWhatsapp, '#25D366'],
+  telegram: [SiTelegram, '#26A5E4'],
+  email: [SiGmail, '#EA4335'],
+  instagram: [SiInstagram, '#E4405F'],
+  threads: [SiThreads, '#000000'],
+}
+
+export function ChannelIcon({ c, size = 16 }: { c: string; size?: number }) {
+  const b = BRANDS[c]
+  if (!b) return <Icon name={c === 'web' ? 'form' : 'globe'} size={size} />
+  const [Mark, color] = b
+  return <Mark size={size} color={color} aria-hidden="true" className="icon" />
+}
 
 /** The citizen chat channel (Telegram bot). */
 /** Link to an agency's Telegram bot, if it has one. */

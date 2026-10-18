@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { api, type Agency, type Citation, type TeamMember, type Ticket, type TraceStep } from '../api'
-import { AGENT_META, CHANNEL_ICON, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
+import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
 import { useStaff } from './StaffProvider'
 
 const TABS = [
@@ -67,7 +67,7 @@ export default function Case({ id }: { id: string }) {
           <StatusBadge s={t.status} />
           <UrgencyBadge u={t.policy?.final_urgency} />
           {category && <span className="tag">{category.label}</span>}
-          <span className="tag"><Icon name={CHANNEL_ICON[t.channel]} size={12} /> {CHANNEL_LABEL[t.channel]}</span>
+          <span className="tag"><ChannelIcon c={t.channel} size={12} /> {CHANNEL_LABEL[t.channel]}</span>
           {sla && <span className={`sla ${sla.tone}`}><Icon name="clock" size={12} /> {sla.text}</span>}
           {t.seeded && <span className="tag muted">synthetic history</span>}
         </div>

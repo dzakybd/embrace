@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { api, type AnalystAnswer, type Overview } from '../api'
 import Link from 'next/link'
-import { CHANNEL_LABEL, Card, Icon, URGENCY_LABEL } from '../ui'
+import { CHANNEL_LABEL, ChannelIcon, Card, Icon, URGENCY_LABEL } from '../ui'
 import { useStaff } from './StaffProvider'
 
 const SUGGESTED: Record<string, string[]> = {
@@ -141,7 +141,7 @@ export default function Insights() {
         <Card title="By channel" icon="chat" className="chan">
           <ul className="statlist">
             {Object.entries(ov.by_channel).sort((a, b) => b[1] - a[1]).map(([c, n]) => (
-              <li key={c}><span>{CHANNEL_LABEL[c] ?? c}</span><b>{n}</b></li>
+              <li key={c}><span><ChannelIcon c={c} size={14} /> {CHANNEL_LABEL[c] ?? c}</span><b>{n}</b></li>
             ))}
           </ul>
         </Card>
