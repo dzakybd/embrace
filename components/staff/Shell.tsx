@@ -1,12 +1,13 @@
 'use client'
 
+import { Avatar } from '../Avatar'
 import Link from 'next/link'
 import { usePathname, useRouter } from 'next/navigation'
 import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { Brand, Footer } from '../Brand'
 import { localize } from '@/lib/i18n'
 import { LangSwitch, useLang, useT } from '../Lang'
-import { Avatar, Icon, ago } from '../ui'
+import { Icon, ago } from '../ui'
 import { StaffProvider, useStaff } from './StaffProvider'
 
 const ROLES = [

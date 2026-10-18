@@ -2,8 +2,9 @@
 
 import { useEffect, useState } from 'react'
 import { api, type Row } from '../api'
-import { Avatar, Card } from '../ui'
+import { Card } from '../ui'
 import { useT } from '../Lang'
+import { Avatar } from '../Avatar'
 import { useStaff } from './StaffProvider'
 
 export default function Team() {

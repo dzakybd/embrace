@@ -3,11 +3,12 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { api, type Agency, type Citation, type TeamMember, type Ticket, type TraceStep } from '../api'
-import { Avatar, AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
+import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
 import { LABEL, type Slot } from '@/lib/details'
 import { useLang, useT } from '../Lang'
 import { catLabel, LawLinks, procTitle, stageTitle } from '../Procedures'
 import { AGENT_IO } from './AgentMap'
+import { Avatar } from '../Avatar'
 import { useStaff } from './StaffProvider'
 
 const TABS = [

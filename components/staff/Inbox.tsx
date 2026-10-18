@@ -3,8 +3,9 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Row } from '../api'
-import { Avatar, ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
+import { ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
 import { useT } from '../Lang'
+import { Avatar } from '../Avatar'
 import { useStaff } from './StaffProvider'
 
 const FILTERS = [
