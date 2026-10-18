@@ -24,7 +24,7 @@ const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
   { href: '/staff/insights', label: 'Insights', icon: 'chart', roles: ['leader'] },
   { href: '/staff/inbox', label: 'Inbox', icon: 'inbox', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/team', label: 'Team', icon: 'user', roles: ['leader', 'supervisor'] },
-  { href: '/staff/knowledge', label: 'Knowledge', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
+  { href: '/staff/knowledge', label: 'Knowledge base', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/case-types', label: 'Case types', icon: 'rules', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/integrations', label: 'Channels', icon: 'chat', roles: ['supervisor'] },
   { href: '/staff/ai', label: 'AI control', icon: 'shield', roles: ['supervisor'] },

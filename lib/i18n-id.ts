@@ -605,6 +605,8 @@ export const ID: Record<string, string> = {
   '{held} of {n} synthetic attacks held (prompt injection, prompt leaks, urgency tricks, planted links and promises); {s} were caught by the input screen first.': '{held} dari {n} serangan sintetis tertahan (injeksi prompt, pembocoran prompt, manipulasi urgensi, tautan dan janji sisipan); {s} sudah tertangkap oleh penyaring input.',
   'Run {date}': 'Dijalankan {date}',
   'Conversation': 'Percakapan',
+  'Uploaded': 'Unggahan',
+  'Laws, SOPs and service flows the replies cite': 'Undang-undang, SOP, dan alur layanan yang dirujuk balasan',
   'Knowledge base': 'Basis pengetahuan',
   '{n} documents the replies cite': '{n} dokumen yang dirujuk balasan',
   'Every case type, step by step': 'Setiap jenis kasus, tahap demi tahap',

@@ -10,7 +10,6 @@ import { ChannelIcon, Icon, telegramUrl } from '@/components/ui'
 import { agencyById } from '@/lib/agencies'
 import { localize, translator } from '@/lib/i18n'
 import { getLang } from '@/lib/i18n-server'
-import { sourcesFor } from '@/lib/sop'
 
 export const dynamic = 'force-dynamic'
 
@@ -27,12 +26,11 @@ const STAFF = [
 
 const MANAGE = [
   { as: 'supervisor', page: 'integrations', icon: 'chat', title: 'Channels', body: 'Telegram bot token, WhatsApp, email and more' },
+  { as: 'supervisor', page: 'knowledge', icon: 'book', title: 'Knowledge base', body: 'Laws, SOPs and service flows the replies cite' },
   { as: 'supervisor', page: 'case-types', icon: 'rules', title: 'Case types', body: 'Procedures, stages, who does what and the legal basis' },
   { as: 'supervisor', page: 'settings', icon: 'form', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
   { as: 'supervisor', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
 ]
-
-const KIND: Record<string, string> = { law: 'Law', regulation: 'Regulation', sop: 'SOP', 'service-flow': 'Service flow', 'sample-sop': 'Sample SOP' }
 
 const FLOW = [
   { icon: 'check', text: 'Report number in seconds, personal data masked' },
@@ -49,7 +47,6 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
   const t = translator(lang)
   const agency = localize(found, lang)
   const tg = telegramUrl(agency.telegram_bot)
-  const docs = sourcesFor(agency.id).filter((s) => !s.title.includes('(Indonesian original)'))
   return (
     <div className="public">
       <header className="top">
@@ -92,6 +89,11 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
           <TrackBox />
         </section>
 
+        <h2 className="pick-h">{t('How a report is handled')} {(agency.procedures?.length ?? 0) > 0 && <Link className="h-link" href={`/a/${agency.id}/guide`}>{t('Every case type, step by step')} →</Link>}</h2>
+        <ol className="steps-row flow">
+          {FLOW.map((f, i) => <li key={f.text}><span className="entry-ic small"><Icon name={f.icon} size={18} /></span><span><small className="muted">{t('Step {n}', { n: i + 1 })}</small>{t(f.text)}</span></li>)}
+        </ol>
+
         <h2 className="pick-h">{t('Staff workspace')}</h2>
         <section className="hub-grid three">
           {STAFF.map((s) => (
@@ -123,21 +125,6 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
           ))}
         </section>
 
-        <h2 className="pick-h">{t('How a report is handled')} {(agency.procedures?.length ?? 0) > 0 && <Link className="h-link" href={`/a/${agency.id}/guide`}>{t('Every case type, step by step')} →</Link>}</h2>
-        <ol className="steps-row flow">
-          {FLOW.map((f, i) => <li key={f.text}><span className="entry-ic small"><Icon name={f.icon} size={18} /></span><span><small className="muted">{t('Step {n}', { n: i + 1 })}</small>{t(f.text)}</span></li>)}
-        </ol>
-        <h2 className="pick-h">{t('Knowledge base')} <span className="muted small">{t('{n} documents the replies cite', { n: docs.length })}</span></h2>
-        <section className="kb-grid">
-          {docs.map((d) => (
-            <a key={d.file} className="role-card kb-card" href={d.url || undefined} target="_blank" rel="noreferrer">
-              <span className={`kb-kind ${d.kind}`}>{t(KIND[d.kind] ?? 'Document')}</span>
-              <b>{d.short}</b>
-              <span className="muted small clamp">{d.title}</span>
-              <span className="muted small">{d.issuer}</span>
-            </a>
-          ))}
-        </section>
       </main>
       <Footer />
     </div>
