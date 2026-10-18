@@ -16,6 +16,11 @@ service firebase.storage {
       allow read: if true;
       allow write: if false;
     }
+    // Boundaries for the case maps (geoBoundaries, open licences; see NOTICE.md).
+    match /geo/{file} {
+      allow read: if true;
+      allow write: if false;
+    }
     // Report photos and voice notes: private; only the server (Admin SDK) reads and writes them.
     match /reports/{path=**} {
       allow read, write: if false;

@@ -71,6 +71,15 @@ The app's runtime dependencies are open source: 175 MIT, 104 Apache-2.0, 22 ISC,
 
 Each package's license text ships in its folder under `node_modules`.
 
+## Map boundaries (Cloud Storage `geo/`, not in this repository)
+
+| File | Source | Terms |
+|---|---|---|
+| `geo/indonesia-provinces.json` (34 provinces, simplified, names in Indonesian) | [geoBoundaries](https://www.geoboundaries.org) gbOpen IDN ADM1 (Runfola et al., 2020) | Open Data Commons Open Database License 1.0 |
+| `geo/demak-kecamatan.json` (the 14 kecamatan of Demak regency, simplified) | geoBoundaries gbHumanitarian IDN ADM3, from OCHA ROAP via HDX | CC BY 3.0 IGO |
+
+Charts and maps use [Apache ECharts](https://echarts.apache.org) (Apache-2.0); diagrams use [React Flow](https://reactflow.dev) (`@xyflow/react`, MIT).
+
 ## Submission film (sources kept outside this repository)
 
 | Item | Source | Terms |

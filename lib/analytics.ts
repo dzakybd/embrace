@@ -1,5 +1,6 @@
 // Aggregates for the insights dashboard and the analyst agent's tools.
 import type { Agency } from './agencies'
+import { regionOf } from './geo'
 import type { Ticket } from './schemas'
 
 export const OPEN = new Set(['escalated', 'manual_review', 'assigned', 'in_progress'])
@@ -45,7 +46,40 @@ export function overview(agency: Agency, tickets: Ticket[], days = 30) {
     (t) => t.triage?.category,
   )
   const daily = tally(recent, (t) => t.created_at.slice(0, 10))
+  const dailyUrgency = new Map<string, Record<string, number>>()
+  for (const t of recent) {
+    const d = t.created_at.slice(0, 10)
+    const u = t.policy?.final_urgency ?? 'normal'
+    const row = dailyUrgency.get(d) ?? { critical: 0, high: 0, normal: 0, low: 0 }
+    row[u] = (row[u] ?? 0) + 1
+    dailyUrgency.set(d, row)
+  }
+  // Cases on the agency map: per region, with how many were escalated, are still open, and the main case type.
+  const regions = new Map<string, { count: number; escalated: number; open: number; cats: Map<string, number> }>()
+  if (agency.map)
+    for (const t of recent) {
+      const r = regionOf(agency.map.level, t.intake?.entities?.location)
+      if (!r) continue
+      const g = regions.get(r) ?? { count: 0, escalated: 0, open: 0, cats: new Map() }
+      g.count++
+      if (t.policy?.route === 'escalated') g.escalated++
+      if (OPEN.has(t.status)) g.open++
+      const c = t.triage?.category
+      if (c) g.cats.set(c, (g.cats.get(c) ?? 0) + 1)
+      regions.set(r, g)
+    }
   return {
+    map: agency.map ?? null,
+    by_region: [...regions]
+      .map(([name, g]) => ({
+        name,
+        count: g.count,
+        escalated: g.escalated,
+        open: g.open,
+        top_category: labels[[...g.cats].sort((a, b) => b[1] - a[1])[0]?.[0] ?? ''] ?? null,
+      }))
+      .sort((a, b) => b.count - a.count),
+    daily_urgency: [...dailyUrgency].sort().map(([date, u]) => ({ date, ...u })),
     window_days: days,
     total: recent.length,
     open: recent.filter((t) => OPEN.has(t.status)).length,

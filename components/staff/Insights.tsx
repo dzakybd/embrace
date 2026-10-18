@@ -6,6 +6,8 @@ import Link from 'next/link'
 import { CHANNEL_LABEL, ChannelIcon, Card, Icon, URGENCY_LABEL } from '../ui'
 import { useLang, useT } from '../Lang'
 import { useStaff } from './StaffProvider'
+import { CountUp } from '../CountUp'
+import { CaseMap, CategoryChart, ChannelDonut, DailyChart, UrgencyDonut } from './InsightCharts'
 
 const SUGGESTED: Record<string, string[]> = {
   dinsos_demak: [
@@ -210,38 +212,33 @@ export default function Insights() {
               ))}
             </Card>
 
+            {ov.map && (
+              <Card
+                title={ov.map.level === 'province' ? t('Reports across Indonesia') : t('Reports across Demak regency')}
+                icon="pin"
+                className="geo"
+              >
+                <p className="muted small">
+                  {t('Hover a region for its figures, scroll to zoom, click to open its cases.')}
+                </p>
+                <CaseMap ov={ov} />
+              </Card>
+            )}
+
             <Card title={t('Reports by category')} icon="chart" className="cats">
-              <CategoryBars ov={ov} />
+              <CategoryChart ov={ov} agency={agency} />
             </Card>
 
             <Card title={t('Daily volume')} icon="chart" className="daily">
-              <DailyColumns data={ov.daily} />
+              <DailyChart ov={ov} />
             </Card>
 
             <Card title={t('By urgency')} icon="alert" className="urg">
-              <ul className="statlist">
-                {(['critical', 'high', 'normal', 'low'] as const).map((u) => (
-                  <li key={u}>
-                    <span className={`badge urg-${u}`}>{t(URGENCY_LABEL[u])}</span>
-                    <b>{ov.by_urgency[u] ?? 0}</b>
-                  </li>
-                ))}
-              </ul>
+              <UrgencyDonut ov={ov} />
             </Card>
 
             <Card title={t('By channel')} icon="chat" className="chan">
-              <ul className="statlist">
-                {Object.entries(ov.by_channel)
-                  .sort((a, b) => b[1] - a[1])
-                  .map(([c, n]) => (
-                    <li key={c}>
-                      <span>
-                        <ChannelIcon c={c} size={14} /> {t(CHANNEL_LABEL[c] ?? c)}
-                      </span>
-                      <b>{n}</b>
-                    </li>
-                  ))}
-              </ul>
+              <ChannelDonut ov={ov} />
             </Card>
           </div>
         </>
@@ -267,7 +264,7 @@ function Kpi({
       <span>
         {icon && <Icon name={icon} size={14} />} {t(label)}
       </span>
-      <b>{value}</b>
+      <b>{typeof value === 'number' ? <CountUp value={value} /> : value}</b>
     </div>
   )
 }
@@ -290,95 +287,5 @@ function Answer({ a }: { a: AnalystAnswer }) {
         </p>
       )}
     </>
-  )
-}
-
-function CategoryBars({ ov }: { ov: Overview }) {
-  const max = Math.max(1, ...ov.by_category.map((c) => c.count))
-  return (
-    <table className="bars">
-      <caption className="sr">Complaints per category in the last 30 days, with this week versus last week</caption>
-      <tbody>
-        {ov.by_category.map((c) => {
-          const d = c.this_week - c.prev_week
-          return (
-            <tr key={c.id} title={`${c.label}: ${c.count} (this week ${c.this_week}, last week ${c.prev_week})`}>
-              <th scope="row">{c.label}</th>
-              <td className="bar-cell">
-                <span className="bar" style={{ width: `${(c.count / max) * 100}%` }} />
-                <span className="val">{c.count}</span>
-              </td>
-              <td className={`delta ${d > 0 ? 'up' : ''}`}>
-                {d > 0 ? `▲ ${d}` : d < 0 ? `▼ ${-d}` : '–'}
-                <span className="sr"> vs last week</span>
-              </td>
-            </tr>
-          )
-        })}
-      </tbody>
-    </table>
-  )
-}
-
-function DailyColumns({ data }: { data: { date: string; count: number }[] }) {
-  const [hover, setHover] = useState<number | null>(null)
-  const days: { date: string; count: number }[] = []
-  const map = Object.fromEntries(data.map((d) => [d.date, d.count]))
-  for (let i = 29; i >= 0; i--) {
-    const d = new Date(Date.now() - i * 864e5).toISOString().slice(0, 10)
-    days.push({ date: d, count: map[d] ?? 0 })
-  }
-  const max = Math.max(1, ...days.map((d) => d.count))
-  const W = 600,
-    H = 160,
-    pad = 24,
-    bw = (W - pad) / days.length
-  const ticks = [0, Math.ceil(max / 2), max]
-  return (
-    <div className="daily-wrap">
-      <svg
-        viewBox={`0 0 ${W} ${H + 20}`}
-        role="img"
-        aria-label="Complaints per day for the last 30 days"
-        onMouseLeave={() => setHover(null)}
-      >
-        {ticks.map((t) => {
-          const y = H - (t / max) * (H - 10)
-          return (
-            <g key={t}>
-              <line x1={pad} x2={W} y1={y} y2={y} className="grid" />
-              <text x={pad - 6} y={y + 4} className="axis" textAnchor="end">
-                {t}
-              </text>
-            </g>
-          )
-        })}
-        {days.map((d, i) => {
-          const h = (d.count / max) * (H - 10)
-          return (
-            <g key={d.date} onMouseEnter={() => setHover(i)}>
-              <rect x={pad + i * bw} y={0} width={bw} height={H} fill="transparent" />
-              {d.count > 0 && (
-                <path
-                  className={`col ${hover === i ? 'on' : ''}`}
-                  d={`M${pad + i * bw + 2},${H} v${-(h - 4)} q0,-4 4,-4 h${bw - 12} q4,0 4,4 v${h - 4} z`}
-                />
-              )}
-            </g>
-          )
-        })}
-        {[0, 14, 29].map((i) => (
-          <text key={i} x={pad + i * bw + bw / 2} y={H + 16} className="axis" textAnchor="middle">
-            {new Date(days[i].date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
-          </text>
-        ))}
-      </svg>
-      {hover != null && (
-        <div className="tip" style={{ left: `${((pad + hover * bw + bw / 2) / W) * 100}%` }}>
-          <b>{days[hover].count}</b> on{' '}
-          {new Date(days[hover].date).toLocaleDateString(undefined, { day: 'numeric', month: 'short' })}
-        </div>
-      )}
-    </div>
   )
 }

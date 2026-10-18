@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useCallback, useEffect, useState } from 'react'
 import { api, type Row } from '../api'
-import { ChannelIcon, Icon, UrgencyBadge, ago, slaLeft } from '../ui'
+import { ChannelIcon, Icon, URGENCY_LABEL, UrgencyBadge, ago, slaLeft } from '../ui'
 import { useT } from '../Lang'
 import { Avatar } from '../Avatar'
 import { useStaff } from './StaffProvider'
@@ -25,20 +25,25 @@ const ROLE_FILTERS = {
   leader: ['', 'escalated', 'in_progress', 'resolved'],
 }
 const URG_RANK = { critical: 0, high: 1, normal: 2, low: 3 }
+/** Filters a chart on Insights links to: ?q= (search, e.g. a map region), ?category=, ?urgency=. */
+const fromUrl = (k: string) =>
+  typeof window === 'undefined' ? '' : (new URLSearchParams(location.search).get(k) ?? '')
 
 export default function Inbox() {
   const t = useT()
   const { agency, me } = useStaff()
   const [rows, setRows] = useState<Row[] | null>(null)
   const [filter, setFilter] = useState('')
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(() => fromUrl('q'))
+  const [only, setOnly] = useState(() => ({ category: fromUrl('category'), urgency: fromUrl('urgency') }))
+  const linked = !!(only.category || only.urgency || fromUrl('q'))
 
   const load = useCallback(() => api.tickets(agency.id).then(setRows), [agency.id])
   useEffect(() => {
     setRows(null)
     load()
   }, [load])
-  useEffect(() => setFilter(ROLE_FILTERS[me.role][0]), [me.id, me.role])
+  useEffect(() => setFilter(linked ? '' : ROLE_FILTERS[me.role][0]), [me.id, me.role, linked])
 
   const names = Object.fromEntries(agency.team.map((m) => [m.id, m.name]))
   const filters = ROLE_FILTERS[me.role].map((id) => FILTERS.find((f) => f.id === id)!)
@@ -55,7 +60,13 @@ export default function Inbox() {
   const counts = Object.fromEntries(filters.map((f) => [f.id, all.filter((r) => match(r, f.id)).length]))
   const q = query.trim().toLowerCase()
   const shown = all
-    .filter((r) => match(r, filter) && (!q || `${r.id} ${r.summary}`.toLowerCase().includes(q)))
+    .filter(
+      (r) =>
+        match(r, filter) &&
+        (!only.category || r.category === only.category) &&
+        (!only.urgency || r.urgency === only.urgency) &&
+        (!q || `${r.id} ${r.summary} ${r.region ?? ''}`.toLowerCase().includes(q)),
+    )
     .sort((a, b) =>
       filter === 'resolved'
         ? b.created_at.localeCompare(a.created_at)
@@ -98,6 +109,14 @@ export default function Inbox() {
           placeholder={t('Search cases')}
           aria-label={t('Search cases')}
         />
+        {(only.category || only.urgency) && (
+          <button type="button" className="chip on" onClick={() => setOnly({ category: '', urgency: '' })}>
+            {only.category
+              ? (agency.categories.find((c) => c.id === only.category)?.label ?? only.category)
+              : t(URGENCY_LABEL[only.urgency as keyof typeof URGENCY_LABEL] ?? only.urgency)}{' '}
+            ✕
+          </button>
+        )}
       </div>
       <section className="table card" aria-label={t('Cases')}>
         {rows === null && <div className="shimmer tall" />}

@@ -4,8 +4,9 @@ import Link from 'next/link'
 import { useEffect, useMemo, useState } from 'react'
 import { api, type SopSource } from '../api'
 import { useLang } from '../Lang'
-import { ACTORS, catLabel, FlowDiagram, procTitle, type ProcedureT } from '../Procedures'
+import { ACTORS, catLabel, procTitle, type ProcedureT } from '../Procedures'
 import { Card, Icon } from '../ui'
+import { FlowDiagram } from '../ProcedureFlow'
 import { useStaff } from './StaffProvider'
 
 const lines = (s: string) =>

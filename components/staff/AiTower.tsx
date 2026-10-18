@@ -1,12 +1,14 @@
 'use client'
 
 import Link from 'next/link'
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import type { AiReport } from '@/lib/ai-report'
 import { api } from '../api'
 import { useT } from '../Lang'
 import { AGENT_META, Card, Icon, ago } from '../ui'
 import { AgentMap } from './AgentMap'
+import { Chart, COLORS } from '../Chart'
+import { CountUp } from '../CountUp'
 import { useStaff } from './StaffProvider'
 
 type Guard = { read: string; write: string; injection: 'review' | 'flag'; questions: number }
@@ -469,7 +471,7 @@ function Kpi({ label, value, sub, tone }: { label: string; value: string | numbe
   return (
     <div className={`kpi ${tone ?? ''}`}>
       <span>{label}</span>
-      <b>{value}</b>
+      <b>{typeof value === 'number' ? <CountUp value={value} /> : value}</b>
       {sub && <small className="muted">{sub}</small>}
     </div>
   )
@@ -509,55 +511,47 @@ function Stat({
   )
 }
 
-/** Model calls per day as columns, median model latency as a line. */
+/** Model calls per day as columns, median model latency as a line (ECharts: tooltips, legend toggles, animation). */
 function Activity({ days }: { days: AiReport['daily'] }) {
   const t = useT()
-  const W = 560,
-    H = 140,
-    pad = 4
-  const maxC = Math.max(1, ...days.map((d) => d.calls))
-  const maxL = Math.max(1, ...days.map((d) => d.p50_ms))
-  const bw = (W - pad * 2) / days.length
-  const pts = days
-    .map((d, i) => [pad + i * bw + bw / 2, H - (d.p50_ms / maxL) * (H - 16)] as const)
-    .filter((_, i) => days[i].calls)
-  return (
-    <div className="activity">
-      <svg
-        viewBox={`0 0 ${W} ${H + 18}`}
-        role="img"
-        aria-label={t('Model calls per day and median latency, last 14 days')}
-      >
-        {days.map((d, i) => {
-          const h = (d.calls / maxC) * (H - 16)
-          return (
-            <g key={d.day}>
-              <rect
-                x={pad + i * bw + 3}
-                y={H - h}
-                width={bw - 6}
-                height={Math.max(h, d.calls ? 2 : 0)}
-                rx="3"
-                className="col"
-              >
-                <title>{`${d.day}: ${d.calls} calls, ${d.tokens} tokens, p50 ${(d.p50_ms / 1000).toFixed(1)} s`}</title>
-              </rect>
-              {i % 2 === 0 && (
-                <text x={pad + i * bw + bw / 2} y={H + 14} textAnchor="middle" className="axis">
-                  {d.day.slice(5)}
-                </text>
-              )}
-            </g>
-          )
-        })}
-        {pts.length > 1 && <polyline points={pts.map((p) => p.join(',')).join(' ')} className="lat" />}
-        {pts.map((p, i) => (
-          <circle key={i} cx={p[0]} cy={p[1]} r="3" className="latdot" />
-        ))}
-      </svg>
-      <p className="legend muted small">
-        <span className="seg llm" /> {t('model calls')} <span className="dot-line" /> {t('median latency')}
-      </p>
-    </div>
+  const option = useMemo(
+    () => ({
+      grid: { left: 8, right: 8, top: 34, bottom: 8, containLabel: true },
+      legend: { top: 0, itemWidth: 12, itemHeight: 12, textStyle: { fontSize: 12 } },
+      tooltip: { trigger: 'axis' },
+      xAxis: {
+        type: 'category',
+        data: days.map((d) => d.day.slice(5)),
+        axisTick: { show: false },
+        axisLine: { lineStyle: { color: COLORS.line } },
+      },
+      yAxis: [
+        { type: 'value', minInterval: 1, splitLine: { lineStyle: { color: COLORS.line } } },
+        { type: 'value', axisLabel: { formatter: '{value} s' }, splitLine: { show: false } },
+      ],
+      series: [
+        {
+          name: t('model calls'),
+          type: 'bar',
+          data: days.map((d) => d.calls),
+          itemStyle: { color: COLORS.brand, borderRadius: [4, 4, 0, 0] },
+          barMaxWidth: 22,
+          animationDelay: (i: number) => i * 40,
+        },
+        {
+          name: t('median latency'),
+          type: 'line',
+          yAxisIndex: 1,
+          smooth: true,
+          symbolSize: 6,
+          data: days.map((d) => (d.calls ? Math.round(d.p50_ms / 100) / 10 : null)),
+          itemStyle: { color: COLORS.high },
+          lineStyle: { width: 2 },
+          areaStyle: { color: 'rgba(232,113,10,.08)' },
+        },
+      ],
+    }),
+    [days, t],
   )
+  return <Chart option={option} height={200} label={t('Model calls per day and median latency, last 14 days')} />
 }

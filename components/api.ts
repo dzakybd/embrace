@@ -258,6 +258,7 @@ export interface Row {
   sla_breached: boolean
   seeded: boolean
   assignee: string | null
+  region: string | null
 }
 export interface Cluster {
   kind: string
@@ -282,6 +283,9 @@ export interface Overview {
   by_status: Record<string, number>
   by_channel: Record<string, number>
   daily: { date: string; count: number }[]
+  daily_urgency: { date: string; critical: number; high: number; normal: number; low: number }[]
+  map: { file: string; level: 'province' | 'kecamatan' } | null
+  by_region: { name: string; count: number; escalated: number; open: number; top_category: string | null }[]
   clusters: Cluster[]
 }
 export interface AnalystAnswer {

@@ -3,7 +3,8 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useLang } from '../Lang'
-import { FlowDiagram, procTitle, type Stage } from '../Procedures'
+import { procTitle, type Stage } from '../Procedures'
+import { FlowDiagram } from '../ProcedureFlow'
 import { Icon } from '../ui'
 
 interface Tracked {

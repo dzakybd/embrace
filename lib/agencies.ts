@@ -1,5 +1,6 @@
 // Agency packs: taxonomy, queues, escalation rules and SOP index per agency (agencies/<id>/),
 // plus agencies created in the app, which live in the store and are loaded on demand.
+import type { MapConfig } from './geo'
 import dinsosDemak from '@/agencies/dinsos_demak/agency.json'
 import kpai from '@/agencies/kpai/agency.json'
 import type { Urgency } from './schemas'
@@ -38,6 +39,8 @@ export interface Agency {
   telegram_bot?: string | null
   /** What the agency calls its head (English, translated in the UI), e.g. "Chairperson"; default "Head of office". */
   leader_label?: string
+  /** The map cases are placed on in Insights (lib/geo.ts). */
+  map?: MapConfig
   /** Indonesian name, short name and description, shown when the UI language is Indonesian. */
   name_id?: string
   short_name_id?: string
