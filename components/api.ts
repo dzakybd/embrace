@@ -1,3 +1,5 @@
+import type { ProcedureT } from './Procedures'
+
 export type Urgency = 'critical' | 'high' | 'normal' | 'low'
 export type Status = 'received' | 'escalated' | 'manual_review' | 'assigned' | 'in_progress' | 'resolved'
 export type Channel = 'web' | 'whatsapp' | 'email' | 'social' | 'telegram'
@@ -6,9 +8,10 @@ export interface Agency {
   id: string
   name: string
   short_name: string
-  categories: { id: string; label: string; queue: string; min_urgency?: Urgency }[]
+  categories: { id: string; label: string; label_id?: string; queue: string; min_urgency?: Urgency; laws?: string[] }[]
   queues: Record<string, string>
   country: string
+  procedures: ProcedureT[]
   sla_hours: Record<Urgency, number>
   emergency_line: string
   escalation_contact: string
@@ -159,6 +162,7 @@ export interface Ticket {
   sent_reply?: string
   guard?: { injection: string[]; draft: string[] }
   details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
+  progress?: { procedure: string; done: number[] }
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean
@@ -227,6 +231,8 @@ export const api = {
   details: (id: string, answers: Record<string, string>) =>
     fetch(`/api/tickets/${id}/details`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ answers }) })
       .then(json<Pick<Ticket, 'id' | 'status' | 'details'>>),
+  progress: (id: string, body: { procedure: string; stage: number; done: boolean; officer: string }) =>
+    fetch(`/api/tickets/${id}/progress`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Ticket>),
   act: (id: string, body: { action: string; officer?: string; note?: string; reply?: string; queue?: string; assignee?: string }) =>
     fetch(`/api/tickets/${id}/actions`, {
       method: 'POST',

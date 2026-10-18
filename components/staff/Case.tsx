@@ -5,7 +5,8 @@ import { useEffect, useState } from 'react'
 import { api, type Agency, type Citation, type TeamMember, type Ticket, type TraceStep } from '../api'
 import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBadge, UrgencyBadge, ago, slaLeft } from '../ui'
 import { LABEL, type Slot } from '@/lib/details'
-import { useT } from '../Lang'
+import { useLang, useT } from '../Lang'
+import { catLabel, LawLinks, procTitle, stageTitle } from '../Procedures'
 import { useStaff } from './StaffProvider'
 
 const TABS = [
@@ -15,7 +16,7 @@ const TABS = [
 ]
 
 export default function Case({ id }: { id: string }) {
-  const tr = useT()
+  const { t: tr, lang } = useLang()
   const { agency, me, refreshNotes } = useStaff()
   const [t, setT] = useState<Ticket | null>(null)
   const [missing, setMissing] = useState(false)
@@ -69,7 +70,7 @@ export default function Case({ id }: { id: string }) {
         <div className="tags">
           <StatusBadge s={t.status} />
           <UrgencyBadge u={t.policy?.final_urgency} />
-          {category && <span className="tag">{category.label}</span>}
+          {category && <span className="tag">{catLabel(category, lang)}</span>}
           <span className="tag"><ChannelIcon c={t.channel} size={12} /> {tr(CHANNEL_LABEL[t.channel])}</span>
           {sla && <span className={`sla ${sla.tone}`}><Icon name="clock" size={12} /> {sla.text}</span>}
           {t.seeded && <span className="tag muted">{tr('synthetic history')}</span>}
@@ -101,6 +102,7 @@ export default function Case({ id }: { id: string }) {
           </div>
           <div className="col">
             <Pic t={t} agency={agency} me={me} busy={busy} act={act} readOnly={readOnly} />
+            <Checklist t={t} agency={agency} officer={me.name} readOnly={readOnly} onChange={setT} />
             {!readOnly && <Card title={tr('Actions')} icon="rules">
               <div className="actions">
                 {t.status !== 'in_progress' && t.status !== 'resolved' && <button disabled={busy} onClick={() => act('start')}>{tr('Start handling')}</button>}
@@ -137,6 +139,44 @@ export default function Case({ id }: { id: string }) {
     </div>
   )
 }
+
+/** The agency procedure for this kind of case, stage by stage; the citizen sees the same stages on the tracking page. */
+function Checklist({ t, agency, officer, readOnly, onChange }: { t: Ticket; agency: Agency; officer: string; readOnly: boolean; onChange: (t: Ticket) => void }) {
+  const { t: tr, lang } = useLang()
+  const [err, setErr] = useState('')
+  const all = agency.procedures ?? []
+  const fits = all.filter((p) => p.categories.includes(t.triage?.category ?? ''))
+  const options = fits.length ? fits : all
+  const [chosen, setChosen] = useState(t.progress?.procedure ?? options[0]?.id ?? '')
+  const proc = all.find((p) => p.id === chosen)
+  if (!proc) return null
+  const done = t.progress?.procedure === proc.id ? t.progress.done : []
+  const toggle = async (stage: number, on: boolean) => {
+    setErr('')
+    try { onChange(await api.progress(t.id, { procedure: proc.id, stage, done: on, officer })) } catch (e) { setErr(String(e)) }
+  }
+  return (
+    <Card title={tr('Procedure')} icon="rules" className="checklist" action={<Link className="small" href={`/a/${agency.id}/guide#${proc.id}`} target="_blank">{tr('Guide')} ↗</Link>}>
+      {options.length > 1
+        ? <select value={proc.id} onChange={(e) => setChosen(e.target.value)} aria-label={tr('Procedure')}>{options.map((p) => <option key={p.id} value={p.id}>{procTitle(p, lang)}</option>)}</select>
+        : <p className="small-body"><b>{procTitle(proc, lang)}</b></p>}
+      <p className="muted small">{tr('{done} of {n} stages done', { done: done.length, n: proc.stages.length })}</p>
+      <ul className="stage-list">
+        {proc.stages.map((s, i) => (
+          <li key={i}>
+            <label className={done.includes(i) ? 'done' : ''}>
+              <input type="checkbox" checked={done.includes(i)} disabled={readOnly} onChange={(e) => toggle(i, e.target.checked)} />
+              <span>{stageTitle(s, lang)}</span>
+            </label>
+          </li>
+        ))}
+      </ul>
+      {caseCategory(agency, t)?.laws?.length ? <div className="proc-sub"><b>{tr('Legal basis')}</b><LawLinks shorts={caseCategory(agency, t)!.laws!} docs={[]} /></div> : null}
+      {err && <p className="error small" role="alert">{err}</p>}
+    </Card>
+  )
+}
+const caseCategory = (agency: Agency, t: Ticket) => agency.categories.find((c) => c.id === t.triage?.category)
 
 function Report({ t }: { t: Ticket }) {
   const tr = useT()

@@ -3,7 +3,8 @@
 import { useEffect, useState } from 'react'
 import { api, type Citation, type SopSource } from '../api'
 import { Card, Citations, Icon } from '../ui'
-import { useT } from '../Lang'
+import { useLang } from '../Lang'
+import { Procedures } from '../Procedures'
 import { useStaff } from './StaffProvider'
 
 const EXAMPLES: Record<string, string[]> = {
@@ -12,7 +13,7 @@ const EXAMPLES: Record<string, string[]> = {
 }
 
 export default function Knowledge() {
-  const t = useT()
+  const { t, lang } = useLang()
   const { agency } = useStaff()
   const [sources, setSources] = useState<SopSource[]>([])
   const [q, setQ] = useState('')
@@ -74,6 +75,8 @@ export default function Knowledge() {
                       </Card>
         </div>
       </div>
+      <h2 className="section-h">{t('Procedures')} <span className="muted small">{t('The stages each case follows; tick them off on the case.')}</span></h2>
+      <Procedures procedures={agency.procedures ?? []} categories={agency.categories} docs={sources} lang={lang} t={t} />
     </div>
   )
 }

@@ -17,9 +17,13 @@ export interface Source {
   issuer: string
   kind: string
 }
-interface IndexFile {
+export interface IndexFile {
   sources: Source[]
   passages: Passage[]
+  /** A built-in agency whose shipped documents this agency also uses (only those named in `keep`): stored as a
+   * reference, so a copied agency stays far below Firestore's 1 MB document limit. */
+  template?: string
+  keep?: string[]
 }
 
 const FILES: Record<string, IndexFile> = {
@@ -153,9 +157,15 @@ export function resetDocs(agencyId: string): void {
   cache.delete(agencyId)
 }
 
-/** Documents of an agency created in the app (built at upload time, see passagesFor). */
+export const isShippedDocs = (agencyId: string) => !!SHIPPED[agencyId]
+
+/** Documents of an agency created in the app (built at upload time, see passagesFor), plus the template documents it keeps. */
 export function registerDocs(agencyId: string, docs: IndexFile): void {
-  FILES[agencyId] = docs
+  const base = docs.template ? SHIPPED[docs.template] : undefined
+  const kept = (short: string) => (docs.keep ?? []).includes(short)
+  FILES[agencyId] = base
+    ? { sources: [...base.sources.filter((s) => kept(s.short)), ...docs.sources], passages: [...base.passages.filter((p) => kept(p.doc)), ...docs.passages] }
+    : docs
   cache.delete(agencyId)
 }
 

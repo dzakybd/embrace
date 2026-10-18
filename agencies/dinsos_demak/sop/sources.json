@@ -32,35 +32,111 @@
   "kind": "sample-sop"
  },
  {
-  "file": "permenpanrb-5-2025-sp4n.pdf",
-  "title": "PANRB Ministerial Regulation 5/2025 on the national public service complaint management system (SP4N-LAPOR!)",
-  "short": "PermenPANRB 5/2025",
-  "url": "https://jdih.menpan.go.id",
-  "issuer": "Ministry of Administrative and Bureaucratic Reform",
+  "file": "uu-11-2009-kesejahteraan-sosial.pdf",
+  "title": "Law 11/2009 on Social Welfare",
+  "short": "UU 11/2009",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-11-2009-kesejahteraan-sosial.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu11-2009.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "permensos-1-2018-pkh.pdf",
+  "title": "Minister of Social Affairs Regulation 1/2018 on the Family Hope Programme (PKH)",
+  "short": "Permensos 1/2018",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermensos-1-2018-pkh.pdf?alt=media",
+  "source": "https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf",
+  "issuer": "Ministry of Social Affairs",
   "kind": "regulation"
  },
  {
   "file": "permensos-4-2023-program-sembako.pdf",
   "title": "Minister of Social Affairs Regulation 4/2023 on the Sembako food aid programme",
   "short": "Permensos 4/2023",
-  "url": "https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermensos-4-2023-program-sembako.pdf?alt=media",
+  "source": "https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf",
   "issuer": "Ministry of Social Affairs",
   "kind": "regulation"
  },
  {
-  "file": "permensos-1-2018-pkh.pdf",
-  "title": "Minister of Social Affairs Regulation 1/2018 on the PKH family cash transfer",
-  "short": "Permensos 1/2018",
-  "url": "https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf",
-  "issuer": "Ministry of Social Affairs",
+  "file": "uu-8-2016-penyandang-disabilitas.pdf",
+  "title": "Law 8/2016 on Persons with Disabilities",
+  "short": "UU 8/2016",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-8-2016-penyandang-disabilitas.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu8-2016bt.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-13-1998-lanjut-usia.pdf",
+  "title": "Law 13/1998 on the Welfare of Older Persons",
+  "short": "UU 13/1998",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-13-1998-lanjut-usia.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu13-1998.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-24-2007-penanggulangan-bencana.pdf",
+  "title": "Law 24/2007 on Disaster Management",
+  "short": "UU 24/2007",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-24-2007-penanggulangan-bencana.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu24-2007.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-23-2004-pkdrt.pdf",
+  "title": "Law 23/2004 on the Elimination of Domestic Violence (PKDRT)",
+  "short": "UU 23/2004",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-23-2004-pkdrt.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu23-2004.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-12-2022-tpks.pdf",
+  "title": "Law 12/2022 on Sexual Violence Crimes (TPKS)",
+  "short": "UU 12/2022",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-12-2022-tpks.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu12-2022.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-35-2014-perlindungan-anak.pdf",
+  "title": "Law 35/2014 amending Law 23/2002 on Child Protection",
+  "short": "UU 35/2014",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-35-2014-perlindungan-anak.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu35-2014bt.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "permen-pppa-4-2018-uptd-ppa.pdf",
+  "title": "Minister of Women Empowerment and Child Protection Regulation 4/2018 on establishing UPTD PPA (women and child protection units)",
+  "short": "Permen PPPA 4/2018",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermen-pppa-4-2018-uptd-ppa.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/bn532-2018.pdf",
+  "issuer": "Ministry of Women Empowerment and Child Protection",
   "kind": "regulation"
  },
  {
-  "file": "standar-layanan-uptd-ppa-kab-tapin.pdf",
-  "title": "UPTD PPA service standard (Tapin Regency, used as an example of a district UPTD PPA standard)",
-  "short": "UPTD PPA service standard",
-  "url": "https://dpppa.profile.tapinkab.go.id/storage/assets/dpppa/file/ipAH6UkH3KvjhUXd08KIMvr2LRk1wa4mgzKrEAYv.pdf",
-  "issuer": "DPPPA Tapin Regency",
-  "kind": "example-sop"
+  "file": "uu-16-2019-perkawinan.pdf",
+  "title": "Law 16/2019 amending the Marriage Law (minimum marriage age 19)",
+  "short": "UU 16/2019",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fuu-16-2019-perkawinan.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu16-2019bt.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "permenpanrb-5-2025-sp4n.pdf",
+  "title": "PANRB Ministerial Regulation 5/2025 on public service complaint management",
+  "short": "PermenPANRB 5/2025",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fdinsos_demak%2Fpermenpanrb-5-2025-sp4n.pdf?alt=media",
+  "source": "https://jdih.menpan.go.id",
+  "issuer": "Ministry of Administrative and Bureaucratic Reform",
+  "kind": "regulation"
  }
 ]

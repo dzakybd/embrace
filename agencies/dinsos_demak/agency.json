@@ -12,57 +12,114 @@
     {
       "id": "domestic_violence",
       "label": "Violence against women or children (KDRT, sexual violence)",
-      "queue": "protection"
+      "label_id": "Kekerasan terhadap perempuan atau anak (KDRT, kekerasan seksual)",
+      "queue": "protection",
+      "laws": [
+        "UU 23/2004",
+        "UU 12/2022",
+        "UU 35/2014",
+        "Permen PPPA 4/2018"
+      ]
     },
     {
       "id": "benefit_not_received",
       "label": "Social aid not received or late (PKH, BPNT/Sembako, BLT)",
-      "queue": "linjamsos"
+      "label_id": "Bansos tidak diterima atau terlambat (PKH, BPNT/Sembako, BLT)",
+      "queue": "linjamsos",
+      "laws": [
+        "Permensos 1/2018",
+        "Permensos 4/2023",
+        "UU 11/2009"
+      ]
     },
     {
       "id": "eligibility_registration",
       "label": "DTSEN registry and eligibility (registration, status check, certificate of registration, data corrections)",
-      "queue": "slrt"
+      "label_id": "DTSEN dan kelayakan (pendaftaran, cek status, surat keterangan terdaftar, perbaikan data)",
+      "queue": "slrt",
+      "laws": [
+        "UU 11/2009",
+        "Permensos 1/2018"
+      ]
     },
     {
       "id": "payment_schedule",
       "label": "Distribution schedule, pickup location (e-warong, post office) and PKH companion",
-      "queue": "linjamsos"
+      "label_id": "Jadwal penyaluran, lokasi pengambilan (e-warong, kantor pos), dan pendamping PKH",
+      "queue": "linjamsos",
+      "laws": [
+        "Permensos 1/2018",
+        "Permensos 4/2023"
+      ]
     },
     {
       "id": "health_insurance",
       "label": "Health and social insurance support (PBI-Pemda / UHC recommendation, BPJS for vulnerable workers)",
-      "queue": "slrt"
+      "label_id": "Dukungan jaminan kesehatan dan sosial (rekomendasi PBI-Pemda / UHC, BPJS pekerja rentan)",
+      "queue": "slrt",
+      "laws": [
+        "UU 11/2009"
+      ]
     },
     {
       "id": "disability_elderly",
       "label": "Disability and elderly services (rehabilitation, assistive devices, home care)",
-      "queue": "rehabsos"
+      "label_id": "Layanan disabilitas dan lansia (rehabilitasi, alat bantu, perawatan di rumah)",
+      "queue": "rehabsos",
+      "laws": [
+        "UU 8/2016",
+        "UU 13/1998"
+      ]
     },
     {
       "id": "social_rehabilitation",
       "label": "Homeless people, beggars, street children and neglected people with mental illness (ODGJ, pasung)",
-      "queue": "rehabsos"
+      "label_id": "Gelandangan, pengemis, anak jalanan, dan ODGJ terlantar (termasuk pasung)",
+      "queue": "rehabsos",
+      "laws": [
+        "UU 11/2009",
+        "UU 8/2016"
+      ]
     },
     {
       "id": "disaster_relief",
       "label": "Disaster relief (flood, tidal flood/rob, fire, social disaster)",
-      "queue": "bencana"
+      "label_id": "Bantuan bencana (banjir, rob, kebakaran, bencana sosial)",
+      "queue": "bencana",
+      "laws": [
+        "UU 24/2007",
+        "UU 11/2009"
+      ]
     },
     {
       "id": "child_family",
       "label": "Child marriage, adoption and childcare institutions (LKS)",
-      "queue": "pppa"
+      "label_id": "Perkawinan anak, adopsi, dan lembaga pengasuhan (LKS)",
+      "queue": "pppa",
+      "laws": [
+        "UU 16/2019",
+        "UU 35/2014"
+      ]
     },
     {
       "id": "fraud_misconduct",
       "label": "Illegal levies or fraud in aid distribution",
-      "queue": "oversight"
+      "label_id": "Pungli atau penipuan dalam penyaluran bantuan",
+      "queue": "oversight",
+      "laws": [
+        "PermenPANRB 5/2025",
+        "Permensos 4/2023"
+      ]
     },
     {
       "id": "general_info",
       "label": "General information and service requirements",
-      "queue": "general"
+      "label_id": "Informasi umum dan persyaratan layanan",
+      "queue": "general",
+      "laws": [
+        "UU 11/2009",
+        "PermenPANRB 5/2025"
+      ]
     }
   ],
   "queues": {
@@ -121,7 +178,10 @@
   },
   "emergency_line": "110 (police) or 112; for violence against women and children SAPA 129 (WhatsApp 08111-129-129)",
   "emergency_line_id": "110 (polisi) atau 112; untuk kekerasan terhadap perempuan dan anak SAPA 129 (WhatsApp 08111-129-129)",
-  "required_details": ["location", "incident_time"],
+  "required_details": [
+    "location",
+    "incident_time"
+  ],
   "reply_signature": "Complaints Desk, Demak Regency Social Affairs Office (Dinsos P2PA Demak)",
   "team": [
     {
@@ -196,5 +256,434 @@
     }
   ],
   "telegram_bot": "embrace_dinsos_demak_bot",
-  "logo": "/agencies/dinsos_demak.svg"
+  "logo": "/agencies/dinsos_demak.svg",
+  "procedures": [
+    {
+      "id": "puskesos_complaint",
+      "title": "Complaint at the Puskesos (village social welfare centre)",
+      "title_id": "Pengaduan di Puskesos",
+      "categories": [
+        "benefit_not_received",
+        "payment_schedule",
+        "fraud_misconduct",
+        "general_info"
+      ],
+      "stages": [
+        {
+          "title": "Complaint received in person, by phone or online",
+          "title_id": "Pengaduan diterima langsung, lewat telepon, atau daring"
+        },
+        {
+          "title": "Identity recorded and complaint checked",
+          "title_id": "Identitas dicatat dan pengaduan diverifikasi"
+        },
+        {
+          "title": "Need identified (aid, health, education, civil records, other)",
+          "title_id": "Kebutuhan diidentifikasi (bansos, kesehatan, pendidikan, adminduk, lainnya)"
+        },
+        {
+          "title": "Referral or coordination with the office concerned",
+          "title_id": "Rujukan atau koordinasi dengan OPD/instansi terkait"
+        },
+        {
+          "title": "Follow-up until the problem is resolved",
+          "title_id": "Tindak lanjut sampai masalah selesai"
+        },
+        {
+          "title": "Result recorded and the citizen informed",
+          "title_id": "Hasil dicatat dan warga diberi informasi"
+        }
+      ]
+    },
+    {
+      "id": "slrt_dtsen_certificate",
+      "title": "Certificate of registration in DTSEN (formerly DTKS)",
+      "title_id": "Surat keterangan terdaftar DTSEN (dulu DTKS)",
+      "categories": [
+        "eligibility_registration"
+      ],
+      "requirements": [
+        "Copy of ID card (KTP)",
+        "Copy of family card (KK)",
+        "Application form",
+        "Supporting documents if needed"
+      ],
+      "requirements_id": [
+        "Fotokopi KTP",
+        "Fotokopi Kartu Keluarga (KK)",
+        "Formulir permohonan",
+        "Data pendukung jika diperlukan"
+      ],
+      "stages": [
+        {
+          "title": "Application submitted to SLRT",
+          "title_id": "Permohonan diajukan ke SLRT"
+        },
+        {
+          "title": "Data recorded and requirements checked",
+          "title_id": "Data dicatat dan persyaratan diperiksa"
+        },
+        {
+          "title": "Check in the DTSEN system, field visit if needed",
+          "title_id": "Pengecekan di sistem DTSEN, verifikasi lapangan jika perlu"
+        },
+        {
+          "title": "Analysis and follow-up plan",
+          "title_id": "Analisis dan rencana tindak lanjut"
+        },
+        {
+          "title": "Certificate issued",
+          "title_id": "Surat keterangan diterbitkan"
+        }
+      ]
+    },
+    {
+      "id": "slrt_pbi_uhc",
+      "title": "PBI-Pemda / UHC health insurance recommendation",
+      "title_id": "Rekomendasi jaminan kesehatan PBI-Pemda / UHC",
+      "categories": [
+        "health_insurance"
+      ],
+      "requirements": [
+        "Copy of ID card (KTP)",
+        "Copy of family card (KK)"
+      ],
+      "requirements_id": [
+        "Fotokopi KTP",
+        "Fotokopi Kartu Keluarga (KK)"
+      ],
+      "stages": [
+        {
+          "title": "Request submitted to SLRT",
+          "title_id": "Permohonan diajukan ke SLRT"
+        },
+        {
+          "title": "Request recorded in the SLRT system",
+          "title_id": "Permohonan dicatat di sistem SLRT"
+        },
+        {
+          "title": "Reported to the head of division and head of office",
+          "title_id": "Dilaporkan ke Kepala Bidang dan Kepala Dinas"
+        },
+        {
+          "title": "Administrative check, field visit if needed",
+          "title_id": "Pemeriksaan administrasi, lapangan jika perlu"
+        },
+        {
+          "title": "Eligibility analysis",
+          "title_id": "Analisis kelayakan"
+        },
+        {
+          "title": "Follow-up plan prepared",
+          "title_id": "Rencana tindak lanjut disusun"
+        },
+        {
+          "title": "Recommendation issued",
+          "title_id": "Rekomendasi diterbitkan"
+        }
+      ]
+    },
+    {
+      "id": "slrt_bpjs_workers",
+      "title": "BPJS employment insurance claims for vulnerable workers",
+      "title_id": "Klaim BPJS Ketenagakerjaan pekerja rentan",
+      "categories": [
+        "health_insurance"
+      ],
+      "stages": [
+        {
+          "title": "Complaint submitted in writing (suggestion box, SMS, email)",
+          "title_id": "Aduan tertulis (kotak saran, SMS, email)"
+        },
+        {
+          "title": "Complaints collected",
+          "title_id": "Aduan dikumpulkan"
+        },
+        {
+          "title": "Administrative and factual check",
+          "title_id": "Pemeriksaan administratif dan faktual"
+        },
+        {
+          "title": "Reported to the manager",
+          "title_id": "Dilaporkan ke manajer"
+        },
+        {
+          "title": "Results analysed",
+          "title_id": "Hasil pemeriksaan dianalisis"
+        },
+        {
+          "title": "Follow-up plan (old-age, accident, death benefits)",
+          "title_id": "Rencana tindak lanjut (JHT, JKK, JKM)"
+        }
+      ]
+    },
+    {
+      "id": "violence_women_children",
+      "title": "Handling violence against women and children (UPTD PPA)",
+      "title_id": "Penanganan kekerasan terhadap perempuan dan anak (UPTD PPA)",
+      "categories": [
+        "domestic_violence"
+      ],
+      "stages": [
+        {
+          "title": "Report received; if anyone is in danger, call 110 or SAPA 129",
+          "title_id": "Laporan diterima; jika ada yang dalam bahaya, hubungi 110 atau SAPA 129"
+        },
+        {
+          "title": "First response: police PPA unit, counselling, home visit if needed",
+          "title_id": "Penanganan awal: Unit PPA Polres, konseling, home visit jika perlu"
+        },
+        {
+          "title": "Medical examination (visum)",
+          "title_id": "Pemeriksaan medis (visum)"
+        },
+        {
+          "title": "Needs analysis and handling plan",
+          "title_id": "Analisis kebutuhan dan rencana penanganan"
+        },
+        {
+          "title": "Psychological support",
+          "title_id": "Pendampingan psikologis"
+        },
+        {
+          "title": "Legal aid",
+          "title_id": "Bantuan hukum"
+        }
+      ]
+    },
+    {
+      "id": "disaster_aid",
+      "title": "Aid for victims of natural and social disasters",
+      "title_id": "Bantuan korban bencana alam dan sosial",
+      "categories": [
+        "disaster_relief"
+      ],
+      "stages": [
+        {
+          "title": "Request for aid received",
+          "title_id": "Permohonan bantuan diterima"
+        },
+        {
+          "title": "Site visit",
+          "title_id": "Peninjauan lokasi"
+        },
+        {
+          "title": "Needs and type of aid identified",
+          "title_id": "Kebutuhan dan jenis bantuan diidentifikasi"
+        },
+        {
+          "title": "Amount of aid decided and approved",
+          "title_id": "Jumlah bantuan ditetapkan dan disetujui"
+        },
+        {
+          "title": "Relief goods prepared",
+          "title_id": "Barang bantuan disiapkan"
+        },
+        {
+          "title": "Aid distributed",
+          "title_id": "Bantuan disalurkan"
+        },
+        {
+          "title": "Handover documented and recorded",
+          "title_id": "Penyaluran didokumentasikan dan dicatat"
+        }
+      ]
+    },
+    {
+      "id": "disability_rehab",
+      "title": "Social rehabilitation for people with disabilities",
+      "title_id": "Rehabilitasi sosial penyandang disabilitas",
+      "categories": [
+        "disability_elderly"
+      ],
+      "stages": [
+        {
+          "title": "Complaint received and recorded",
+          "title_id": "Aduan diterima dan dicatat"
+        },
+        {
+          "title": "Assessment of needs and condition",
+          "title_id": "Asesmen kebutuhan dan kondisi"
+        },
+        {
+          "title": "Service plan agreed",
+          "title_id": "Rencana layanan ditetapkan"
+        },
+        {
+          "title": "Referral (health, psychological, legal, social, economic)",
+          "title_id": "Rujukan (kesehatan, psikologis, hukum, sosial, ekonomi)"
+        },
+        {
+          "title": "Monitoring and follow-up",
+          "title_id": "Pemantauan dan tindak lanjut"
+        }
+      ]
+    },
+    {
+      "id": "homeless_referral",
+      "title": "Homeless people and beggars: referral to a rehabilitation centre",
+      "title_id": "Gelandangan dan pengemis: rujukan ke Balai Rehabsos",
+      "categories": [
+        "social_rehabilitation"
+      ],
+      "stages": [
+        {
+          "title": "Person received from Satpol PP, police or the public",
+          "title_id": "Diterima dari Satpol PP, kepolisian, atau masyarakat"
+        },
+        {
+          "title": "Identified and recorded",
+          "title_id": "Identifikasi dan pencatatan"
+        },
+        {
+          "title": "Counselling",
+          "title_id": "Penyuluhan"
+        },
+        {
+          "title": "Intervention plan",
+          "title_id": "Rencana intervensi"
+        },
+        {
+          "title": "Intervention (guidance)",
+          "title_id": "Intervensi (pembinaan)"
+        },
+        {
+          "title": "Return to family or referral to a rehabilitation centre",
+          "title_id": "Kembali ke keluarga atau rujukan ke Balai Rehabsos"
+        },
+        {
+          "title": "Follow-up home visits",
+          "title_id": "Bimbingan lanjut (home visit)"
+        }
+      ]
+    },
+    {
+      "id": "shelter_admission",
+      "title": "Admission to the shelter (rumah singgah)",
+      "title_id": "Penerimaan di rumah singgah",
+      "categories": [
+        "social_rehabilitation"
+      ],
+      "stages": [
+        {
+          "title": "Report checked against the criteria",
+          "title_id": "Laporan diperiksa terhadap kriteria"
+        },
+        {
+          "title": "Identification and selection",
+          "title_id": "Identifikasi dan seleksi"
+        },
+        {
+          "title": "Assessment (interview, observation)",
+          "title_id": "Asesmen (wawancara, observasi)"
+        },
+        {
+          "title": "Intervention plan",
+          "title_id": "Rencana intervensi"
+        },
+        {
+          "title": "Support and basic needs",
+          "title_id": "Pendampingan dan pemenuhan kebutuhan dasar"
+        },
+        {
+          "title": "Reunification or referral",
+          "title_id": "Reunifikasi atau rujukan"
+        },
+        {
+          "title": "Follow-up home visits",
+          "title_id": "Bimbingan lanjut (home visit)"
+        }
+      ]
+    },
+    {
+      "id": "child_marriage",
+      "title": "Recommendation on child marriage",
+      "title_id": "Rekomendasi pernikahan usia anak",
+      "categories": [
+        "child_family"
+      ],
+      "stages": [
+        {
+          "title": "Application with the requirements",
+          "title_id": "Permohonan dengan persyaratan"
+        },
+        {
+          "title": "Documents checked",
+          "title_id": "Berkas diperiksa"
+        },
+        {
+          "title": "Coordination with the child marriage prevention team (POKJA KHPK)",
+          "title_id": "Koordinasi dengan Ketua POKJA KHPK"
+        },
+        {
+          "title": "Assessment by a social worker or psychologist",
+          "title_id": "Asesmen oleh pekerja sosial atau psikolog"
+        },
+        {
+          "title": "Eligibility analysis",
+          "title_id": "Analisis kelayakan"
+        },
+        {
+          "title": "Recommendation letter issued if eligible",
+          "title_id": "Surat rekomendasi diterbitkan jika layak"
+        }
+      ]
+    },
+    {
+      "id": "adoption",
+      "title": "Child adoption",
+      "title_id": "Pengangkatan anak (adopsi)",
+      "categories": [
+        "child_family"
+      ],
+      "stages": [
+        {
+          "title": "Documents handed in",
+          "title_id": "Berkas diserahkan"
+        },
+        {
+          "title": "Documents checked",
+          "title_id": "Dokumen diperiksa"
+        },
+        {
+          "title": "First home visit and assessment",
+          "title_id": "Home visit pertama dan asesmen"
+        },
+        {
+          "title": "Approval letter",
+          "title_id": "Surat persetujuan"
+        },
+        {
+          "title": "Second home visit",
+          "title_id": "Home visit kedua"
+        },
+        {
+          "title": "Adoption recommendation issued",
+          "title_id": "Rekomendasi pengangkatan anak diterbitkan"
+        }
+      ]
+    },
+    {
+      "id": "lks_registration",
+      "title": "Renewing a care home or social welfare institution (LKS) registration",
+      "title_id": "Perpanjangan tanda daftar panti / LKS",
+      "categories": [
+        "child_family"
+      ],
+      "stages": [
+        {
+          "title": "Renewal request with the requirements",
+          "title_id": "Permohonan perpanjangan dengan persyaratan"
+        },
+        {
+          "title": "Documents checked",
+          "title_id": "Dokumen diperiksa"
+        },
+        {
+          "title": "Registration recommendation (SIOP) issued",
+          "title_id": "Rekomendasi tanda daftar (SIOP) diterbitkan"
+        }
+      ]
+    }
+  ]
 }

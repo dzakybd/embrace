@@ -18,19 +18,32 @@ is not an official service of either. Their unit structure and service flows are
 | `agencies/kpai/sop/kpai-complaint-sop-en.md`, `sop-pengaduan-kpai.md` | KPAI's published complaint service flow ([kpai.go.id](https://www.kpai.go.id)), transcribed and translated by the team | Public information |
 | `*/sop/response-standard-en.md`, `standar-respons-pengaduan.md`, `complaint-handling-sop.md` | Written for this demo | Part of Embrace, all rights reserved |
 
-## Laws, regulations and treaties in the agency packs
+## Laws and regulations in the agency packs
 
-Included unaltered so the SOP agent can cite them; each has its source in the pack's `sop/sources.json`. Under Indonesian
-copyright law (Law 28/2014, Article 42) laws and regulations are not protected by copyright.
+Indonesian laws and regulations only, included unaltered so the SOP agent can cite them and staff and citizens can open
+them. Each is copied from the official source below, hosted for the app in Firebase Storage (`docs/<agency>/`), and listed
+in the pack's `sop/sources.json`. Under Indonesian copyright law (Law 28/2014, Article 42) laws and regulations are not
+protected by copyright.
 
-| File | Issuer | Source |
-|---|---|---|
-| `uu-35-2014-perlindungan-anak.pdf` | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu35-2014bt.pdf) |
-| `perpres-61-2016-kpai.pdf` | President of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/ps61-2016.pdf) |
-| `permenpanrb-5-2025-sp4n.pdf` | Ministry of Administrative and Bureaucratic Reform | [jdih.menpan.go.id](https://jdih.menpan.go.id) |
-| `permensos-1-2018-pkh.pdf`, `permensos-4-2023-program-sembako.pdf` | Ministry of Social Affairs | [peraturan.bpk.go.id](https://peraturan.bpk.go.id) |
-| `standar-layanan-uptd-ppa-kab-tapin.pdf` | DPPPA Tapin Regency (public service standard, used as an example of a district UPTD PPA standard) | [dpppa.profile.tapinkab.go.id](https://dpppa.profile.tapinkab.go.id/storage/assets/dpppa/file/ipAH6UkH3KvjhUXd08KIMvr2LRk1wa4mgzKrEAYv.pdf) |
-| `un-crc.pdf`, Convention on the Rights of the Child | United Nations, OHCHR | [ohchr.org](https://www.ohchr.org/sites/default/files/crc.pdf) |
+| File | Issuer | Official source | Packs |
+|---|---|---|---|
+| `uu-35-2014-perlindungan-anak.pdf`, UU 35/2014 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu35-2014bt.pdf) | `kpai`, `dinsos_demak` |
+| `perpres-61-2016-kpai.pdf`, Perpres 61/2016 | President of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/ps61-2016.pdf) | `kpai` |
+| `pp-78-2021-perlindungan-khusus-anak.pdf`, PP 78/2021 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/pp78-2021bt.pdf) | `kpai` |
+| `uu-12-2022-tpks.pdf`, UU 12/2022 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu12-2022.pdf) | `kpai`, `dinsos_demak` |
+| `uu-11-2012-sppa.pdf`, UU 11/2012 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu11-2012bt.pdf) | `kpai` |
+| `uu-21-2007-tppo.pdf`, UU 21/2007 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu21-2007.pdf) | `kpai` |
+| `uu-44-2008-pornografi.pdf`, UU 44/2008 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu44-2008.pdf) | `kpai` |
+| `uu-23-2004-pkdrt.pdf`, UU 23/2004 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu23-2004.pdf) | `kpai`, `dinsos_demak` |
+| `uu-16-2019-perkawinan.pdf`, UU 16/2019 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu16-2019bt.pdf) | `kpai`, `dinsos_demak` |
+| `permenpanrb-5-2025-sp4n.pdf`, PermenPANRB 5/2025 | Ministry of Administrative and Bureaucratic Reform | [jdih.menpan.go.id](https://jdih.menpan.go.id) | `kpai`, `dinsos_demak` |
+| `uu-11-2009-kesejahteraan-sosial.pdf`, UU 11/2009 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu11-2009.pdf) | `dinsos_demak` |
+| `permensos-1-2018-pkh.pdf`, Permensos 1/2018 | Ministry of Social Affairs | [peraturan.bpk.go.id](https://peraturan.bpk.go.id/Download/120868/PERMENSOS%20NOMOR%20%201%20TAHUN%202018.pdf) | `dinsos_demak` |
+| `permensos-4-2023-program-sembako.pdf`, Permensos 4/2023 | Ministry of Social Affairs | [peraturan.bpk.go.id](https://peraturan.bpk.go.id/Download/339294/Permensos_Nomor_4_Tahun_2023.pdf) | `dinsos_demak` |
+| `uu-8-2016-penyandang-disabilitas.pdf`, UU 8/2016 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu8-2016bt.pdf) | `dinsos_demak` |
+| `uu-13-1998-lanjut-usia.pdf`, UU 13/1998 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu13-1998.pdf) | `dinsos_demak` |
+| `uu-24-2007-penanggulangan-bencana.pdf`, UU 24/2007 | Government of Indonesia | [peraturan.go.id](https://peraturan.go.id/files/uu24-2007.pdf) | `dinsos_demak` |
+| `permen-pppa-4-2018-uptd-ppa.pdf`, Permen PPPA 4/2018 | Ministry of Women Empowerment and Child Protection | [peraturan.go.id](https://peraturan.go.id/files/bn532-2018.pdf) | `dinsos_demak` |
 
 ## Google services and models
 

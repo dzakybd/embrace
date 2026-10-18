@@ -290,6 +290,22 @@ export async function act(id: string, action: string, officer: string, note = ''
   return updated
 }
 
+/** Marks a stage of the agency procedure done or not done; choosing another procedure starts its stages afresh. */
+export async function setStage(id: string, procedure: string, stage: number, done: boolean, officer: string) {
+  const t = await STORE.get(id)
+  if (!t) return null
+  const agency = (await agencyById(t.agency_id))!
+  const proc = agency.procedures?.find((p) => p.id === procedure)
+  if (!proc || stage < 0 || stage >= proc.stages.length) return null
+  const prev = t.progress?.procedure === procedure ? t.progress.done : []
+  const next = done ? [...new Set([...prev, stage])].sort((a, b) => a - b) : prev.filter((s) => s !== stage)
+  return STORE.update(id, {
+    progress: { procedure, done: next },
+    updated_at: now(),
+    history: [...t.history, entry(officer, done ? 'stage_done' : 'stage_undone', `${proc.title}: ${proc.stages[stage].title}`)],
+  })
+}
+
 export async function askAnalyst(agencyId: string, question: string) {
   const agency = (await agencyById(agencyId))!
   const toolsUsed: string[] = []

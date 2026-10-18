@@ -2,7 +2,8 @@
 
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
-import { useT } from '../Lang'
+import { useLang } from '../Lang'
+import { procTitle, stageTitle } from '../Procedures'
 import { Icon } from '../ui'
 
 interface Tracked {
@@ -17,10 +18,13 @@ interface Tracked {
   responded_at: string | null
   resolved_at: string | null
   reply: string | null
+  agency_id: string
+  agency_name_id: string | null
+  procedure: { id: string; title: string; title_id?: string; stages: { title: string; title_id?: string }[]; done: number[] } | null
 }
 
 export default function Track({ id }: { id: string }) {
-  const tr = useT()
+  const { t: tr, lang } = useLang()
   const [t, setT] = useState<Tracked | null>(null)
   const [missing, setMissing] = useState(false)
   useEffect(() => {
@@ -42,7 +46,7 @@ export default function Track({ id }: { id: string }) {
   ]
   return (
     <section className="card citizen-card">
-      <p className="muted small">{t.agency}</p>
+      <p className="muted small">{lang === 'id' && t.agency_name_id ? t.agency_name_id : t.agency}</p>
       <h1>{tr('Report')} {t.id}</h1>
       {t.escalated && !t.resolved_at && (
         <div className="banner crit"><Icon name="alert" /><span>{tr('Marked urgent: a supervisor has been alerted.')} {tr('If anyone is in danger right now, call {line}.', { line: t.emergency_line })}</span></div>
@@ -56,6 +60,7 @@ export default function Track({ id }: { id: string }) {
         ))}
       </ol>
       {!t.responded_at && due && <p className="lead">{tr('First response expected by')} <b>{due.toLocaleString()}</b>.</p>}
+      {t.procedure && <Stages p={t.procedure} agencyId={t.agency_id} lang={lang} tr={tr} />}
       {t.reply && (
         <div className="reply-box">
           <p className="muted small">{tr('Reply from {agency}', { agency: t.agency })}</p>
@@ -66,5 +71,23 @@ export default function Track({ id }: { id: string }) {
         <Link className="btn tonal" href="/report">{tr('Send another report')}</Link>
       </div>
     </section>
+  )
+}
+
+/** The agency procedure for this report: stages done, the current one, and what comes after. */
+function Stages({ p, agencyId, lang, tr }: { p: NonNullable<Tracked['procedure']>; agencyId: string; lang: string; tr: ReturnType<typeof useLang>['t'] }) {
+  const next = p.stages.findIndex((_, i) => !p.done.includes(i))
+  return (
+    <div className="track-proc">
+      <h2>{procTitle(p, lang)}</h2>
+      <p className="muted small">{tr('{done} of {n} stages done', { done: p.done.length, n: p.stages.length })} · <Link href={`/a/${agencyId}/guide#${p.id}`}>{tr('About this procedure')}</Link></p>
+      <ol className="proc-stages">
+        {p.stages.map((s, i) => (
+          <li key={i} className={p.done.includes(i) ? 'done' : i === next ? 'now' : ''} aria-current={i === next ? 'step' : undefined}>
+            <span className="pdot">{p.done.includes(i) ? <Icon name="check" size={12} /> : i + 1}</span>{stageTitle(s, lang)}
+          </li>
+        ))}
+      </ol>
+    </div>
   )
 }

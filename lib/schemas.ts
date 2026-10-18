@@ -141,6 +141,8 @@ export interface Ticket {
   guard?: { injection: string[]; draft: string[] }
   /** Details the agency needs that the report lacks, and the citizen's answers once given. */
   details?: { missing: string[]; answers: Record<string, string>; refined_at?: string | null }
+  /** The agency procedure staff follow for this case, and the stages done (indexes); the citizen sees it on tracking. */
+  progress?: { procedure: string; done: number[] }
   trace: TraceStep[]
   history: HistoryItem[]
   seeded: boolean

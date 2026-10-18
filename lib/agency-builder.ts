@@ -2,9 +2,9 @@
 // names, categories, team and documents. Stored agencies are plain data; no code changes per agency.
 import { randomBytes } from 'node:crypto'
 import { z } from 'zod'
-import { AGENCIES, type Agency, type StoredAgency } from './agencies'
+import { AGENCIES, type Agency, type Procedure, type StoredAgency } from './agencies'
 import { FLAGS } from './schemas'
-import { indexFor, markdownUnits, passagesFor, sourcesFor, type Passage, type Source } from './sop'
+import { indexFor, isShippedDocs, markdownUnits, passagesFor, sourcesFor, type Passage, type Source } from './sop'
 
 const name = z.string().trim().min(2).max(120)
 
@@ -67,6 +67,13 @@ async function pdfUnits(b64: string): Promise<{ loc: string; text: string }[]> {
  * Returns the stored agency, or an error message the form can show. With `existing` (editing), ids of categories,
  * teams and staff are kept so open cases, saved sign-ins and eval labels still match; its documents are the base.
  */
+/** The template's procedures that still apply to at least one of the agency's categories. */
+function keptProcedures(procedures: Procedure[], ids: string[]): Procedure[] {
+  return procedures
+    .map((p) => ({ ...p, categories: p.categories.filter((c) => ids.includes(c)) }))
+    .filter((p) => p.categories.length > 0)
+}
+
 export async function buildAgency(input: NewAgency, existing?: Agency): Promise<StoredAgency | string> {
   const base = existing ?? AGENCIES[input.template]
   if (!base) return 'Unknown template'
@@ -82,9 +89,15 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     queues[id] ??= team
     return id
   }
-  const categories = input.categories.map((c) => ({
-    id: c.id || slug(c.label), label: c.label, queue: queueId(c.team), ...(c.min_urgency ? { min_urgency: c.min_urgency } : {}),
-  }))
+  const categories = input.categories.map((c) => {
+    // A category kept from the template keeps its Indonesian label (if the label is unchanged) and its laws.
+    const was = base.categories.find((b) => b.id === c.id)
+    return {
+      id: c.id || slug(c.label), label: c.label, queue: queueId(c.team), ...(c.min_urgency ? { min_urgency: c.min_urgency } : {}),
+      ...(was?.label_id && was.label === c.label ? { label_id: was.label_id } : {}),
+      ...(was?.laws ? { laws: was.laws } : {}),
+    }
+  })
   if (new Set(categories.map((c) => c.id)).size !== categories.length) return 'Two categories have the same name'
   const team = input.team.map((m, i) => ({
     id: m.id || `${slug(m.name.split(' ')[0])}${i}`,
@@ -97,7 +110,10 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
 
   const sources: Source[] = []
   const passages: Passage[] = []
-  if (input.keep_template_docs) {
+  // Documents shipped with a built-in agency are kept by reference; other agencies' documents are copied.
+  const template = input.keep_template_docs && isShippedDocs(base.id) ? base.id : undefined
+  const keepShorts = sourcesFor(base.id).filter((s) => !input.drop_docs.includes(s.file)).map((s) => s.short)
+  if (input.keep_template_docs && !template) {
     const keep = sourcesFor(base.id).filter((s) => !input.drop_docs.includes(s.file))
     const shorts = new Set(keep.map((s) => s.short))
     sources.push(...keep)
@@ -145,6 +161,7 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
     ...(existing?.telegram_bot ? { telegram_bot: existing.telegram_bot } : {}),
     ...(existing?.logo ? { logo: existing.logo } : {}),
     ...(base.required_details ? { required_details: base.required_details } : {}),
+    ...(base.procedures ? { procedures: keptProcedures(base.procedures, categories.map((c) => c.id)) } : {}),
   }
-  return { ...agency, docs: { sources, passages }, created_at: new Date().toISOString() }
+  return { ...agency, docs: { sources, passages, ...(template ? { template, keep: keepShorts } : {}) }, created_at: new Date().toISOString() }
 }

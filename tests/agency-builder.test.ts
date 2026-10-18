@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest'
 import { buildAgency, NewAgency } from '@/lib/agency-builder'
 import { decide } from '@/lib/policy'
-import { indexFor, registerDocs } from '@/lib/sop'
+import { indexFor, registerDocs, sourcesFor } from '@/lib/sop'
 import type { Triage } from '@/lib/schemas'
 
 const form = (over: Partial<NewAgency> = {}) => NewAgency.parse({
@@ -56,6 +56,11 @@ describe('agency builder', () => {
   it('can keep the template documents', async () => {
     const a = await buildAgency(form({ keep_template_docs: true, docs: [] }))
     if (typeof a === 'string') throw new Error(a)
-    expect(a.docs!.sources.map((s) => s.short)).toContain('Demak service flows')
+    // Shipped documents are kept by reference and expanded when the agency's documents are registered.
+    expect(a.docs!.template).toBe('dinsos_demak')
+    expect(a.docs!.keep).toContain('Demak service flows')
+    registerDocs(a.id, a.docs!)
+    expect(sourcesFor(a.id).map((s) => s.short)).toContain('Demak service flows')
+    expect(indexFor(a.id).search('tidal flood aid', 1).length).toBe(1)
   })
 })

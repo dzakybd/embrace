@@ -17,9 +17,10 @@
  },
  {
   "file": "uu-35-2014-perlindungan-anak.pdf",
-  "title": "Law 35/2014 on Child Protection",
+  "title": "Law 35/2014 amending Law 23/2002 on Child Protection",
   "short": "UU 35/2014",
-  "url": "https://peraturan.go.id/files/uu35-2014bt.pdf",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-35-2014-perlindungan-anak.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu35-2014bt.pdf",
   "issuer": "Government of Indonesia",
   "kind": "law"
  },
@@ -27,24 +28,81 @@
   "file": "perpres-61-2016-kpai.pdf",
   "title": "Presidential Regulation 61/2016 on the Indonesian Child Protection Commission",
   "short": "Perpres 61/2016",
-  "url": "https://peraturan.go.id/files/ps61-2016.pdf",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fperpres-61-2016-kpai.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/ps61-2016.pdf",
   "issuer": "President of Indonesia",
   "kind": "regulation"
  },
  {
-  "file": "permenpanrb-5-2025-sp4n.pdf",
-  "title": "PANRB Ministerial Regulation 5/2025 on the national public service complaint management system (SP4N-LAPOR!)",
-  "short": "PermenPANRB 5/2025",
-  "url": "https://jdih.menpan.go.id",
-  "issuer": "Ministry of Administrative and Bureaucratic Reform",
+  "file": "pp-78-2021-perlindungan-khusus-anak.pdf",
+  "title": "Government Regulation 78/2021 on Special Protection for Children",
+  "short": "PP 78/2021",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fpp-78-2021-perlindungan-khusus-anak.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/pp78-2021bt.pdf",
+  "issuer": "Government of Indonesia",
   "kind": "regulation"
  },
  {
-  "file": "un-crc.pdf",
-  "title": "United Nations Convention on the Rights of the Child (1989), ratified by Indonesia in 1990",
-  "short": "UN CRC",
-  "url": "https://www.ohchr.org/sites/default/files/crc.pdf",
-  "issuer": "United Nations (OHCHR)",
-  "kind": "treaty"
+  "file": "uu-12-2022-tpks.pdf",
+  "title": "Law 12/2022 on Sexual Violence Crimes (TPKS)",
+  "short": "UU 12/2022",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-12-2022-tpks.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu12-2022.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-11-2012-sppa.pdf",
+  "title": "Law 11/2012 on the Juvenile Criminal Justice System (SPPA)",
+  "short": "UU 11/2012",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-11-2012-sppa.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu11-2012bt.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-21-2007-tppo.pdf",
+  "title": "Law 21/2007 on the Eradication of Human Trafficking (TPPO)",
+  "short": "UU 21/2007",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-21-2007-tppo.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu21-2007.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-44-2008-pornografi.pdf",
+  "title": "Law 44/2008 on Pornography",
+  "short": "UU 44/2008",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-44-2008-pornografi.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu44-2008.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-23-2004-pkdrt.pdf",
+  "title": "Law 23/2004 on the Elimination of Domestic Violence (PKDRT)",
+  "short": "UU 23/2004",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-23-2004-pkdrt.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu23-2004.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "uu-16-2019-perkawinan.pdf",
+  "title": "Law 16/2019 amending the Marriage Law (minimum marriage age 19)",
+  "short": "UU 16/2019",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fuu-16-2019-perkawinan.pdf?alt=media",
+  "source": "https://peraturan.go.id/files/uu16-2019bt.pdf",
+  "issuer": "Government of Indonesia",
+  "kind": "law"
+ },
+ {
+  "file": "permenpanrb-5-2025-sp4n.pdf",
+  "title": "PANRB Ministerial Regulation 5/2025 on public service complaint management",
+  "short": "PermenPANRB 5/2025",
+  "url": "https://firebasestorage.googleapis.com/v0/b/embrace-23a9c.firebasestorage.app/o/docs%2Fkpai%2Fpermenpanrb-5-2025-sp4n.pdf?alt=media",
+  "source": "https://jdih.menpan.go.id",
+  "issuer": "Ministry of Administrative and Bureaucratic Reform",
+  "kind": "regulation"
  }
 ]

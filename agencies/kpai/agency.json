@@ -12,47 +12,95 @@
     {
       "id": "physical_emotional_abuse",
       "label": "Physical or psychological violence against a child (incl. bullying with injury)",
-      "queue": "pka_violence"
+      "label_id": "Kekerasan fisik atau psikis terhadap anak (termasuk perundungan yang melukai)",
+      "queue": "pka_violence",
+      "laws": [
+        "UU 35/2014",
+        "PP 78/2021",
+        "UU 23/2004"
+      ]
     },
     {
       "id": "sexual_abuse",
       "label": "Sexual crimes against a child",
-      "queue": "pka_violence"
+      "label_id": "Kejahatan seksual terhadap anak",
+      "queue": "pka_violence",
+      "laws": [
+        "UU 12/2022",
+        "UU 35/2014",
+        "PP 78/2021"
+      ]
     },
     {
       "id": "children_in_conflict_with_law",
       "label": "Children in conflict with the law (ABH), as offender, victim or witness",
-      "queue": "pka_violence"
+      "label_id": "Anak berhadapan dengan hukum (ABH), sebagai pelaku, korban, atau saksi",
+      "queue": "pka_violence",
+      "laws": [
+        "UU 11/2012",
+        "UU 35/2014"
+      ]
     },
     {
       "id": "exploitation_trafficking",
       "label": "Child trafficking, child labour and economic or sexual exploitation",
-      "queue": "pka_exploitation"
+      "label_id": "Perdagangan anak, pekerja anak, serta eksploitasi ekonomi atau seksual",
+      "queue": "pka_exploitation",
+      "laws": [
+        "UU 21/2007",
+        "UU 35/2014",
+        "PP 78/2021"
+      ]
     },
     {
       "id": "online_harm",
       "label": "Pornography and cybercrime (grooming, sextortion, abuse images, online bullying)",
-      "queue": "pka_exploitation"
+      "label_id": "Pornografi dan kejahatan siber (grooming, pemerasan seksual, konten kekerasan seksual, perundungan daring)",
+      "queue": "pka_exploitation",
+      "laws": [
+        "UU 44/2008",
+        "UU 35/2014",
+        "PP 78/2021"
+      ]
     },
     {
       "id": "family_care",
       "label": "Family and alternative care (custody disputes, child support, access, adoption, neglect)",
-      "queue": "family"
+      "label_id": "Keluarga dan pengasuhan alternatif (hak asuh, nafkah anak, akses bertemu, adopsi, penelantaran)",
+      "queue": "family",
+      "laws": [
+        "UU 35/2014",
+        "UU 23/2004",
+        "UU 16/2019"
+      ]
     },
     {
       "id": "education",
       "label": "Education, leisure, culture and religion (school bullying, fees, right to school)",
-      "queue": "education"
+      "label_id": "Pendidikan, waktu luang, budaya, dan agama (perundungan di sekolah, biaya, hak bersekolah)",
+      "queue": "education",
+      "laws": [
+        "UU 35/2014"
+      ]
     },
     {
       "id": "health_nutrition",
       "label": "Basic health and welfare (health services, nutrition, free school meals)",
-      "queue": "health"
+      "label_id": "Kesehatan dasar dan kesejahteraan (layanan kesehatan, gizi, makan bergizi di sekolah)",
+      "queue": "health",
+      "laws": [
+        "UU 35/2014"
+      ]
     },
     {
       "id": "other",
       "label": "Civil rights and other (birth certificate, identity, participation, other)",
-      "queue": "pengaduan"
+      "label_id": "Hak sipil dan lainnya (akta kelahiran, identitas, partisipasi, lainnya)",
+      "queue": "pengaduan",
+      "laws": [
+        "UU 35/2014",
+        "Perpres 61/2016"
+      ]
     }
   ],
   "queues": {
@@ -105,7 +153,11 @@
   },
   "emergency_line": "110 (police) or SAPA 129 (WhatsApp 08111-129-129); KPAI complaints 0811-1002-7727",
   "emergency_line_id": "110 (polisi) atau SAPA 129 (WhatsApp 08111-129-129); pengaduan KPAI 0811-1002-7727",
-  "required_details": ["location", "victim_age", "incident_time"],
+  "required_details": [
+    "location",
+    "victim_age",
+    "incident_time"
+  ],
   "reply_signature": "Complaints Unit, Indonesian Child Protection Commission (KPAI)",
   "team": [
     {
@@ -170,5 +222,65 @@
     }
   ],
   "telegram_bot": "embrace_kpai_bot",
-  "logo": "/agencies/kpai.png"
+  "logo": "/agencies/kpai.png",
+  "procedures": [
+    {
+      "id": "kpai_complaint",
+      "title": "KPAI complaint, from report to closing",
+      "title_id": "Pengaduan KPAI, dari laporan sampai selesai",
+      "categories": [
+        "physical_emotional_abuse",
+        "sexual_abuse",
+        "children_in_conflict_with_law",
+        "exploitation_trafficking",
+        "online_harm",
+        "family_care",
+        "education",
+        "health_nutrition",
+        "other"
+      ],
+      "requirements": [
+        "Complainant's identity",
+        "The child's identity (birth certificate or family card)",
+        "Information supporting the complaint"
+      ],
+      "requirements_id": [
+        "Identitas pengadu",
+        "Identitas anak (akta kelahiran atau KK)",
+        "Keterangan pendukung pengaduan"
+      ],
+      "note": "If the data is incomplete an officer contacts you within 3 x 24 hours; if it is complete you hear back within 14 working days.",
+      "note_id": "Jika data belum lengkap, petugas menghubungi Anda dalam 3 x 24 jam; jika lengkap, Anda mendapat jawaban dalam 14 hari kerja.",
+      "stages": [
+        {
+          "title": "Complaint registered",
+          "title_id": "Pengaduan dicatat"
+        },
+        {
+          "title": "Checked: is it a child protection case?",
+          "title_id": "Diperiksa: apakah kasus perlindungan anak?"
+        },
+        {
+          "title": "Assessment by a social worker",
+          "title_id": "Asesmen oleh pekerja sosial"
+        },
+        {
+          "title": "Referral to a service (SAPA 129, UPTD PPA, Dinas Sosial, police), or oversight of the agency that handled it",
+          "title_id": "Rujukan ke layanan (SAPA 129, UPTD PPA, Dinas Sosial, kepolisian), atau pengawasan atas lembaga yang menangani"
+        },
+        {
+          "title": "Clarification and mediation if needed; recommendation issued",
+          "title_id": "Klarifikasi dan mediasi jika perlu; rekomendasi diterbitkan"
+        },
+        {
+          "title": "Monitoring how the recommendation is followed up",
+          "title_id": "Pemantauan tindak lanjut rekomendasi"
+        },
+        {
+          "title": "Case closed with the complainant (or if unreachable 3 times in 3 weeks)",
+          "title_id": "Kasus ditutup bersama pengadu (atau jika tidak dapat dihubungi 3 kali dalam 3 minggu)"
+        }
+      ]
+    }
+  ]
 }

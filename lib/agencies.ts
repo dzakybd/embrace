@@ -3,7 +3,7 @@
 import dinsosDemak from '@/agencies/dinsos_demak/agency.json'
 import kpai from '@/agencies/kpai/agency.json'
 import type { Urgency } from './schemas'
-import { registerDocs, resetDocs, type Passage, type Source } from './sop'
+import { registerDocs, resetDocs, type IndexFile } from './sop'
 import { STORE } from './store'
 
 export interface Agency {
@@ -15,7 +15,8 @@ export interface Agency {
   country: string
   description?: string
   /** min_urgency: an agency rule that keeps a category at or above this urgency. */
-  categories: { id: string; label: string; queue: string; min_urgency?: Urgency }[]
+  /** label_id: Indonesian label. laws: `short` names of the pack's documents that govern this kind of case. */
+  categories: { id: string; label: string; label_id?: string; queue: string; min_urgency?: Urgency; laws?: string[] }[]
   queues: Record<string, string>
   escalation: {
     always_escalate_categories: string[]
@@ -44,6 +45,21 @@ export interface Agency {
   required_details?: string[]
   /** Public path of the agency's emblem, shown on its cards and home. */
   logo?: string | null
+  /** The agency's published service procedures, the stages a case goes through (shown to staff and the public). */
+  procedures?: Procedure[]
+}
+
+export interface Procedure {
+  id: string
+  title: string
+  title_id?: string
+  /** Category ids this procedure applies to. */
+  categories: string[]
+  requirements?: string[]
+  requirements_id?: string[]
+  note?: string
+  note_id?: string
+  stages: { title: string; title_id?: string }[]
 }
 
 export interface TeamMember {
@@ -55,7 +71,7 @@ export interface TeamMember {
 }
 
 export interface StoredAgency extends Agency {
-  docs?: { sources: Source[]; passages: Passage[] }
+  docs?: IndexFile
   created_at?: string
   /** Settings saved over a built-in agency. */
   override?: boolean
@@ -139,7 +155,7 @@ export function publicAgency(a: Agency) {
     id, name, short_name, country, description, categories, queues, sla_hours, emergency_line, team, telegram_bot: a.telegram_bot ?? null, logo: a.logo ?? null,
     name_id: a.name_id ?? '', short_name_id: a.short_name_id ?? '', description_id: a.description_id ?? '', emergency_line_id: a.emergency_line_id ?? '',
     custom: !!custom, edited: !!edited, escalation_contact: a.escalation.escalation_contact,
-    escalation: a.escalation, reply_signature: a.reply_signature,
+    escalation: a.escalation, reply_signature: a.reply_signature, procedures: a.procedures ?? [],
   }
 }
 export type PublicAgency = ReturnType<typeof publicAgency>

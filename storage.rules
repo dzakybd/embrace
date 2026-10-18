@@ -1,0 +1,14 @@
+rules_version = '2';
+// Public legal documents the agents cite (laws and regulations, public domain in Indonesia) are readable by anyone.
+// Nothing else is: the server uses the Admin SDK, and no client writes.
+service firebase.storage {
+  match /b/{bucket}/o {
+    match /docs/{agency}/{file} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /{path=**} {
+      allow read, write: if false;
+    }
+  }
+}

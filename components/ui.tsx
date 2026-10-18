@@ -104,6 +104,12 @@ export const AGENT_META: Record<string, { label: string; role: string }> = {
   analyst_agent: { label: 'Analyst agent', role: 'Insights, weekly brief, questions' },
 }
 
+/** Opens a cited PDF at the cited page ("p. 12"); browsers' PDF viewers read #page. */
+const pageLink = (url: string, loc: string) => {
+  const page = /^p\. (\d+)/.exec(loc)?.[1]
+  return page && url.includes('.pdf') ? `${url}#page=${page}` : url
+}
+
 export function Citations({ items }: { items: { n?: number; doc: string; title: string; url: string; loc: string; text: string }[] }) {
   const t = useT()
   if (!items.length) return <p className="muted small">{t('No matching SOP passage: the caseworker confirms the procedure.')}</p>
@@ -113,7 +119,7 @@ export function Citations({ items }: { items: { n?: number; doc: string; title: 
         <li key={`${c.doc}-${c.loc}-${i}`}>
           <span className="cite-n">[{c.n ?? i + 1}]</span>
           <div>
-            <a href={c.url} target="_blank" rel="noreferrer" title={c.title}><b>{c.doc}</b>, {c.loc}</a>
+            <a href={pageLink(c.url, c.loc)} target="_blank" rel="noreferrer" title={c.title}><b>{c.doc}</b>, {c.loc}</a>
             <p>{c.text.slice(0, 260)}{c.text.length > 260 ? '…' : ''}</p>
           </div>
         </li>

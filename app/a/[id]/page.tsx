@@ -6,6 +6,7 @@ import { Monogram } from '@/components/AgencyPicker'
 import { Brand, Footer } from '@/components/Brand'
 import { TrackBox } from '@/components/citizen/TrackBox'
 import { LangSwitch } from '@/components/Lang'
+import { catLabel } from '@/components/Procedures'
 import { ChannelIcon, Icon, telegramUrl } from '@/components/ui'
 import { agencyById } from '@/lib/agencies'
 import { localize, translator } from '@/lib/i18n'
@@ -125,6 +126,16 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
         <ol className="steps-row flow">
           {FLOW.map((f, i) => <li key={f.text}><span className="entry-ic small"><Icon name={f.icon} size={18} /></span><span><small className="muted">{t('Step {n}', { n: i + 1 })}</small>{t(f.text)}</span></li>)}
         </ol>
+        {(agency.procedures?.length ?? 0) > 0 && (
+          <Link href={`/a/${agency.id}/guide`} className="role-card staff-tile guide-tile">
+            <span className="entry-ic small"><Icon name="rules" size={22} /></span>
+            <span>
+              <b>{t('Case types and procedures')}</b>
+              <span className="muted">{t('{n} procedures, the stages of each and the laws behind them', { n: agency.procedures!.length })}</span>
+            </span>
+            <Icon name="send" size={16} />
+          </Link>
+        )}
 
         <details className="card more">
           <summary><Icon name="rules" /> {t('What this agency handles')} <span className="muted small">{t('{n} teams', { n: byTeam.length })}</span></summary>
@@ -132,7 +143,7 @@ export default async function AgencyPage({ params }: { params: Promise<{ id: str
             {byTeam.map((t) => (
               <div key={t.team}>
                 <h3>{t.team}</h3>
-                <ul>{t.cats.map((c) => <li key={c.id}>{c.label}</li>)}</ul>
+                <ul>{t.cats.map((c) => <li key={c.id}>{catLabel(c, lang)}</li>)}</ul>
               </div>
             ))}
           </section>
