@@ -1,4 +1,5 @@
 // Ticket storage: Firestore in the cloud (EMBRACE_STORE=firestore), an in-memory map for local dev and tests.
+import { BUCKET } from './files-url'
 import type { Notification, Ticket } from './schemas'
 
 export const now = () => new Date().toISOString()
@@ -27,6 +28,9 @@ export interface Store {
   /** Channel credentials per agency (server only; Firestore rules deny all client access). */
   getIntegration(agencyId: string): Promise<Integrations | null>
   setIntegration(agencyId: string, fields: Partial<Integrations>): Promise<void>
+  /** Private files (report photos and voice notes): Cloud Storage `reports/...`, never readable by clients. */
+  putFile(path: string, mime: string, data: Buffer): Promise<void>
+  getFile(path: string): Promise<{ mime: string; data: Buffer } | null>
 }
 
 /** Guardrail settings an agency can adjust in the AI control tower (defaults in lib/guardrails.ts). */
@@ -84,6 +88,14 @@ class MemoryStore implements Store {
   }
   async clear(agencyId: string) {
     for (const [id, t] of this.tickets) if (t.agency_id === agencyId) this.tickets.delete(id)
+    for (const path of this.files.keys()) if (path.startsWith(`reports/${agencyId}/`)) this.files.delete(path)
+  }
+  private files = new Map<string, { mime: string; data: Buffer }>()
+  async putFile(path: string, mime: string, data: Buffer) {
+    this.files.set(path, { mime, data })
+  }
+  async getFile(path: string) {
+    return this.files.get(path) ?? null
   }
   private claims = new Set<string>()
   private hits = new Map<string, number[]>()
@@ -177,6 +189,22 @@ class FirestoreStore implements Store {
       snap.docs.slice(i, i + 400).forEach((d) => batch.delete(d.ref))
       await batch.commit()
     }
+    await (await this.bucket).deleteFiles({ prefix: `reports/${agencyId}/` }).catch(() => undefined)
+  }
+  private bucket = (async () => {
+    const { initializeApp, getApps } = await import('firebase-admin/app')
+    const { getStorage } = await import('firebase-admin/storage')
+    return getStorage(getApps()[0] ?? initializeApp()).bucket(BUCKET)
+  })()
+  async putFile(path: string, mime: string, data: Buffer) {
+    await (await this.bucket).file(path).save(data, { contentType: mime, resumable: false })
+  }
+  async getFile(path: string) {
+    const file = (await this.bucket).file(path)
+    const [exists] = await file.exists()
+    if (!exists) return null
+    const [[data], [meta]] = await Promise.all([file.download(), file.getMetadata()])
+    return { mime: String(meta.contentType ?? 'application/octet-stream'), data }
   }
   async addNotification(n: Notification) {
     await (await this.db).collection('notifications').add(n)

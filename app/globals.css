@@ -818,3 +818,6 @@ pre.json { font: 11px/1.45 'Google Sans Code', monospace; background: var(--surf
 .pick-h .muted.small { font-size: 13px; margin-left: 8px; }
 .avatar { overflow: hidden; }
 .avatar img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.attachments { display: flex; flex-wrap: wrap; gap: 8px; margin: 8px 0; align-items: center; }
+.attachments img { max-width: 220px; max-height: 180px; border-radius: 10px; display: block; }
+.attachments audio { max-width: 100%; }

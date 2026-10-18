@@ -1,6 +1,7 @@
 // Channels per agency. Telegram is live: each agency has its own bot. Built-in agencies' bots are managed by the
 // deployment (token in Secret Manager); agencies created in the app connect a bot from their Integrations page.
 import { getAgency } from './agencies'
+import { fileUrl } from './files-url'
 import { localize } from './i18n'
 import { STORE } from './store'
 import { call } from './telegram'
@@ -82,7 +83,7 @@ export async function setupBot(agencyId: string, token: string, secret: string):
     await call(token, 'setMyName', { name: `${local.short_name} · Embrace`.slice(0, 64), language_code: 'id' })
   })
   await run('Profile photo', async () => {
-    const res = await fetch(`${publicUrl()}/bot-avatar.jpg`, { signal: AbortSignal.timeout(10_000) })
+    const res = await fetch(fileUrl('brand/bot-avatar.jpg'), { signal: AbortSignal.timeout(10_000) })
     if (!res.ok) throw new Error(`avatar not found (${res.status})`)
     const form = new FormData()
     form.append('photo', JSON.stringify({ type: 'static', photo: 'attach://p' }))

@@ -669,6 +669,8 @@ export const ID: Record<string, string> = {
     '{held} dari {n} serangan sintetis tertahan (injeksi prompt, pembocoran prompt, manipulasi urgensi, tautan dan janji sisipan); {s} sudah tertangkap oleh penyaring input.',
   'Run {date}': 'Dijalankan {date}',
   Conversation: 'Percakapan',
+  'Photo {n} from the citizen': 'Foto {n} dari warga',
+  '{n} attachments, hidden with the personal data': '{n} lampiran, disembunyikan bersama data pribadi',
   'ends in {k}': 'berakhiran {k}',
   Uploaded: 'Unggahan',
   'Laws, SOPs and service flows the replies cite': 'Undang-undang, SOP, dan alur layanan yang dirujuk balasan',
@@ -852,8 +854,8 @@ export const ID: Record<string, string> = {
   "Google's Gemini reads your report to sort it, find the right team and draft a reply. On the paid Gemini API, Google does not use it to train its models. The AI never decides alone: urgent cases follow fixed rules, and a person approves every reply.":
     'Gemini dari Google membaca laporan Anda untuk memilahnya, menemukan tim yang tepat, dan menyiapkan draf balasan. Pada Gemini API berbayar, Google tidak memakainya untuk melatih modelnya. AI tidak pernah memutuskan sendiri: kasus mendesak mengikuti aturan tetap, dan setiap balasan disetujui oleh petugas.',
   'What is kept': 'Apa yang disimpan',
-  'Your message, the contact you give, and what the AI read from a voice note or photo. The voice note or photo itself is not stored.':
-    'Pesan Anda, kontak yang Anda berikan, dan isi yang dibaca AI dari pesan suara atau foto. Pesan suara atau foto itu sendiri tidak disimpan.',
+  'Your message, the contact you give, and any voice note or photo, kept privately in the agency’s cloud storage so the caseworker can review them. Only the agency’s staff can open them.':
+    'Pesan Anda, kontak yang Anda berikan, serta pesan suara atau foto, disimpan secara privat di penyimpanan cloud instansi agar petugas dapat memeriksanya. Hanya petugas instansi yang dapat membukanya.',
   'Your rights': 'Hak Anda',
   'You can ask the agency to show, correct or delete your data, or withdraw your consent, under Law 27/2022 on Personal Data Protection.':
     'Anda dapat meminta instansi untuk menampilkan, memperbaiki, atau menghapus data Anda, atau menarik persetujuan Anda, berdasarkan UU 27/2022 tentang Pelindungan Data Pribadi.',

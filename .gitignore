@@ -13,3 +13,6 @@ reference/
 .vitest/
 docs/
 video/
+
+# Law PDFs live in Cloud Storage (docs/<agency>/); npm run sop:index downloads missing ones
+agencies/*/sop/*.pdf

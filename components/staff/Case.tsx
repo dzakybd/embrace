@@ -339,6 +339,28 @@ function Report({ t }: { t: Ticket }) {
       }
     >
       <p className="complaint">{reveal ? t.text : (t.intake?.masked_text ?? t.text)}</p>
+      {(t.attachments?.length ?? 0) > 0 &&
+        (reveal ? (
+          <div className="attachments">
+            {t.attachments!.map((a, i) =>
+              !a.path ? null : a.mime.startsWith('image/') ? (
+                <a key={i} href={`/api/tickets/${t.id}/files/${i + 1}`} target="_blank" rel="noreferrer">
+                  <img
+                    src={`/api/tickets/${t.id}/files/${i + 1}`}
+                    alt={tr('Photo {n} from the citizen', { n: i + 1 })}
+                  />
+                </a>
+              ) : (
+                <audio key={i} controls preload="none" src={`/api/tickets/${t.id}/files/${i + 1}`} />
+              ),
+            )}
+          </div>
+        ) : (
+          <p className="muted small">
+            <Icon name="image" size={13} />{' '}
+            {tr('{n} attachments, hidden with the personal data', { n: t.attachments!.length })}
+          </p>
+        ))}
       {t.followups?.map((f, i) => (
         <p key={i} className="followup">
           <Icon name="chat" size={13} />{' '}

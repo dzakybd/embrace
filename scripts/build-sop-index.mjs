@@ -1,5 +1,6 @@
 // Builds agencies/<id>/sop-index.json from the PDFs and Markdown files listed in each sop/sources.json.
-// Run after adding or changing an SOP document: npm run sop:index
+// Run after adding or changing an SOP document: npm run sop:index. PDFs live in Cloud Storage (`url` in sources.json),
+// not in the repository: a PDF missing locally is downloaded first.
 import { readdirSync, readFileSync, existsSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
 import { extractText, getDocumentProxy } from 'unpdf'
@@ -27,7 +28,12 @@ function chunks(text) {
 }
 
 /** Pages of a PDF, or "## " sections of a Markdown file, as [{loc, text}]. */
-async function units(path) {
+async function units(path, url) {
+  if (!existsSync(path) && url) {
+    const res = await fetch(url)
+    if (!res.ok) throw new Error(`could not download ${url}: ${res.status}`)
+    writeFileSync(path, Buffer.from(await res.arrayBuffer()))
+  }
   if (path.endsWith('.md')) {
     return readFileSync(path, 'utf8')
       .split(/^## /m)
@@ -45,7 +51,7 @@ for (const id of readdirSync(AGENCIES)) {
   const sources = JSON.parse(readFileSync(manifest, 'utf8'))
   const passages = []
   for (const src of sources) {
-    const parts = await units(join(AGENCIES, id, 'sop', src.file))
+    const parts = await units(join(AGENCIES, id, 'sop', src.file), src.file.endsWith('.pdf') ? src.url : null)
     if (parts.reduce((n, p) => n + p.text.trim().length, 0) < 200) {
       console.warn(`skipped ${src.file}: no text layer`)
       continue

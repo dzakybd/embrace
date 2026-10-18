@@ -131,7 +131,7 @@ How to report a vulnerability, where secrets live and the known limits of the pr
 
 - Synthetic data only. Personal data is masked by the intake agent before staff see it; the original stays behind a "Show original" toggle.
 - Escalation never depends on the model alone; replies are never sent without caseworker approval.
-- Attachments are sent to Gemini and not stored; the ticket keeps only their type and size and what the media agent read.
+- Photos and voice notes go to Gemini and are kept in private Cloud Storage (`reports/<agency>/<case>/`); staff open them on the case behind the "Show original" toggle. Public files (laws, staff portraits, emblems) are in Cloud Storage too, not in the repository.
 - Per-IP rate limits protect the demo's Gemini budget. Gemini rate limits and server errors back off and retry twice (1 s, then 2 s) before the keyword rules decide.
 - Public text is fenced as data in every prompt. Reports with instructions aimed at the AI (English and Indonesian patterns) go to a person, and the reply drafter gets only a neutral restatement of them, never the attacker's words. Drafts are checked for copied personal data, foreign links, invented citations, promised outcomes, leaked instructions and claims that the case is closed.
 - The chat and the Telegram bot link to a privacy notice ([`/privacy`](app/privacy/page.tsx)): who sees a report, how Gemini is used, what is kept, and the rights under Indonesia's Personal Data Protection Law (UU 27/2022).

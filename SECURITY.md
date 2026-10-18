@@ -5,7 +5,7 @@ staff member is in the repository, the demo deployment or the film. Please do no
 
 ## Reporting a vulnerability
 
-Email **dzakybd@gmail.com** with "Embrace security" in the subject. Please include what you found, how to reproduce
+Email **dzaky.fawwaz@nalaria.ai.id** (founder; copy luluil.maknuna@nalaria.ai.id, head of business) with "Embrace security" in the subject. Please include what you found, how to reproduce
 it and what an attacker could do with it. Do not open a public issue, and do not test against other people's data
 or run load or denial-of-service tests on embrace.nalaria.ai.id. We aim to reply within 3 working days and to fix
 confirmed issues in the demo within 14 days, and we credit reporters who want it.
@@ -40,7 +40,7 @@ meant to be public: the key identifies the project and grants no access on its o
   cases. Storage rules allow public reads of `docs/` (Indonesian laws and regulations, not copyright protected) and
   nothing else, and no client writes.
 - **Personal data.** The intake agent masks names, phone numbers, ID numbers and addresses before staff see a case;
-  the original stays behind a "Show original" toggle. Voice notes and photos go to Gemini and are not stored.
+  the original stays behind a "Show original" toggle. Voice notes and photos are kept in private Cloud Storage (`reports/`, closed to clients by the Storage rules) and shown to staff behind the same toggle.
   Citizens see a privacy notice (`/privacy`, Law 27/2022 on Personal Data Protection) in the chat and the Telegram bot.
 - **Abuse and cost.** Per-IP rate limits on every public endpoint (20 web reports per hour), per-chat limits and a
   daily AI budget for the Telegram bot shared across instances (past it, keyword rules decide), Gemini retries with
@@ -62,6 +62,8 @@ meant to be public: the key identifies the project and grants no access on its o
   Role checks on the server trust the account the browser names. A real deployment needs Firebase Authentication
   with roles on the user, checked on the server, before it holds real data.
 - **Rate limits** on most endpoints are per instance; the Telegram limits are shared through Firestore.
+- **Attachments** are served to the staff case page by the server without sign-in, like the rest of the demo staff
+  workspace.
 - **Data retention** is not automated: there is no scheduled deletion of closed cases yet.
 - **Dependencies** are kept current but not scanned automatically in CI.
 

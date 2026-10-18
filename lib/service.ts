@@ -107,6 +107,41 @@ async function* runAgents(
   }
 }
 
+const EXT: Record<string, string> = {
+  'image/jpeg': 'jpg',
+  'image/png': 'png',
+  'image/webp': 'webp',
+  'audio/ogg': 'ogg',
+  'audio/mpeg': 'mp3',
+  'audio/mp4': 'm4a',
+  'audio/aac': 'aac',
+  'audio/wav': 'wav',
+  'audio/webm': 'webm',
+  'audio/flac': 'flac',
+}
+
+/** Keeps the report's photos and voice notes in private Cloud Storage so staff can open them on the case. A storage
+ * failure never blocks the report: the attachment is then kept as type and size only. */
+async function saveAttachments(
+  agencyId: string,
+  id: string,
+  media: { mime: string; data: string }[],
+): Promise<Ticket['attachments']> {
+  return Promise.all(
+    media.map(async (m, i) => {
+      const data = Buffer.from(m.data, 'base64')
+      const path = `reports/${agencyId}/${id}/${i + 1}.${EXT[m.mime] ?? 'bin'}`
+      try {
+        await STORE.putFile(path, m.mime, data)
+        return { mime: m.mime, bytes: data.length, path }
+      } catch (err) {
+        log('ERROR', 'attachment_not_saved', { ticket: id, error: String(err).slice(0, 200) })
+        return { mime: m.mime, bytes: data.length }
+      }
+    }),
+  )
+}
+
 /** Output guardrail on the drafted reply; findings are shown to the officer, who approves every reply anyway. */
 function guardDraft(agency: Agency, id: string, text: string, outputs: Outputs): string[] {
   const draft = outputs.draft as { reply?: string } | undefined
@@ -173,7 +208,7 @@ export async function* submit(
     status: 'received',
     created_at: ts,
     updated_at: ts,
-    attachments: media.map((m) => ({ mime: m.mime, bytes: Math.floor((m.data.length * 3) / 4) })),
+    attachments: await saveAttachments(agencyId, id, media),
     trace: [],
     history: [entry('system', 'received', `via ${channel}`)],
     seeded: false,

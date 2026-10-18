@@ -20,7 +20,7 @@ export default async function PrivacyPage() {
     ],
     [
       'What is kept',
-      'Your message, the contact you give, and what the AI read from a voice note or photo. The voice note or photo itself is not stored.',
+      'Your message, the contact you give, and any voice note or photo, kept privately in the agency’s cloud storage so the caseworker can review them. Only the agency’s staff can open them.',
     ],
     [
       'Your rights',

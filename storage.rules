@@ -1,11 +1,24 @@
 rules_version = '2';
-// Public legal documents the agents cite (laws and regulations, public domain in Indonesia) are readable by anyone.
-// Nothing else is: the server uses the Admin SDK, and no client writes.
+// Public: the legal documents the agents cite (laws and regulations, not copyright protected in Indonesia), staff
+// portraits and agency emblems. Report attachments are private. The server uses the Admin SDK; no client writes.
 service firebase.storage {
   match /b/{bucket}/o {
     match /docs/{agency}/{file} {
       allow read: if true;
       allow write: if false;
+    }
+    // Fictional staff portraits and agency emblems shown in the app.
+    match /team/{agency}/{file} {
+      allow read: if true;
+      allow write: if false;
+    }
+    match /brand/{path=**} {
+      allow read: if true;
+      allow write: if false;
+    }
+    // Report photos and voice notes: private; only the server (Admin SDK) reads and writes them.
+    match /reports/{path=**} {
+      allow read, write: if false;
     }
     match /{path=**} {
       allow read, write: if false;

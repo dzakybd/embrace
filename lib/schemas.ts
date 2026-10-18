@@ -134,7 +134,8 @@ export interface Ticket {
   updated_at: string
   responded_at?: string | null
   resolved_at?: string | null
-  attachments: { mime: string; bytes: number }[]
+  /** path: the file in Cloud Storage (`reports/<agency>/<ticket>/<n>.<ext>`, private), when it was saved. */
+  attachments: { mime: string; bytes: number; path?: string }[]
   media?: Media | null
   intake?: Intake | null
   triage?: Triage | null

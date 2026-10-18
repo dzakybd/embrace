@@ -181,7 +181,7 @@ export interface Ticket {
   created_at: string
   responded_at?: string | null
   resolved_at?: string | null
-  attachments?: { mime: string; bytes: number }[]
+  attachments?: { mime: string; bytes: number; path?: string }[]
   media?: Media | null
   intake?: Intake | null
   triage?: Triage | null

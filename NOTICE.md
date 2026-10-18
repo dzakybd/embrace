@@ -12,8 +12,8 @@ is not an official service of either. Their unit structure and service flows are
 
 | Item | Source | Terms |
 |---|---|---|
-| `public/agencies/dinsos_demak.svg`, Seal of Demak Regency | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Seal_of_Demak_Regency.svg) | Public domain (Indonesian government insignia; use must not imply official endorsement, so the app labels it "independent demo, not an official service") |
-| `public/agencies/kpai.png`, KPAI emblem, cropped from the logo | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Logo_Komisi_Perlindungan_Anak_Indonesia.png) | Public domain, same note as above |
+| `brand/agencies/dinsos_demak.svg` (Cloud Storage), Seal of Demak Regency | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Seal_of_Demak_Regency.svg) | Public domain (Indonesian government insignia; use must not imply official endorsement, so the app labels it "independent demo, not an official service") |
+| `brand/agencies/kpai.png` (Cloud Storage), KPAI emblem, cropped from the logo | [Wikimedia Commons](https://commons.wikimedia.org/wiki/File:Logo_Komisi_Perlindungan_Anak_Indonesia.png) | Public domain, same note as above |
 | `agencies/dinsos_demak/sop/service-flows-en.md`, `alur-layanan-dinsos-p2pa-demak.md` | Service-flow infographics published by [Dinsos P2PA Demak](https://dinsosp2pa.demakkab.go.id), transcribed and translated by the team (research notes in `docs/research/complaint-processes.md`) | Public information; the original infographics are not redistributed |
 | `agencies/kpai/sop/kpai-complaint-sop-en.md`, `sop-pengaduan-kpai.md` | KPAI's published complaint service flow ([kpai.go.id](https://www.kpai.go.id)), transcribed and translated by the team | Public information |
 | `*/sop/response-standard-en.md`, `standar-respons-pengaduan.md`, `complaint-handling-sop.md` | Written for this demo | Part of Embrace, all rights reserved |
@@ -59,7 +59,7 @@ Sans are trademarks of Google LLC.
 | Google Sans, Google Sans Code | Loaded from the [Google Fonts](https://fonts.google.com) API | Open font licenses as listed on each family's Google Fonts page |
 | Brand marks (WhatsApp, Telegram, Instagram, Threads, Gmail, Gemini, Firebase, Google Cloud) | [Simple Icons](https://simpleicons.org) through [react-icons](https://github.com/react-icons/react-icons) | Icons CC0-1.0, package MIT. The marks are trademarks of their owners and show which channel or service is meant; no affiliation is implied |
 | Interface icons and the Embrace logo | Drawn for this project | Part of Embrace, all rights reserved |
-| `public/team/*/*.jpg`, staff portraits | Generated with Gemini (Google) for this demo from text prompts; the people are fictional and resemble no real person | Part of Embrace, all rights reserved; Gemini terms of use |
+| `team/<agency>/<id>.jpg` (Cloud Storage), staff portraits | Generated with Gemini (Google) for this demo from text prompts; the people are fictional and resemble no real person | Part of Embrace, all rights reserved; Gemini terms of use |
 
 ## Software dependencies
 
