@@ -767,6 +767,13 @@
       "public": true
     },
     {
+      "id": "dinsos_instagram",
+      "kind": "social",
+      "name": "Instagram @dinsosp2pa_demak",
+      "url": "https://www.instagram.com/dinsosp2pa_demak/",
+      "public": true
+    },
+    {
       "id": "demak_portal",
       "kind": "link",
       "name": "Demak Regency portal",
