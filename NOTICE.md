@@ -57,12 +57,11 @@ The app's runtime dependencies are open source: 175 MIT, 104 Apache-2.0, 22 ISC,
 
 Each package's license text ships in its folder under `node_modules`.
 
-## Submission film (`video/`)
+## Submission film (sources kept outside this repository)
 
 | Item | Source | Terms |
 |---|---|---|
 | Screens | Screenshots of this app | Part of Embrace, all rights reserved |
-| Voiceover | Generated with Gemini text-to-speech from `video/vo.json` | Gemini API terms |
-| Sound effects `air-woosh-quick`, `data-scan`, `impact-cine-big`, `impact-zoom-quick`, `shimmer-sparkle-sweep`, `switch-click-quick`, `switch-tap`, `swoosh-slow`, `transition-soft`, `ui-message-pop`, `whoosh-fast` | [Mixkit](https://mixkit.co/free-sound-effects/) | Mixkit Sound Effects Free License (no attribution required) |
-| Sound effects `keyboard`, `riser-cine`, `sparkle` and background music `bgm` (Tech House) | Mixkit; the individual tracks could not be traced back to their pages | Mixkit Free License, to be re-verified before any commercial use |
-| Sound effect `pop` | Source not recorded | To be replaced or verified before any use beyond this submission |
+| Voiceover | Generated with Gemini text-to-speech from the film script | Gemini API terms |
+| Sound effects: [Quick air woosh](https://assets.mixkit.co/active_storage/sfx/2605/2605-preview.mp3), [Data scaner](https://assets.mixkit.co/active_storage/sfx/2847/2847-preview.mp3), [Big cinematic impact](https://assets.mixkit.co/active_storage/sfx/788/788-preview.mp3), [Quick zoom impact](https://assets.mixkit.co/active_storage/sfx/772/772-preview.mp3), [Sweeping sparkle presentation intro](https://assets.mixkit.co/active_storage/sfx/2633/2633-preview.mp3), [Quick switch click](https://assets.mixkit.co/active_storage/sfx/2582/2582-preview.mp3), [On or off light switch tap](https://assets.mixkit.co/active_storage/sfx/2585/2585-preview.mp3), [Slow sweeping swoosh](https://assets.mixkit.co/active_storage/sfx/163/163-preview.mp3), [Air zoom vacuum](https://assets.mixkit.co/active_storage/sfx/2608/2608-preview.mp3), [Message pop alert](https://assets.mixkit.co/active_storage/sfx/2354/2354-preview.mp3), [Fast whoosh transition](https://assets.mixkit.co/active_storage/sfx/1490/1490-preview.mp3), [Digital typewriter](https://assets.mixkit.co/active_storage/sfx/1363/1363-preview.mp3), [Magic sparkle touch](https://assets.mixkit.co/active_storage/sfx/3083/3083-preview.mp3), [Electronics power up](https://assets.mixkit.co/active_storage/sfx/2602/2602-preview.mp3) | [Mixkit](https://mixkit.co/free-sound-effects/) | Mixkit Sound Effects Free License (no attribution required) |
+| Music: ["House Vibez" by Lily J](https://assets.mixkit.co/music/745/745.mp3) | [Mixkit](https://mixkit.co/free-stock-music/) | Mixkit Stock Music Free License (no attribution required) |
