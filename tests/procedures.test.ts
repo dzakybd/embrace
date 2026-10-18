@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { AGENCIES } from '@/lib/agencies'
-import { procedureText } from '@/lib/agents/pipeline'
+import { guessLanguage, procedureText } from '@/lib/agents/pipeline'
 import { sourcesFor } from '@/lib/sop'
 
 const WHO = ['citizen', 'desk', 'caseworker', 'supervisor', 'head', 'partner']
@@ -29,5 +29,15 @@ describe('agency procedures', () => {
     expect(text).toMatch(/UU 12\/2022/)
     expect(text).toMatch(/SAPA 129 .*: 129 · WhatsApp 08111-129-129/)
     expect(procedureText(AGENCIES.kpai, 'nope')).toMatch(/no published procedure/)
+  })
+})
+
+describe('reply language', () => {
+  it('reads the words, not the place names', () => {
+    expect(guessLanguage("My neighbour's 7-year-old daughter has been locked in a room in Bekasi for two days.")).toBe(
+      'en',
+    )
+    expect(guessLanguage('Rumah kami di Bedono, Sayung terendam rob dan nenek saya tidak bisa dievakuasi.')).toBe('id')
+    expect(guessLanguage('Min, simbah kula sampun sepuh, dereng angsal bantuan.')).toBeNull()
   })
 })

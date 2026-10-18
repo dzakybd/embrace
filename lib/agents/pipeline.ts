@@ -132,13 +132,38 @@ export function procedureText(agency: Agency, category: string | undefined): str
     .join('\n')
 }
 
+const ID_WORDS = new Set(
+  'yang dan di ke dari tidak saya kami anak untuk dengan ini itu sudah belum ada mohon tolong bantuan karena akan juga atau kalau bisa sejak sampai kepada pak bu'.split(
+    ' ',
+  ),
+)
+const EN_WORDS = new Set(
+  'the and is are my our to of a for with this that has have not please help we he she they was were been his her their it on at since'.split(
+    ' ',
+  ),
+)
+
+/** "en" or "id" when the words clearly say so, else null (Javanese, mixed or too short): place names do not count. */
+export function guessLanguage(text: string): 'en' | 'id' | null {
+  const words = text.toLowerCase().match(/[a-z]+/g) ?? []
+  const id = words.filter((w) => ID_WORDS.has(w)).length
+  const en = words.filter((w) => EN_WORDS.has(w)).length
+  if (en >= 3 && en >= 2 * id) return 'en'
+  if (id >= 3 && id >= 2 * en) return 'id'
+  return null
+}
+
 /** What the drafter sees of the complaint. When the input guardrail flagged instructions aimed at the AI, the
  * drafter (whose text reaches the public) gets the intake's neutral restatement instead of the citizen's words. */
 function replyInputs(s: Record<string, unknown>) {
   const intake = (s['intake'] ?? {}) as Partial<Intake>
-  if (!s['injection']) return { reply_source: s['complaint_text'], reply_intake: intake }
+  // The model sometimes tags English with Indonesian place names as Indonesian; plain word counts decide when clear.
+  const reply_language =
+    guessLanguage(String(s['complaint_text'] ?? '')) ?? intake.language ?? 'the complaint’s language'
+  if (!s['injection']) return { reply_source: s['complaint_text'], reply_intake: intake, reply_language }
   return {
-    reply_source: `(The original message is withheld: it contained instructions aimed at the AI. Neutral summary: ${fence(intake.restated ?? '')})`,
+    reply_language,
+    reply_source: `(The original message is withheld: it contained instructions aimed at the AI. Neutral summary in English: ${fence(intake.restated ?? '')})`,
     reply_intake: { ...intake, masked_text: '(withheld)' },
   }
 }
@@ -214,7 +239,7 @@ The agency's published procedure for this case type (stages in order, who does e
 {procedure_text?}
 
 Rules:
-- Write in the language of the complaint (intake.language; if it mixes languages, use the main one) with a warm, plain, respectful tone; short paragraphs.
+- Write in this language: {reply_language} (ISO code), with a warm, plain, respectful tone; short paragraphs.
 - Acknowledge the specific issue in one sentence, give the ticket number, say which team handles it and the
   expected first response time from sla_hours (in hours, e.g. "within 72 hours"). Never promise an outcome.
 - Name a hotline or partner service only from the list given with the procedure, with its number as given.
