@@ -8,7 +8,7 @@ Complaints are accepted from every channel: in person (Puskesos, SLRT, the offic
 
 ## 2. Emergencies
 
-Emergencies: violence happening now, a woman or child thrown out of their home, a family with no food today or nowhere to sleep tonight, victims of floods, tidal floods (rob) or fire who have not evacuated, people with mental illness who are chained (pasung) or neglected, and threats of suicide. Emergency complaints go straight to the duty supervisor and get a response within 2 hours at most. For violence against women and children, the UPTD PPA officer coordinates with the police women and children unit and points to SAPA 129. Late social aid alone is not an emergency.
+Emergencies: violence happening now, a woman or child thrown out of their home, a family with no food today or nowhere to sleep tonight, victims of floods, tidal floods (rob) or fire who have not evacuated, people with mental illness who are chained (pasung) or neglected, and threats of suicide. Emergency complaints go straight to the supervisor and get a response within 2 hours at most. For violence against women and children, the UPTD PPA officer coordinates with the police women and children unit and points to SAPA 129. Late social aid alone is not an emergency.
 
 ## 3. Follow-up deadlines
 

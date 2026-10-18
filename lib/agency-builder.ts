@@ -79,7 +79,7 @@ export async function buildAgency(input: NewAgency, existing?: Agency): Promise<
   if (!base) return 'Unknown template'
   const roles = new Set(input.team.map((m) => m.role))
   if (!roles.has('leader') || !roles.has('supervisor') || !roles.has('officer')) {
-    return 'The team needs at least one head of office, one duty supervisor and one caseworker'
+    return 'The team needs at least one head of office, one supervisor and one caseworker'
   }
 
   const queues: Record<string, string> = {}

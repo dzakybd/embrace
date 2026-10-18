@@ -8,7 +8,7 @@ Pengaduan diterima dari semua kanal: datang langsung (Puskesos, SLRT, kantor din
 
 ## 2. Keadaan darurat
 
-Keadaan darurat: kekerasan yang sedang terjadi, perempuan atau anak diusir dari rumah, keluarga tidak punya makanan hari ini atau tidak punya tempat tinggal malam ini, korban banjir, rob atau kebakaran yang belum mengungsi, orang dengan gangguan jiwa yang dipasung atau terlantar, dan ancaman bunuh diri. Pengaduan darurat langsung diteruskan kepada supervisor piket dan ditanggapi paling lama 2 jam. Untuk kekerasan terhadap perempuan dan anak, petugas UPTD PPA berkoordinasi dengan Unit PPA Polres dan mengarahkan ke SAPA 129. Bantuan sosial yang terlambat saja bukan keadaan darurat.
+Keadaan darurat: kekerasan yang sedang terjadi, perempuan atau anak diusir dari rumah, keluarga tidak punya makanan hari ini atau tidak punya tempat tinggal malam ini, korban banjir, rob atau kebakaran yang belum mengungsi, orang dengan gangguan jiwa yang dipasung atau terlantar, dan ancaman bunuh diri. Pengaduan darurat langsung diteruskan kepada manajer dan ditanggapi paling lama 2 jam. Untuk kekerasan terhadap perempuan dan anak, petugas UPTD PPA berkoordinasi dengan Unit PPA Polres dan mengarahkan ke SAPA 129. Bantuan sosial yang terlambat saja bukan keadaan darurat.
 
 ## 3. Jangka waktu tindak lanjut
 

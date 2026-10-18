@@ -79,7 +79,7 @@ const menu = (c: Chat): Button[][] => [
 async function welcome(c: Chat) {
   await c.say(
     `<b>${esc(c.agency.name)}</b>\n\n` +
-      c.t('Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the duty supervisor at once, and a real caseworker reviews every reply.') + '\n\n' +
+      c.t('Tell us what happened, where and when, in your own words. You can also send a voice note or a photo. Urgent reports reach the supervisor at once, and a real caseworker reviews every reply.') + '\n\n' +
       c.t('If anyone is in danger right now, call {line}.', { line: esc(c.agency.emergency_line) }) + '\n\n' +
       c.t('Only {agency} staff see your report. By sending it, you agree to how it is handled.', { agency: esc(c.agency.short_name) }) +
       ` <a href="${publicUrl()}/privacy">${c.t('How your report is handled')}</a>`,

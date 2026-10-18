@@ -22,19 +22,20 @@ export async function generateMetadata({ params }: { params: Promise<{ id: strin
 
 const STAFF = [
   { as: 'officer', page: 'inbox', icon: 'inbox', title: 'Caseworker', body: 'My cases and AI-drafted replies' },
-  { as: 'supervisor', page: 'inbox', icon: 'alert', title: 'Duty supervisor', body: 'Escalations first, delegate cases' },
+  { as: 'supervisor', page: 'inbox', icon: 'alert', title: 'Supervisor', body: 'Escalations first, delegate cases' },
   { as: 'leader', page: 'insights', icon: 'chart', title: 'Head of office', body: 'KPIs, weekly AI brief, early warnings' },
 ]
 
 const MANAGE = [
   { as: 'supervisor', page: 'integrations', icon: 'chat', title: 'Channels', body: 'Telegram bot token, WhatsApp, email and more' },
-  { as: 'leader', page: 'settings', icon: 'rules', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
+  { as: 'leader', page: 'case-types', icon: 'rules', title: 'Case types', body: 'Procedures, stages, who does what and the legal basis' },
+  { as: 'leader', page: 'settings', icon: 'form', title: 'Settings', body: 'Names, rules, categories, teams, staff and documents' },
   { as: 'leader', page: 'ai', icon: 'shield', title: 'AI control tower', body: 'Models, API key, guardrails, traces and metrics' },
 ]
 
 const FLOW = [
   { icon: 'check', text: 'Report number in seconds, personal data masked' },
-  { icon: 'alert', text: 'Urgent cases alert the duty supervisor' },
+  { icon: 'alert', text: 'Urgent cases alert the supervisor' },
   { icon: 'user', text: 'A caseworker gets a cited draft reply' },
   { icon: 'send', text: 'A person approves every reply' },
 ]

@@ -3,7 +3,7 @@
 import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { useLang } from '../Lang'
-import { procTitle, stageTitle } from '../Procedures'
+import { FlowDiagram, procTitle, type Stage } from '../Procedures'
 import { Icon } from '../ui'
 
 interface Tracked {
@@ -20,7 +20,7 @@ interface Tracked {
   reply: string | null
   agency_id: string
   agency_name_id: string | null
-  procedure: { id: string; title: string; title_id?: string; stages: { title: string; title_id?: string }[]; done: number[] } | null
+  procedure: { id: string; title: string; title_id?: string; stages: Stage[]; done: number[] } | null
 }
 
 export default function Track({ id }: { id: string }) {
@@ -81,13 +81,7 @@ function Stages({ p, agencyId, lang, tr }: { p: NonNullable<Tracked['procedure']
     <div className="track-proc">
       <h2>{procTitle(p, lang)}</h2>
       <p className="muted small">{tr('{done} of {n} stages done', { done: p.done.length, n: p.stages.length })} · <Link href={`/a/${agencyId}/guide#${p.id}`}>{tr('About this procedure')}</Link></p>
-      <ol className="proc-stages">
-        {p.stages.map((s, i) => (
-          <li key={i} className={p.done.includes(i) ? 'done' : i === next ? 'now' : ''} aria-current={i === next ? 'step' : undefined}>
-            <span className="pdot">{p.done.includes(i) ? <Icon name="check" size={12} /> : i + 1}</span>{stageTitle(s, lang)}
-          </li>
-        ))}
-      </ol>
+      <FlowDiagram stages={p.stages} lang={lang} t={tr} done={p.done} current={next < 0 ? undefined : next} />
     </div>
   )
 }

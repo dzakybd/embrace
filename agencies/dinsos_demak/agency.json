@@ -168,7 +168,7 @@
       "chained",
       "trapped"
     ],
-    "escalation_contact": "Sri Wahyuni, duty supervisor (Head of UPTD PPA)"
+    "escalation_contact": "Sri Wahyuni, supervisor (Head of UPTD PPA)"
   },
   "sla_hours": {
     "critical": 2,
@@ -195,7 +195,7 @@
       "id": "sri",
       "name": "Sri Wahyuni",
       "role": "supervisor",
-      "title": "Duty supervisor, Head of UPTD PPA",
+      "title": "Supervisor, Head of UPTD PPA",
       "queues": []
     },
     {
@@ -271,27 +271,33 @@
       "stages": [
         {
           "title": "Complaint received in person, by phone or online",
-          "title_id": "Pengaduan diterima langsung, lewat telepon, atau daring"
+          "title_id": "Pengaduan diterima langsung, lewat telepon, atau daring",
+          "who": "citizen"
         },
         {
           "title": "Identity recorded and complaint checked",
-          "title_id": "Identitas dicatat dan pengaduan diverifikasi"
+          "title_id": "Identitas dicatat dan pengaduan diverifikasi",
+          "who": "desk"
         },
         {
           "title": "Need identified (aid, health, education, civil records, other)",
-          "title_id": "Kebutuhan diidentifikasi (bansos, kesehatan, pendidikan, adminduk, lainnya)"
+          "title_id": "Kebutuhan diidentifikasi (bansos, kesehatan, pendidikan, adminduk, lainnya)",
+          "who": "caseworker"
         },
         {
           "title": "Referral or coordination with the office concerned",
-          "title_id": "Rujukan atau koordinasi dengan OPD/instansi terkait"
+          "title_id": "Rujukan atau koordinasi dengan OPD/instansi terkait",
+          "who": "partner"
         },
         {
           "title": "Follow-up until the problem is resolved",
-          "title_id": "Tindak lanjut sampai masalah selesai"
+          "title_id": "Tindak lanjut sampai masalah selesai",
+          "who": "caseworker"
         },
         {
           "title": "Result recorded and the citizen informed",
-          "title_id": "Hasil dicatat dan warga diberi informasi"
+          "title_id": "Hasil dicatat dan warga diberi informasi",
+          "who": "caseworker"
         }
       ]
     },
@@ -317,23 +323,28 @@
       "stages": [
         {
           "title": "Application submitted to SLRT",
-          "title_id": "Permohonan diajukan ke SLRT"
+          "title_id": "Permohonan diajukan ke SLRT",
+          "who": "citizen"
         },
         {
           "title": "Data recorded and requirements checked",
-          "title_id": "Data dicatat dan persyaratan diperiksa"
+          "title_id": "Data dicatat dan persyaratan diperiksa",
+          "who": "desk"
         },
         {
           "title": "Check in the DTSEN system, field visit if needed",
-          "title_id": "Pengecekan di sistem DTSEN, verifikasi lapangan jika perlu"
+          "title_id": "Pengecekan di sistem DTSEN, verifikasi lapangan jika perlu",
+          "who": "caseworker"
         },
         {
           "title": "Analysis and follow-up plan",
-          "title_id": "Analisis dan rencana tindak lanjut"
+          "title_id": "Analisis dan rencana tindak lanjut",
+          "who": "supervisor"
         },
         {
           "title": "Certificate issued",
-          "title_id": "Surat keterangan diterbitkan"
+          "title_id": "Surat keterangan diterbitkan",
+          "who": "head"
         }
       ]
     },
@@ -355,31 +366,38 @@
       "stages": [
         {
           "title": "Request submitted to SLRT",
-          "title_id": "Permohonan diajukan ke SLRT"
+          "title_id": "Permohonan diajukan ke SLRT",
+          "who": "citizen"
         },
         {
           "title": "Request recorded in the SLRT system",
-          "title_id": "Permohonan dicatat di sistem SLRT"
+          "title_id": "Permohonan dicatat di sistem SLRT",
+          "who": "desk"
         },
         {
           "title": "Reported to the head of division and head of office",
-          "title_id": "Dilaporkan ke Kepala Bidang dan Kepala Dinas"
+          "title_id": "Dilaporkan ke Kepala Bidang dan Kepala Dinas",
+          "who": "supervisor"
         },
         {
           "title": "Administrative check, field visit if needed",
-          "title_id": "Pemeriksaan administrasi, lapangan jika perlu"
+          "title_id": "Pemeriksaan administrasi, lapangan jika perlu",
+          "who": "caseworker"
         },
         {
           "title": "Eligibility analysis",
-          "title_id": "Analisis kelayakan"
+          "title_id": "Analisis kelayakan",
+          "who": "caseworker"
         },
         {
           "title": "Follow-up plan prepared",
-          "title_id": "Rencana tindak lanjut disusun"
+          "title_id": "Rencana tindak lanjut disusun",
+          "who": "supervisor"
         },
         {
           "title": "Recommendation issued",
-          "title_id": "Rekomendasi diterbitkan"
+          "title_id": "Rekomendasi diterbitkan",
+          "who": "head"
         }
       ]
     },
@@ -393,27 +411,33 @@
       "stages": [
         {
           "title": "Complaint submitted in writing (suggestion box, SMS, email)",
-          "title_id": "Aduan tertulis (kotak saran, SMS, email)"
+          "title_id": "Aduan tertulis (kotak saran, SMS, email)",
+          "who": "citizen"
         },
         {
           "title": "Complaints collected",
-          "title_id": "Aduan dikumpulkan"
+          "title_id": "Aduan dikumpulkan",
+          "who": "desk"
         },
         {
           "title": "Administrative and factual check",
-          "title_id": "Pemeriksaan administratif dan faktual"
+          "title_id": "Pemeriksaan administratif dan faktual",
+          "who": "caseworker"
         },
         {
           "title": "Reported to the manager",
-          "title_id": "Dilaporkan ke manajer"
+          "title_id": "Dilaporkan ke manajer",
+          "who": "supervisor"
         },
         {
           "title": "Results analysed",
-          "title_id": "Hasil pemeriksaan dianalisis"
+          "title_id": "Hasil pemeriksaan dianalisis",
+          "who": "caseworker"
         },
         {
           "title": "Follow-up plan (old-age, accident, death benefits)",
-          "title_id": "Rencana tindak lanjut (JHT, JKK, JKM)"
+          "title_id": "Rencana tindak lanjut (JHT, JKK, JKM)",
+          "who": "supervisor"
         }
       ]
     },
@@ -427,27 +451,33 @@
       "stages": [
         {
           "title": "Report received; if anyone is in danger, call 110 or SAPA 129",
-          "title_id": "Laporan diterima; jika ada yang dalam bahaya, hubungi 110 atau SAPA 129"
+          "title_id": "Laporan diterima; jika ada yang dalam bahaya, hubungi 110 atau SAPA 129",
+          "who": "citizen"
         },
         {
           "title": "First response: police PPA unit, counselling, home visit if needed",
-          "title_id": "Penanganan awal: Unit PPA Polres, konseling, home visit jika perlu"
+          "title_id": "Penanganan awal: Unit PPA Polres, konseling, home visit jika perlu",
+          "who": "partner"
         },
         {
           "title": "Medical examination (visum)",
-          "title_id": "Pemeriksaan medis (visum)"
+          "title_id": "Pemeriksaan medis (visum)",
+          "who": "partner"
         },
         {
           "title": "Needs analysis and handling plan",
-          "title_id": "Analisis kebutuhan dan rencana penanganan"
+          "title_id": "Analisis kebutuhan dan rencana penanganan",
+          "who": "caseworker"
         },
         {
           "title": "Psychological support",
-          "title_id": "Pendampingan psikologis"
+          "title_id": "Pendampingan psikologis",
+          "who": "caseworker"
         },
         {
           "title": "Legal aid",
-          "title_id": "Bantuan hukum"
+          "title_id": "Bantuan hukum",
+          "who": "partner"
         }
       ]
     },
@@ -461,31 +491,38 @@
       "stages": [
         {
           "title": "Request for aid received",
-          "title_id": "Permohonan bantuan diterima"
+          "title_id": "Permohonan bantuan diterima",
+          "who": "citizen"
         },
         {
           "title": "Site visit",
-          "title_id": "Peninjauan lokasi"
+          "title_id": "Peninjauan lokasi",
+          "who": "caseworker"
         },
         {
           "title": "Needs and type of aid identified",
-          "title_id": "Kebutuhan dan jenis bantuan diidentifikasi"
+          "title_id": "Kebutuhan dan jenis bantuan diidentifikasi",
+          "who": "caseworker"
         },
         {
           "title": "Amount of aid decided and approved",
-          "title_id": "Jumlah bantuan ditetapkan dan disetujui"
+          "title_id": "Jumlah bantuan ditetapkan dan disetujui",
+          "who": "head"
         },
         {
           "title": "Relief goods prepared",
-          "title_id": "Barang bantuan disiapkan"
+          "title_id": "Barang bantuan disiapkan",
+          "who": "caseworker"
         },
         {
           "title": "Aid distributed",
-          "title_id": "Bantuan disalurkan"
+          "title_id": "Bantuan disalurkan",
+          "who": "caseworker"
         },
         {
           "title": "Handover documented and recorded",
-          "title_id": "Penyaluran didokumentasikan dan dicatat"
+          "title_id": "Penyaluran didokumentasikan dan dicatat",
+          "who": "caseworker"
         }
       ]
     },
@@ -499,23 +536,28 @@
       "stages": [
         {
           "title": "Complaint received and recorded",
-          "title_id": "Aduan diterima dan dicatat"
+          "title_id": "Aduan diterima dan dicatat",
+          "who": "desk"
         },
         {
           "title": "Assessment of needs and condition",
-          "title_id": "Asesmen kebutuhan dan kondisi"
+          "title_id": "Asesmen kebutuhan dan kondisi",
+          "who": "caseworker"
         },
         {
           "title": "Service plan agreed",
-          "title_id": "Rencana layanan ditetapkan"
+          "title_id": "Rencana layanan ditetapkan",
+          "who": "supervisor"
         },
         {
           "title": "Referral (health, psychological, legal, social, economic)",
-          "title_id": "Rujukan (kesehatan, psikologis, hukum, sosial, ekonomi)"
+          "title_id": "Rujukan (kesehatan, psikologis, hukum, sosial, ekonomi)",
+          "who": "partner"
         },
         {
           "title": "Monitoring and follow-up",
-          "title_id": "Pemantauan dan tindak lanjut"
+          "title_id": "Pemantauan dan tindak lanjut",
+          "who": "caseworker"
         }
       ]
     },
@@ -529,31 +571,38 @@
       "stages": [
         {
           "title": "Person received from Satpol PP, police or the public",
-          "title_id": "Diterima dari Satpol PP, kepolisian, atau masyarakat"
+          "title_id": "Diterima dari Satpol PP, kepolisian, atau masyarakat",
+          "who": "partner"
         },
         {
           "title": "Identified and recorded",
-          "title_id": "Identifikasi dan pencatatan"
+          "title_id": "Identifikasi dan pencatatan",
+          "who": "desk"
         },
         {
           "title": "Counselling",
-          "title_id": "Penyuluhan"
+          "title_id": "Penyuluhan",
+          "who": "caseworker"
         },
         {
           "title": "Intervention plan",
-          "title_id": "Rencana intervensi"
+          "title_id": "Rencana intervensi",
+          "who": "caseworker"
         },
         {
           "title": "Intervention (guidance)",
-          "title_id": "Intervensi (pembinaan)"
+          "title_id": "Intervensi (pembinaan)",
+          "who": "caseworker"
         },
         {
           "title": "Return to family or referral to a rehabilitation centre",
-          "title_id": "Kembali ke keluarga atau rujukan ke Balai Rehabsos"
+          "title_id": "Kembali ke keluarga atau rujukan ke Balai Rehabsos",
+          "who": "supervisor"
         },
         {
           "title": "Follow-up home visits",
-          "title_id": "Bimbingan lanjut (home visit)"
+          "title_id": "Bimbingan lanjut (home visit)",
+          "who": "caseworker"
         }
       ]
     },
@@ -567,31 +616,38 @@
       "stages": [
         {
           "title": "Report checked against the criteria",
-          "title_id": "Laporan diperiksa terhadap kriteria"
+          "title_id": "Laporan diperiksa terhadap kriteria",
+          "who": "desk"
         },
         {
           "title": "Identification and selection",
-          "title_id": "Identifikasi dan seleksi"
+          "title_id": "Identifikasi dan seleksi",
+          "who": "caseworker"
         },
         {
           "title": "Assessment (interview, observation)",
-          "title_id": "Asesmen (wawancara, observasi)"
+          "title_id": "Asesmen (wawancara, observasi)",
+          "who": "caseworker"
         },
         {
           "title": "Intervention plan",
-          "title_id": "Rencana intervensi"
+          "title_id": "Rencana intervensi",
+          "who": "caseworker"
         },
         {
           "title": "Support and basic needs",
-          "title_id": "Pendampingan dan pemenuhan kebutuhan dasar"
+          "title_id": "Pendampingan dan pemenuhan kebutuhan dasar",
+          "who": "caseworker"
         },
         {
           "title": "Reunification or referral",
-          "title_id": "Reunifikasi atau rujukan"
+          "title_id": "Reunifikasi atau rujukan",
+          "who": "supervisor"
         },
         {
           "title": "Follow-up home visits",
-          "title_id": "Bimbingan lanjut (home visit)"
+          "title_id": "Bimbingan lanjut (home visit)",
+          "who": "caseworker"
         }
       ]
     },
@@ -605,27 +661,33 @@
       "stages": [
         {
           "title": "Application with the requirements",
-          "title_id": "Permohonan dengan persyaratan"
+          "title_id": "Permohonan dengan persyaratan",
+          "who": "citizen"
         },
         {
           "title": "Documents checked",
-          "title_id": "Berkas diperiksa"
+          "title_id": "Berkas diperiksa",
+          "who": "desk"
         },
         {
           "title": "Coordination with the child marriage prevention team (POKJA KHPK)",
-          "title_id": "Koordinasi dengan Ketua POKJA KHPK"
+          "title_id": "Koordinasi dengan Ketua POKJA KHPK",
+          "who": "supervisor"
         },
         {
           "title": "Assessment by a social worker or psychologist",
-          "title_id": "Asesmen oleh pekerja sosial atau psikolog"
+          "title_id": "Asesmen oleh pekerja sosial atau psikolog",
+          "who": "caseworker"
         },
         {
           "title": "Eligibility analysis",
-          "title_id": "Analisis kelayakan"
+          "title_id": "Analisis kelayakan",
+          "who": "caseworker"
         },
         {
           "title": "Recommendation letter issued if eligible",
-          "title_id": "Surat rekomendasi diterbitkan jika layak"
+          "title_id": "Surat rekomendasi diterbitkan jika layak",
+          "who": "head"
         }
       ]
     },
@@ -639,27 +701,33 @@
       "stages": [
         {
           "title": "Documents handed in",
-          "title_id": "Berkas diserahkan"
+          "title_id": "Berkas diserahkan",
+          "who": "citizen"
         },
         {
           "title": "Documents checked",
-          "title_id": "Dokumen diperiksa"
+          "title_id": "Dokumen diperiksa",
+          "who": "desk"
         },
         {
           "title": "First home visit and assessment",
-          "title_id": "Home visit pertama dan asesmen"
+          "title_id": "Home visit pertama dan asesmen",
+          "who": "caseworker"
         },
         {
           "title": "Approval letter",
-          "title_id": "Surat persetujuan"
+          "title_id": "Surat persetujuan",
+          "who": "supervisor"
         },
         {
           "title": "Second home visit",
-          "title_id": "Home visit kedua"
+          "title_id": "Home visit kedua",
+          "who": "caseworker"
         },
         {
           "title": "Adoption recommendation issued",
-          "title_id": "Rekomendasi pengangkatan anak diterbitkan"
+          "title_id": "Rekomendasi pengangkatan anak diterbitkan",
+          "who": "head"
         }
       ]
     },
@@ -673,15 +741,18 @@
       "stages": [
         {
           "title": "Renewal request with the requirements",
-          "title_id": "Permohonan perpanjangan dengan persyaratan"
+          "title_id": "Permohonan perpanjangan dengan persyaratan",
+          "who": "citizen"
         },
         {
           "title": "Documents checked",
-          "title_id": "Dokumen diperiksa"
+          "title_id": "Dokumen diperiksa",
+          "who": "desk"
         },
         {
           "title": "Registration recommendation (SIOP) issued",
-          "title_id": "Rekomendasi tanda daftar (SIOP) diterbitkan"
+          "title_id": "Rekomendasi tanda daftar (SIOP) diterbitkan",
+          "who": "head"
         }
       ]
     }

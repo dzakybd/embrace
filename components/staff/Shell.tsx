@@ -11,18 +11,19 @@ import { StaffProvider, useStaff } from './StaffProvider'
 
 const ROLES = [
   { id: 'leader', label: 'Head of office' },
-  { id: 'supervisor', label: 'Duty supervisor' },
+  { id: 'supervisor', label: 'Supervisor' },
   { id: 'officer', label: 'Caseworkers' },
 ]
 
 type Role = 'leader' | 'supervisor' | 'officer'
 
-/** What each role sees: caseworkers work their cases, the duty supervisor runs the desk, the head of office watches trends. */
+/** What each role sees: caseworkers work their cases, the supervisor runs the desk, the head of office watches trends. */
 const NAV: { href: string; label: string; icon: string; roles: Role[] }[] = [
   { href: '/staff/insights', label: 'Insights', icon: 'chart', roles: ['leader'] },
   { href: '/staff/inbox', label: 'Inbox', icon: 'inbox', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/team', label: 'Team', icon: 'user', roles: ['leader', 'supervisor'] },
   { href: '/staff/knowledge', label: 'Knowledge', icon: 'book', roles: ['leader', 'supervisor', 'officer'] },
+  { href: '/staff/case-types', label: 'Case types', icon: 'rules', roles: ['leader', 'supervisor', 'officer'] },
   { href: '/staff/integrations', label: 'Channels', icon: 'chat', roles: ['leader', 'supervisor'] },
   { href: '/staff/ai', label: 'AI control', icon: 'shield', roles: ['leader', 'supervisor'] },
   { href: '/staff/settings', label: 'Settings', icon: 'rules', roles: ['leader'] },

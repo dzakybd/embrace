@@ -1,5 +1,6 @@
 'use client'
 
+import Link from 'next/link'
 import { useEffect, useState } from 'react'
 import { api, type Citation, type SopSource } from '../api'
 import { Card, Citations, Icon } from '../ui'
@@ -75,7 +76,7 @@ export default function Knowledge() {
                       </Card>
         </div>
       </div>
-      <h2 className="section-h">{t('Procedures')} <span className="muted small">{t('The stages each case follows; tick them off on the case.')}</span></h2>
+      <h2 className="section-h">{t('Procedures')} <Link className="small" href="/staff/case-types">{t('Case types and their stages')} →</Link></h2>
       <Procedures procedures={agency.procedures ?? []} categories={agency.categories} docs={sources} lang={lang} t={t} />
     </div>
   )

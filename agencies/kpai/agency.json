@@ -143,7 +143,7 @@
       "sexually abused",
       "locked in"
     ],
-    "escalation_contact": "Hendro Wibisono, duty supervisor (Complaints Coordinator)"
+    "escalation_contact": "Hendro Wibisono, supervisor (Complaints Coordinator)"
   },
   "sla_hours": {
     "critical": 2,
@@ -171,7 +171,7 @@
       "id": "hendro",
       "name": "Hendro Wibisono",
       "role": "supervisor",
-      "title": "Duty supervisor, Complaints Coordinator",
+      "title": "Supervisor, Complaints Coordinator",
       "queues": []
     },
     {
@@ -254,31 +254,38 @@
       "stages": [
         {
           "title": "Complaint registered",
-          "title_id": "Pengaduan dicatat"
+          "title_id": "Pengaduan dicatat",
+          "who": "citizen"
         },
         {
           "title": "Checked: is it a child protection case?",
-          "title_id": "Diperiksa: apakah kasus perlindungan anak?"
+          "title_id": "Diperiksa: apakah kasus perlindungan anak?",
+          "who": "desk"
         },
         {
           "title": "Assessment by a social worker",
-          "title_id": "Asesmen oleh pekerja sosial"
+          "title_id": "Asesmen oleh pekerja sosial",
+          "who": "caseworker"
         },
         {
           "title": "Referral to a service (SAPA 129, UPTD PPA, Dinas Sosial, police), or oversight of the agency that handled it",
-          "title_id": "Rujukan ke layanan (SAPA 129, UPTD PPA, Dinas Sosial, kepolisian), atau pengawasan atas lembaga yang menangani"
+          "title_id": "Rujukan ke layanan (SAPA 129, UPTD PPA, Dinas Sosial, kepolisian), atau pengawasan atas lembaga yang menangani",
+          "who": "supervisor"
         },
         {
           "title": "Clarification and mediation if needed; recommendation issued",
-          "title_id": "Klarifikasi dan mediasi jika perlu; rekomendasi diterbitkan"
+          "title_id": "Klarifikasi dan mediasi jika perlu; rekomendasi diterbitkan",
+          "who": "supervisor"
         },
         {
           "title": "Monitoring how the recommendation is followed up",
-          "title_id": "Pemantauan tindak lanjut rekomendasi"
+          "title_id": "Pemantauan tindak lanjut rekomendasi",
+          "who": "caseworker"
         },
         {
           "title": "Case closed with the complainant (or if unreachable 3 times in 3 weeks)",
-          "title_id": "Kasus ditutup bersama pengadu (atau jika tidak dapat dihubungi 3 kali dalam 3 minggu)"
+          "title_id": "Kasus ditutup bersama pengadu (atau jika tidak dapat dihubungi 3 kali dalam 3 minggu)",
+          "who": "supervisor"
         }
       ]
     }

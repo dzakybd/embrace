@@ -1,7 +1,7 @@
 'use client'
 
 import { useCallback, useEffect, useState } from 'react'
-import { api, type Integrations as Status } from '../api'
+import { api, type BotStatus, type Integrations as Status, type SetupStep } from '../api'
 import { Card, ChannelIcon, Icon } from '../ui'
 import { useT } from '../Lang'
 import { useStaff } from './StaffProvider'
@@ -48,6 +48,7 @@ export default function Integrations() {
   const [token, setToken] = useState('')
   const [busy, setBusy] = useState(false)
   const [err, setErr] = useState('')
+  const [steps, setSteps] = useState<SetupStep[] | null>(null)
   const load = useCallback(() => api.integrations(agency.id).then(setSt).catch((e) => setErr(String(e))), [agency.id])
   useEffect(() => { load() }, [load])
 
@@ -91,17 +92,34 @@ export default function Integrations() {
             <>
               <p className="status ok"><Icon name="check" size={14} /> {t('Connected:')} <a href={`https://t.me/${tg.username}`} target="_blank" rel="noreferrer">@{tg.username}</a></p>
               <p className="small-body">{t('Spam and danger words are filtered in code; only real reports reach Gemini. Approved replies go back to the chat.')}</p>
-              {tg.managed
-                ? <p className="muted small">{t('Managed by the deployment (token in Secret Manager).')}</p>
-                : canEdit && <button className="ghost small" disabled={busy} onClick={() => act(() => api.disconnectTelegram(agency.id))}>{t('Disconnect')}</button>}
+              <dl className="bot-facts">
+                <dt>{t('Token')}</dt><dd><code>{tg.token_hint}</code></dd>
+                <dt>{t('Stored in')}</dt><dd>{tg.stored_in}</dd>
+                {tg.status?.name && <><dt>{t('Bot name')}</dt><dd>{tg.status.name}</dd></>}
+              </dl>
+              {tg.status && <BotChecks s={tg.status} />}
+              {steps && (
+                <ul className="bot-checks" aria-label={t('Setup result')}>
+                  {steps.map((x) => <li key={x.step} className={x.ok ? 'ok' : 'bad'}><Icon name={x.ok ? 'check' : 'close'} size={13} /> {t(x.step)}{x.error ? `: ${x.error}` : ''}</li>)}
+                </ul>
+              )}
+              {canEdit && (
+                <div className="copy-row">
+                  <button className="tonal small" disabled={busy} onClick={() => act(async () => setSteps((await api.setupTelegram(agency.id)).steps))}>
+                    <Icon name="refresh" size={14} /> {busy ? t('Setting up…') : t('Set up profile, commands and webhook')}
+                  </button>
+                  {!tg.managed && <button className="ghost small" disabled={busy} onClick={() => act(() => api.disconnectTelegram(agency.id))}>{t('Disconnect')}</button>}
+                </div>
+              )}
+              <p className="muted small">{t('The full token never leaves the server. Name, photo, descriptions in English and Indonesian, commands and the menu button are set from the agency settings.')}</p>
             </>
           )}
           {tg && !tg.connected && (
-            <form onSubmit={(e) => { e.preventDefault(); act(() => api.connectTelegram(agency.id, token)) }}>
+            <form onSubmit={(e) => { e.preventDefault(); act(async () => setSteps((await api.connectTelegram(agency.id, token)).steps)) }}>
               <p className="status"><Icon name="close" size={14} /> {t('Not connected')}</p>
               <ol className="small-body steps">
                 <li>{t('In Telegram, open')} <a href="https://t.me/BotFather" target="_blank" rel="noreferrer">@BotFather</a> {t('and send /newbot.')}</li>
-                <li>{t('Paste the token it gives you. Embrace sets the webhook, commands and description.')}</li>
+                <li>{t('Paste the token it gives you. Embrace sets the webhook, name, photo, descriptions, commands and menu.')}</li>
               </ol>
               <label className="field"><span>{t('Bot token')}</span>
                 <input value={token} onChange={(e) => setToken(e.target.value)} placeholder="123456789:AA…" autoComplete="off" disabled={!canEdit} />
@@ -125,5 +143,25 @@ export default function Integrations() {
         ))}
       </div>
     </div>
+  )
+}
+
+/** What Telegram reports about the bot right now. */
+function BotChecks({ s }: { s: BotStatus }) {
+  const t = useT()
+  const checks = [
+    { ok: s.reachable, label: t('Token accepted by Telegram') },
+    { ok: s.webhook_ok, label: s.pending ? t('Webhook set ({n} updates waiting)', { n: s.pending }) : t('Webhook set') },
+    { ok: s.photo, label: t('Profile photo') },
+    { ok: s.description, label: t('Description') },
+    { ok: s.commands > 0, label: t('{n} commands', { n: s.commands }) },
+  ]
+  return (
+    <>
+      <ul className="bot-checks">
+        {checks.map((c) => <li key={c.label} className={c.ok ? 'ok' : 'bad'}><Icon name={c.ok ? 'check' : 'close'} size={13} /> {c.label}</li>)}
+      </ul>
+      {s.last_error && <p className="error small">{t('Last delivery error')}: {s.last_error.message} · {new Date(s.last_error.at).toLocaleString()}</p>}
+    </>
   )
 }

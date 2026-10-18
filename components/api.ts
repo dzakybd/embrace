@@ -29,9 +29,18 @@ export interface Agency {
   emergency_line_id: string
 }
 
+export interface BotStatus {
+  reachable: boolean; name: string | null; webhook_ok: boolean; pending: number; last_error: { message: string; at: string } | null
+  description: boolean; commands: number; photo: boolean
+}
+export interface SetupStep { step: string; ok: boolean; error?: string }
+
 export interface Integrations {
   web: { connected: boolean; url: string; page: string }
-  telegram: { connected: boolean; username?: string; managed: boolean; webhook: string }
+  telegram: {
+    connected: boolean; username?: string; managed: boolean; webhook: string; token_hint?: string; stored_in?: string
+    status?: BotStatus
+  }
 }
 
 export interface NewAgency {
@@ -260,8 +269,11 @@ export const api = {
   integrations: (t: string) => fetch(`/api/agencies/${t}/integrations`).then(json<Integrations>),
   connectTelegram: (t: string, token: string) =>
     fetch(`/api/agencies/${t}/integrations`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify({ token }) })
-      .then(json<{ connected: boolean; username: string }>),
+      .then(json<{ connected: boolean; username: string; steps: SetupStep[] }>),
+  setupTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'PATCH' }).then(json<{ steps: SetupStep[]; status: BotStatus }>),
   disconnectTelegram: (t: string) => fetch(`/api/agencies/${t}/integrations`, { method: 'DELETE' }).then(json),
+  saveProcedures: (t: string, body: { procedures: ProcedureT[]; laws: Record<string, string[]>; by: { name: string; role: string } }) =>
+    fetch(`/api/agencies/${t}/procedures`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
   updateAgency: (t: string, body: NewAgency) =>
     fetch(`/api/agencies/${t}`, { method: 'PUT', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) }).then(json<Agency>),
   deleteAgency: (t: string) => fetch(`/api/agencies/${t}`, { method: 'DELETE' }).then(json),

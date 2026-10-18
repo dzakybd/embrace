@@ -17,7 +17,7 @@ const form = (over: Partial<NewAgency> = {}) => NewAgency.parse({
   ],
   team: [
     { name: 'Ana Cruz', role: 'leader', title: 'City Social Welfare Officer' },
-    { name: 'Ben Reyes', role: 'supervisor', title: 'Duty supervisor' },
+    { name: 'Ben Reyes', role: 'supervisor', title: 'Supervisor' },
     { name: 'Carla Santos', role: 'officer', title: 'Caseworker', teams: ['Pantawid Team'] },
   ],
   keywords: ['Gibunalan', 'walay pagkaon'],
@@ -44,13 +44,13 @@ describe('agency builder', () => {
     expect(indexFor(a.id).search('cash grant not received', 1)[0].loc).toBe('section 1')
   })
 
-  it('rejects a team without a duty supervisor', async () => {
+  it('rejects a team without a supervisor', async () => {
     const r = await buildAgency(form({ team: [
       { name: 'Ana Cruz', role: 'leader', title: 'Head', teams: [] },
       { name: 'Carla Santos', role: 'officer', title: 'Caseworker', teams: [] },
       { name: 'Dan Lim', role: 'officer', title: 'Caseworker', teams: [] },
     ] }))
-    expect(r).toMatch(/duty supervisor/)
+    expect(r).toMatch(/supervisor/)
   })
 
   it('can keep the template documents', async () => {

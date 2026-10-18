@@ -6,6 +6,7 @@ import type { AiReport } from '@/lib/ai-report'
 import { api } from '../api'
 import { useT } from '../Lang'
 import { AGENT_META, Card, Icon, ago } from '../ui'
+import { AgentMap } from './AgentMap'
 import { useStaff } from './StaffProvider'
 
 type Guard = { read: string; write: string; injection: 'review' | 'flag'; questions: number }
@@ -100,6 +101,8 @@ export default function AiTower() {
         <Kpi label={t('Guardrail findings')} value={r.guard_injection + r.guard_draft} sub={t('{a} input · {b} draft', { a: r.guard_injection, b: r.guard_draft })} tone={r.guard_injection ? 'warn' : undefined} />
         <Kpi label={t('Drafts edited by staff')} value={`${r.draft_edited_pct}%`} sub={t('{n} replies sent', { n: r.replies_sent })} />
       </div>
+
+      <AgentMap models={Object.fromEntries(d.models.map((m) => [m.agent, models[m.key]]))} stats={r.agents} />
 
       <div className="tower-grid">
         <Card title={t('Activity, last 14 days')} icon="chart" className="t-activity">

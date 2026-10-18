@@ -7,12 +7,13 @@ import { AGENT_META, ChannelIcon, CHANNEL_LABEL, Card, Citations, Icon, StatusBa
 import { LABEL, type Slot } from '@/lib/details'
 import { useLang, useT } from '../Lang'
 import { catLabel, LawLinks, procTitle, stageTitle } from '../Procedures'
+import { AGENT_IO } from './AgentMap'
 import { useStaff } from './StaffProvider'
 
 const TABS = [
   { id: 'case', label: 'Case' },
   { id: 'trace', label: 'Agent trace' },
-  { id: 'history', label: 'History' },
+  { id: 'history', label: 'Audit trail' },
 ]
 
 export default function Case({ id }: { id: string }) {
@@ -56,7 +57,7 @@ export default function Case({ id }: { id: string }) {
       setBusy(false)
     }
   }
-  // The head of office reads cases; caseworkers and the duty supervisor act on them.
+  // The head of office reads cases; caseworkers and the supervisor act on them.
   const readOnly = me.role === 'leader'
   const category = agency.categories.find((c) => c.id === t.triage?.category)
   const sla = t.status === 'resolved' ? null : slaLeft(t.created_at, t.policy?.sla_hours, t.responded_at, tr)
@@ -125,7 +126,8 @@ export default function Case({ id }: { id: string }) {
       )}
       {tab === 'trace' && <Trace t={t} />}
       {tab === 'history' && (
-        <Card title={tr('History')} icon="clock">
+        <Card title={tr('Audit trail')} icon="clock">
+          <p className="muted small">{tr('Every action on this case, by whom and when: routing, delegation, procedure stages, replies. The app only ever adds entries.')}</p>
           <ol className="history">
             {t.history.map((h, i) => (
               <li key={i}>
@@ -230,7 +232,7 @@ function Reply({ t, busy, act, readOnly }: { t: Ticket; busy: boolean; act: (a: 
             <details className="sources"><summary>{tr('Sources cited in this draft ({n})', { n: t.sop.length })}</summary><Citations items={t.sop} /></details>
           )}
           {readOnly
-            ? <p className="muted small">{tr('Read only: the caseworker in charge or the duty supervisor approves replies.')}</p>
+            ? <p className="muted small">{tr('Read only: the caseworker in charge or the supervisor approves replies.')}</p>
             : <button className="primary" disabled={busy || !reply.trim()} onClick={() => act('send_reply', { reply })}>
               <Icon name="send" size={14} /> {tr('Approve & send')}
             </button>}
@@ -275,26 +277,52 @@ function Pic({ t, agency, me, busy, act, readOnly }: {
   )
 }
 
+const PROJECT = 'embrace-23a9c'
+const KIND_LABEL: Record<string, string> = { llm: 'Gemini', rules: 'Rules', search: 'Tool' }
+const AGENT_ICON: Record<string, string> = { media_reader: 'mic', intake_agent: 'form', triage_agent: 'alert', policy_agent: 'rules', sop_agent: 'book', drafter_agent: 'send' }
+
+/** The agent run as a conversation: the citizen's report, then each agent saying what it did, with what it read and
+ * wrote, model, time and tokens, and a link to its span in Cloud Trace. Guardrails and the caseworker speak too. */
 function Trace({ t }: { t: Ticket }) {
   const tr = useT()
+  const traceId = t.trace.find((s) => s.trace_id)?.trace_id
+  const first = t.trace.filter((s) => !s.rerun)
+  const rerun = t.trace.filter((s) => s.rerun)
+  const answers = Object.entries(t.details?.answers ?? {}).filter(([, v]) => v)
   return (
     <div className="case-grid">
       <div className="col">
-        <Card title={tr('Why this case is here')} icon="spark">
+        <Card title={tr('Agent conversation')} icon="spark" action={traceId && <a className="small" href={`https://console.cloud.google.com/traces/explorer;traceId=${traceId}?project=${PROJECT}`} target="_blank" rel="noreferrer">{tr('Cloud Trace')} ↗</a>}>
           {t.trace.length === 0 && t.policy && <p className="muted">{tr('Historical case: routed by the policy rules from its labels.')}</p>}
-          <ol className="trace">
-            {t.trace.map((s, i) => (
-              <li key={`${s.agent}-${i}`} className={s.kind}>
-                <div className="trace-h">
-                  <b>{tr(AGENT_META[s.agent]?.label ?? s.agent)}</b>
-                  {s.rerun && <span className="tag">{tr('after details')}</span>}
-                  <span className="muted">{s.kind === 'rules' ? tr('deterministic rules') : s.kind === 'search' ? tr('SOP search, no AI tokens')
-                    : `${s.model ?? 'Gemini'} · ${(s.ms / 1000).toFixed(1)} s${s.tokens_in != null ? ` · ${s.tokens_in} → ${s.tokens_out} ${tr('tokens')}` : ''}`}</span>
-                </div>
-                <TraceBody agent={s.agent} out={s.output} />
-              </li>
-            ))}
-          </ol>
+          <div className="convo">
+            <Say who="citizen" name={tr('Citizen')} meta={tr(CHANNEL_LABEL[t.channel])}>
+              <p>{t.intake?.masked_text || t.text}</p>
+              {(t.attachments?.length ?? 0) > 0 && <p className="muted small">{tr('{n} attachments', { n: t.attachments!.length })}</p>}
+            </Say>
+            {!!t.guard?.injection.length && (
+              <Say who="guard" name={tr('Input guardrail')} meta={tr('Code')}>
+                <p>{tr('This report contains instructions aimed at the AI, so a person checks the triage and the drafter only sees a neutral restatement.')}</p>
+                <code>{t.guard.injection[0]}</code>
+              </Say>
+            )}
+            {first.map((s, i) => <AgentSay key={`${s.agent}-${i}`} s={s} t={t} />)}
+            {answers.length > 0 && (
+              <Say who="citizen" name={tr('Citizen')} meta={tr('answered follow-up questions')}>
+                {answers.map(([k, v]) => <p key={k}><b>{tr(LABEL[k as Slot] ?? k)}:</b> {v}</p>)}
+              </Say>
+            )}
+            {rerun.map((s, i) => <AgentSay key={`r-${s.agent}-${i}`} s={s} t={t} />)}
+            {!!t.guard?.draft.length && (
+              <Say who="guard" name={tr('Output guardrail')} meta={tr('Code')}>
+                <ul className="reasons">{t.guard.draft.map((w) => <li key={w}>{w}</li>)}</ul>
+              </Say>
+            )}
+            {t.sent_reply && (
+              <Say who="human" name={t.history.findLast((h) => h.action === 'send_reply')?.actor ?? tr('Caseworker')} meta={t.draft && t.draft.reply !== t.sent_reply ? tr('edited and sent the reply') : tr('approved and sent the reply')}>
+                <pre className="draft">{t.sent_reply}</pre>
+              </Say>
+            )}
+          </div>
         </Card>
       </div>
       <div className="col">
@@ -314,7 +342,50 @@ function Trace({ t }: { t: Ticket }) {
   )
 }
 
-function TraceBody({ agent, out: raw }: { agent: string; out: TraceStep['output'] }) {
+function Say({ who, name, meta, icon, children }: { who: string; name: string; meta?: React.ReactNode; icon?: string; children: React.ReactNode }) {
+  return (
+    <div className={`say ${who}`}>
+      <span className="say-av" aria-hidden="true"><Icon name={icon ?? (who === 'citizen' ? 'user' : who === 'guard' ? 'shield' : who === 'human' ? 'check' : 'spark')} size={16} /></span>
+      <div className="say-b">
+        <div className="say-h"><b>{name}</b>{meta && <span className="muted small">{meta}</span>}</div>
+        {children}
+      </div>
+    </div>
+  )
+}
+
+function AgentSay({ s, t }: { s: TraceStep; t: Ticket }) {
+  const tr = useT()
+  const io = AGENT_IO[s.agent]
+  const meta = (
+    <>
+      <span className={`am-kind ${s.kind === 'search' ? 'tool' : s.kind}`}>{tr(KIND_LABEL[s.kind] ?? s.kind)}</span>
+      {s.model && <code>{s.model}</code>}
+      <span>{(s.ms / 1000).toFixed(1)} s</span>
+      {s.tokens_in != null && <span>{tr('{a} → {b} tokens', { a: s.tokens_in, b: s.tokens_out ?? 0 })}</span>}
+      {s.rerun && <span className="tag">{tr('after details')}</span>}
+      {s.fallback && <span className="tag flag">{tr('fallback')}</span>}
+    </>
+  )
+  return (
+    <Say who={`agent ${s.kind}`} name={tr(AGENT_META[s.agent]?.label ?? s.agent)} meta={meta} icon={AGENT_ICON[s.agent]}>
+      {s.fallback && <p className="error small">{tr('The model call failed, so the keyword rules decided:')} {s.fallback}</p>}
+      <TraceBody agent={s.agent} out={s.output} t={t} />
+      {io && (
+        <details className="say-io">
+          <summary>{tr('What it read and wrote')}</summary>
+          <dl>
+            <dt>{tr('Input')}</dt><dd>{tr(io.input)}</dd>
+            <dt>{tr('Output')}</dt><dd>{tr(io.output)}</dd>
+          </dl>
+          <pre className="json">{JSON.stringify(s.output, null, 2)}</pre>
+        </details>
+      )}
+    </Say>
+  )
+}
+
+function TraceBody({ agent, out: raw, t }: { agent: string; out: TraceStep['output']; t: Ticket }) {
   if (agent === 'sop_agent') {
     const cites = raw as Citation[]
     return <p>{cites.length ? cites.map((c) => `[${c.n}] ${c.doc}, ${c.loc}`).join(' · ') : 'No matching SOP passage'}</p>
@@ -336,6 +407,19 @@ function TraceBody({ agent, out: raw }: { agent: string; out: TraceStep['output'
       </p>
     )
   }
-  if (agent === 'policy_agent') return <p>Route <b>{String(out.route).replace('_', ' ')}</b> → queue <b>{String(out.queue)}</b>, SLA {String(out.sla_hours)} h</p>
-  return <p>{String(out.next_step ?? '')}</p>
+  if (agent === 'policy_agent') {
+    return (
+      <>
+        <p>Route <b>{String(out.route).replace('_', ' ')}</b> → queue <b>{String(out.queue)}</b>, SLA {String(out.sla_hours)} h</p>
+        {Array.isArray(out.reasons) && <ul className="reasons">{(out.reasons as string[]).map((r) => <li key={r}>{r}</li>)}</ul>}
+      </>
+    )
+  }
+  return (
+    <>
+      {out.reply ? <pre className="draft">{String(out.reply)}</pre> : null}
+      <p><b>Next step:</b> {String(out.next_step ?? '')}</p>
+      {t.draft && t.sent_reply && t.draft.reply !== t.sent_reply && <p className="muted small">The caseworker edited this draft before sending.</p>}
+    </>
+  )
 }

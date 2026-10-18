@@ -12,7 +12,7 @@ type Cat = NewAgency['categories'][number]
 type Member = NewAgency['team'][number]
 type Doc = NewAgency['docs'][number] & { size: number }
 
-const ROLE_LABEL: Record<TeamMember['role'], string> = { leader: 'Head of office', supervisor: 'Duty supervisor', officer: 'Caseworker' }
+const ROLE_LABEL: Record<TeamMember['role'], string> = { leader: 'Head of office', supervisor: 'Supervisor', officer: 'Caseworker' }
 const MAX_PDF = 4 * 1024 * 1024
 const URGENCIES: Urgency[] = ['critical', 'high', 'normal', 'low']
 const FLAG_LABEL: Record<string, string> = {
@@ -192,14 +192,14 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
           ))}
         </div>
         <fieldset className="flags">
-          <legend className="hint">{tr('Safety signals from the AI that always alert the duty supervisor')}</legend>
+          <legend className="hint">{tr('Safety signals from the AI that always alert the supervisor')}</legend>
           {Object.entries(FLAG_LABEL).map(([id, label]) => (
             <label key={id} className="check">
               <input type="checkbox" checked={f.flags.includes(id)} onChange={(e) => set({ flags: e.target.checked ? [...f.flags, id] : f.flags.filter((x) => x !== id) })} /> {tr(label)}
             </label>
           ))}
         </fieldset>
-        <label className="field"><span>{tr('Escalation words (comma separated): a match always alerts the duty supervisor')}</span><textarea rows={2} value={f.keywords} onChange={(e) => set({ keywords: e.target.value })} /></label>
+        <label className="field"><span>{tr('Escalation words (comma separated): a match always alerts the supervisor')}</span><textarea rows={2} value={f.keywords} onChange={(e) => set({ keywords: e.target.value })} /></label>
         <label className="field"><span>{tr('Send to manual review when the AI is less sure than {n}%', { n: Math.round(f.floor * 100) })}</span>
           <input type="range" min={0.5} max={0.95} step={0.05} value={f.floor} onChange={(e) => set({ floor: Number(e.target.value) })} />
         </label>
@@ -227,7 +227,7 @@ export default function AgencyForm({ agency, onSaved }: { agency?: Agency; onSav
       </Card>
 
       <Card title={editing ? tr('Staff') : tr('5. Staff')} icon="user">
-        <p className="hint">{tr('Needs a head of office, a duty supervisor (receives escalations) and caseworkers (each in charge of one or more teams). Use made-up names; clear a name to drop that row.')}</p>
+        <p className="hint">{tr('Needs a head of office, a supervisor (receives escalations) and caseworkers (each in charge of one or more teams). Use made-up names; clear a name to drop that row.')}</p>
         <div className="rows">
           {f.team.map((m, i) => (
             <div key={i} className="row member">

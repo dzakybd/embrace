@@ -59,7 +59,8 @@ export interface Procedure {
   requirements_id?: string[]
   note?: string
   note_id?: string
-  stages: { title: string; title_id?: string }[]
+  /** who: the actor doing the stage (citizen, desk, caseworker, supervisor, head, partner), a swimlane in the diagram. */
+  stages: { title: string; title_id?: string; who?: string }[]
 }
 
 export interface TeamMember {
